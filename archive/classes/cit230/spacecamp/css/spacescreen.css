@@ -1,0 +1,214 @@
+/* 
+    Document   : spacescreen.css
+    Created on : Apr 5, 2010, 2:46:59 PM
+    Author     : Cory Fugate
+    Description: css file for CIT230 final
+        
+*/
+
+body {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        background-image: url("/classes/cit230/spacecamp/images/spacebg.jpg");
+        font-family: Georgia, 'Times New Roman', serif;
+	font-size: 12px;
+	color: #292421;
+}
+
+h1, h2, h3 {
+    color: #F26522;
+    margin: 0;
+    padding: 0;
+}
+
+h6 {
+    margin: 0;
+    padding: 0;
+}
+
+#container{
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 900px;
+    margin: auto;
+
+        top: 20px;
+    background-image: url("/classes/cit230/spacecamp/images/metaltexture1.gif");
+    border: 2px solid #F26522;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    box-shadow: 3px 3px 3px #292421;
+    -moz-box-shadow: 3px 3px 3px #292421;
+    -webkit-box-shadow: 3px 3px 3px #292421;
+    -o-box-shadow: 3px 3px 3px #292421;
+    
+}
+
+#header{
+    
+    height: 100px;
+    
+    margin: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-top: 5px;
+}
+
+#header img{
+    margin-top: 10px
+}
+
+#nav{
+    
+    top: 100px;
+    height: 26px;
+    background-image: url("/classes/cit230/spacecamp/images/metaltexture2.jpg");
+    margin: 0;
+    padding-top: 14px;
+    
+}
+
+#nav2{
+    float: right;
+}
+
+#nav a{
+    border-bottom-style: dotted;
+    border-width: 2px;
+    border-color: #292421;
+}
+#nav a:hover{
+    border-bottom-style: dotted;
+    border-width: 2px;
+    border-color: #F26522;
+}
+
+.home #homenav,
+.activities #activitiesnav,
+.zerograv #activitiesnav,
+.gforce #activitiesnav,
+.marswall #activitiesnav,
+.command #activitiesnav,
+.qualifications #qualificationsnav,
+.staff #staffnav,
+.contact #contactnav{
+    border-bottom-style: dotted;
+    border-width: 2px;
+    border-color: #F26522;
+    cursor: default;
+}
+
+#activitiesnav2 {
+    padding: 20px;
+    background-image: url('/classes/cit230/spacecamp/images/metaltexture5.jpg');
+    color: #000000;
+    line-height: 20px;
+}
+#activitiesnav2 a {
+    color: #000000;
+    text-decoration: none;
+    border-bottom-style: dotted;
+    border-width: 2px;
+    border-color: #292421;
+}
+#activitiesnav2 a:hover {
+    border-bottom-style: dotted;
+    border-width: 2px;
+    border-color: #F26522;
+}
+
+.zerograv #zerogravnav,
+.gforce #gforcenav,
+.marswall #marswallnav,
+.command #commandnav {
+    border-bottom-style: dotted;
+    border-width: 2px;
+    border-color: #F26522;
+    cursor: default;
+}
+
+#content{
+    top: 160px;
+    width: 700px;
+    float: right;
+    background-color: #FFFFFF;
+    padding: 20px;
+}
+
+#content a{
+    color: #292421;
+}
+
+#content a:hover{
+    color: #F26522;
+}
+
+#footer{
+    clear: both;
+}
+
+img{
+    margin: 0;
+    padding: 0;
+    border-style: none;
+
+}
+
+#nav dl, #footer dl {
+margin:0;
+padding:0;
+list-style:none;
+}
+
+#nav dt {
+display:inline;
+margin: 10px;
+padding:0;
+}
+
+#footer dt {
+display:inline;
+margin: 0;
+padding:0;
+}
+
+#footer {
+    clear: both;
+    
+    font-family: Georgia, 'Times New Roman', serif;
+	font-size: 12px;
+	color: #FFFFFF;
+    border-top: 1px solid #000000;
+    padding: 12px 20px 12px 20px;
+
+	line-height: 12px;
+    background-image: url('/classes/cit230/spacecamp/images/metaltexture1.jpg');
+
+
+}
+
+#footernav {
+	width: 350px;
+	float: right;
+	text-align: right;
+
+}
+#footer a {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+#footer a:hover {
+	color: #F26522;
+}
+
+p.activitiesnavheading{
+    font-size: 12px;
+    color: #F26522;
+    padding: 0px;
+    margin: 0px;
+}

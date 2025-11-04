@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Styling Text with CSS | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+    </head>
+
+    <body>
+
+        <div id="header">
+            <!--#include virtual="../modules/comm310header.inc" -->
+            <!--#include virtual="../modules/comm310nav.inc" -->
+        </div>
+
+        <div id="content">
+            <h2>Styling Text with CSS</h2>
+            <p>Once you've got the the text of your webpage all beautifully marked up with HTML, you're
+                ready to make it look good with CSS. On this page I'll cover the basic properties used when
+                altering the appearance of your text.
+            </p>
+
+            <ul id="top">
+                <li><a href="#fontfam" title="Font Family">Font Family</a></li>
+                <li><a href="#fontsize" title="Font Size">Font Size</a></li>
+                <li><a href="#color" title="Color">Color</a></li>
+                <li><a href="#fontweight" title="Font Weight">Font Weight</a></li>
+            </ul>
+            <h3 id="fontfam">The Font-Family Property</h3>
+            <p>The <code>font-family</code> property is used to change the font that the
+                text will be displayed in. You can choose any font you would like, but
+                the user visiting the page must have the font on his or her own computer.
+                As a safegaurd, its a good idea to use a number of fonts, seperated by commas.
+                The browser will try the first font, and if finds that the user doesn't have that
+                font, it'll move onto the next. It's a good idea to use a generic term, such as
+                &quot;sans-serif&quot; &quot;serif&quot; as the last font, and the browser will
+                just a default font. Here is an example, assuming we wanted to apply a font to a
+                <code>p</code> tag.</p>
+
+            <pre><code>
+
+p {
+    font-family: Crimson, Georgia, 'Times New Roman', sans-serif;
+}
+
+</code></pre>
+            <p>Note: Fonts names with multiple words need to be in single quotes.</p>
+            <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
+
+
+            <h3 id="fontsize">The Font-Size Property</h3>
+            <p>As I'm sure you've guessed, this property is used to change the size
+            of text. You can set the size in a few different units, but I'd recommend
+            sticking with ems or plain old pixels. You can find a detailed description of
+            these units and others <a href="http://kyleschaeffer.com/best-practices/css-font-size-em-vs-px-vs-pt-vs/"
+                     title="Awesome Fontsize Unit Description" >here</a></p>
+                     <p>Here's an example of the font-size property in action:</p>
+
+            <pre><code>
+
+h1 {
+    font-size: 2em;
+}
+
+</code></pre>
+        <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
+
+
+            <h3 id="color">The Color Property</h3>
+            <p>This property is used to change the color of the text. There are few ways
+                you can select the color you'd like to use, but the most common or the hexadecimal
+                color code or color name. You can only use a color name for the most common of colors,
+                like read, blue, white black, aqua, and few others. Hexadecimal codes can found online
+                on dozens of different websites. I'd recommend downloading the ColorZilla add on for
+                Firefox to help with as well. Here is the color property in action:</p>
+
+            <pre><code>
+
+h1 {
+    color: blue;
+}
+
+p {
+    color: #C00000;
+}
+
+</code></pre>
+            <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
+
+
+            <h3 id="fontweight">The Font-Weight Property</h3>
+            <p>The font-weight property is used to change the thickness of the text. There are
+                a few different options with this, but I typically only use bold or normal. You can
+                also use &quot;bolder&quot;, &quot;lighter&quot;, or a multiple of 100 from
+            100-900, where 400 is normal and 700 is bold. This property is used as follows:</p>
+
+            <pre><code>
+
+h1 {
+    font-weight: bold;
+}
+
+</code></pre>
+
+            <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
+
+            <p><a href="index.shtml" title="CSS | coryfugate.com">Back to CSS index</a></p>
+
+
+
+        </div>
+
+        <!--#include virtual="../modules/comm310footer.inc" -->
+
+    </body>
+</html>
+

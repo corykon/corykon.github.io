@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>HTML | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+    </head>
+
+    <body>
+        
+        <div id="header">
+            <!--#include virtual="../modules/comm310header.inc" -->
+            <!--#include virtual="../modules/comm310nav.inc" -->
+        </div>
+    
+        <div id="content">
+            <h2>HTML (Hyper Text Markup Language)</h2>
+            <p>HTML is where writing code for the internet begins. It is used to create the basic structure of a webpage-
+            not from a presentation standpoint, but from the content/functionality side of things. <strong>Hyper</strong> 
+            essentially means "linkable." HTML is what enables one page to link to another. <strong>Markup</strong> refers 
+            to HTML's ability to apply meaning to text, you can use it to tell the browser that certain text is a
+            title, or that it is more important than other text, or any other number of things.</p>
+            <h3 id="contentVSpres">Content Vs. Presentation</h3>
+            <p>This is one of the most important principles taught in the class&ndash; HTML is primarily used for
+            giving a website content and structure, while CSS is used for the presentation and appearance of the
+            webpage. The HTML Dog textbook stresses this principle early on, probably in a much clearer manner than
+            I can, so to quote a portion of its explanation:</p>
+            <blockquote>"HTML is for one thing and CSS is for the other&ndash; HTML should be used solely to construct
+                content and CSS should be solely to present it."</blockquote>
+            <p>The point was further illustrated in this manner:</p>
+            <p id="superem"> <em >HTML = Content</em></p>
+            <p id="superem"> <em >CSS = Presentation</em></p>
+
+
+            <h3>Tutorials</h3>
+            <p>Following are links to tutorials for some of the HTML concepts and code we have learned:</p>
+            <ul>
+                <li><a href="htmlbasics.shtml" title ="HTML basics | CIT330 GUIDE">HTML basics</a></li>
+                <li><a href="text.shtml" title ="HTML Links | CIT330 GUIDE">Text</a></li>
+                <li><a href="links.shtml" title ="HTML Images | CIT330 GUIDE">Links</a></li>
+            </ul>
+
+        </div>
+       <!--#include virtual="../modules/comm310footer.inc" -->
+    
+        
+    </body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Styling Links with CSS | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+    </head>
+
+    <body>
+
+        <div id="header">
+            <!--#include virtual="../modules/comm310header.inc" -->
+            <!--#include virtual="../modules/comm310nav.inc" -->
+        </div>
+
+        <div id="content">
+            <h2>Styling Links with CSS</h2>
+            <p>Hyperlinks can be style by the same css properties explained in the <a href="text.shtml" title="Styling Text wit CSS">
+                    text</a> section, but there are a few points specific to hyperlinks that I'd like to explain here.
+                    First of all, you need to be aware that the css styling of font-color applied to a paragraph
+                    will not apply to the hyperlinks within that paragraph, because by default hyperlinks are blue. Similarly,
+                    the default underlining can be removed with css applied to the paragraph tag. CSS for hyperlinks needs to
+                    be applied to the <code>&lt;a&gt;<code> tag itself.
+            </p>
+            <p>The most important concept to learn when styling hyperlinks is that they can exist in four different
+            states. Here they are with their associated psuedo classes, which we'll discuss in a minute:</p>
+            <ul>
+                <li>Normal - a:<strong>link</strong></li>
+                <li>Visited - a:<strong>visited</strong></li>
+                <li>Hover - a:<strong>hover</strong></li>
+                <li>Active - a:<strong>active</strong></li>
+
+            </ul>
+            <p>A visited hyperlink is one that references a page the user has already visited, whether by clicking
+            on that particular hyperlink, or visiting it by another means. By default, visited links are that
+            <span style="color:purple">nasty purple</span>
+            color. A hyperlink is in its hover state when the mouse roll's over it. Keeping that in mind, we can create
+            cool rollover effets, like link colors changing or underlines appearing when a user rolls over your links. The active
+            state is when a link is currently being clicked (or when browser considers the link &quot;in focus&quot;, so this state usually doesn't exist for long. Normal links
+            are whenever the link isn't in any of the other three states. As mentioned, the default for a normal link
+            is the <span style="color:blue">blue color</span> we're all used to seeing.</p>
+            <p>After understanding the different hyperlink states, we can use CSS psuedo classes to create cool effects.
+            Simply choose a style for normal links, apply that style using the <code>a:link</code> selector(or just
+            <code>a</code>), and then decide how you want the link to look when its being hover over, and apply that
+            style with the <code>a:hover</code> selector. I typically just apply the normal styling to the
+            <code>a</code> rather than <code>a:link</code>, because apply style to <code>a</code> affects all
+            link states, including the visited and active states. If you want those states different as well (which
+            would be a good idea for the visited state, at least when the hyperlink is in the body of the text as
+            opposed to the main navigation), then go ahead and do so.</p>
+            <p>Here's an example of this in action. This is the css used to style the links in the body of
+                this webpage:</p>
+              <pre><code>
+
+a{
+	color: #0099cc;
+	text-decoration:underline;
+}
+
+
+a:hover{
+	color: #0080A6;
+}
+
+
+a:visited {
+    color: #6dc7ec;
+
+}
+
+
+</code></pre>
+           
+            <p><a href="index.shtml" title="CSS | coryfugate.com">Back to CSS index</a></p>
+
+
+
+        </div>
+
+        <!--#include virtual="../modules/comm310footer.inc" -->
+
+    </body>
+</html>
+

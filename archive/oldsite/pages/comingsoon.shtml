@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Coming Soon | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+</head>
+
+<body>
+<div id="outercontainer">
+<div id="container">
+
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id="content">
+    <div>
+    <p><strong>This page is coming soon!</strong></p>
+    </div>
+</div>
+
+<div id="footer">
+    <div>
+    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+
+</div>
+</div>
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>
+

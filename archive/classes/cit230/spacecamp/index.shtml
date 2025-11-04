@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Home | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+<!--embedded style sheet -->
+<style type="text/css">
+
+#content{
+    width: 340px;
+    height: 310px;
+    padding: 10px;
+}
+
+#content p{
+    font-size: 14px;
+}
+
+#leftside{
+    background-color: #000000;
+    float: left;
+    width: 540px;
+    
+   
+}
+
+#leftside div{
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+</style>
+
+</head>
+
+<body class="home">
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div>
+        <img src="/classes/cit230/spacecamp/images/boyastronaut.jpg" alt="Little Astronaut" width="500" height="310" />
+    </div>
+</div>
+
+<div id="content">
+    <div>
+         <h1>Welcome to Space Camp.</h1>
+         <p>Future space explorers, look no further! You've reached the
+            homepage of the worlds greatest Space Camp. Here you'll find the most
+            exciting adventures, the funnest games, and the largest depth of
+            professional-caliber training and instruction from our team of highly
+            experienced and respected former NASA team members.</p><br /><br /><br />
+         <h2>Get ready for a whole new universe of discovery!</h2>
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

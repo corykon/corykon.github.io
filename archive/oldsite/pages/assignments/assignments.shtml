@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Assignments | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+</head>
+
+<body class="assignments">
+<div id="outercontainer">
+<div id="container">
+
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id="content">
+    <div>
+      <h1>Assignments</h1>
+        <p>Following are links to view weekly assignments for my CIT 230 class:</p>
+        <p><a href="/oldsite/pages/assignments/learningreport1.shtml" title="Learning Report 1 @ coryfugate.com">
+        Learning Report 1</a></p>
+        <p><a href="/oldsite/pages/assignments/learningreport2.shtml" title="Learning Report 2 @ coryfugate.com">
+        Learning Report 2</a></p>
+        <p><a href="/oldsite/pages/assignments/learningreport3.shtml" title="Learning Report 3 @ coryfugate.com">
+        Learning Report 3</a></p>
+        <p><a href="/oldsite/pages/assignments/learningreport4.shtml" title="Learning Report 4 @ coryfugate.com">
+        Learning Report 4</a></p>
+        <p><a href="/oldsite/pages/assignments/learningreport5.shtml" title="Learning Report 5 @ coryfugate.com">
+        Learning Report 5</a></p>
+        <p><a href="/oldsite/pages/assignments/learningreport6.shtml" title="Learning Report 6 @ coryfugate.com">
+        Learning Report 6</a></p>
+        <p><a href="/oldsite/pages/assignments/learningreport7.shtml" title="Learning Report 7 @ coryfugate.com">
+        Learning Report 7</a></p>
+        <p><a href="/oldsite/pages/assignments/learningreport8.shtml" title="Learning Report 8 @ coryfugate.com">
+        Learning Report 8</a></p>
+    </div>
+</div>
+
+<div id="footer">
+    <div>
+    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+
+</div>
+</div>
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>
+

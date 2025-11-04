@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+        <title>Home Page | coryfugate.com</title>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-Language" content="en-us" />
+
+	<meta http-equiv="imagetoolbar" content="no" />
+	<meta name="MSSmartTagsPreventParsing" content="true" />
+	<meta name="author" content="Cory Fugate" />
+
+   
+    <meta name="description" content="View Cory Fugate's resume and portfolio online.
+          Also a brief personal and family history, interests page, and an assignments
+          page for his CIT 230 class." />
+    <meta name="keywords" content="Cory, Fugate, resume, portfolio, website, designer,
+            design, computers, programming, graphics, art" />
+
+
+<link href="/oldsite/css/indexscreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+    <link rel="shortcut icon" href="favicon.ico" />
+    
+<!--embedded style sheet -->
+<style type="text/css">
+
+    p {
+        font-size: 14px;
+        
+        line-height: 16px;
+    }
+
+    h3{
+        margin: 0px;
+        padding: 0px;      
+    }
+
+
+</style>
+
+</head>
+<body class="home">
+<div id="outercontainer">
+
+<div id= "container">    
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+    
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+
+<div id="content">
+    <div>
+        <h1>Welcome.</h1>
+        <p>My name is <strong>Cory Fugate</strong>, and I'm a current student at 
+            BYU-Idaho, where I'm studying computer information technology with an
+            emphasis in web and graphics design.</p>
+        <p>This website contains my resume, a portfolio of some of my work, and some
+            general info about me. Feel free to browse around, and let me know if
+            you'd like me to design something for you.</p>
+        <p> Thanks for visiting!<br />
+        </p>
+        <br /><br />
+        <h3>Contact Me:</h3>
+        <p><a href="/oldsite/pages/contact.php" title="Go to the Contact Page">ckfugate@gmail.com</a></p>
+    </div>
+</div>
+
+    <div id="aside">
+        <div align="center">
+            <p>
+                <a href="/oldsite/pages/resume.shtml" id="resumeButton" title="View Cory Fugate's resume">
+                <span>
+                <!--<img src="/oldsite/images/resumeico.png" alt="Cory Fugate's Resume" height="150" width="141" />-->
+                View My Resume.
+                </span>
+                </a>
+            </p>
+            <p>
+                <a href="/oldsite/pages/portfolio/portfolio.shtml" id="portfolioButton" title="View Cory Fugate's Portfolio">
+                <span>
+                <!-- <img src="/oldsite/images/portfolioico.png" alt="Cory Fugate's Resume" height="155" width="140" />-->
+                View My Portfolio.
+                </span>
+                </a>
+            </p>
+        </div>
+    </div>
+
+<div id="footer">
+    <div>
+    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+
+</div>
+
+</div>
+
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+
+</html>

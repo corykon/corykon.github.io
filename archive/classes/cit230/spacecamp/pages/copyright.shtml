@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Copyright | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+
+</head>
+
+<body>
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div>
+       
+    </div>
+</div>
+
+<div id="content">
+    <div>
+       <h1>Copyright Information</h1>
+       <br /><br />
+       <h2>Overview</h2>
+        <p>All privately produced creative works, whether specifically marked as
+           copyrighted or not, are protected under the Berne Copyright Convention.
+           This includes endeavors in any creative form, whether it be written content,
+           illustrations/graphics design, or any other form of media, and extends to
+           anything created after April 1, 1989. Copyright on these items is established
+           immediately as they are produced in tangible form, and lasts until 50 years
+           after the author has died.</p>
+        <p>Copyright protects the monetary value of such creations for their designers,
+           thus encouraging the sharing of creative works. Copyright garauntees the following
+           for its owner:</p>
+        <ul>
+            <li>The right to reproduce the work</li>
+            <li>The right to create a new work, based on the orginal(a derivative work)</li>
+            <li>The right to share and distribute the work in any form</li>
+        </ul>
+        <p> The <strong>violation of Copyright laws</strong> is a civil matter, and as such will result
+            in a lawsuit, potentially leading to lawsuits of up to $100,000 in civil
+            damages. Cases of infringement which include more than 10 copies or a value
+            of over $2,500 can result in a felony.</p>
+
+        <h2>Adherence</h2>
+        <p>In the construction of this website(which is being produced for academic
+        purposes), all Copyright laws have been honored. This includes not reproducing,
+        or deriving any of its works from other sources without explicit permission,
+        unless covered by the <strong>Fair Use Guidlines.</strong> All users of this
+        webpage are encouraged to do the same.</p>
+        <p> The <strong>Fair Use Guidlines</strong> are a set of rules that outline when
+            and how to legally use Copyrighted materials. They were created to allow for
+            critisicm and commentary, reporting, and educational purposes. Following
+            are a few basic descriptions of these guidelines:</p>
+        <ul>
+            <li>Students may incorporate portions of lawfully acquired copyrighted works
+                when producing their own educational multimedia projects for a specific course</li>
+            <li>Students may use up to 10% or 3 minutes of video, which is ever is less</li>
+            <li>They may use 10% or 1,000 words of written material, which ever is less</li>
+            <li>They may use 10% or 30 seconds of musical work, which ever is less</li>
+            <li> They may use no more than 5 images of one artist or photographer</li>
+        </ul>
+
+        <p>For a fuller
+           description of the guidlines, visit this webpage:
+           <a href="http://www.utsystem.edu/ogc/intellectualproperty/ccmcguid.htm">
+           http://www.utsystem.edu/ogc/intellectualproperty/ccmcguid.htm</a>
+        </p>
+        
+        <p>In addition, all images that have been used in this website have been
+           clearly credited to in our <a href="/classes/cit230/spacecamp/pages/resources.shtml" title="Resources page @ spacecamp.com">
+               resources page.</a></p> 
+        <p>Again, all are strongly encouraged and required by law to honor the
+           copyrighted content on this and other webpages. If you would like
+           permission to use any of the content on this website, please
+           <a href="/classes/cit230/spacecamp/pages/contact.php" title="Contact">contact us.</a>
+        </p>
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

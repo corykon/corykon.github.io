@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>:: Pineapple Papers :: How it Works</title>
+        <link rel="stylesheet" href="css/style.css" media="screen">
+        <meta name="description" content="How to purchase wedding, greeting, and print stationery from Pineapple Papers." />
+        <meta name="keywords" content="wedding, greeting, print, stationery, DIY" />
+    </head>
+
+    <body class="howitworks">
+
+        <div id="container">
+            <header>
+                <div>
+                    <?php include 'modules/header.inc'; ?>
+                    <?php include 'modules/nav.inc'; ?>
+                </div>
+            </header>
+
+            <div id="content">
+                <h1>how it works</h1>
+                <p>Purchasing DIY printable stationery from Pineapple Papers is easy. Click on a button below to learn how.</p>
+                <section id="btns">
+                    <a href="hiwcardsprints.php" title ="how to purchase DIY greeting and print stationery">
+
+                        <div id="cardsandprintsbtn">
+                            <img src="images/envelope.gif" alt ="do it yourself greeting and print stationery" />
+                            <h2>how to purchase do it yourself greeting and print stationery</h2>
+                        </div>
+
+                    </a>
+                    <a href ="hiwweddings.php" title ="how to purchase DIY wedding stationery">
+                        <div id="weddingsbtn">
+                            <img src="images/envelope.gif" alt ="do it yourself wedding stationery and invites" />
+                            <h2>how to purchase do it yourself wedding stationery</h2>
+                        </div>
+                    </a>
+                </section>
+            </div>
+
+
+            <?php include 'modules/footer.inc'; ?>
+
+    </body>
+
+</html>

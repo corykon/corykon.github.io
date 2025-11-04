@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Qualification | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+</head>
+
+<body>
+
+<div id="topcontainer">
+<div id="header">
+    <div>
+        <!--#include virtual="/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+<div id="navleft">
+    <div>
+    <!--#include virtual="/modules/spacenav.inc" -->
+    </div>
+</div>
+
+<div id="navright">
+    <div>
+
+    </div>
+</div>
+</div>
+
+<div id="centercontainer">
+<div id="leftside">
+    <div>
+       
+    </div>
+</div>
+
+<div id="content">
+    <div>
+        <h1>Qualifications</h1>
+        <p>In preparing to apply to attend Space Camp, remember to consider the
+           following qualifications:</p>
+        <ul>
+            <li>6-10 age range for Junior Camp</li>
+            <li>11-16 age range for Senior Camp</li>
+            <li>Must be an honor roll student</li>
+            <li>Must be able to commit a full week at camp</li>
+            <li>Must be able to sustain reasonable physical activity(running, jumping, etc.)</li>
+            <li></li>
+
+        </ul>
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+
+
+</body>
+</html>

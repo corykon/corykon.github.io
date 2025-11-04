@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Learning Report 5 | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+</head>
+
+<body class="assignments">
+<div id="outercontainer">
+<div id="container">
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id= "secondarynav">
+    <div>
+    <a href="/oldsite/pages/assignments/learningreport4.shtml" title="Learning Report 4">&#60; Previous </a> |
+    <a href="/oldsite/pages/assignments/assignments.shtml" title ="Back to Assignments">Back to Assignments Main</a> |
+    <a href="/oldsite/pages/assignments/learningreport6.shtml" title="Learning Report 6">Next &#62;</a>
+    </div>
+</div>
+
+<div id = "centerbox">
+<div id="content">
+<div>
+ <h1>Learning Report 5</h1>
+ <h2>Rollover Images in CSS</h2>
+ <h3>Resource:<a href ="http://www.elated.com/articles/css-rollover-buttons/">
+     http://www.elated.com/articles/css-rollover-buttons/
+ </a></h3>
+ 
+ <hr></hr>
+ <h3>What did I learn?</h3>
+ <p>This week I learned how to create rollover images using CSS, rather then
+ javascript. I've found that is probably a better method to use, because I can
+ include the code in the CSS stylesheet I'm already using, and save my users the load
+ time of pulling up an additional javascript file. </p>
+ <p>The tutorial I used showed a couple different methods for doing this. Using 
+     either method, you first two images, one to be the normal image, and the other
+     to be diplayed with the mouse hovers over it. In one method, you use code that
+     will swap the two images when the mouse is rolled over, similar to javascript.
+     In the other method, you combine the images into one file, and the code tells
+     the browser to display a different portion of the image depending whether or
+     not the mouse is hovering over it. This method is useful because it eliminates
+     the quick flash that you get when employing the previous method. This flash occurs 
+     because the server will not preload the second image, it doesn't grab it until
+     the second image is called for when you hover over it.
+ </p>
+ <hr></hr>
+ <h3>How did I implement it?</h3>
+ <p>I implemented this technique with some buttons on the aside of my index page. 
+     These buttons are additional links to my resume and portfolio. I ended up having 
+     to use the less effective first technique of CSS coding because I lack adequate
+    image editor to do the second technique, but in time will switch over to the second
+    technique. I'll show the code for both techniques.</p>
+ <p><strong>So first off,</strong> I needed to create the images for the button, so here is what I created for
+     the resume button:</p>
+ <p>
+ <img src="/oldsite/images/resumeico.png" alt="resume button 1" />
+ <img src="/oldsite/images/resumeico2.png" alt="resume button 2" />
+ </p>
+ <p><strong>Next the code.</strong> With either method, you begin your code in the html file:</p>
+  <p><em>&#60;a id="resumeButton" href="/resume.shtml" title="View My Resume"&#62; &#60;span&#62; View My Resume&#60;/span&#62;&#60;/a&#62;&#60;img src="/images/resume1.jpg" alt"Resume"&#62;</em>
+     </p>
+ <p>The main point to remember is that you must give the hyperlink element an id that 
+    will be used in the CSS file. The span element is used to provide text that will appear
+    if the browser does not use CSS files. This next code goes in the CSS file. If your using
+    the more effective second method, the code looks like this:</p>
+ <p>
+ <em>
+    #resumeButton {<br />
+    display: block;<br />
+    width: 107px;<br />
+    height: 23px;<br />
+    background: url("resume1.gif") no-repeat 0 0;<br />
+      }<br />
+
+    #resumeButton:hover { <br />
+    background-position: 0 -23px;<br />
+    }<br />
+
+    #resumeButton span {<br />
+    display: none;<br />
+    }<br />
+ </em>
+ </p>
+<p> For the less effective first technique, only one portion of the code is different:</p>
+<p>
+<em>
+    #resumeButton1:hover {<br />
+    <strong>background: url("resume2.gif") no-repeat 0 0;</strong><br />
+    }<br />
+</em>
+</p>
+<p>Again, either method will work, the second will just have a little flash the
+    first time your user rolls the mouse over the image. You can view the finished
+    product on the <a href="/oldsite/index.shtml" title="Return to the Homepage">Home Page</a>.
+</p>
+
+    </div>
+</div>
+</div>
+    
+<div id="footer">
+    <div>
+   <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+</div>
+</div>
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Interests | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/oldsite/css/indexscreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+<meta name="description" content="Some general information about Cory Fugate's interests,
+      including writing and playing music, designing, outdoor activiteis." />
+    <meta name="keywords" content="Cory, Fugate, website, designer, about, biography,
+            design, music, games, interests, guitar, drums, ukulele" />
+
+</head>
+
+
+<body class="interests">
+<div id="outercontainer">
+<div id="container">
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+    
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id="content">
+    <div>
+        <h1>Interests</h1>
+        <h2>Music</h2>
+        <p>My favorite hobby is to play music. I bought my first
+            drumset when I was sixteen and soon after picked up the guitar, and
+            spent much of high school playing covers and writing orignal
+            music with friends and family.</p>
+        <p>In my current location in Rexburg I don't always have access to a drumset,
+            but my roomates and I all experiment with a few different instruments. We've got
+            a couple guitars laying around, a set of bongos, and I also picked up a
+            ukulele. Many nights are spent relaxing in the living room jamming and
+            freestyling some music.</p>
+        <p><a href="/oldsite/videos/shesmine.wmv" target="_blank" title="She's Mine">
+            Check out this quick clip</a> from a goofy jam session, a song we wrote for
+            the ward's talent show, basically an LDS version of "I'm Yours." Honestly
+            a little embarassing, but we had a fun time with it.</p>
+        <p>I love most all music, but my favorite have always been rock and acoustic
+            music. Some of my favorite bands and artists are Jack Johnson, Dashboard Confessional,
+            Jimmy Eat World, Relient K, Bayside, The Almost, and Switchfoot, along with
+            lots of others.</p>
+        <h2>Activities</h2>
+        <p> I love doing things outside, and there's plenty of spots for that here
+            close to Rexburg. Yellowstone National Park is minutes away, and their are
+            lots of other caves, rivers, mountains, and even sand dunes close
+            by. There also plenty of people around to get together and play all kinds of
+            sports, and I enjoy playing most anything.</p>
+        <h2>Movies</h2>
+        <p> During the winters here it's freezing, so that leaves lots of time for
+            indoor activities, especially movie watching. I've always enjoyed movies,
+            especially from an artists point of few. I love being entertained by
+            excellent examples of special effects and cinemtography, and enjoy picking
+            apart the elements of a good story. Just to throw up a list of some movies
+            I enjoy-Jurrasic Park, M Night Shyamalan Movies, Chris Farley Movies,
+            The Fugitive, Forest Gump, Star Wars, X-Men, The Matrix, Casino Royale,
+            The Bourne Series, The Count Of Monte Cristo, The Green Mile, The Blindside,
+            Mr. Holland's Opus, Gladiator, and countless others.</p>
+
+    </div>
+</div>
+
+    <div id="aside">
+        <div align="center">
+            <br /><br /><br />
+            <img src="/oldsite/images/drumming.jpg" alt="Drumming" width="190" height="222" />
+            <br /><br />
+            <img src="/oldsite/images/jammingjace.jpg" alt="Jamming w/ lil Bro" width="190" height="222" />
+            <br /><br />
+            <img src="/oldsite/images/bonfire.jpg" alt="FHE Bonfire" width="190" height="222" />
+
+            
+
+
+        </div>
+
+    </div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Assignments | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+    </head>
+
+    <body>
+        
+        <div id="header">
+            <!--#include virtual="../modules/comm310header.inc" -->
+            <!--#include virtual="../modules/comm310nav.inc" -->
+        </div>
+    
+        <div id="content">
+            <h2>Assignments</h2>
+            <p>Here are links to a couple of the major assigments we've worked on in Brother Judkins class. Feel
+            free to use them for inspiration, and to view the source code.</p>
+           	<h3>Project 1 & 4</h3>
+           	<p>Your looking at it! For projects 1 and 4 we were to create a help website for future and current students
+           	of taking this class. We created a "beta" version of the site for Project 1, an then
+           	expanded it to include at least 12 pages during project 4.</p>
+            <h3>Project 2: Big Juds Redesign</h3>
+            <p>For this project we were to redesign the website for any local Rexburg restaurant. We were
+            supposed to design something that would make you hungry. <a href="../bigjuds" title ="Big Jud's Redesign">
+            View the site.</a> </p>    
+ 			<h3>Project 3: CSS Jurrasic Garden</h3>
+            <p> For this assignment we were given the html code for the CSS Zen website, and had to create
+            a css file based on a random theme. My theme words were "Jurrasic, Aqua, and Pocketwatch." 
+            <a href="../csszen" title= "Css Zen assignment">View the site.</a>.</p>
+        </div>
+       <!--#include virtual="../modules/comm310footer.inc" -->
+    
+        
+    </body>
+</html>

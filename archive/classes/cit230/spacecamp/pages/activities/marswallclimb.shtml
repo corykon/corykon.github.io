@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Mars Wall Climb | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+<!--embedded style sheet -->
+<style type="text/css">
+#content{
+    width: 610px;
+    height: 345px;
+}
+
+#leftside{
+    background-color: #000000;
+    float: left;
+    width: 250px;
+    height: 385px;
+}
+
+#activitiesnav2{
+    height: 345px;
+}
+</style>
+
+</head>
+
+<body class="marswall">
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div id="activitiesnav2">
+        <!--#include virtual="/classes/cit230/spacecamp/modules/activitiesnav.inc" -->
+          <img src="/classes/cit230/spacecamp/images/kidastronauts.jpg" alt="Embarking for Mars" width="205" height="215" />
+</div>
+</div>
+
+<div id="content">
+    <div>
+       <h1>Mars Wall Climb</h1>
+        <p>True, we haven't been to Mars yet, but that day is sure to be soon. As we
+            train the next generation of astronauts, we though it appropriate to train
+            for future expeditions to Mars. As an astronaut its important to stay in
+            shape, so we've built a massive room full of climbing surfaces.</p>
+       <p>This program is run by Benjamin Simonsen. All age groups are able to
+           participate at the Mars Climbing Wall.</p>
+       <br />
+       <img src="/classes/cit230/spacecamp/images/marswallclimb.jpg" class="centeredImage" width="233" height="175" alt="Mars Wall Climb" />
+       <br /><br />
+       <a href ="/classes/cit230/spacecamp/pages/activities/activities.shtml" id="miniLink" title="Back to Activities Main">
+           Back to Activities Main
+       </a>
+        
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Class Overview | COMM310 Guide</title>
+        <link rel ="stylesheet" href="css/comm310style.css" />
+    </head>
+
+    <body>
+
+        <div id="header">
+            <!--#include virtual="modules/comm310header.inc" -->
+            <!--#include virtual="modules/comm310nav.inc" -->
+        </div>
+
+        <div id="content">
+            <h2>Class Overview</h2>
+            <p>As described in Brother Judkin's Syllabus, the purpose of this class is to teach students the basics
+            of web design. We'll become familiar with a few different languages, including HTML, 
+            CSS, and PHP. Also included will be discussions of SEO, usabilty, and the importance of following web 
+            standards.</p>
+            <p>As with all classes, the level of understanding and mastery students achieve will depend on the time
+            and effort they are willing to give. Those who wish to become future web designers or developers will be able
+            delve in as deep as they would like into their assignments and projects, and those who are just seeking to
+            become acquainted with the world of online media creation will able to do so and be successful as well. I
+            would encourage everyone to learn concepts as fully as they are able because online media is certainly
+            becoming more and more prevalent, and so the ability to produce it will become an extremely
+            valuable and marketable skill.</p>
+            <h3>Class Flow/Structure</h3>
+            <p>As of Winter 2011, the class is three days a week, twice as normal class/lecture time, and then
+            once week as a lab. Participation plays a fairly large roll in class, so its is important to do as
+            the Learning Model suggests, come prepared to class to teach other students, and look for opportunities
+            to share what you learn out of class. Refer to the
+            <a href="http://www.brotherjudkins.com/310/syllabus/schedule.php" title="Online schedule for COMM310">
+                online schedule</a> to keep track of reading assignments, projects, and topics for lab days.</p>
+            <p>Most assignments and quizzes are open book and open web, which
+            is very much a real-world condition, because students' ability to understand principles and then
+            comfortably use resources online is more important than just memorizing code. In real world situations,
+            web designers will always have such resources available and will use them often. Memorization certainly
+            helps and will come with practice, but by no means is memorization a requirement to be a successful web
+            designer.</p>
+            <h3>Materials Needed</h3>
+            <p>The hard copy resource required (as of Winter 2010) is the HTML Dog book called: "The Best
+            Practice Guide to XHTML & CSS. This book teaches concepts very simply and clearly, but just as often
+            I would recommend refering to online resources when looking up code,because the HTML Dog book is
+            becoming out of date. HTML 5 will very soon be the most current widely supported version of HTML, and
+            CSS will soon complete its transition to version 3.</p>
+            <p>It is also helpful to have some sort of code editor, such as Dreamweaver(which is super expensive),
+            or NetBeans,TextWrangler(for Mac), or Notepad++(Windows). The later three are all free and relatively
+            easy to use.</p>
+            <h3>Keep Skills Polished</h3>
+            <p>The web is a rapidly evolving world, so hopefully in this class students will learn how to use
+            available resources to stay educated and up to date. A great way to do this is to ocassionaly visit
+            web design blogs and other resources online. Some great sites for this are listed
+            <a href ="http://www.brotherjudkins.com/310/links/" title ="to Brother Judkins site">on Brother Judkin's
+            website.</a> </p>
+        </div>
+
+        <!--#include virtual="modules/comm310footer.inc" -->
+        
+    </body>
+</html>

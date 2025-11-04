@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>TableDemo | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+</head>
+
+<body>
+<div id="outercontainer">
+<div id="container">
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+    
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id="content">
+    <div>
+        <h1>Table Demo Page</h1>
+        <table border="1" cellpadding="4" cellspacing="2" summary="Water data for the Portneuf river at Pocatello Idaho">
+            <caption>Available Data:</caption>
+            <thead>
+            <tr>
+                <th>Data Type</th>
+                <th>Begin Date</th>
+                <th>End Date</th>
+                <th>Count</th>
+            </tr>
+            </thead>
+            <tfoot>
+                <tr><td colspan ="4">Last Updated: 17 March, 2010, 14:51:00</td></tr>
+            </tfoot>
+            <tbody>
+            <tr>
+                <td>Real Time</td>
+                <td colspan="3" align="center">-- Previous 120 days --</td>
+            </tr>        
+            <tr>
+                <td colspan="4">Daily Data</td>
+            </tr>        
+            <tr>
+                <td>Temperature, water, degrees Celsius</td>
+                <td>1996-05-23</td>
+                <td>2002-11-19</td>
+                <td>2265</td>
+            </tr>        
+            <tr>
+                <td>Discharge, cubic feet per second</td>
+                <td>1897-05-18</td>
+                <td>2010-03-15</td>
+                <td>36547</td>
+            </tr>        
+            <tr>
+                <td colspan="4">Daily Statistics</td>
+            </tr>        
+            <tr>
+                <td>Temperature, water, degrees Celsius</td>
+                <td>1996-05-24</td>
+                <td>2002-11-19</td>
+                <td>754</td>
+            </tr>        
+            <tr>
+                <td>Discharge, cubic feet per second</td>
+                <td>1897-05-18</td>
+                <td>2009-11-4</td>
+                <td>36416</td>
+            </tr> 
+            </tbody>
+        </table>
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

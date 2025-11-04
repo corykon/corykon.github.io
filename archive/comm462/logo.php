@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Logo Design by Cory Fugate, digital designer and web developer." />
+        <title>Logo Design :: Cory Fugate - Digital Designer and Web Developer</title>
+        <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href ="css/style.css" media="screen" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript">
+             var _gaq = _gaq || [];
+             _gaq.push(['_setAccount', 'UA-15220341-1']);
+             _gaq.push(['_trackPageview']);
+
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+    </head>
+    <body class="logo">
+    <div id="header">
+        <div class="container">
+        <?php
+            include 'modules/header.inc';
+        ?>
+        </div>
+    </div>
+    <div id="content">
+    <div class="container photobox">
+        <div>
+        <h2>Logo Design</h2>
+        <h3>Opdrop Logo Redesign</h3>
+        <img src="images/portfolio/opdrop-logo-old.jpg" alt="old opdrop logo"><img src="images/portfolio/opdrop-logo-new.jpg" alt="new opdrop logo">
+        <p>I've recently joined the founding team of a new web startup called Opdrop,
+        which is out to change the world by providing a platform to share opinions and
+        reviews on any topic. Kind of like a Yelp for everything, but a lot cooler. My
+        primary responsibility is to work on the redesign of the site, and that began with
+        some rebranding.</p>
+        <p>You'll see that I changed the colors slightly, switching from a washed out gray
+        to solid black (or white), and added a slight gradient for more pop. The little
+        message bubble that used to live just in the first "o" of opdrop was moved over to
+        the "p" and "d" to further suggest that our site is all about conversation and
+        contrasting opinions. I also switched the font over to a slab serif, which I felt gave us a
+        bit more of a current feel, and stands out over some of the typical
+        sans serif fonts. Overall the changes aren't drastic, but I think they are poignant
+        and effective. </p>
+        <img src="images/portfolio/opdrop-logo-new2.jpg" alt="new opdrop logo on black">
+
+        <h3>Radionut Logo Design</h3>
+        <span class="radionut"><img src="images/portfolio/radio-logo-1.jpg" alt="radionut logo">
+            <img src="images/portfolio/radio-logo-2.jpg" alt="radionut logo">
+            <img src="images/portfolio/radio-logo-3.jpg" alt="radionut logo"></span>
+        <p>These logos are from an older project in my Intro to Visual Media class about 2 years
+            ago. We were asked to come up with some new business or entity and design three logos for it.
+            I created a fictional web radio company called "Radionut." All three were created as
+            vector graphics in Adobe Illustrator.</p>
+        <h3>Jnick and Joie Logo Design</h3>
+        <img src="images/portfolio/jnick-logo-1.jpg" alt="jnick and joie logo design process"> <img src="images/portfolio/jnick-logo-2.jpg" alt="jnick and joie logo variations">
+        <p>The logo's were commissioned by a friend who was looking to start a t-shirt company. He gave me an old
+        photograph of a logo he had designed previously, and my job was to create a streamlined digital version
+        of that.</p>
+
+        </div>
+    </div>
+    </div>
+
+
+    <div id="footer">
+        <div class="container">
+            <?php
+             include 'modules/footer.inc';
+            ?>
+        </div>
+    </div>
+    </body>
+</html>

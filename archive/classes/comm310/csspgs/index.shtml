@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>CSS | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+    </head>
+
+    <body>
+        
+        <div id="header">
+            <!--#include virtual="../modules/comm310header.inc" -->
+            <!--#include virtual="../modules/comm310nav.inc" -->
+        </div>
+    
+        <div id="content">
+            <h2>CSS (Cascading Style Sheets)</h2>
+            <p>CSS is used to make websites pretty (or not pretty, if that's the way you want it). It works
+                hand and hand with the HTML, and is used solely to produce the look of the webpage. As explained a
+                bit more fully in the <a href="../htmlpgs/index.shtml#contentVSprs" title="Content VS. Presentation">
+                HTML index page</a>, HTML is for content, and CSS is for presentation.</p>
+            <p>CSS has been around for over ten years, but has only been widely adopted more recently. Before,
+            HTML was used for producing both content and presentation. To some, having just one language instead
+            of two may seem simpler, but in the end, using HTML for both aspects can seriously slow you down. For
+            example, say you've built a HUGE webpage, with something like 1,000 seperate pages, and then you decide
+            that you don't like the way the font looks. You likely we need to go and make that change 1,000 times, but
+            with CSS you can just change it once, and all is well.</p>
+
+
+            <h3>Tutorials</h3>
+            <p>Following are links to tutorials for some of the CSS concepts and code we have learned:</p>
+            <ul>
+                <li><a href="cssbasics.shtml" title ="CSS Basics | CIT330 GUIDE">CSS Basics</a></li>
+                <li><a href="text.shtml" title ="Text | CIT330 GUIDE">Styling Text</a></li>
+                <li><a href="links.shtml" title ="Links| CIT330 GUIDE">Styling Links</a></li>
+            </ul>
+
+        </div>
+       <!--#include virtual="../modules/comm310footer.inc" -->
+    
+        
+    </body>
+</html>

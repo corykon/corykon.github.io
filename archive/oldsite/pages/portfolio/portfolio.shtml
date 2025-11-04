@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Portfolio | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+<meta name="description" content="Cory Fugate's online portfolio. Examples of visual media
+            design and creative writing." />
+    <meta name="keywords" content="Cory, Fugate, website, designer, about, portfolio,
+            design, computers, graphics, art, visual media, examples, flyers, brochures,
+            business, logos, logo, writing, samples" />
+
+<!--embedded style sheet -->
+<style type="text/css">
+
+#content img {
+        border-bottom-style: dotted;
+        border-bottom-color: #FFFFFF;
+        padding: 10px;
+        margin: 10px;
+}
+
+#content img:hover {
+    border-bottom-style: dotted;
+    border-bottom-color: #C00000;
+}
+
+</style>
+
+</head>
+
+<body class="portfolio">
+<div id="outercontainer">
+<div id="container">
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+    
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id="content">
+    <div>
+        <h1>Portfolio</h1>
+        <p>Click on a thumbnail below to view samples of work created for my Visual Media and
+            Creative Writing classes during the Winter 2010 semester. Also included are samples of
+            promotions created for on campus events at BYU-I, where I volunteer as a promotions manager for the
+            <a href="/oldsite/pages/portfolio/promomanager.shtml" title="view promotions created for events @ BYU-I">BYU-I SocialBoard.</a></p>
+        <a href="/oldsite/pages/portfolio/flyerdesign.shtml" title="view a flyer created with Adbobe InDesign">
+        <img src ="/oldsite/images/leadershipflyerthumb.jpg" alt="Leadership Flyer" /></a>
+        <a href="/oldsite/pages/portfolio/logodesign.shtml" title="view logos, letterhead and business card">
+        <img src ="/oldsite/images/logothumb.jpg" alt="Logo Design" /></a>
+        <a href="/oldsite/pages/portfolio/montagedesign.shtml" title="view montage created with photoshop">
+        <img src ="/oldsite/images/montagethumb.jpg" alt="Montage" /></a> <br />
+
+        <a href="/oldsite/pages/portfolio/photoediting.shtml" title="view photo editing">
+        <img src ="/oldsite/images/photoeditingthumb.jpg" alt="Photo Editing" /></a>
+        <a href="/oldsite/pages/portfolio/brochuredesign.shtml" title="view brochure design">
+        <img src ="/oldsite/images/moviebrochurethumb.jpg" alt="Brochure Design" /></a>
+        <a href="/oldsite/pages/portfolio/creativewriting.shtml" title="view creative writing sample">
+        <img src ="/oldsite/images/creativewritingthumb.jpg" alt="Creative Writing" /></a> <br />
+
+        <a href="/oldsite/pages/portfolio/webdesign.shtml" title="view web design example">
+        <img src ="/oldsite/images/websitethumb.jpg" alt="Web Design" /></a>
+        <a href="/oldsite/pages/portfolio/crystalclear.shtml" title="view flyer design">
+        <img src ="/oldsite/images/crystalclearthumb.jpg" alt="Flyer Design" /></a>
+        <a href="/oldsite/pages/portfolio/promomanager.shtml" title="view promotions created for events @ BYU-I">
+        <img src ="/oldsite/images/promomanagerthumb.jpg" alt="Promotions for BYU-Idaho" /></a> <br />
+
+        
+
+
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

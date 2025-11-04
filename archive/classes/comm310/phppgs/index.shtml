@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>PHP | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+    </head>
+
+    <body>
+        
+        <div id="header">
+            <!--#include virtual="../modules/comm310header.inc" -->
+            <!--#include virtual="../modules/comm310nav.inc" -->
+        </div>
+    
+        <div id="content">
+            <h2>PHP (PHP Hypertext Preprocessor)</h2>
+            <p>PHP scripting language is what makes a webpage dynamic. It was oringally developed in 1995 by
+            Rasmus Lerdorf as a set Perl web tools, but it didn't really come into a form similar to the it's
+            current form until 1997. As you can see above, PHP is a "recursive" acronym, as the first letter
+            "P" literally stands for PHP. Originally it stood for Personal Home Page, and since transformed into
+            what it is today, so I suppose all together you could call it "Personal Home Page Hypertext
+            Preprocessor. </p>
+            <p>With all that said, PHP is basically a language that can manipulate the webpage based on the
+            way the user interacts with it. As of yet we have yet to cover PHP in class, but below
+            I've included a link that gives a rundown on all the basics of PHP. More informations, in smaller
+            bits and pieces will be included in the future.</p>
+
+
+            <a href="phpprimer.shtml" title ="PHP primer | CIT330 GUIDE">PHP Primer Tutorial</a>
+               
+
+        </div>
+       <!--#include virtual="../modules/comm310footer.inc" -->
+    
+        
+    </body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Style Guide | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+</head>
+
+<body>
+<div id="outercontainer">
+<div id="container">
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+
+
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id="content">
+    <div>
+    <h1>Style Guide</h1>
+    <p>This guide will include a set of rules and standards for the design of the
+    website as a whole. It serves as a reference to help maintain continuity amongst
+    all the various pages. This will create for a more unified and usable webpage.</p><br />
+        
+    <h2>Page Dimensions/Orientation</h2>
+    <p>The webpage will be designed using a fixed template that is 760px wide so
+    as to fit within the smaller resolution screens, and to be around the
+    optimum width for comfortable viewing on most any resolution. Its height
+    will be based on the content of the page. The template will also be centered
+    in the page.</p>
+    <h2>Browser Requirements</h2>
+    <p>All pages should be viewable in the major browsers: Internet Explorer,
+    Mozilla Firefox, Opera, and Google Chrome w/ minor if any differences.</p>
+    <h2>Frames</h2>
+    <p>Frames are not to be used!</p>
+    <h2>Graphics</h2>
+    <p>Images included should be one of the common suportable images types,
+    such as jpeg, png, and gif. They should be appropriately sized, and
+    geared towards optimum loading speed.</p>
+    <h2>Typography</h2>
+    Body Text
+        <ul><li>Font Family defined as "Arial, Helvetica, Verdana, Sans-serif"</li>
+            <li>Font size: 12px</li>
+            <li>Line height: 18px</li>
+            <li>Font Color: #666666</li>
+        </ul>
+    Footer Text
+        <ul><li>Font Family defined as "Tahoma, Arial, Helvetica, Sans-serif"</li>
+            <li>Font size: 10px</li>
+            <li>Color: #c9c9c9</li>
+            <li>Hover Color: #C00000</li>
+        </ul>
+    <p></p>
+    <h2>Colors</h2>
+    <p>The color scheme is simple, the color red and a mix of grayscale colors. The color red found in
+    the favicon, navigation bar, etc is #C00000. A standard white backgorund will
+    be used in the content section of the page, and the background will like colors, mostly
+    black, white and gray colors.</p>
+    <h2>Navigation</h2>
+    <p>The main navigation will be located just below the header, and arrowws will point at
+        the links when the mouse hovers over them. They will be created using
+    images so that I can be more free w/ my font choice and rollover effect. The blue "image link" border should
+    be taken out using css, and margins will need to be adapted so that images can sit right
+    next to each other. </p>
+    <p>Links within the content of the page will be the same color as normal test, but will
+       be underlined to show that they are links. They will change to the hex color code
+       #C00000 when the mouse hovers over them. There is also navigation located in the footer,
+       and it is set to align with the right edge of the page. It also employs the rollover
+       color-changing effect.</p>
+    <p>Overall, navigation should be simple and intuitive. Links should be clearly labeled.</p>
+    <h2>Content</h2>
+    <p>The content of the page overall should be sensible and useful. Don't be
+    overly wordy or confusing. Content should be arranged in an aesthetically pleasing
+    way, and tend lean towards a very simple and clean appearance. Extra divs may be created
+    within the content div, but divs outside the main container are not to be created.</p>
+    <h2>Logo</h2>
+    <p><img src="/oldsite/images/cflogo.gif" alt="coryfugate.com logo" /></p>
+    <p>The logos filename is cflogo.gif. It is a simple red box with a white lowercase
+        cf aligned to the right. It should be seen on everypage and used in a professional
+        way.</p>
+
+    
+
+    </div>
+</div>
+
+<div id="footer">
+    <div>
+   <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+
+</div>
+</div>
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

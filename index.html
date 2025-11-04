@@ -1,0 +1,353 @@
+<!--
+Author: Cory Fugate
+Date: 8/17/13
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cory Fugate | Dev & Design</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="Online portfolio of web developer/designer Cory Fugate.">
+    <meta name="author" content="Cory Fugate">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="resources/css/style.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.mixitup.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <!-- favicon stuff -->
+    <link rel="apple-touch-icon" sizes="180x180" href="resources/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="resources/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="resources/favicon/favicon-16x16.png">
+    <link rel="manifest" href="resources/favicon/site.webmanifest">
+    <link rel="mask-icon" href="resources/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+  </head>
+  <body>
+    <div id="maincontent">
+
+    <!------ Header/Nav ------->
+    <nav>
+        <div class="container">
+            <h1><img src="resources/images/c-skate-logo.png" alt="Cory Fugate Logo" /><span>Cory Fu<span class="letterG">g</span><span class="letterA">a</span>te</span></h1>
+        <h2>Dev & design</h2>
+        <div class="nav-links">
+            <a href="#" class="active">Projects</a>
+            <a href="about.html">About</a>
+        </div>
+        <ul>
+            <li class="social"><a href="http://www.linkedin.com/pub/cory-fugate/44/434/768/" target="_blank" title="Cory's Linkedin profile">
+                    <span class="label"><i class="icon-linkedin"></i></span>
+                    <span class="label hov-label"><i class="icon-linkedin"></i></span>
+                </a>
+            </li>
+            <li class="social"><a href="https://github.com/corykon" target="_blank" title="Cory's GitHub profile">
+                    <span class="label"><i class="icon-github"></i></span>
+                    <span class="label hov-label"><i class="icon-github"></i></span>
+                </a>
+            </li>
+            <li class="contactme" title="Send a Message">
+                <span class="label"><span>contact me</span></span>
+                <span class="label hov-label"><span><i class="icon-envelope-alt icon-2x"></i></span></span>
+            </li>
+        </ul>
+        </div>
+    </nav>
+    <!------ End Header/Nav ------->
+    
+    <!------ Portfolio Grid ------->
+    <div id="portfolio-grid">
+        <div class="work-filter container">
+            <ul>
+                <li class="filter active" data-filter="dev-work design-work">All</li>
+                <li class="filter" data-filter="dev-work">Dev</li>
+                <li class="filter" data-filter="design-work">Design</li>
+            </ul>
+        </div>
+
+        <div id="mywork">
+            <div class="work-item dev-work design-work" data-workitem="cashmere">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Cashmere</h3>
+                    <p>Component Library & Style Guide. 2017-2024.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item dev-work design-work" data-workitem="quickwin">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>UX: Quick Wins</h3>
+                    <p>Slides. 2021.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item dev-work design-work" data-workitem="perf">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>UX: Performance</h3>
+                    <p>Slides. 2021.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item design-work" data-workitem="cloud">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Cloud Kitchens</h3>
+                    <p>Slides. 2019.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <!-- <div class="work-item dev-work design-work" data-workitem="pb">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Population Builder</h3>
+                    <p>Dev & UX. 2019.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div> -->
+            
+            <div class="work-item dev-work" data-workitem="sk8">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Street Skate</h3>
+                    <p>DOS Game. 2003.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item dev-work" data-workitem="wd">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>The Walking Dead: Zombiefied</h3>
+                    <p>Web Dev. Parallax. 2013.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item design-work" data-workitem="photobook">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Digital Imaging Photobook</h3>
+                    <p>Photography & Design. 2011.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item design-work" data-workitem="safewise">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Safewise</h3>
+                    <p>Design & Branding. 2013.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item dev-work design-work" data-workitem="usability5">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>UX: 5 Points of Usability</h3>
+                    <p>Slides. 2024</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item dev-work" data-workitem="missionary">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Church Missionary Apps</h3>
+                    <p>Web & iOS Dev. 2013-2016.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item dev-work" data-workitem="lebron">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>NBA Stat Faceoff - Data Dashboard</h3>
+                    <p>Dev & Design. 2011.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item dev-work design-work" data-workitem="disaster">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Disaster Prep</h3>
+                    <p>Dev & Design. 2013.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item dev-work design-work" data-workitem="opdrop">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Opdrop</h3>
+                    <p>Dev & Design. 2012.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item design-work" data-workitem="miscweb">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Miscellaneous Web Design</h3>
+                    <p>Design.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item design-work" data-workitem="miscprint">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Miscellaneous Print Design</h3>
+                    <p>Design.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item design-work" data-workitem="mtn">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Mountain Wall Art</h3>
+                    <p>Typography & Design. 2018.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+            <div class="work-item design-work" data-workitem="robbed">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>You Just Got Robbed</h3>
+                    <p>Web Dev & Design. 2013.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+             <div class="work-item design-work" data-workitem="slctemple">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>Salt Lake Temple Wall Art</h3>
+                    <p>Design. 2014.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+             <div class="work-item design-work" data-workitem="mlbcollage">
+                <div class="thumb"></div>
+                <div class="overlay"></div>
+                <div class="description">
+                    <h3>MLB Collage Wall Art</h3>
+                    <p>Design. 2014.</p>
+                </div>
+                <div class="action-btn">See more <i class="icon-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <!------ End Portfolio Grid ------->
+
+
+    <!------ Portfolio Item ------->
+    <div id="portfolio-item"><div>
+        <span id="back-to-port"><i class="icon-angle-left"></i> Back to Home</span>
+
+        <div id="portfolio-item-content">
+            <!-- awesome placeholder text -->
+            <div id="loading">Loading<span class="uno"></span><span class="dos"></span><span class="tres"></span></div>
+            
+        </div>
+        <div id="port-footer">
+            <span id="back-to-port"><i class="icon-angle-left"></i> Back to Home</span>
+            <span id="back-to-top">Back to Top <i class="icon-angle-up"></i></span>
+        </div>
+
+    </div></div>
+
+    <footer>
+        <div class="container">
+        <ul>
+            <li class="social"><a href="http://www.linkedin.com/pub/cory-fugate/44/434/768/" target="_blank" title="Cory's Linkedin profile">
+                    <span class="label"><i class="icon-linkedin"></i></span>
+                    <span class="label hov-label"><i class="icon-linkedin"></i></span>
+                </a>
+            </li>
+            <li class="social"><a href="https://github.com/corykon" target="_blank" title="Cory's GitHub profile">
+                    <span class="label"><i class="icon-github"></i></span>
+                    <span class="label hov-label"><i class="icon-github"></i></span>
+                </a>
+            </li>
+            <li class="contactme" title="Send a Message">
+                <a href="#">
+                    <span class="label"><span>contact me</span></span>
+                    <span class="label hov-label"><span><i class="icon-envelope-alt icon-2x"></i></span></span>
+                </a>
+            </li>
+        </ul>
+        <div class="signature-container">
+            <div class="skateboard"></div>
+            <div class="signature"></div>
+        </div>
+        <p><span class="ut-outline"></span>Made by hand in UT, USA. &copy;<span id="year"></span>.</p>
+        <script>
+            document.getElementById('year').textContent = new Date().getFullYear();
+        </script>
+        
+        </div>
+      </footer>
+    </div>
+
+    <!------ Sidebar ------->
+      <div id="sidebar">
+          <div class="close">x</div>
+
+          <div>
+              <h3><i class="icon-envelope-alt icon-3x"></i>Contact Me</h3>
+              <form id="contact-form">
+                  <input type="hidden" name="time" id="current-time">
+                  <script>
+                      document.getElementById('current-time').value = new Date().toLocaleString();
+                  </script>
+                  <label>Your Email</label>
+                  <input id="contact-email" type="email" name="email">
+                  <label>Message</label>
+                  <textarea id="contact-message" name="message"></textarea>
+                  <button class="action-btn disabled" type="submit">Send Message <i class="icon-angle-right"></i></button>
+              </form>
+          </div>
+          <div id="contact-links">
+              <ol>
+                <li class="social"><a href="http://www.linkedin.com/pub/cory-fugate/44/434/768" target="_blank" title="Cory's Linkedin profile">
+                    <i class="icon-linkedin"></i><span>Linkedin</span></a></li>
+                <li class="social"><a href="https://github.com/corykon" target="_blank" title="Cory's GitHub profile">
+                    <i class="icon-github"></i><span>GitHub</span></a></li>
+                <li class="contactme"><a href="mailto:cory.fugate@gmail.com" title="Send a Message">
+                    <i class="icon-envelope"></i><span>Email</span></a></li>
+              </ol>
+          </div>
+      </div>
+      <!------ End Sidebar ------->
+  <script src="js/portfolio.js"></script>
+  <!-- preload and hide all of the skateboard image kf1.png - kf9.png-->
+     <div style="position: fixed; bottom: -100px; left: -1000px; z-index: 0;">
+        <img src="resources/images/kickflip/kf1.png">
+        <img src="resources/images/kickflip/kf2.png">
+        <img src="resources/images/kickflip/kf3.png">
+        <img src="resources/images/kickflip/kf4.png">
+        <img src="resources/images/kickflip/kf5.png">
+        <img src="resources/images/kickflip/kf6.png">
+        <img src="resources/images/kickflip/kf7.png">
+        <img src="resources/images/kickflip/kf8.png">
+        <img src="resources/images/kickflip/kf9.png">
+    </div>
+  </body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Resources | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+
+</head>
+
+<body>
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div>
+       
+    </div>
+</div>
+
+<div id="content">
+    <div>
+    <h1>Resources</h1>
+    <p>This page is documentation of all sources used to create this website for my
+        CIT 230 final exam.</p>
+    <h2>Programs Used</h2>
+    <ul>
+        <li><strong>Adobe Photoshop-</strong> To edit images and textures.</li>
+        <li><strong>Adobe InDesign-</strong> To brainstorm layout and create images for header and
+            navigation.</li>
+        <li><strong>Netbeans-</strong> To write and edit code.</li>
+        <li><strong>Filezilla-</strong> To upload files.</li>
+        <li><strong>Picnik-</strong> To edit pictures.</li>
+    </ul>
+
+    <h2>Image Sources</h2>
+    <p>Following are the names of images and the urls from which they were found:<br /><br />
+<strong>littlegirlastronaut-</strong> "http://www.lestout.com/modules/article/images/lestout/article-space_camp_vacations.jpg"<br />
+<strong>kid astronauts-</strong> "http://www.studio2b.org/images/escape/destinations/events/astronaut%20fast%20track.JPG"<br />
+<strong>spacecamp boy-</strong> "http://spacemansam.files.wordpress.com/2008/05/spacecamp-boy.gif"<br />
+<strong>little girl pushing button-</strong> "http://static.howstuffworks.com/gif/family-vacations-us-space-and-rocket-center-1.jpg"<br />
+<strong>spacecamp class-</strong> http://thewalkerschool.wikispaces.com/file/view/IMG_0062.jpg/46478113/IMG_0062.jpg<br />
+<strong>space camp-</strong> http://z.about.com/d/huntsville/1/0/7/X/spacecamp34.jpg<br />
+<strong>graduate spacecamp-</strong> "http://www.ronclarkacademy.com/media/uploads/space_camp_2008_036.jpg"<br />
+<strong>cockpit@spacecamp-</strong> "http://www3.timeoutny.com/chicago/blog/out-and-about/wp-content/uploads/2009/12/spacecamp11.jpg"<br />
+<strong>asian kid spining-</strong>"http://www.isset.org/programmes2/images/SCPeggyMAT.jpg"<br />
+<strong>boy astronaut-</strong> "http://www.takeafuntrip.com/files/Images/Space%20Camp.jpg"<br />
+<strong>spinny kid-</strong> "http://www.kennedyspacecenter.com/images/Boy-on-ride_rdax_258x171.jpg"<br />
+<strong>command center-</strong> "http://news.cnet.com/i/bto/20080616/Blog_-_Mission_control_540x361.jpg"<br />
+<strong>zero gravity-</strong> "http://i.telegraph.co.uk/telegraph/multimedia/archive/00871/money-graphics-2008_871289a.jpg"<br />
+<strong>zero gravity2-</strong> "http://english.people.com.cn/200507/01/images/0630_D59.jpg"<br />
+<strong>mars wall climb-</strong> "http://farm2.static.flickr.com/1263/1024608553_576c82c059.jpg?v=0"<br />
+    </p>
+    
+    <h2>Textures</h2>
+    <p>Background images and metal textures from <a href="http://www.webtreats.mysitemyway.com/" title="Webtreats ETC Homepage">Webtreats ETC</a>.
+    </p>
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

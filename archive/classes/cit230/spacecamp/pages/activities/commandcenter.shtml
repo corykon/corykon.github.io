@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Command Center Training | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+<!--embedded style sheet -->
+<style type="text/css">
+#content{
+    width: 610px;
+    height: 345px;
+}
+
+#leftside{
+    background-color: #000000;
+    float: left;
+    width: 250px;
+    height: 385px;
+}
+
+#activitiesnav2{
+    height: 345px;
+}
+</style>
+
+</head>
+
+<body class="command">
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div id="activitiesnav2">
+        <!--#include virtual="/classes/cit230/spacecamp/modules/activitiesnav.inc" -->
+          <img src="/classes/cit230/spacecamp/images/spacecampclass.jpg" alt="Command Center Team" width="205" height="215" />
+</div>
+</div>
+
+<div id="content">
+    <div>
+       <h1>Command Center Training</h1>
+        <p>Not all members of NASA's team are necessarily off the ground. Hundereds
+           of individuals are needed at the command center to moniter the progress
+           of the mission and make sure it is a success. We train camp atendees on
+            some of the basics of working with high-tech computers, but more importantly
+            we focus on helping them learn to work as a team.</p>
+       <p>This program is run by Jacob Coolbanks. All age groups are able to
+          participate.</p>
+       <br />
+       <img src="/classes/cit230/spacecamp/images/spacecampbutton.jpg" class="centeredImage" width="263" height="175" alt="At the Command Center" />
+       <br /><br />
+       <a href ="/classes/cit230/spacecamp/pages/activities/activities.shtml" id="miniLink" title="Back to Activities Main">
+           Back to Activities Main
+       </a>
+        
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+         <title>HTML for Text | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+    </head>
+
+    <body>
+
+        <div id="header">
+            <!--#include virtual="../modules/comm310header.inc" -->
+            <!--#include virtual="../modules/comm310nav.inc" -->
+        </div>
+
+        <div id="content">
+        <h2 id="top">Marking up text with HTML</h2>
+        <p>After pinning down the fundamental HTML &quot;filing cabinet&quot;, it's time
+        to move on to the markup for you text. Text is the real meat of a webpage; amidst
+        the flashy images and cool css design, the actual text, the content you deliver
+        is more often then not what your user have really come to see. Improper markup will make
+        it different for them to read and understand, and will also make it difficult for them
+        to find, as search engines are beginning to rely more and more heavily on the way 
+        you mark things up.</p>
+        <p>I'll cover the most commonly used tags here, which allow you to create paragraphs,
+        empahasize particular words, create headings, and create lists. There are many other types
+        of text markup, including abbreviations, acronyms, addresses, quotes, and others. I'd encourage
+        you to refer the HTML dog text book, and other sources for more information on these.</p>
+
+        <ul>
+            
+            <li><a href="#paragraph" title="Paragraph Tag">Paragraph Tag</a></li>
+            <li><a href="#emstrong" title="Emphasis and Strong">Emphasis and Strong</a></li>
+            <li><a href="#headings" title="Headings">Headings</a></li>
+            <li><a href="#list" title="list">Lists</a></li>
+
+                
+        </ul>
+
+        <h3 id="paragraph">The Paragraph Tag</h3>
+        <p>We'll start with the paragraph tag. Simply put, the paragraph tags are placed around
+            anything that is a paragraph. For example, this chunk of text you're reading right now.
+            It's been wrapped in opening (<code>&lt;p&gt;</code>) and closing (<code>&lt;/p&gt;</code>)
+            paragraph tags...because it's a paragraph. If the
+            chunk of text you're marking up isn't a paragraph, then don't wrap it in paragraph tags. If
+            you want to insert a picture into your page, don't wrap it in paragraph tags either. Unless
+             of course it's part of a paragraph. Some new designers go a little crazy and wrap everything
+            with p tags. Don't do that. Here's a correct example of using paragraph tags:</p>
+       
+        <pre><code>
+
+&lt;p&gt;This is a paragraph. It is in between the paragraph tags.
+    Isn't it fantastic? &lt;/p&gt;
+
+</code></pre>
+
+        <p><em>Remember:</em> By default, paragraphs have a certain amount of padding or space
+            above/below them. This can be changed w/ css.</p>
+
+        
+        <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
+        
+
+        <h3 id="emstrong">Emphasis and Strong</h3>
+        <p>The emphasis and strong tags are used to add a little extra <strong><em>umph</em></strong>
+            to a word or phrase. (I added both the <code>strong</code> and <code>em</code> tags around
+            the word &quot;umph&quot;. By default these tags make the text look a little difference, but when talking
+            about HTML, the point is that the words or phrases literally <em>mean</em> more to the browser, which means
+            they also mean more to the search engine. Here's and example of the code:</p>
+        <pre><code>
+
+
+    &lt;p&gt;I want &lt;em&gt; emphasis &lt;/em&gt; and &lt;strong&gt; strength &lt;/strong&gt;
+       in this paragraph.&lt;/p&gt; &lt;em&gt;&lt;strong&gt;Lots of it.&lt;/strong&gt;&lt;/em&gt;
+    &lt;/p&gt;
+
+</code></pre>
+        <p><em>Remember:</em> When html tags are nested, they inner tags need to be closed before
+        outer tags, as is shown above. (i.e. - the paragraph closing tag comes after the strong and
+        emphasis tags because it opened first. It is the &quot;outer&quot; or &quot;parent&quot;
+        element.</p>
+
+        <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
+
+        <h3 id="headings">Headings</h3>
+        <p>Heading tags are used to identify headings, such as the word &quot;Headings&quot; up above
+        this paragraph. Headings come in 6 preset sizes, 1 being the most important, and 6 the least.
+        By deafault, your browser will display that at different sizes, but these can be altered
+        with css. Here's how you use them:</p>
+        <pre><code>
+&lt;h1&gt;This is the most important heading&lt;/h1&gt;
+&lt;h2&gt;This is the second most important heading&lt;/h2&gt;
+&lt;/h6&gt;This is the least important.&lt;/h6&gt;
+
+</code></pre>
+
+        <p><em>Remember:</em> Headings by default will take up an entire line.
+        </p>
+        <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
+
+        <h3 id="lists">Lists</h3>
+        <p>There are three types of lists in html:</p>
+        <ul>
+            <li>ordered lists</li>
+            <li>unordered lists</li>
+            <li>definition lists</li>
+        </ul>
+        <p>Order lists should be used when the information you're
+        displaying needs to be in a particular order, such as a list of chronological steps to
+        complete. By default ordered lists show up with numbers. Unordered lists, like the one above,
+        should be used when lists have no chronological order. By default these lists are bulleted.
+        Definition lists should be used when defining words, so to be honest you may or may not
+        use it quite so often. Following is an example of the code for an unordered list. To use
+        an ordered list, simply substitue &quot;ol&quot; for &quot;ul&quot;. To use a definition list,
+        substitute &quot;dl&quot; for &quot;ul&quot; and then use &quot;dt&quot; for the term to be
+        defined and &quot;dd&quot; for the definitions of that term.</p>
+        <pre><code>
+&lt;ul&gt;
+    &lt;li&gt;List item 1&lt;/li&gt;
+    &lt;li&gt;List item 2&lt;/li&gt;
+    &lt;li&gt;List item 3&lt;/li&gt;
+    &lt;li&gt;List item 4&lt;/li&gt;
+&lt;/ul&gt;
+
+
+</code></pre>
+
+    <p><em>Remember:</em> Lists can be nested, this can create some nifty results when using
+        lists for hyperlinks. The navigation at the top of my pages were created using
+        nested unordered lists and some css.<br></p>
+    <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
+
+
+    <p><a href="index.shtml" title="HTML | coryfugate.com">Back to HTML index</a></p>
+
+        </div>
+
+    <!--#include virtual="../modules/comm310footer.inc" -->
+    
+    </body>
+</html>

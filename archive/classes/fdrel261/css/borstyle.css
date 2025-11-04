@@ -1,0 +1,298 @@
+/******* CSS for Cory K. Fugate's BofR ******/
+
+
+
+@font-face {
+    font-family: Crimson;
+    src: url("Crimson-Roman.otf");
+}
+
+body{
+    font-family: Crimson, Georgia, 'Times New Roman';
+    min-width: 900px;
+}
+
+header{
+    display: block;
+    margin-top: 40px;
+}
+
+
+
+/*************Styling for Splash Page ****************/
+
+.splash h1 {
+    background-image: url("../images/bortitle.png");
+    height: 125px;
+    margin: 10% auto auto;
+    width: 605px;
+    margin-bottom: 40px;
+}
+.splash a span {
+    display: none;
+}
+.splash a {
+    background-image: url("../images/enterhome.png");
+    background-position: 0 -3px;
+    display: block;
+    height: 65px;
+    margin: 7% auto auto;
+    width: 320px;
+}
+.splash a:hover {
+    background-position: 1px 67px;
+}
+
+
+/*************Header ****************/
+h1 {
+    background-image: url("../images/bortitle2.png");
+    height: 90px;
+    margin-left: 140px;
+    width: 80%;
+    background-repeat: no-repeat;
+    border-bottom: 2px solid #777777;
+    padding-bottom: 30px;
+}
+h1 span, h2 span {
+    display: none;
+}
+
+
+/*************Content ****************/
+
+h3 {
+    font-size: 2em;
+    margin: 0;
+    margin-top: 30px;
+}
+
+p{
+    font-family: Verdana, Tahoma, Arial;
+    font-size: .9em;
+    font-weight: lighter;
+    line-height: 1.5em;
+}
+
+
+
+#content {
+    border-left: 2px solid #777777;
+    float: left;
+    margin-left: 100px;
+    min-width: 460px;
+    padding-left: 40px;
+    width: 50%;
+    margin-top: -90px;
+    padding-top: 70px;
+}
+
+#content a{
+    color: #777;
+    font-size: 1.4em;
+}
+
+#content a:hover{
+    color: #C00000;
+}
+
+#content img{
+    margin: 20px;
+    margin-left: 0px;
+}
+
+#content img.wrap{
+    margin: 20px;
+    margin-left: 0px;
+    float: left
+}
+
+#content h4{
+    font-size: 1.2em;
+    margin: 0;
+    margin-top: 50px;
+}
+
+#content h5{
+    font-size: 1em;
+    margin: 0;
+}
+
+
+table td{
+    padding: 5px;
+    padding-right:10px;
+}
+
+#content table a{
+    font-size: 1em;
+    color: #C00000;
+}
+#content table a:hover{
+    font-size: 1em;
+    color: #D11111;
+}
+.firstrow{
+    font-weight: bold;
+}
+
+table{
+    margin-bottom: 40px;
+}
+
+/***********Flourish Decoration**********/
+#flourish {
+    background-image: url("../images/flourish.png");
+    height: 65px;
+    margin-left: 38px;
+    position: absolute;
+    top: 35px;
+    width: 64px;
+}
+
+
+/***********Side Navigation**********/
+#side {
+    margin-left: 70%;
+    margin-top: 50px;
+    width: 310px;
+}
+
+#side h4{
+    margin: 0;
+    margin-top: 25px;
+}
+
+#side ul {
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 15px;
+}
+#side h4 {
+    font-size: 1.2em;
+}
+#side a {
+    color: #777777;
+    text-decoration: none;
+}
+#side a:hover {
+    text-decoration: underline;
+    color: #C00000;
+}
+#flourish2 {
+    background-image: url("../images/flourish2.png");
+    height: 65px;
+    margin: 50px 0 0 20px;
+    width: 64px;
+}
+
+/************** Fixed Contact link ****************/
+#contact{
+    position:fixed;
+    right:0px;
+    top: 160px;
+    height: 330px;
+    width: 50px;
+    border: 1px solid #777777;
+    -moz-box-shadow: -2px 2px 5px #ddd;
+    -webkit-box-shadow: -3px 2px 5px #ddd;
+    box-shadow: -2px 2px 5px #ddd;
+    background-color:#FFFFFF;
+    
+
+}
+
+#contact div {
+    margin: 3px;
+    width: 44px;
+    height: 324px;
+    background-color:#C00000;
+    background-image: url('../images/contactme.png');
+    background-position: 4px;
+    background-repeat: no-repeat;
+}
+
+#contact div:hover{
+    background-color: #D11111;
+
+}
+
+#contact a{
+    text-indent: -9999em;
+    width: 44px;
+    height: 324px;
+    color: #C00000;
+}
+#contact a span{
+    display:none;
+}
+
+/************** Footer ****************/
+footer ul{
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+    color: #777777;
+    margin: 60px 0px 20px 0px;
+}
+
+footer li{
+    display: inline;
+    list-style: none;
+}
+
+
+
+/***********Forms **************/
+fieldset{
+    border: none;
+}
+fieldset ul{
+    margin: 10px 0 0 0;
+    padding: 0;
+}
+
+fieldset li{
+    list-style: none;
+    width: 45%;
+    height: 1.75em;
+}
+label {
+    padding-right: 10px;
+}
+input {
+    width: 150px;
+    float: right;
+}
+
+textarea {
+    width: 450px;
+    height: 200px;
+    margin-left: 114px;
+    margin-bottom: 30px;
+}
+
+#ctext{
+    width: 450px;
+    height: 500px;
+
+
+}
+
+
+/*********Login Links********/
+#loginlinks h6 {
+    font-weight: normal;
+    display: inline;
+    font-size: 1em;
+    color: #C00000;
+}
+#loginlinks {
+    
+    position: absolute;
+    top: 40px;
+    font-size: .7em;
+}
+
+

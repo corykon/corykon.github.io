@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Brochure Design | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+<!--embedded style sheet -->
+<style type="text/css">
+
+
+
+
+#portnav img {
+   padding: 3px;
+   margin: 3px;
+}
+
+#portnav a:hover {
+    border-bottom-style: dotted;
+    border-bottom-color: #C00000;
+    border-width: 2px;
+}
+
+
+
+
+#current {
+    border-style: solid;
+    border-color: #C00000;
+    border-width: 2px;
+}
+
+#back {
+    font-size: 10px;
+    color: #c9c9c9;
+    text-decoration: none;
+}
+
+#back:hover {
+	color: #C00000;
+}
+
+#photos img {
+	margin: 10px;
+        
+}
+
+
+
+</style>
+
+
+</head>
+
+<body class="portfolio">
+<div id="outercontainer">
+<div id="container">
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+    
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id="content">
+    <div>
+        <h1>Brochure Design </h1>
+        <img src="/oldsite/images/moviebrochurethumb2.jpg" alt="Brochure Design" align="middle" height="40" width="40" />
+        <br /><br />
+        <p>Our brochure assignment was a very open project, we were free to chose any topic
+           or size. I decided on an informational brochure about the highest
+           grossing films of all time, and designed it as a trifold on 17x11 tabloid
+           paper. We also were asked to design a new logo for the brochure, so I 
+           created an imaginary company called "Film Facts."<br/>
+           <img src="/oldsite/images/filmfactslogo.jpg" alt="Film Facts" height="93" width="183"/>
+
+        </p>
+        <p>We were encouraged to be creative with the format of our brochure, so I
+           added a cut out on the front of the brochure which allows you to see a 
+           screenshot of the movie <em>Spider Man</em> on the screen of the movie theatre.
+           graphic. On the side opposite the cover, I photoshopped some framing hands
+           onto a blank transparent background and positioned them around the hole.</p>
+        <p id="photos">
+            <img src="/oldsite/images/brochure1.JPG" alt="Brochure Picture 1" height="300" width="300"/>
+            <img src="/oldsite/images/brochure2.JPG" alt="Brochure Picture 2" height="300" width="300"/><br />
+            <img src="/oldsite/images/brochure3.JPG" alt="Brochure Picture 3" height="300" width="300"/>
+            <img src="/oldsite/images/brochure4.JPG" alt="Brochure Picture 4" height="300" width="300"/>
+           </p>     
+    
+        <hr />
+        <div id="portnav">
+            
+             
+         <a href="/oldsite/pages/portfolio/flyerdesign.shtml" title="view a flyer created with Adbobe InDesign">
+        <img src ="/oldsite/images/leadershipflyerthumb2.jpg" alt="Leadership Flyer" height="40" width="40"/></a>
+        <a href="/oldsite/pages/portfolio/logodesign.shtml" title="view logos, letterhead and business card">
+        <img src ="/oldsite/images/logothumb2.jpg" alt="Logo Design" height="40" width="40" /></a>
+<a href="/oldsite/pages/portfolio/montagedesign.shtml" title="view montage created with photoshop">
+        <img src ="/oldsite/images/montagethumb2.jpg" alt="Montage" height="40" width="40"/></a>
+        <a href="/oldsite/pages/portfolio/photoediting.shtml" title="view photo editing">
+        <img src ="/oldsite/images/photoeditingthumb2.jpg" alt="Photo Editing" height="40" width="40"/></a>
+          
+        <img src ="/oldsite/images/moviebrochurethumb2.jpg" alt="Brochure Design" height="40" width="40" id="current" />
+        <a href="/oldsite/pages/portfolio/creativewriting.shtml" title="view creative writing sample">
+        <img src ="/oldsite/images/creativewritingthumb2.jpg" alt="Creative Writing" height="40" width="40" /></a>
+        <a href="/oldsite/pages/portfolio/webdesign.shtml" title="view website design">
+        <img src ="/oldsite/images/websitethumb2.jpg" alt="Website Design" height="40" width="40"/></a>
+        <a href="/oldsite/pages/portfolio/crystalclear.shtml" title="view flyer design">
+        <img src ="/oldsite/images/crystalclearthumb2.jpg" alt="Flyer Design" height="40" width="40" /></a>
+        <a href="/oldsite/pages/portfolio/promomanager.shtml" title="view promotions created for BYU-Idaho">
+        <img src ="/oldsite/images/promomanagerthumbmini.jpg" alt="Promotions Manager" height="40" width="40" /></a>
+        </div>
+        
+        <a href="/oldsite/pages/portfolio/portfolio.shtml" title="Back to Portfolio Main" id="back">&#60; Back to Portfolio Main </a>
+        
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

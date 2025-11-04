@@ -1,0 +1,48 @@
+<?php
+    include 'modules/phphead.inc';
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Senior Year | BofR</title>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="css/borstyle.css" />
+    </head>
+
+    <body>
+    <header>
+        <h1><span>Cory K. Fugate</span></h1>
+        <h2><span>Book of Remembrance</span></h2>
+
+    </header>
+
+    <div id="flourish"></div>
+    <section id="content">
+        <h3>Senior Year (05'-06' - Age 17)</h3>
+        <p>I had some great experiences during high school—I always kept my grades up, had lots of fun with friends and family, and certainly learned and grew up a lot, but I was more than ready to just be finished with school when I entered my senior year. I'd grown tired of what seemed like pointless busy work and the frivolous politics. I always had good people and close friends around me, but overall I was a quiet kid, and socially I never felt that I connected with most of my classmates. I didn't feel like an outcast, but I didn't feel that comfortable around the popular crowd either. I only needed one english credit to graduate, and so I considered taking care of that over the summer and then starting college a year early, but ultimately I decided to come back and take a few classes my senior year. I took english and a couple others, and then would leave for the day around noon, usually to go to work.
+        </p><p>The summer before my senior year I picked up a second job (the first being with Gamestop) at Regal Cinemas. I had a couple friends working there that were able to put in a good word for me. This job paid significantly better, and provided a lot more hours as well. During most of the summer I would work 30 hours or more at the movies, and then another 5-10 at Gamestop, so I started making a lot more ground on saving for a mission, and also for a new drumset. 
+        </p><p>I enjoyed this job at the movies a whole lot more than my sales rep job at Gamestop. One thing I appreciated was that my responsibilities would change from day to day. I primarily worked as an usher, but sometimes I would be on doorman duty, or would do box office or concession sales. Being a doorman was the simplest; basically I would just tear tickets and point people to their theatres. This could get monotonous, but it was easy and sometimes even relaxing. Working the box office was normally pretty chill, except for the awkward moments when I'd have to check for ID's before selling rated R tickets. I usually played it super safe and just decided that if they looked under thirty I would go ahead and ask, and it was interesting to see reactions I would get. Some people would laugh or say “Are you serious?”, others would get offended, and I'm sure the women now and then would just be flattered. These reactions couldn't compare to those I'd get at the concessions. As we all know, movie theatre food is outrageously overpriced, and some would have a really hard time understanding that I didn't personally set the prices. I'd get multiple lectures and disgusted looks every night, especially when I'd attempt to upsell for larger drinks or some candy, which I was required to do. I kind of think the experience was good for me; helped toughen me up and prepare me  for the crap I'd deal with on the mission.
+        </p><p>The best job was definitely working as an usher. Part of my job was to do walk-through checks in all 10 theatres each hour or so, which entailed walking through with my lightsaber looking flashlight to check for problems with the movie's sound or picture, help people find seats, or quiet people down if need be. There almost never were any problems, so it basically felt like I just spent two hours walking around watching movies. An usher also had to clean the theatres after each showing, and the lobby and  bathrooms every now and then, but things never got outrageously bad.
+        </p><p>I also really enjoyed this job because of the people I worked with. The managers were great, and most of my coworkers had hilarious senses of humor. I had fun working most every night, whether it be laughing at the hilarious outbursts from customers, catching part of a movie, or joking around with the coworkers. The job's greatest benefit of course had to be the free movie tickets and popcorn. I could get 4 tickets a night, and all the popcorn and soda I wanted. I definitely stayed up-to-date on movies during the two years I worked there. I continued my employment there right up until I left for my mission, and would have been promoted to management had I stayed any longer.
+        </p><p>Just a bit more about job experience during my senior year—As  previously mentioned, my job at the video game store kind of stunk, but I wanted to keep pulling as close to 40 hours as I could get, so in December of 2005 I left Gamestop to start working in PacSun. Again, I had a good buddy who was an employee there, a friend from my ward named Nick Keogan. I came into Pacsun all the time so I knew  some of the other employee's and mangers before hand which also helped. This job was tons better than the one at Gamestop. The atmosphere was just so much better. I enjoyed the laid-back, skate and surf feel that it had, had more fun working with the customers, and I loved my coworker's. The people who worked here become some of my best friends during the year and half that I worked there and since. Only Nick and I were members, but everyone was way chill, and I feel like I had some really good gospel discussions and missionary opportunities there. I definitely had some great job experience. Looking back now, I'd even say that for the most part I miss the friends, and appreciated the experiences I had in the workplace a lot more than those from high school. 
+        </p><p>My biggest interest and hobby at this time was definitely music. I still skateboarded now and then, but drumming took over as my new passion. Since buying that drumset on my sixteenth birthday, I'd put a lot of effort into practicing. I had such a hunger to learn and improve. I'm so grateful for the internet, because I really feel like it significantly sped up my progression. Besides the basic techniques I learned in middle school band, I would consider myself completely self taught on the drumset, and it the internet made it so easy to do that.  First of all, there are thousand of drum tabs available, so for nearly any song I wanted to learn, I could find the notation somewhere online. There were tons drum lessons available, in written and video form, and I would read from drumming discussion boards and forums. I also spent a lot of time doing research on great drummers from the past, studying their style and technique and trying to emulate it. Some of my favorites were Neil Peart, the drummer from the old canadian prog rock band Rush, and the great jazz drummer Buddy Rich.  
+        </p><p>My high school graduation was on May 25, 2006, two days before 18th birthday. I personally don't care much for pagentry, and would have happily had my diploma mailed to me rather that sitting through a graduation presentation, but I have to admit it did feel good to walk up and take my diploma, knowing that high school was finally finished. To be honest I can't remember a lot of the specifics about that night. I'm sure I went and did some kind of celebrating that night, but more than anything I was happy to move on to bigger and better things.
+        </p>
+            <a href="missionprep.php" title="Mission Prep">Continue to &quot;Mission Prep&quot; &gt;&gt;</a>
+        <footer>
+            
+             <?php include 'modules/borfooter.inc' ?>
+            
+         </footer>
+
+</section>
+
+<div id="side">
+    <?php include 'modules/bornav.inc'; ?>
+    <div id="flourish2"></div>
+</div>
+
+
+
+</body>
+</html>

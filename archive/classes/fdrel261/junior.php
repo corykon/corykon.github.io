@@ -1,0 +1,47 @@
+<?php
+    include 'modules/phphead.inc';
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Junior Year | BofR</title>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="css/borstyle.css" />
+    </head>
+
+    <body>
+    <header>
+        <h1><span>Cory K. Fugate</span></h1>
+        <h2><span>Book of Remembrance</span></h2>
+
+    </header>
+
+    <div id="flourish"></div>
+    <section id="content">
+        <h3>Junior Year (04'-05' - Age 16)</h3>
+        <p>I reached a few big milestones during my 16th year, one of which was of course getting my driver's license. I had been driving around with my parents for at least the past 6 months with my learner's permit, so I wasn't too worried about taking the driver's test. My only fear was the parallel parking, because where we lived I almost never needed to park like that, but luckily enough I parked like a pro on my first try breezed right through the test. The first car that I drove was a Toyota Tercel, a nasty girly little car, but I couldn't complain. My parents were willing to fill it up with gas and pay for the insurance, and I was happy to be able to drive to school instead of taking the bus.
+        </p><p>With the new mobility of a driver's license, later that year I started my first job at a video game store called Gamestop. I wanted be able to have a little spending money, and also to start saving for a mission. My sister's boyfriend at the time had been an employee there for quite a while, so he offered to try and hook me up with the job. I filled and an application and brought it in, and if I remember right the manager of the store hired me right there on the spot; we didn't even have an interview. Being able to have my own hard earned money in my pocket was nice, but it wasn't long before I decided to start looking for other options. The pay here wasn't very good (I received the minimum wage at the time- $5.15 and hour), some of my co-workers were, well, a little strange, and my job was just flat out boring. Most of the time my duty was to walk around and alphabetize the hundreds of games lined across the walls, which I can tell you becomes very monotonous very quickly. It certainly wasn't the greatest job, but I got at least a start on my missionary fund, and I took advantage of the employee discount, so I would call it a decent first employment experience.
+        </p><p>Another milestone that year was being advanced in the priesthood to the office of a priest. This was a neat moment for me, especially because I remembered looking up to the priests and feeling like they were so grown up back when I was in primary. I enjoyed all the new opportunities, and happily took on the new responsibilities as well.
+        </p><p>Turning 16 also opened up the possibility of dating, but I never really did much of that. The first official date that I went on was on my friend Ben Breedlove's birthday. He and I both had blind dates lined up for us but it turned out the girl I was being set up with wasn't able to make it, so instead I took out a “backup.” We went out to Denny's for breakfast, and then played this random game at Traget where each couple would fill up a cart full of products from throughout the store, then switch carts and see who kids everything back the fastest. It was fun, and overall I'd call it was a good experience, but the girl and I didn't exactly hit it off.
+        </p><p>There was one girl that I had a pretty big crush during a couple of my high school years, a girl that I met during my sophomore year. She was a freshman that lived just 2 or 3 minutes down the street, but up until now I had never really noticed her. We started hanging out with the some of the same friends, and she had the alternative skate kind of style that I really liked at the time. She was just a super cute girl in general. I remember the first time I planned on calling her to ask her out; being the shy guy that I was, it really took a lot to convince myself to do it. I paced the room back and forth and then finally forced my finger onto the dial pad, pressed send and hoped for the best. If I remember right we didn't up going out that night, but we hung out a little later on. Nothing substantial ever happened between us, which I blame on my timidness with dating, but I got over it. She wasn't a member, and especially as we got older she tended to lean towards the wilder side, so it was probably for the best.
+        </p><p>Based on my academic performance during my high school career I was able to be inducted into the National Honor Society this year. It was a nice thing to be apart of, but in my opinion as an organization it really doesn't do all that much besides padding the resume. There were a couple meeting throughout the year that I would attend, an induction ceremony, and the other requirement was that I become involved in some type of extra curricular service activity, so I signed up to be a math tutor after school. I was assigned to work with just one student throughout the year, and I happened to be assigned to work with a friend of mine named Laura, so really it was a pretty cush and enjoyable job.
+        </p><p>The summer after my junior year I went on vacation with my buddy Logan Stewart. He and his family made a trip to Ocean City each year, and were kind enough to offer to take me along with them this time. It was the first time I been to a beach since that disaster-of-a-trip with my family three years or so before, and I was especially excited to get to hang there with a good friend. We went boogie boarding every day, my first experience with that, played sports on the beach and at the hotel, soaked in the hot-tub, ran around each night on the board-walk, and we brought our skateboards to go hit up the local skateparks.
+        </p><p>The week was great, except for an incident towards the end. We were out skating with some kids we met at our hotel, and for some reason went into another hotel 3 or 4 blocks away. I can't remember why, but we went up to the second floor to look around, and a couple of them decided it would be cool to jump off the balcony that overlooked the lobby. Two of them safely hopped down, and then Logan decided to follow suit. Somehow he ended up jumping from a higher spot, and he collapsed onto the ground and then pounded the floor, grabbing at his wrist and back. The three of us really had no idea what to do. After a few minutes he was able to get up, so we walked him back to the hotel, and he pretty much laid on the couch for the last day of the vacation. It turned out he had a broken wrist and a fractured vertabrae in his back, but he healed up just fine. We both still look back fondly at the trip, and laugh at how retarded his epic leap as, and how glad we were that he decided to jump at the end of the week instead of the beginning.
+        </p>    <a href="senior.php" title="Senior Year">Continue to &quot;Senior Year&quot; &gt;&gt;</a>
+        <footer>
+            
+             <?php include 'modules/borfooter.inc' ?>
+            
+         </footer>
+
+</section>
+
+<div id="side">
+    <?php include 'modules/bornav.inc'; ?>
+    <div id="flourish2"></div>
+</div>
+
+
+
+</body>
+</html>

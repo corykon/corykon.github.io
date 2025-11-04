@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>:: Pineapple Papers :: How it Works :: Weddings</title>
+        <link rel="stylesheet" href="css/style.css" media="screen">
+        <meta name="description" content="How to purchase greetings and prints from from Pineapple Papers." />
+        <meta name="keywords" content="greeting, print, stationery, DIY" />
+    </head>
+
+    <body class="howitworksw">
+
+        <div id="container">
+            <header>
+                <div>
+                    <?php include 'modules/header.inc'; ?>
+                    <?php include 'modules/nav.inc'; ?>
+                </div>
+            </header>
+
+            <div id="content">
+                <h1>weddings</h1>
+                <div id="instructionwrapper">
+                <section class="instruction">
+                    <h2>1. pick a design</h2>
+                    <p>Pick your favorite design, and color(s) that best fit your wedding style.</p>
+                </section>
+
+                <section class="instruction">
+                    <h2>2. purchase</h2>
+                    <p>Purchase your invite through our
+                        <a href ="#" title ="visit our etsy shop">etsy shop</a>. Be sure to include color changes, names,
+                        dates, locations, and any other info you would like included.</p>
+                </section>
+
+                <section class="instruction">
+                    <h2>3. proof it</h2>
+                    <p>Within 3 days of your purchase, you will receive an e-mail with the pdf draft of
+                        your invite. Proof it over, and respond with any changes you'd like us to make. After the changes
+                        have been made you will receive an e-mail with your final pdf copy.</p>
+                </section>
+
+                <section class="instruction">
+                    <h2>4. print it</h2>
+                    <p>You have a few options here&ndash; you can print at home, through an online printer, or at
+                    a local print shop. Need help finding a print shop? Just <a href="/contact.php" title ="ask us!">ask us!</a></p>
+                </section>
+                </div>
+            </div>
+
+
+            <?php include 'modules/footer.inc'; ?>
+
+    </body>
+
+</html>

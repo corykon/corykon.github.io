@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Print Design by Cory Fugate, digital designer and web developer." />
+        <title>Print Design :: Cory Fugate - Digital Designer and Web Developer</title>
+        <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href ="css/style.css" media="screen" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript">
+             var _gaq = _gaq || [];
+             _gaq.push(['_setAccount', 'UA-15220341-1']);
+             _gaq.push(['_trackPageview']);
+
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+    </head>
+    <body class="print">
+    <div id="header">
+        <div class="container">
+        <?php
+            include 'modules/header.inc';
+        ?>
+        </div>
+    </div>
+    <div id="content">
+    <div class="container photobox">
+        <div>
+        <h2>Print Design</h2>
+        <h3>Image Montage</h3>
+        <p>The montages below were created by blending together multiple images and adding typography
+        in Photoshop. Both were made during my COMM 130 Intro to Visual Media class.</p>
+        <img src="images/portfolio/olympic-montage.jpg" alt="Olympic Montage"><img src="images/portfolio/edison-montage.jpg" alt="Edison Montage">
+
+        <h3>Brochure Design</h3>
+        <p>The brochure below was created in my COMM 130 class. The assignment was to choose any topic
+            and create an informational brochure. It includes a logo design for a fictional company called
+            "Film Facts", and was created in Adobe InDesign.</p>
+        <img src="images/portfolio/filmfacts-brochure.jpg" alt="Film Facts Brochure">
+
+        <h3>Poster Design</h3>
+        <p>A few years ago I volunteered as a Promotions Manager on BYU-Idaho campus, and was responsible
+        to design posters for various events. Below are a few of the posters designed using the Adobe Suite.</p>
+        <img src="images/portfolio/redcarpet-poster.jpg" alt="Red Carpet Dance Poster">
+        <img src="images/portfolio/sadiehawkins-poster.jpg" alt="Sadie Hawkins Dance Poster">
+        <img src="images/portfolio/shipwrecked-poster.jpg" alt="Shipwrecked Dance Poster">
+
+
+        </div>
+    </div>
+    </div>
+
+
+    <div id="footer">
+        <div class="container">
+            <?php
+             include 'modules/footer.inc';
+            ?>
+        </div>
+    </div>
+    </body>
+</html>

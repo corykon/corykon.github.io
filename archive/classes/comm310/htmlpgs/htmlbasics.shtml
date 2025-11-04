@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>HTML Basics | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+    </head>
+
+    <body>
+
+        <div id="header">
+            <!--#include virtual="../modules/comm310header.inc" -->
+            <!--#include virtual="../modules/comm310nav.inc" -->
+        </div>
+
+        <div id="content">
+            <h2>HTML Basics</h2>
+            <p>As you begin to create your first HTML page, it is important to start with the basic "filing cabinet"
+                structure. To begin, each page needs to start with a <code>DOCTYPE</code> declaration. This basically
+                tells the browser which version of HTML you are using. For this example I will use an HTML 5 declaration.
+                HTML is not yet fully supported, but soon will be. The <code>DOCTYPE</code> MUST be the first line of the
+                page; not even a single space ought to be before it. It is just a single line, and looks like this:</p>
+              <pre><code>
+&lt;!DOCTYPE html&gt;
+
+
+
+</code></pre>
+            <p>It is as simple as that. In previous versions of HTML, much longer declarations (including mile-long, impossible
+            to remember URL's) were required.</p>
+            <p>The next step is to layout the before-mentioned HTML "filing cabinet." Following the <code>
+            DOCTYPE</code> you'll use an <code>&lt;html&gt;</code> tag to let the browser know that the actual html
+            markup is beggining. Inside of the <code>&lt;html&gt;</code> opening and closing tag, there will be
+            <span title="one HTML tag that is inside of another HTML tag is 'nested' within it">"nested"</span>
+            <code>&lt;head&gt;</code> and <code>&lt;body&gt;</code> tags as follows: </p>
+           <pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+    &lt;head&gt;
+
+    &lt;/head&gt;
+
+    &lt;body&gt;
+
+    &lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
+            <p>If you were to copy and paste that code into an HTML file and view it in a browser, you would see
+            absolutely nothing(unless you view the source code), but that in and of it's self is basically
+            a valid HTML page.</p>
+            <p>To further explain these tags, the <code>&lt;head&gt;</code> tags will contain information about
+            the webpage that is not seen in the browser window, such as the title that you see on the top of the tab,
+            links ot other files used by the webpage, or information about the author or content of the page. In the
+            <code>&lt;body&gt;</code> you'll throw in all the code that that will actually be seen in the browser window.
+            To learn about some of the HTML tags needed to starting add some real content to your page, refer to
+            future tutorials on this webpge, or another great resource such as HTML Dog or 
+            <a href="http://www.w3schools.com" title="W3 Schools">W3 Schools.</a></p>
+
+            <p><a href="index.shtml" title="HTML | coryfugate.com">Back to HTML index</a></p>
+
+
+
+        </div>
+
+        <!--#include virtual="../modules/comm310footer.inc" -->
+
+    </body>
+</html>
+

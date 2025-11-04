@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Colophon | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+
+</head>
+
+<body>
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div>
+       
+    </div>
+</div>
+
+<div id="content">
+    <div>
+       <h1>Colophon</h1>
+       <p>The purpose of this page is to describe the efforts that have been made to
+          insure that this website is as simple and user friendly as possible, as
+          well as search enigine optimized. Also discussed are the efforts that have
+          been made to insure a large ROI.</p><br />
+            
+         <h2>Web Standards</h2>
+         <p>This webpage follows the current standards for XHTML and CSS code. This
+            ensures that it will be viewable on all browsers,and on many different
+            mediums, including computers, cell phones, and other devices.</p>
+
+         <h2>Usability</h2>
+         <p>Great efforts were made to ensure that this webpage is very simple and
+            easy to use. The following lists some of the specific efforts to enhance
+            navigation and clarity of content:</p>
+            <ul>
+                <li>The names of links are simple and descriptive</li>
+                <li>All links employ mousever effects, such as font changing colors or appearing arrows</li>
+                <li>Links within the content section of the page are underlined</li>
+                <li>The main navigation is just below the header, and secondary navigation 
+                    is located on the left, common web standards</li>
+                <li>Navigation is persistent, meaning it is the same on every page</li>
+                <li>In the main navigation, the current pages link is underlined</li>
+                <li>The name of each page is clearly displayed</li>
+                <li>The names of pages correspond with their link</li>
+                <li>Headings and titles are properly sized to ensure clear hierarchy
+                    and scanability</li>
+                <li>The design is stylish, but not overpowering. It doesn't cloud
+                    the content.</li>
+                <li>The purpose of each page is clearly defined</li>
+                <li>Content is clear and concise</li>
+            </ul>
+         <h2>Search Engine Optimization(SEO)</h2>
+         <p>SEO is ensured because of a clear hierarchy, "alt" and "title" being
+            included in each link and image to increase the natural occurence of
+            keywords.</p>
+         <h2>Return On Investment(ROI)</h2>
+         <p>While great efforts were made to ensure the usability, SEO, and strict
+            adherence to web standards, relatively little money has been spent to
+            do so. Space Camp is very in demand, so most potential particpants will
+            seek out information on their own; not much marketing is needed. All on
+            the Space Camp team will recieve proper pay checks, and Space Camp
+            participants will recieve a quality experience for the price.</p>
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

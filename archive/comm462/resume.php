@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Resume of Cory Fugate, digital designer and web developer." />
+        <title>Resume :: Cory Fugate - Digital Designer and Web Developer</title>
+        <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href ="css/style.css" media="screen" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript">
+             var _gaq = _gaq || [];
+             _gaq.push(['_setAccount', 'UA-15220341-1']);
+             _gaq.push(['_trackPageview']);
+
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+    </head>
+    <body class="resume">
+    <div id="header">
+        <div class="container">
+        <?php
+            include 'modules/header.inc';
+        ?>
+        </div>
+    </div>
+    <div id="content">
+    <div class="container photobox">
+        <div>
+        <h2>Resume</h2>
+        <section id="column1">
+        <h3>Skills</h3>
+        <article>
+            <img id="skillschart" src="images/skillschart.png" alt="List of skills" />
+        </article>
+
+        <h3>Education</h3>
+        <article>
+        <h4>BYU-Idaho from August 2009-Present</h4>
+        <ul>
+        <li>Will graduate in July with a Bachelor's in Computer Information Technology.</li>
+        <li>3.7 GPA</li>
+
+        </ul>
+        </article>
+
+        <h3>Volunteer Work</h3>
+        <article>
+        <ul>
+        <li>Served as a full-time missionary for the Church of Jesus Christ of Latter-day Saints
+            in the Nevada Las Vegas West Mission. <br /><span>Served from August 2007 to August 2009</span></li>
+        <li>Volunteered as the Promotions Manager for the BYU-Idaho SocialBoard designing posters,
+            fliers, and other promotions for on-campus event.<br /> <span>April 2010 to July 2010</span></li>
+        </ul>
+        </article>
+
+
+        </section>
+
+        <section id="column2">
+            <h3>Work Experience</h3>
+            <article>
+                <img class="reslogo" src="images/byui-logo.jpg" alt="BYUI logo"/>
+                <h4>Web Programmer</h4>
+                <h5>at BYU-Idaho ADC [Jan 2012&mdash;Present]</h5>
+                <ul>
+                    <li>Manage the advising and internship office website.</li>
+                    <li>Design creative assets in Photoshop to enhance the user experience. </li>
+                    <li>Collaborate with the marketing/events team to promote department events.</li>
+                </ul>
+            </article>
+            <article>
+                <img class="reslogo" src="images/domo-logo.jpg" alt="Domo Technologies"/>
+                <h4>Quality Assurance Engineer</h4>
+                <h5>at Domo Technologies [Apr 2011&mdash;Dec 2011]</h5>
+                <ul>
+                    <li>Performed manual tests on an extensive Java web application as well as on Android and iOS applications. </li>
+                    <li>Wrote automated functional tests in Java using Selenium. </li>
+                    <li>Configured and managed a continuous integration build server for iOS applications.</li>
+                    <li>Implemented UI designs using HTML and CSS. </li>
+                    <li>Won a company-wide BI dashboard design contest.</li>
+                </ul>
+            </article>
+            <article>
+                <img class="reslogo" src="images/cory-logopiece.jpg" alt="Cory Fugate logo"/>
+                <h4>Web and Media Development</h4>
+                <h5>Freelance</h5>
+                <ul>
+                    <li>Design and build custom webpages, specialize in UX and front end development. </li>
+                    <li>Design flyers and other media for advertising and informational purposes.</li>
+                    <li>Digitally edit photos using the Adobe Suite.</li>
+                </ul>
+            </article>
+            <article>
+                <img class="reslogo" src="images/byui-logo.jpg" alt="BYUI logo"/>
+                <h4>Lab Assistant/Tutor</h4>
+                <h5>at BYU-Idaho CIT Department [Jan 2010&mdash;Apr 2011]</h5>
+                <ul>
+                    <li>Tutored students in their computer information technology classes including
+                        networking, website design, programming, Microsoft applications, and other
+                        classes as needed.</li>
+                </ul>
+            </article>
+
+
+        </section>
+        </div>
+    </div>
+    </div>
+
+
+    <div id="footer">
+        <div class="container">
+            <?php
+             include 'modules/footer.inc';
+            ?>
+        </div>
+    </div>
+    </body>
+</html>

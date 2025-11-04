@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+         <title>HTML for Hyperlinks | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+    </head>
+
+    <body>
+
+        <div id="header">
+            <!--#include virtual="../modules/comm310header.inc" -->
+            <!--#include virtual="../modules/comm310nav.inc" -->
+        </div>
+
+        <div id="content">
+        <h2 id="top">Hyperlinks</h2>
+        <p>Hyperlinks are really what make the internet so special. They allow you to click
+        and then be transported to a new page. Without them, websites would just be big online
+        books, we'd have to flip or scroll through until we found what we were looking for.
+        On this page I'll explain the basic of creating hyperlinks with HTML.</p>
+        <p>Hyperlinks are created using the <code>&lt;a&gt;</code> tag, which stands for
+            &quot;anchor&quot;. Within this html tag there are two attributes which should
+            be included, the <code>href</code> or &quot;hyperlink reference&quot; and the
+            <code>title</code> attribute. The <code>href</code> attribute is used to specify
+            the location where the link should take you, and the <code>title</code> attributes
+            basically explains where the link takes you. The <code>&lt;a&gt;</code> will be
+            wrapped around the text or image you would like to serve as the link, in this
+            manner:</p>
+
+        <pre><code>
+
+&lt;a href=&quot;/path/path.html&quot; title=&quot;Link Title&quot;&gt;This text will be a link. &lt;/a&gt;
+
+</code></pre>
+
+        <p>Again, the <code>href</code> specifies the path this link will follow, whether
+        that be to another page, a location within the same page, or to a particular file. The
+        <code>title</code> attribute explain the link. As you hover over a link, the title
+        will be displayed, sort of like a tooltip.</p>
+        <p>Paths in in the <code>href</code> attribute can be absolute or relative.
+        Absolute paths begin with the &quot;/&quot; symbol, which means "go back to
+        the root of this webpage's file structure. Without that symbol, the path is
+        assumed as being relative to the location of the file you are currently on.</p>
+        <p>For a more in depth explanation of absolute and relative paths, check out
+            <a href="http://www.communitymx.com/content/article.cfm?cid=230ad"
+               title="Awesome Path Explanation">this
+        article.</a></p>
+
+        <p><a href="index.shtml" title="HTML | coryfugate.com">Back to HTML index</a></p>
+
+        
+
+    </div>
+
+    <!--#include virtual="../modules/comm310footer.inc" -->
+    
+    </body>
+</html>

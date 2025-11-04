@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Activities | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+<!--embedded style sheet -->
+<style type="text/css">
+#content{
+    width: 610px;
+    height: 324px;
+}
+
+#leftside{
+    background-color: #000000;
+    float: left;
+    width: 250px;
+}
+</style>
+
+</head>
+
+<body class="activities">
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div id="activitiesnav2">
+        <!--#include virtual="/classes/cit230/spacecamp/modules/activitiesnav.inc" -->
+          <img src="/classes/cit230/spacecamp/images/spacecamp.jpg" alt="Space Camp" width="200" height="200" />
+</div>
+</div>
+
+<div id="content">
+    <div>
+       <h1>Activities</h1>
+        <p>Here at Space Camp we have an itinerary packed with fun, educational
+           and exciting activities. There are several informational movies and
+           workshops about different aspects of being an astronaut, as well as opportunities
+           for one-on-one instruction from retired NASA professionals. Each day will include
+           several team building, and also individual competetive games for multiple hours.</p>
+        <p>Additionaly, each day Space Camp attendees will be able to participate in
+           one of our <strong>&copy;Space Exploration</strong>, activities, including Zero-Gravity and G-Force
+           training activities, Command Center training, and the Mars Wall Climb, among others.
+           <em>(Follow the links at left to learn more about some of our &copy;Space Exploration activites.)</em></p>
+        <p>We are also pleased to anounce that this year we're are introudicing three
+           brand new <strong>&copy;Space Exploration</strong> activities, which will be revealed at the
+           beginning of this summer's first camp, and will then be released here on our
+           website.</p>
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

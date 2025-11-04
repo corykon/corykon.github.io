@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>CSS Basics | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+    </head>
+
+    <body>
+
+        <div id="header">
+            <!--#include virtual="../modules/comm310header.inc" -->
+            <!--#include virtual="../modules/comm310nav.inc" -->
+        </div>
+
+        <div id="content">
+            <h2>CSS Basics</h2>
+            <p>Although CSS works hand and hand with the HTML of a web page, its syntax is completely different. It
+                is made up three major parts, namely <em>selectors</em>, <em>properties</em>, and <em>values</em>. These three together are what is
+                called a CSS <em>rule</em>. The following would be an example of a standard CSS rule, with one selector,
+                property, and value:
+            </p>
+              <pre><code>
+p {text-size: 1em;}
+
+
+
+</code></pre>
+            <p>It the preceding example, <code>p</code> is the selector. This tells the browser that the <code>
+            &lt;p&gt;</code> in the linked HTML page is what is being targeted for some styling. The <code>
+            text-size:</code> portion of this rule is the property. The particular property as you can probably guess
+                gives you the ability to change the zie of the text in that HTML paragraph. Finally, <code>1em</code>
+                is the value. (An <em>em</em> is a relative typography measurement). The text in the paragraph
+                tags of the linked HTML page will be displayed at a size of 1 em.</p>
+            <p> Make a special note of the colon placed between the property and value. This must be present for the CSS to
+                work. An equals sign, or any other symbol will not work. Also, remember not to forget the semicolon which
+                follows the value. In a singe property rule it will not cause problems, but if there are multiple properties
+                in the rule, the browser will not properly interpret your CSS.</p>
+
+           <!-- <h3>CSS Selectors</h3>
+            <p> There are dozens of different properties to be learned, and some of those will be introduced in future tutorials,
+                but what I would like to cover here are some of the basic types of selectors that can be used.</p>
+            <p>The first type of CSS selector is an HTML selector. This... </p>
+            -->
+
+            <p><a href="index.shtml" title="CSS | coryfugate.com">Back to CSS index</a></p>
+
+
+
+        </div>
+
+        <!--#include virtual="../modules/comm310footer.inc" -->
+
+    </body>
+</html>
+

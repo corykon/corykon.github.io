@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>:: Pineapple Papers :: Printable Stationary for the DIY-ers</title>
+        <link rel="stylesheet" href="css/style.css" media="screen">
+        <meta name="description" content="Purchase printable do it yourself stationery for weddings, greetings, and prints." />
+        <meta name="keywords" content="wedding, greeting, print, stationery, DIY" />
+    </head>
+
+    <body class="home">
+
+        <div id="container">
+            <header>
+                <div>
+                    <?php include 'modules/header.inc'; ?>
+                    <?php include 'modules/nav.inc'; ?>
+                </div>
+            </header>
+
+            <div id="content">
+                <section id = "homepagewelcome">
+                    <p class="banner"><span>printable stationery</span></p>
+                    <p>for the <span class="boxed">DIY-ers.</span></p>
+                    <img src="images/pineapplelogo.png" alt="Pineapple Papers | Prinatable Stationary Logo" height="250px" width="211px" />
+
+                </section>
+
+                <section id = "listofservices">
+                        <section class="stationerylist">
+
+                            <h2>Cards</h2>
+                            
+                        </section>
+                        <section class="stationerylist">
+                            <h2>Weddings</h2>
+                            
+                        </section>
+                        <section class="stationerylist">
+                            <h2>Prints</h2>
+                            
+                        </section>
+                </section>
+            </div>
+
+
+            <?php include 'modules/footer.inc'; ?>
+
+    </body>
+
+</html>

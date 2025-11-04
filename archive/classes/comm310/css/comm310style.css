@@ -1,0 +1,291 @@
+/* 
+    Document   : comm310style
+    Created on : Jan 27, 2011, 4:10:08 PM
+    Author     : ckfugate
+    Description: stylesheet for COMM310 class
+*/
+*{
+    margin: 0;
+    padding: 0;
+}
+root { 
+    display: block;
+}
+a{
+	color: #0099cc;
+	text-decoration:underline;
+}
+
+a:hover{
+	color: #0080A6;
+}
+
+a:visited {
+    color: #6dc7ec;
+
+}
+
+body{
+    background-image: url(../images/leftside.jpg);
+    background-repeat: repeat-y;
+
+    
+}
+
+#header{
+    font-family: Geneva, Tahoma, sans-serif;
+    margin-top: 20px;
+    
+         margin-left: 225px;
+    max-width: 1200px;
+    min-width: 950px;
+    width: 80%;
+}
+
+#header h1{
+    display: inline;
+
+}
+
+#header h1 span{
+    display: none;
+}
+
+
+/*
+#nav {
+    position: relative;
+    font-family: Geneva, Tahoma, sans-serif;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #0099cc;
+    float: right;
+    margin-top: 68px;
+    text-align: right;
+    
+}
+
+#nav a{
+    font-family: Geneva, Tahoma, sans-serif;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #000;
+    font-size: .75em;
+}
+
+#nav a:hover{
+    font-family: Geneva, Tahoma, sans-serif;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #0099cc;
+}
+
+#nav ul li{
+    display:inline;
+    padding-right: 30px;
+    position: relative;
+}
+
+#nav ul li ul{
+	display: none;
+}
+
+#nav ul li:hover ul{
+	display: block;
+	position: absolute;
+	background-color: #B7B7B7;
+	
+}
+
+
+#nav ul li:hover ul li a {
+    	 display:block;
+	     color:#000;
+	     width: 50px;
+	     border-bottom: 1px solid #f2f2f2;
+	     border-right: none;
+}
+	
+#nav ul li:hover ul li a:hover {
+	     
+	     color:#0099cc;
+}*/
+
+#nav {
+     font-family: Geneva, Tahoma, sans-serif;
+     text-transform: uppercase;
+     position: relative;
+    float: right;
+    margin-top: 68px;
+     font-size:.9em;
+  
+    
+}
+
+#nav ul {
+     list-style-type: none;
+}
+
+#nav ul li {
+     float: left;
+     position: relative;
+}
+
+#nav ul li a {
+     text-align: left;
+     display:block;
+     text-decoration:none;
+     color:#000;
+	 padding-left: 15px;
+}
+
+#nav a:hover{
+	color: #0099cc;
+}
+
+
+#nav ul li ul {
+     display: none
+}
+
+#nav ul li:hover ul {
+     display: block;
+     position: absolute;
+}
+
+#nav ul li:hover ul li a {
+     display:block;
+     background:#12aeef;
+     color:#ffffff;
+     width: 100px;
+     text-align: center;
+     border-bottom: 1px solid #f2f2f2;
+     border-right: none;
+	 font-size: .9em;
+	 opacity: .9;
+}
+
+#nav ul li:hover ul li a:hover {
+     background:#6dc7ec;
+     color:#fff;
+}
+
+
+
+#content{
+    font-family: Geneva, Tahoma, sans-serif;
+    line-height: 1.25em;
+    background-image: url(../images/inkline.jpg);
+    background-repeat: no-repeat;
+    clear: both;
+    margin-left: 225px;
+    max-width: 1200px;
+    min-width: 950px;
+    width: 80%;
+    min-height: 90%;
+    padding-top: 10px;
+}
+
+#content1{
+    display:inline;
+    text-align: left;
+    float: left;
+    width: 50%;
+}
+
+#welcome{
+    margin-top: 20px;
+    font-size: 2em;
+    line-height: 1.25em;
+    margin-bottom: 40px;
+}
+
+#content2{
+    display:inline;
+    text-align: right;
+    float: right;
+    width: 45%;
+}
+
+em {
+    color: #0099cc;
+    font-style:normal;
+    font-weight: bold;
+}
+
+p {
+    padding-top: 15px;
+}
+
+h1, h2, h3 {
+    padding-top: 40px;
+}
+
+#superem{
+    font-size: 4em;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 40px;
+}
+
+#footer{
+    font-size: .75em;
+    font-family: Geneva, Tahoma, sans-serif;
+    line-height: 1.25em;
+    background-image: url(../images/inkline.jpg);
+    background-repeat: no-repeat;
+    clear: both;
+     margin-left: 225px;
+    max-width: 1200px;
+    min-width: 950px;
+    width: 80%;
+    margin-top: 20px;
+    
+}
+
+
+
+/* For Tutorial Stuff */
+pre {
+    background-color: #EEEEEE;
+    border: 1px;
+    border-style: dashed;
+    border-color: #000;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    margin-top: 20px;
+
+}
+
+h3, h4 {
+    border-bottom: 1px solid #000;
+    padding-top: 40px;
+}
+
+table{
+    border-collapse: collapse;
+}
+
+table, td {
+    border: 1px solid #000;
+
+}
+
+td {
+    padding: 3px;
+}
+
+.totop {
+    font-size: .75em;
+    padding-top: 0px;
+    margin-top: 0px;
+}
+
+ul {
+    padding-left: 2em;
+}
+
+li ul{
+    padding-left: 2em;
+}
+

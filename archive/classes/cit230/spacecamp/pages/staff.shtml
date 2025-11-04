@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Staff | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+</head>
+
+<body class="staff">
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div>
+        
+         <!-- <img src="/classes/cit230/spacecamp/images/spacecamp.jpg" alt="Space Camp" width="200" height="200" />-->
+</div>
+</div>
+
+<div id="content">
+    <div>
+       <h1>Staff</h1>
+        <br /><br />
+        <h2>Directors</h2>
+        <p> Our directors are highly experienced professionals who have spent years
+            working for NASA. They have brought a wealth of knowledge to our camp,
+            and wish to pass on their love for the Space Program to a younger generation.
+        </p>
+        <h3>Benjamin Simonsen-President</h3>
+        <table>
+            <tr><td rowspan="5"></td></tr>
+            <tr><td><strong>Age:</strong></td><td>62</td></tr>
+            <tr><td><strong>Hometown:</strong></td><td>Washigton, D.C.</td></tr>
+            <tr><td><strong>Education:</strong></td><td>Masters Degree in Physical Science and Geology from Princeton</td></tr>
+            <tr><td><strong>Experience:</strong></td><td>20 years as commander at NASA, 5 times traveling in space</td></tr>
+        </table>
+        <br /><br />
+        <h3>Sally McGee</h3>
+        <table>
+            <tr><td rowspan="5"></td></tr>
+        <tr><td><strong>Age:</strong></td><td>43</td></tr>
+        <tr><td><strong>Hometown:</strong></td><td>Pittsburgh, PA</td></tr>
+        <tr><td><strong>Education:</strong></td><td>Masters Degree in Biology from Seton Hall University</td></tr>
+        <tr><td><strong>Experience:</strong></td><td>12 years as NASA mission specialist</td></tr>
+        </table>
+        <br /><br />
+        <h3>Duke Ford</h3>
+        <table>
+            <tr><td rowspan="5"></td></tr>
+        <tr><td><strong>Age:</strong></td><td>53</td></tr>
+        <tr><td><strong>Hometown:</strong></td><td>Ft. Lauerdale, FL</td></tr>
+        <tr><td><strong>Education:</strong></td><td>Bachelors Degree in Engineering from Duke</td></tr>
+        <tr><td><strong>Experience:</strong></td><td>20 years as Fighter Pilot in US Air Force, 10 years as NASA pilot</td></tr>
+        </table>
+        <br /><br />
+        <h3>Jacob Coolbanks</h3>
+        <table>
+            <tr><td rowspan="5"></td></tr>
+        <tr><td><strong>Age:</strong></td><td>57</td></tr>
+        <tr><td><strong>Hometown:</strong></td><td>SLC, Utah</td></tr>
+        <tr><td><strong>Education:</strong></td><td>Doctorate in Mathematics, Master in Astronomy from BYU</td></tr>
+        <tr><td><strong>Experience:</strong></td><td>30 years as NASA mission planner</td></tr>
+        </table>
+        <br /><br /><br />
+        <h2>Workers</h2>
+        <p>Our staff members here at Space Camp are of the highest quality. As entry
+            level workers, we hire dozens of college students from undergraduate
+            students at Brigham Young University-Idaho. Only after meeting
+            high standards such as a minimum 3.5 GPA and a recommendation from
+            ecclaistical leaders, and going through a competitive and rigirous
+            application process are they hired. They clean the facilities, serve food,
+            and act as group leaders here at our camp.</p>
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

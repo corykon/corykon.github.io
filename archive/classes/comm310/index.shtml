@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Home | COMM310 Guide</title>
+        <link rel ="stylesheet" href="css/comm310style.css" />
+    </head>
+
+    <body>
+        
+        <div id="header">
+            <!--#include virtual="modules/comm310header.inc" -->
+            <!--#include virtual="modules/comm310nav.inc" -->
+        </div>
+    
+        <div id="content">
+            <div id="content1"><p id="welcome">Welcome to my guide for the COMM 310 class at BYU-Idaho,<br>
+                    <em>Creating Online Media</em>
+                    <br>with Brother Judkins. </p>
+               <p>The purpose of this website is to assist future and current students in the class, and also to
+               showcase what I am learning as I take it myself. Refer to the links above to find extra instruction and
+               tutorials on many of the concepts we cover, as well as help and examples on the assignments given
+               throughout the course.</p></div>
+            <div id="content2"><p><img src="images/coolmac.jpg" alt="A cool mac setup" width="468" height="392" /></p></div>
+        </div>
+
+        <!--#include virtual="modules/comm310footer.inc" -->
+        
+    </body>
+</html>

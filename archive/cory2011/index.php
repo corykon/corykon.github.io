@@ -1,0 +1,102 @@
+<?php
+if (!$_SESSION) {
+    session_start();
+    $sessionid= session_id();
+}
+    $loginflag = $_SESSION['userlogin'];
+    $loginfirst = $_SESSION['userfirst'];
+    $loginlast = $_SESSION['userlast'];
+    $loginlevel = $_SESSION['userlevel'];
+
+    $cookiefirst = $_COOKIE['fname'];
+?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Personal homepage of Cory Fugate, a web-developer-in-training from
+              West Virginia. Currently studying at BYU-Idaho, but is open for freelance jobs, and will be looking
+              for full time employment in the fall." />
+        <title>Cory Fugate - Digital Designer and Web Developer</title>
+        <link href='http://fonts.googleapis.com/css?family=Lobster|Arvo' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href ="css/style.css" media="screen" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="scripts/jquery.jcarousel.min.js"></script>
+        <script type="text/javascript" src="scripts/homepage.js"></script>
+        <script type="text/javascript">
+             var _gaq = _gaq || [];
+             _gaq.push(['_setAccount', 'UA-15220341-1']);
+             _gaq.push(['_trackPageview']);
+
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+    </head>
+    <body class="home">
+    <div id="header">
+        <div>
+        <?php
+            include 'modules/header.inc';
+        ?>
+        <?php
+            include 'modules/nav.inc';
+        ?>
+        </div>
+    </div>
+    <div id="content">
+        <div>
+            <div class="col1">
+            <section class="intromessage">
+                <p><span class="hey">Hey!</span> I’m Cory, a BYU-Idaho student studying
+                    computer info technology with an emphasis in web design and development,
+                    and this is my homepage. </p>
+
+                <p>Feel free to check out my <a href="resume.php" title="view my resume">resume</a>
+                    or <a href="portfolio.php" title="view my portfolio">portfolio</a>, and to contact
+                    me via your preferred social network.</p>
+            </section>
+
+            <section class="social">
+                <span class="flourish"></span>
+                <ul>
+                    <li><a href="http://www.facebook.com/ckfugate" title="facebook me" class="fb"></a></li>
+                    <li><a href="https://twitter.com/#!/corykonfugate" title="follow me" class="twitter"></a></li>
+                    <li><a href="http://www.linkedin.com/pub/cory-fugate/44/434/768" title="connect with me" class="linkedin"></a></li>
+                    <li><a href="mailto:ckfugate@gmail.com" title="email me" class="mail"></a></li>
+                </ul>
+                <span class="flourish"></span>
+            </section>
+            </div>
+
+            <div class="col2">
+                <section class="portpreview">
+                    <h3>My Work</h3>
+                    <ul id="carousel-images" class="carousel jcarousel-skin">
+                        <li><img src="images/photobookcarousel.jpg" title="Digital Imaging Photobook"></li>
+                        <li id="jswarning">WARNING: You'll have to enable JavaScript for full functionality!</li>
+                    </ul>
+                </section>
+
+            
+
+            <section class="featurelink">
+                <a href="portfolio.php" title="check out my portfolio">To My Portfolio<span></span></a>
+            </section>
+
+            </div>
+
+        </div>
+    </div>
+
+
+            <?php
+             include 'modules/footer.inc';
+            ?>
+    </body>
+</html>

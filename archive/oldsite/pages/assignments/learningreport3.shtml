@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Learning Report 3 | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+</head>
+
+<body class="assignments">
+<div id="outercontainer">
+<div id="container">
+
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id= "secondarynav">
+    <div>
+    <a href="/oldsite/pages/assignments/learningreport2.shtml" title="Learning Report 2">&#60; Previous </a> |
+    <a href="/oldsite/pages/assignments/assignments.shtml" title ="Back to Assignments">Back to Assignments Main</a> |
+    <a href="/oldsite/pages/assignments/learningreport4.shtml" title="Learning Report 4">Next &#62;</a>
+    </div>
+</div>
+
+<div id="content">
+    <div>
+ <h1>Learning Report 3</h1>
+ <h2>Creating a Favicon</h2>
+ <h3>Resource:<a href ="http://www.clickfire.com/favicon-tutorial/">
+     http://www.clickfire.com/favicon-tutorial/
+ </a></h3>
+ <hr></hr>
+ <h3>What did I learn?</h3>
+ <p>This week I decided to learn how to create my own favicon. I feel like there
+     are quite a few good reasons for using one. First of all, having a favicon
+     can work as a great source of extra adverting. The simple, tiny little logo will
+     be saved and used if your page is bookmarked, and it will act as a reminder
+     of your website whenever it is seen. I also think that it helps you to appear
+     more professional. Although it is only a small touch, it is much better then
+     default logo that a browser would display.</p>
+ <p>After searching for a tutorial online, I found that creating a favicon is a fairly
+     simple process. The first step is to create a tiny 16 x 16 pixel image. This is
+     not too dificult, but there are tricks to creating more effective images. It
+     is a good idea not too just shrink down a larger image because it will likely
+     be distored, and it also a good idea to create a .png image so that you can
+     have a transparent background. Once the image has been designed, you need to create
+     it to an .ico file, and this can be done by using an online converter. Next you
+     save it with the filenem "favicon," then upload it to your root folder, and
+     insert one tiny piece of code into you site, and then you're done.
+ </p>
+ <hr></hr>
+ <h3>How did I implement it?</h3>
+ <p>I decided that I would like a very simple logo, just my initials, "cf" in a couple
+ different colors. I don't have programs such as photoshop or other adobe products,
+ so I just messed around with paint and some other programs until I found something
+ that I liked. Then I went to http://www.chami.com/html-kit/services/favicon/, where
+ they a quick and easy to use favicon creator. You upload your image, and they produce
+ a favicon.ico file, and also a favicon.gif if you would like to use an animated
+ favicon. I decided to go with the .ico file.</p>
+ <p>After that, you simply upload your file to the server, and then insert this 
+     piece of code in the head section of your html file:</p>
+ <p>&#60; link rel=”shortcut icon” href=”http://www.thenameofyoursitehere.com/favicon.ico” 
+     mce_href=”http://www.thenameofyoursitehere.com/favicon.ico”/&#62;</p>
+
+ <p>Overall it is a simple process, and the result is a more professional and polished
+ website.</p>
+    </div>
+</div>
+
+<div id="footer">
+    <div>
+   <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+
+</div>
+</div>
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

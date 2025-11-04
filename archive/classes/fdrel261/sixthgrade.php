@@ -1,0 +1,42 @@
+<?php
+    include 'modules/phphead.inc';
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sixth Grade | BofR</title>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="css/borstyle.css" />
+    </head>
+
+    <body>
+    <header>
+        <h1><span>Cory K. Fugate</span></h1>
+        <h2><span>Book of Remembrance</span></h2>
+
+    </header>
+
+    <div id="flourish"></div>
+    <section id="content">
+        <h3>Sixth Grade (99'-00' - Age 11)</h3>
+        <p>Middle School was definitely a huge period of transition for me. Its during these years that childhood starts to fade away, and those gritty teenage years start lurking closer and closer. All three years of middle school for me were it at Musselman Middle. It had previously been the high school, and my grade was going to be the first to have its 6th-8th grade years all there in that building. Having lots different teachers and classrooms to go to throughout the day took a bit of getting used to, but I really came to enjoy that format. It provided some time to get up and get around a little more, to get to see more of my friends and meet new teachers. In reality things were rigidly lined out for us, we were only allowed to go to our lockers during certain times, and only had 4 or 5 minutes to get to the next class, but to me it was still neat.
+        </p><p>I remember that it was the cool thing in middle school to just carry your books around in your arm rather than lugging around your backpack all day, but really we just ended up looking goofier. Because we only could visit our locker at specified times during the day, we had to carry so many books at a time that we'd have to pile them up on our forearms in front of us and awkwardly lean back to bear the load.
+        </p><p>In middle school we had the option to either join the band, the choir, or take a general music class, and so I decided to join the band. My sister had been in the percussion section while she was in middle school, and so I followed in her footsteps and decided to do the same. It seemed like half the boys in my grade decided to do the same, so we ended up with a percussion section of about 30 boys. The music teacher's name was Mr. Shelly. He was a gruff and scary guy, and I honestly think he just didn't like us very much. Most of the boys who played the drums were complete slackers, totally awful with music and gave no real effort, so I don't really blame him much. I was able to learn how to read drum notation and did alright, but it would have been nice to learn from someone who cared a little more about our group. From these humble beginnings I came to really love music though, and later on in High School I purchased my own drumset, and playing become a real passion of mine.
+        </p><a href="seventhgrade.php" title="Seventh Grade">Continue to &quot;Seventh Grade&quot; &gt;&gt;</a>
+         <footer>
+            
+             <?php include 'modules/borfooter.inc' ?>
+            
+         </footer>
+
+</section>
+
+<div id="side">
+    <?php include 'modules/bornav.inc'; ?>
+    <div id="flourish2"></div>
+</div>
+
+
+
+</body>
+</html>

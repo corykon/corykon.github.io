@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Site Plan | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+
+</head>
+
+<body>
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div>
+       
+    </div>
+</div>
+
+<div id="content">
+    <div>
+    <h1>Site Plan</h1>
+    <br /><br />
+    <h2>Purpose</h2>
+    <p> Simply put, the purpose of this website is to inform parents and potential participants
+        about space camp. That purpose can be divided into two main parts:</p>
+    <ul>
+        <li>Attracting customers, getting them excited about space camp</li>
+        <li>Informing parents, helping them feel confidence in our staff and facility </li>
+    </ul>
+    
+    <h2>Audience</h2>
+    <p> The audience of this website would be children interested in attending
+        Space Camp, and also their parents. This site needs to showcase the quality of activities and
+        the fun that will be had, as well as the highly quality staff and facilities
+        to inspire confidence in the minds of the parents.</p>
+     <h2>Why will people use this website?</h2>
+    <p>People will use this website if they would like to attend a summer camp and
+        are searching for one to attend. Also, some will have already signed up to attend
+        but just want specific information about the camp.</p>
+
+<br /><br />
+<h2>Basic Site Components</h2>
+    <br />
+    <h3>Directories</h3>
+    <p>The following directories will be included:</p>
+    <ul>
+        <li><strong>css</strong> - for css files</li>
+        <li><strong>images</strong> - for all images</li>
+        <li><strong>modules</strong>- for nav, footer, and header modules</li>
+        <li><strong>pages</strong> - for all pages besides the index</li>
+        <li><strong>activities</strong>-(a sub-directory of pages) contains activity pages</li>
+    </ul>
+
+    <h3>Modules</h3>
+    <p><strong>Header</strong><br />
+       The header module will contain the logo and tagline, as well as a search
+       box in the upper right hand side.</p>
+    <p><strong>Navigation</strong><br />
+       This module will contain the five main links. They will be displayed over
+       a metalic-textured background to give a high tech feel.</p>
+    <p><strong>Activities Navigation</strong><br />
+       Secondary navigation will be diplayed to the left of the content on each of
+       the activities pages.</p>
+    <p><strong>Footer</strong><br />
+       The footer wil contain copyright info, and will contain links to the colophon,
+       contact page, site plan, resources, and copyright page.</p>
+
+    <h3>Pages</h3>
+    <p><strong>Home Page</strong><br />
+        This will contain a welcome, and a brief intro to the purpose of the website.
+        A large picture of a child in an astronaut suit will be prominently featured.</p>
+
+    <p><strong>Activities</strong><br />
+        This page will contain a brief general intro about the activities at our
+        space camp, and links to pages about each activity.</p>
+
+    <p><strong>Qualifications</strong><br />
+        This page will outline the qualifications that a child must meet to be
+        able to participate.</p>
+
+    <p><strong>Staff</strong><br />
+        This page will introduce our staff, and show their experience and
+        credentials.</p>
+
+    <p><strong>Contact</strong><br />
+       This page will aid potential particpants in contacting us and asking questions
+       about the camp.</p>
+
+    <br /><br />
+    <h2>Design Sketch</h2>
+    <table><tr><td><img src="/classes/cit230/spacecamp/images/designsketch1.jpg" alt="A sketch of the planned design for the page" width="250" height="197" />
+           </td><td>
+                   <img src="/classes/cit230/spacecamp/images/designsketch2.jpg" alt="A sketch of the planned design for the page" width="250" height="197" />
+           </td></tr>
+        <tr><td> Sketch of Homepage</td><td>Sketch of General Content Pages</td></tr>
+    </table>
+    <br /><br />
+    <hr />
+    <h1>Style Guide</h1>
+    <br /><br />
+    <h3>Layout</h3>
+    <p>This website will be on a centered template that is 900 pixels wide. The header is 100 pixels
+        tall, and the navigation bar is 40 pixels tall. Their is a left and right section
+        in the center. The right section is for picture/secondary nav and is always a smaller
+        portion(except on homepage). The footer is 60 pixels tall.</p>
+    <h3>Browser Requirements</h3>
+    <p>All pages should be viewable in the major browsers: Internet Explorer,
+    Mozilla Firefox, Opera, and Google Chrome w/ minor if any differences.</p>
+    <h3>Graphics</h3>
+    <p>Images included should be one of the common suportable images types,
+    such as jpeg, png, and gif. They should be appropriately sized, and
+    geared towards optimum loading speed. A large amount of images should no be
+    displayed on a single page.</p>
+    <h3>Colors</h3>
+    <p>The color scheme is composed, black/spacey colors and orange. The orange colors hex
+        code is #F26522. A standard white background will be used in the content section of
+        the page, and purple/black space background will be used.</p>
+    </div>
+     <h3>Typography</h3>
+     <h4>Body Text</h4>
+        <ul><li>Font Family defined as "Georgia, 'Times New Roman', serif;"</li>
+            <li>Font size: 12px</li>
+            <li>Font Color: #292421;</li>
+        </ul>
+     <h4>Heading/Subheadings</h4>
+        <ul><li>Font Family defined as "Georgia, 'Times New Roman', serif;"</li>
+            <li>H4-H6- Font Color: #292421;</li>
+            <li>H1-H3- Font Color: #F26522;</li>
+        </ul>
+     <h4>Footer Text</h4>
+        <ul><li>Font Family defined as "Georgia, 'Times New Roman', serif;</li>
+            <li>Font size: 12px</li>
+            <li>Color: #FFFFFF</li>
+            <li>Hover Color: #F26522;</li>
+        </ul>
+      <h3>Navigation</h3>
+    <p>The main navigation will be located just below the header. They will be created
+        in the same sans-serif font as the logo using text images, and have a css dotted
+        bottom border. When rolled over, the bottom border will turn orange (#F26522).
+        The current page will be underlined in orange.
+        The blue "image link" border should be taken out using css.</p>
+    <p>Links within the content of the page will be the same color as normal text, but
+        will be underlined to show that they are links. They will change to the hex
+        color code #F26522 when the mouse hovers over them. There is also navigation
+        located in the footer and it is set to align with the right edge of the page.
+        They also employ the css rollover effect.</p>
+    <p>Overall, navigation should be simple and intuitive. Links should be clearly labeled.</p>
+    <h3>Content</h3>
+    <p>The content of the page overall should be useful, proffesional, and concise.
+       It should be arranged in an aesthetically pleasing and logical way. Its goal is
+       to inspire excitement in potential camp attendees and confidence in the parents.
+        </p>
+    <h3>Logo</h3>
+    
+    <p>The logo (as seen in header)is named spacecamplogo.png. It should not be altered. It should appear
+    prominently on every page. Use its design and the tagline as a model for other graphics
+    created.</p>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Typo | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+<!--embedded style sheet -->
+<style type="text/css">
+    body{
+        font-family: arial, helvetica, "times new roman", sans-serif;
+        font-size: 100%;
+        color: #666;
+        background-color: #CCCCCC
+    }
+    #content {
+        font-size: 90%;
+    }
+    p{
+        text-indent: .5in;
+    }
+
+    #content p:nth-child(3){
+        color: red;
+}
+
+</style>
+
+</head>
+
+<body>
+<div id="outercontainer">
+<div id="container">
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+    
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id="content">
+    <div>
+        <h1>Lorem Ipsum</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+            consequat, purus in ornare consectetur, diam leo euismod ligula, et
+            convallis nisl ipsum non lorem. Integer lobortis justo nunc. Curabitur
+            pretium, arcu et bibendum porta, eros neque ornare urna, at venenatis
+            velit augue eu nisl. Vestibulum vulputate malesuada varius. Maecenas
+            sit amet porta nunc. Integer pellentesque mauris eget augue sollicitudin
+            a aliquam massa suscipit. Vestibulum lectus purus, tempor ac mollis et,
+            volutpat eget justo. Nam nec est leo, sit amet imperdiet mauris. Ut
+            sagittis eleifend consequat. Etiam pellentesque diam vel enim tincidunt
+            hendrerit. Vivamus viverra ornare tristique. Fusce luctus ultrices suscipit.
+            Donec vel arcu nulla, ac pellentesque erat. Morbi iaculis luctus cursus.
+            Ut viverra purus eu leo sollicitudin ut viverra eros scelerisque.
+            Quisque consectetur ante vel sapien sodales facilisis. Curabitur venenatis
+            sem a urna tincidunt aliquam. Vestibulum faucibus vestibulum elit, vel
+            varius eros suscipit quis. Nam ut gravida tellus.</p>
+
+        <p>Maecenas eget est nibh, quis congue enim. Donec sed purus lorem, vel
+            rutrum mauris. Sed ut sem est, semper suscipit leo. Praesent adipiscing
+            erat vel sapien tempor vitae pulvinar sapien tincidunt. Ut varius enim
+            et urna vehicula eget commodo augue gravida. In a odio vel augue venenatis
+            ultricies. Nunc interdum iaculis fermentum. Ut ut tellus urna. Pellentesque
+            vitae pretium eros. Suspendisse potenti. Nunc eget urna vulputate augue
+            faucibus ullamcorper.</p>
+
+        <p>Sed nec arcu dolor. Cras vestibulum mollis urna eget sollicitudin. Sed
+            ac lectus metus, in aliquet magna. Sed sit amet ipsum lacus, vel suscipit
+            erat. Aliquam et libero diam. Nullam id massa est, quis ornare lectus.
+            Suspendisse eget nisl purus. Nunc vel tristique mi. Suspendisse eget
+            est quis nisi luctus tincidunt. Etiam non odio libero. </p>
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Web Design | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+<!--embedded style sheet -->
+<style type="text/css">
+
+
+
+
+#portnav img {
+   padding: 3px;
+   margin: 3px;
+}
+
+#portnav a:hover {
+    border-bottom-style: dotted;
+    border-bottom-color: #C00000;
+    border-width: 2px;
+}
+
+
+
+
+#current {
+    border-style: solid;
+    border-color: #C00000;
+    border-width: 2px;
+}
+
+#back {
+    font-size: 10px;
+    color: #c9c9c9;
+    text-decoration: none;
+}
+
+#back:hover {
+	color: #C00000;
+}
+
+
+
+</style>
+
+
+</head>
+
+<body class="portfolio">
+<div id="outercontainer">
+<div id="container">
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+    
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id="content">
+    <div>
+        <h1>Web Design</h1>
+         <img src="/oldsite/images/websitethumb2.jpg" alt="Website Design" align="middle" height="40" width="40" />
+        <br /><br />
+         <p>This is the website I created for the final exam in my CIT 230 class.
+         We were instructed to create a website about a Space Camp, and given specific instructions
+         as to the pages that would be included. The design and content of each page was 
+         completely up to us.
+        </p>
+        <p>
+        <a href="/classes/cit230/spacecamp/" target="_blank" title="Space Camp Website">
+                View the Space Camp Website </a>
+        </p>
+        <hr />
+        <div id="portnav">
+            
+        <a href="/oldsite/pages/portfolio/flyerdesign.shtml" title="view flyer design">     
+        <img src ="/oldsite/images/leadershipflyerthumb2.jpg" alt="Leadership Flyer" height="40" width="40" /></a>
+        <a href="/oldsite/pages/portfolio/logodesign.shtml" title="view logos, letterhead and business card">
+        <img src ="/oldsite/images/logothumb2.jpg" alt="Logo Design" height="40" width="40" /></a>
+           <a href="/oldsite/pages/portfolio/montagedesign.shtml" title="view montage created with photoshop">
+        <img src ="/oldsite/images/montagethumb2.jpg" alt="Montage" height="40" width="40" /></a>
+           <a href="/oldsite/pages/portfolio/photoediting.shtml" title="view photo editing">
+        <img src ="/oldsite/images/photoeditingthumb2.jpg" alt="Photo Editing" height="40" width="40" /></a>
+          <a href="/oldsite/pages/portfolio/brochuredesign.shtml" title="view brochure design">
+        <img src ="/oldsite/images/moviebrochurethumb2.jpg" alt="Brochure Design" height="40" width="40" /></a>
+        <a href="/oldsite/pages/portfolio/creativewriting.shtml" title="view creative writing sample">
+        <img src ="/oldsite/images/creativewritingthumb2.jpg" alt="Web Design" height="40" width="40" /></a>
+        
+        
+        <img src ="/oldsite/images/websitethumb2.jpg" alt="Website Design" height="40" width="40" id="current"/>
+        <a href="/oldsite/pages/portfolio/crystalclear.shtml" title="view flyer design">
+        <img src ="/oldsite/images/crystalclearthumb2.jpg" alt="Flyer Design" height="40" width="40" /></a>
+        <a href="/oldsite/pages/portfolio/promomanager.shtml" title="view promotions created for BYU-Idaho">
+        <img src ="/oldsite/images/promomanagerthumbmini.jpg" alt="Promotions Manager" height="40" width="40" /></a>
+        </div>
+        
+        <a href="/oldsite/pages/portfolio/portfolio.shtml" title="Back to Portfolio Main" id="back">&#60; Back to Portfolio Main </a>
+        
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Learning Report 2 | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+</head>
+
+<body class="assignments">
+<div id="outercontainer">
+<div id="container">
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id= "secondarynav">
+    <div>
+    <a href="/oldsite/pages/assignments/learningreport1.shtml" title="Learning Report 1">&#60; Previous </a> |
+    <a href="/oldsite/pages/assignments/assignments.shtml" title ="Back to Assignments">Back to Assignments Main</a> |
+    <a href="/oldsite/pages/assignments/learningreport3.shtml" title="Learning Report 3">Next &#62;</a>
+    </div>
+</div>
+
+<div id="content">
+    <div>
+ <h1>Learning Report 2</h1>
+ <h2>Description and Keyword Meta Tags</h2>
+ <h3>Resource:<a href ="http://www.w3schools.com/html/html_meta.asp">
+     http://www.w3schools.com/html/html_meta.asp
+ </a></h3>
+ <hr />
+ <h3>What did I learn?</h3>
+ <p>This week I looked at some tutorials about using the meta tags. Meta tags have
+    lots of different possible functions, but are in general are used to provide
+    information about your webpage to the browser or search engines. The meta tags
+    I would like to focus on are the description and keyword tags. </p>
+ <p>The description and keyword tags are useful when optimizing your page for
+     search engines. In the description tag you include a brief summary of what
+     your page is about, and this would be used as the description that is seen
+     under your websites name in the search engine. In the keyword tag you enter
+     several words which when entered by someone into a search engine should flag
+     your webpage as a relevant page. I was dissapointed to find that fewer search
+     engines are now using these tags as part of their indexing process, there are
+     still some that do, so it is useful to still include them.
+ </p>
+ <hr />
+ <h3>How did I implement it?</h3>
+ <p>The first step in implementing these meta tags is to develop a brief and concise
+    description of the content and purpose of my webpage, and also to create a list
+    of keywords which a person might use if they were looking for a webpage such as
+    mine. For my page specifically, I don't that it would be extremely common for
+    someone lloking for a resume to use a a search engine to find it, they would
+    either already know of me andknow the web address, or would use a site like
+    monster.com, but someone looking for a web designer would likely do that, so
+    that is what I focused on when creating my keywords.</p>
+ <p>After creating the list and description, these tags are simply placed in the 
+     head section of your code:</p>
+     <p>&#60; meta name="description" content="Insert you webpage Description here!" /&#62;</p>
+
+     <p>&#60;meta name="keywords" content="Keyword1, Keyword2, Keyword3, Keyword4, Keyword5," /&#62;</p>
+     <p>You can go to my home page and view the source code to see the description and
+     keywords that I used for my webpage.</p>
+
+     <h4>Learning Presentation</h4>
+     <p>View the powerpoint file I used as a presentation for this topic:
+         <a href="/oldsite/assignments/metatagspresentation.pptx">metatagspresentation.pptx</a>
+     </p>
+
+ 
+    </div>
+</div>
+
+<div id="footer">
+    <div>
+    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+</div>
+</div>
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

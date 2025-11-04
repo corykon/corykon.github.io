@@ -1,0 +1,218 @@
+/*
+    Document   : usability
+    Created on : Feb 3, 2010, 2:53:28 PM
+    Author     : coryfugate
+    Created for an assignment in class, wanted to use my template for a group website
+*/
+
+
+
+body {
+        margin: 0;
+        padding: 0;
+}
+
+body {
+	font-family: Arial, Helvetica, Verdana, Sans-serif;
+	font-size: 12px;
+	color: #666666;
+	/*background-image: url('/oldsite/images/risinggreysun.gif');*/
+}
+
+.hidden {
+	display: none;
+}
+h1 {
+	margin: 0;
+	padding: 0;
+}
+
+
+#outercontainer{
+    position: relative;
+    margin: auto;
+    width: 776px;
+    top: 20px;
+    background: #FFFFFF 80%;
+    border: 1px solid #666666;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    box-shadow: 3px 3px 3px #666;
+    -moz-box-shadow: 3px 3px 3px #666;
+    -webkit-box-shadow: 3px 3px 3px #666;
+    -o-box-shadow: 3px 3px 3px #666;
+    padding: 5px;
+}
+
+
+#container{
+    width: 760px;
+    margin: auto;
+    top: 20px;
+    padding: 10px;
+}
+
+#header{
+    height: 70px;
+    border-bottom: 3px solid #C00000;
+}
+
+#nav{
+    height: 30px;
+    font-size: 16px;
+    border-bottom: 3px solid #C00000;
+
+}
+
+#nav a {
+	color: #666666;
+        font-weight: bold;
+	letter-spacing: 3px;
+        text-transform: uppercase;
+        text-decoration: none;
+}
+
+#nav a:hover {
+	color: #C00000;
+}
+
+#nav dl, #footer dl {
+margin:0;
+padding:0;
+list-style:none;
+}
+#nav dt, #footer dt {
+display:inline;
+margin:0;
+padding:0;
+}
+
+
+#aside {
+    top: 200px;
+    float: right;
+    width: 280px;
+    line-height: 16px;
+
+}
+
+#aside div {
+    padding: 25px;
+}
+
+#resumeButton
+{
+  display: block;
+  width: 141px;
+  height: 150px;
+  background: url("/oldsite/images/resumeico.png") no-repeat 0 0;
+
+}
+
+#resumeButton:hover
+{
+  background: url("/oldsite/images/resumeico2.png") no-repeat 0 0;
+}
+
+#resumeButton span
+{
+  display: none;
+}
+
+#portfolioButton
+{
+  display: block;
+  width: 140px;
+  height: 155px;
+  background: url("/oldsite/images/portfolioico.png") no-repeat 0 0;
+
+}
+
+#portfolioButton:hover
+{
+  background: url("/oldsite/images/portfolioico2.png") no-repeat 0 0;
+}
+
+#portfolioButton span
+{
+  display: none;
+}
+
+
+#content {
+    float: left;
+    width: 480px;
+    line-height: 18px;
+
+}
+
+#content a{
+    color: #666666;
+}
+
+#content a:hover{
+    color: #C00000;
+}
+
+#content div {
+	padding: 20px;
+}
+
+
+#content h1 {
+	margin: 0;
+	padding: 0;
+        padding-bottom: 15px;
+
+}
+
+#content p {
+	margin: 0;
+	padding: 0;
+        padding-bottom: 15px;
+
+}
+
+#footer {
+    clear: both;
+    font-family: Tahoma, Arial, Helvetica, Sans-serif;
+	font-size: 10px;
+	color: #c9c9c9;
+    border-top: 3px solid #C00000;
+	padding: 13px 47px 13px 25px;
+	line-height: 12px;
+
+
+}
+
+#footer a {
+	color: #c9c9c9;
+	text-decoration: none;
+}
+
+#footer a:hover {
+	color: #C00000;
+}
+
+#footer #footernav {
+	width: 350px;
+	float: right;
+	text-align: right;
+
+}
+
+#footer img{
+    position: relative;
+    bottom: 12px;
+    left: 16px;
+    
+}
+
+img {
+        border-style: none;
+        padding: 0;
+        margin: 0 -2px;
+}
+
+

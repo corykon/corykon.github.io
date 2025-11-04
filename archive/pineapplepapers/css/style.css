@@ -1,0 +1,599 @@
+/* 
+    Document   : Pineapple Papers
+    Created on : Jul 26, 2011, 11:31:14 AM
+    Author     : ckfugate
+    Description: pineapple papers styling
+*/
+
+@font-face {
+    font-family: headlinenews;
+    src: url("headlinenews.ttf");
+}
+@font-face {
+    font-family: satin;
+    src: url("satin.ttf");
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+section, nav, footer, article {
+    display:block;
+
+}
+
+body{
+    font-size: 90%;
+    font-family: Didot, Georgia, "Times New Roman"
+}
+
+#content p{
+    text-align: center;
+    opacity: .75;
+    font-style: italic;
+    display: none;
+}
+
+.home #content p, .howitworkscp #content p, .howitworksw #content p{
+    text-align: left;
+}
+
+#container{
+    max-width: 1200px;
+    min-width: 950px;
+    width: 80%;
+    margin: auto;
+    margin-top: 10px;
+}
+
+#logo{
+    text-align: center;
+}
+
+/************ Navigation ************/
+nav{
+    margin: 30px auto 10px auto;
+    text-align: center;
+}
+
+nav li {
+    display: inline;
+    padding-right: 6em;
+}
+
+nav li:nth-child(6){
+    padding-right: 0;
+}
+
+nav li a {
+    font-size: 1.25em;
+    font-family: Didot, Georgia, "Times New Roman";
+    font-weight: lighter;
+    font-style: italic;
+    letter-spacing: .05em;
+    color: #4D4D4F;
+    text-decoration: none;
+    opacity: .75;
+    -moz-transition: all 300ms linear;
+    -o-transition: all 300ms linear;
+    -webkit-transition: all 300ms linear;
+    -ms-transition: all 300ms linear;
+    border-bottom: 1px #FFFFFF dotted;
+}
+
+nav li a:hover {
+    opacity: 1;
+    border-bottom: 1px #4d4d4F dotted;
+}
+
+.home nav li a[title~=homepage],
+.howitworks nav li a[title~=how],
+.howitworksgp nav li a[title~=how],
+.howitworksw nav li a[title~=how],
+.designs nav li a[title~=designs],
+.shop nav li a[title~=shop],
+.blog nav li a[title~=blog],
+.contact nav li a[title~=touch]{
+    border-bottom: 1px #4D4D4F dotted;
+}
+
+
+p a{
+    text-decoration: none;
+    border-bottom: 1px dotted #4D4D4F;
+    color: #4D4D4F;
+    -moz-transition: all 300ms linear;
+    -o-transition: all 300ms linear;
+    -webkit-transition: all 300ms linear;
+    -ms-transition: all 300ms linear;
+
+}
+
+p a:hover{
+    border-bottom: 1px dotted #99C000;
+    color: #99C000;
+}
+
+/*** Content Box ***/
+#content{
+    width:100%;
+    height: 550px;
+    padding: 40px 0px 0px 0px;
+    background-color: #FFFFFF;
+    background-image: url("../images/papertile.jpg");
+    box-shadow: 2px 3px 7px #777;
+    -webkit-box-shadow: 2px 3px 7px #777;
+
+}
+
+
+/*** H1 Titles ***/
+h1 {
+    width: 400px;
+    border-top: 5px double #A7A9AC;
+    border-bottom: 5px double #A7A9AC;
+    text-align: center;
+    margin: 20px auto 40px auto;
+    font-size: 2.5em;
+    font-weight: normal;
+    letter-spacing: .1em;
+    padding: 5px 0px 5px 0px;
+    color: #FFCD32;
+
+}
+
+
+
+/************ Homepage Content ************/
+#homepagewelcome p{
+    display: block;
+}
+
+#homepagewelcome {
+    padding-top: 60px;
+    padding-left: 5%;
+    height: 235px;
+}
+
+#homepagewelcome p.banner{
+    
+    background-image:url("../images/bannerbg.png");
+    background-repeat: no-repeat;
+    height: 1.25em;
+    padding: 15px 0px 15px 0px;
+    transform:rotate(-8deg);
+    -ms-transform:rotate(-8deg); /* Internet Explorer */
+    -moz-transform:rotate(-8deg); /* Firefox */
+    -webkit-transform:rotate(-8deg); /* Safari and Chrome */
+    -o-transform:rotate(-8deg); /* Opera */
+}
+
+#homepagewelcome p.banner span {
+    display: none;
+}
+
+#homepagewelcome p{
+    font-family: Didot, Georgia, "Times New Roman";
+    font-size: 2em;
+    letter-spacing: .05em;
+    font-style: italic;
+    color: #99CA3C;
+}
+
+#homepagewelcome p span.boxed{
+    color: #FFFFFF;
+    background-color:#99CA3C;
+    padding: 8px;
+    padding-left: 12px;
+    border-radius: 20px;
+
+}
+
+#homepagewelcome p:nth-child(2){
+    margin-left: 350px;
+    margin-top: 50px;
+}
+
+#homepagewelcome img{
+    position: relative;
+    left: 70%;
+    bottom: 225px;
+}
+
+
+#listofservices{
+    width: 87%;
+    height: 10px;
+    background-image: url("../images/dotline.png");
+    background-repeat: repeat-x;
+    margin:auto;
+}
+
+section.stationerylist {
+    float: left;
+    width: 19%;
+    margin-top: 70px;
+    height: 100px;
+    letter-spacing: .2em;
+    padding-left: 4%;
+}
+
+section.stationerylist:nth-child(2){
+    border-right: 1px dotted #4D4D4F;
+    border-left: 1px dotted #4D4D4F;
+   
+}
+
+section.stationerylist:nth-child(1){
+    margin-left:22%;
+    width: 13%;
+}
+
+/*section.stationerylist:nth-child(2) h2{
+    padding-left: 3%;
+}*/
+
+section.stationerylist h2{
+    font-family: Didot, Georgia, "Times New Roman", serif;
+    text-transform: uppercase;
+    color: #4D4D4F;
+    margin: 40px 0px 12px 0px;
+    font-size: 1.25em;
+}
+
+section.stationerylist:hover{
+    opacity: 1;
+}
+
+
+/************ How It Works Homepage Content ************/
+.howitworks #weddingsbtn h2, .howitworks #cardsandprintsbtn h2 {display: none;}
+.howitworks #btns{
+    width: 740px;
+    margin:auto;
+}
+
+.howitworks #cardsandprintsbtn{
+    width: 350px;
+    height: 250px;
+    border-radius: 20px;
+    background-image: url(../images/cardsandprintsbtn.gif);
+    background-repeat: no-repeat;
+    background-position: 3px 24px;
+    margin-right: 5%;
+    margin-top: 35px;
+    float: left;
+    -moz-transition: background-position 250ms linear;
+    -o-transition: background-position 250ms linear;
+    -webkit-transition: background-position 250ms linear;
+    -ms-transition: background-position 250ms linear;
+}
+
+.howitworks #cardsandprintsbtn img{
+    margin-top: 79px;
+}
+
+.howitworks #weddingsbtn{
+    width: 350px;
+    height: 250px;
+    background-image: url(../images/weddingsbtn.gif);
+    background-repeat: no-repeat;
+    background-position: 3px 24px;
+    float: left;
+    margin-top: 35px;
+    -moz-transition: background-position 250ms linear;
+    -o-transition: background-position 250ms linear;
+    -webkit-transition: background-position 250ms linear;
+    -ms-transition: background-position 250ms linear;
+}
+
+.howitworks #weddingsbtn img{
+    margin-top: 79px;
+}
+
+
+.howitworks a #cardsandprintsbtn:hover, .howitworks #weddingsbtn:hover{
+    background-position: 3px 0px;
+}
+
+
+
+/******* How it Works child pages ********/
+.howitworksw h1, .howitworkscp h1{
+    color: #FFCD32;
+    width: 10em;
+    margin-bottom: 20px;
+
+}
+
+.howitworksw #content p, .howitworkscp #content p{
+    display: block;
+}
+
+.howitworkscp h1{
+    width: 12em;
+}
+
+.howitworkscp div#instructionwrapper, .howitworksw div#instructionwrapper{
+    margin-left: 12%;
+
+
+}
+.howitworkscp section.instruction, .howitworksw section.instruction{
+    width: 40%;
+    float: left;
+    margin-top: 40px;
+}
+
+.howitworkscp section.instruction:nth-child(1),
+.howitworkscp section.instruction:nth-child(3),
+.howitworksw section.instruction:nth-child(1),
+.howitworksw section.instruction:nth-child(3){
+    margin-right:6%;
+}
+
+
+
+.howitworkscp h2, .howitworksw h2{
+    border-radius: 20px;
+    background-color: #FFCD32;
+    color: #FFFFFF;
+    padding: 7px 15px;
+    letter-spacing: .1em;
+    font-weight: normal;
+}
+
+/****for green heading on cards and prints
+.howitworkscp h2{
+    background-color: #99CA3C
+}*****/
+
+.howitworkscp p, .howitworksw p{
+    font-style: italic;
+    opacity: .75;
+    margin-left: 10px;
+    margin-top: 20px;
+}
+
+/*** for yellow hover affect
+.howitworksw p a:hover{
+    color: #FFCD32;
+}***/
+
+
+
+/************Designs Hompage Content ************/
+
+
+.designs #content div#btns {
+    margin:auto;
+    width:85%;
+    margin-top: 110px;
+    padding-left: 4%;
+}
+
+
+.designs h2{
+    font-family: didot;
+    width: 29%;
+    height: 52px;
+    box-shadow: 3px 3px 3px #999999;
+    color: #F1F1F2;
+    font-weight: normal;
+    font-size: 2.5em;
+    text-align: center;
+    float: left;
+    -moz-transition: box-shadow, margin-top 250ms linear;
+    -o-transition: box-shadow, margin-top 250ms linear;
+    -webkit-transition: margin-top, box-shadow 250ms linear;
+    -ms-transition: box-shadow, margin-top 250ms linear;
+}
+
+.designs a{
+    text-decoration: none;
+}
+
+.designs h2:hover{
+    box-shadow: 3px 7px 7px #999999;
+    margin-top: -1px;
+}
+
+
+.designs h2:nth-child(1),
+.designs h2:nth-child(2){
+    margin-right: 4%;
+}
+
+.designs #wbtn{
+    background-color: #ED037C;
+}
+
+.designs #cbtn{
+    background-color: #99CA3C
+}
+
+.designs #pbtn{
+    background-color: #FFCD32;
+}
+
+
+/************ Shop Page Content ************/
+.shop #btns{
+    width: 350px;
+    margin: auto;
+}
+
+.shop #shopbtn{
+    margin-top: 80px;
+    width: 350px;
+    height: 250px;
+    background-image: url("../images/shopbtnclick.gif");
+    background-repeat: no-repeat;
+     transition: background-position .5s;
+    -moz-transition: background-position .5s;
+    -webkit-transition: background-position .5s;
+    -o-transition: background-position .5s;
+}
+
+.shop #shopbtn:hover{
+    background-position: 0 -50px;
+
+}
+
+.shop #shopbtn img{
+    opacity: 1;
+}
+
+.shop #shopbtn h2{
+    display: none;
+}
+
+/************ Blog Page Content ************/
+.blog #btns{
+    width: 350px;
+    margin: auto;
+}
+
+.blog #blogbtn{
+    margin-top: 80px;
+    width: 350px;
+    height: 250px;
+    background-image: url("../images/blogbtn.gif");
+    background-repeat: no-repeat;
+}
+
+.blog #blogbtn img{
+    opacity: 0;
+    background-repeat: no-repeat;
+     transition: opacity .5s;
+    -moz-transition: opacity .5s;
+    -webkit-transition: opacity .5s;
+    -o-transition: opacity .5s;
+}
+
+.blog #blogbtn:hover img{
+    opacity: 1;
+
+}
+
+.blog #blogbtn h2{
+    display: none;
+}
+
+
+/************ Contact Page Content ************/
+.contact #content{
+    height: 625px;
+}
+
+.contact #content img.bigpineapple{
+    float: left;
+    margin: 40px -320px 0px 20px;
+}
+
+.contact #content h1{
+    
+}
+
+
+.contact #letshearit{
+    margin: 0px auto 0px auto;;
+    height: 32px;
+    width: 410px;
+    background-image: url("../images/letshearit.png");
+    background-repeat: no-repeat;
+}
+
+.contact #haveaq{
+    height: 40px;
+    width: 500px;
+    background-image: url("../images/haveaq.png");
+    background-repeat: no-repeat;
+    margin: 0px auto 0px auto;
+}
+
+.contact #content p{
+    display: block;
+}
+
+.contact #content p span{
+    display: none;
+}
+
+.contact #content p.message{
+    text-transform: lowercase;
+    letter-spacing: .1em;
+    font-size: 1em;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    color: #99CA3C;
+    text-indent: 20px;
+}
+
+.contact #content p.message span{
+   position: relative;
+   top: 5px;
+   right: 5px;
+}
+   
+
+.contact #content h2 span{
+    display: none;
+}
+
+.contact #content fieldset{
+    border: none;
+    width: 345px;
+    margin:auto;
+    margin-top: 30px;
+}
+
+.contact #content fieldset li{
+    list-style: none;
+}
+
+.contact label{
+    font-size: 1.25em;
+    color:#99C000;
+    float: left;
+    width: 75px;
+    height: 20px;
+    margin-bottom:12px;
+}
+
+.contact input{
+    text-align: left;
+    height: 20px;
+        float: right;
+         margin-bottom:8px;
+         width: 200px;
+}
+
+.contact #msglabel{
+    margin-top: 8px;
+    margin-bottom: 7px;
+}
+
+.contact textarea{
+    width: 100%;
+    max-width: 345px;
+    max-height: 200px;
+    min-width: 300px;
+}
+
+.contact #submit{
+    margin-top: 10px;
+    text-align: center;
+}
+
+
+
+/*** Footer ***/
+footer{
+    font-family: Didot, Georgia, "Times New Roman";
+    text-align: center;
+    margin: 30px;
+    opacity: .5;
+}

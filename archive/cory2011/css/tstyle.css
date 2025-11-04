@@ -1,0 +1,50 @@
+/* 
+    Document   : tstyle
+    Created on : Jan 21, 2011, 11:43:45 AM
+    Author     : ckfugate
+    Description: Stylesheet for tutorial type documents
+*/
+
+
+root { 
+    display: block;
+}
+
+pre {
+    background-color: #3C3C3C;
+    border: 1px;
+    border-style: dashed;
+    border-color: #FFF;
+    padding-left: 10px;
+    padding-bottom: 5px;
+
+}
+
+content {
+    background-color: #FFF;
+    color: #000
+}
+
+h3, h4 {
+    border-bottom: 1px solid #3C3C3C;
+    padding-top: 40px;
+}
+
+table{
+    border-collapse: collapse;
+}
+
+table, td {
+    border: 1px solid #000;
+   
+}
+
+td {
+    padding: 3px;
+}
+
+.totop {
+    font-size: .75em;
+    padding-top: 0px;
+    margin-top: 0px;
+}

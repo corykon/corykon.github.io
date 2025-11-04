@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Product Redesign by Cory Fugate, digital designer and web developer." />
+        <title>Product Redesign :: Cory Fugate - Digital Designer and Web Developer</title>
+        <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href ="css/style.css" media="screen" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript">
+             var _gaq = _gaq || [];
+             _gaq.push(['_setAccount', 'UA-15220341-1']);
+             _gaq.push(['_trackPageview']);
+
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+    </head>
+    <body class="product">
+    <div id="header">
+        <div class="container">
+        <?php
+            include 'modules/header.inc';
+        ?>
+        </div>
+    </div>
+    <div id="content">
+    <div class="container photobox">
+        <div>
+        <h2>Product Redesign</h2>
+        <p>As part of my COMM462 class we were asked to choose a poorly designed
+        product and revamp it. I choose Maverick playing cards, and tried
+        to give them a more rugged, eye-catching look.</p>
+        <p>Typically when you are buying playing cards, especially if you're looking
+        for a cheap deck, one brand won't particularly stand out over another. My
+        plan was to help the cards stand out on the shelves to increase sales.</p>
+        <p>As part of the product we were asked to design and build new packaging and
+            advertising, and then put it all together in a "redesign plan" booklet
+            you can view below.</p>
+        <iframe class="scribd_iframe_embed" src="http://www.scribd.com/embeds/99658049/content?start_page=1&view_mode=slideshow&access_key=key-frzguwghcgx709uihuw" data-auto-height="false" data-aspect-ratio="" scrolling="no" id="doc_8508" width="890" height="600" frameborder="0"></iframe>
+        <a style="margin: 15px 0;" title="View Mav Redesign Press on Scribd" href="http://www.scribd.com/doc/99658049/Mav-Redesign-Press">[View Maverick Redesign Document on Scribd]</a>
+        
+        </div>
+    </div>
+    </div>
+
+
+    <div id="footer">
+        <div class="container">
+            <?php
+             include 'modules/footer.inc';
+            ?>
+        </div>
+    </div>
+    </body>
+</html>

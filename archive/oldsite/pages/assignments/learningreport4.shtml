@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Learning Report 4 | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+</head>
+
+<body class="assignments">
+<div id="outercontainer">
+<div id="container">
+
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id= "secondarynav">
+    <div>
+    <a href="/oldsite/pages/assignments/learningreport3.shtml" title="Learning Report 3">&#60; Previous </a> |
+    <a href="/oldsite/pages/assignments/assignments.shtml" title ="Back to Assignments">Back to Assignments Main</a> |
+    <a href="/oldsite/pages/assignments/learningreport5.shtml" title="Learning Report 5">Next &#62;</a>
+    </div>
+</div>
+
+<div id="content">
+    <div>
+ <h1>Learning Report 4</h1>
+ <h2>CSS Techniques</h2>
+ <h3>Resource:<a href ="http://www.subcide.com/tutorials/csslayout/page10.aspx">
+    http://www.subcide.com/tutorials/csslayout/page10.aspx
+ </a></h3>
+ 
+ <hr></hr>
+ <h3>What did I learn?</h3>
+ <p>This week I spent some time going through a CSS tutorial, and learned quite a bit
+     of useful stuff. I learned alot about specific tags, and also just
+    about the power of CSS in general. It truly is a much more effective way to
+    change the style of your page than anything that was available several years ago.
+    The coding is fairly simple and logical on the service, but more advanced designers
+    can also dive in very deep it create complex layouts. I still have tons to learn,
+    but I was glad to begin picking up on some basics. </p>
+ <p>There were a couple of things specifically that stood out as being very helpful
+     to me that I'd like to mention in this report, one being the font-family element,
+     and the other the "hyperlink hover" feature. I wanted to point out the font-family
+     element because I noticed that after changing the font the feel of my website was 
+     completely changed. It's such a simple thing to do that offers a very professional
+     feel. The hyperlink hover element was also very neat to me, because it can replace
+     several lines of javascript code with just a single line of css. These were just
+     a couple of the multitude of amazing features.
+ </p>
+ <hr></hr>
+ <h3>How did I implement it?</h3>
+ <p>In my own website I decided to use the Arial font, because I feel that the san-sarif
+    font gives a very clean look to the site. In order to do this simply included the following 
+    code in my css file:</p>
+ <p>body {<br />
+	font-family: Arial, Helvetica, Verdana, Sans-serif;<br />
+        }</p>
+ <p>I also wanted to have a simple rollover effect for my links in the footer. I formated
+     the links to look like normal text, but when you rollover them they turn red. Again 
+     the code was very simple, only a few lines: </p>
+     
+ <p>#footer a:hover{ <br />
+	color: red;<br />
+    }</p>
+ <p> I still have lots of things to clean up in my site, but I'm excited to see what
+     I'll be able to accomplish using CSS.</p>
+    </div>
+</div>
+
+<div id="footer">
+    <div>
+   <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+
+</div>
+</div>
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

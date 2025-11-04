@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Learning Report 8 | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+</head>
+
+<body class="assignments">
+<div id="outercontainer">
+<div id="container">
+
+<div id="header">
+    <div>
+    <!--#include virtual="/oldsite/modules/header.inc" -->
+    </div>
+</div>
+
+<div id="nav">
+    <div>
+    <!--#include virtual="/oldsite/modules/nav.inc" -->
+    </div>
+</div>
+
+<div id= "secondarynav">
+    <div>
+    <a href="/oldsite/pages/assignments/learningreport7.shtml" title="Learning Report 7">&#60; Previous </a> |
+    <a href="/oldsite/pages/assignments/assignments.shtml" title ="Back to Assignments">Back to Assignments Main</a> |
+    <a href="/oldsite/pages/assignments/learningreport1.shtml" title="Learning Report 1">Next &#62;</a>
+    </div>
+</div>
+
+<div id="content">
+    <div>
+ <h1>Learning Report 8</h1>
+ <h2>Location Indicators on Main Navigation </h2>
+ <h3>Resource:<a href ="http://school.blainerobertson.net/media/videos/navtabs1.swf">
+   http://school.blainerobertson.net/media/videos/navtabs2.swf
+ </a></h3>
+<hr></hr>
+ <h3>What did I learn?</h3>
+ <p>This week I learned how to use CSS to highlight the link in your navigation that
+    corresponds to your current location in the website. For example, if you look at
+    the main navigation while on this page, you'll see that there is a red arrow
+    pointing to the "assignments" link. I had known that there was some way to create
+    this effect using CSS, but hadn't put in the time learn how to do so until our teacher
+    Brother Roberston mentioned that he had just posted a couple video tutorials on this
+    very topic.</p>
+ <p>I feel like this really is a useful feature for a website, especially after reading
+     through Steve Krug's <em>Don't Make Me Think</em> about web usability. He explains
+     that as users feel comfortable and at ease using your webpage, their confidence in your
+     ability to provide credible content increases. Something as simple as highlighting the
+     link that corresponds with the current location helps add to the ease of navigation
+     and sense of "place" on your webpage.</p>
+ <hr></hr>
+ <h3>How did I implement it?</h3>
+ <p>I had already learned how to
+    <a href="/oldsite/pages/assignments/learningreport5.shtml" title="Learning report 5 @ coryfugate.com">
+    create rollover effects in CSS</a>,so what I gleaned from the video tutorials was
+    how to have the website "recognize" which page it is on. In order to do this, you have
+    first have to specify a "class" in the &#60;body&#62; tag of each page.
+    For example, in the HTML code for this page, I added this:</p>
+ <p>&#60;body <strong>class = "assignments"</strong>&#62;</p>
+ <p>Next, I used the "body class" to trigger the desired effect in CSS. In my webpage,
+    I happened to use image sprites to have arrows point to links as the cursor hovers over
+    them, so for me the desired CSS effect was to adjust the sprite so that the link with
+    the arrow would be shown rather than plain link. So here is what my CSS code looked like:</p>
+ <p>
+ .home #homenav,<br />
+.aboutme #aboutmenav,<br />
+.interests #interestsnav,<br />
+.resume #resumenav,<br />
+.portfolio #portfolionav,<br />
+.assignments #assignmentsnav,<br />
+.contactme #contactmenav<br />
+{<br />
+ background-position: 0 -40px;<br />
+ cursor: default;<br />
+}<br />
+ </p>
+ <p>The <strong>.home</strong> piece of code refers to the class specified in the &#60;body&#62; tag,
+    and <strong>#homenav</strong> refers to the id of the link in my navigation module.
+    In this example you can see that I connected multiple selectors with commas, because the css
+    code needed to produce the desired effect in each was the same.</p>
+ <p>As for the css code within the curly braces, <strong>background-position: 0 -40px;</strong>
+    adjusts the sprite so that the link with the arrow is displayed, and <strong>
+    cursor: default;</strong> prevents the cursor from changing from the standard cursor to
+    the "this is clickable!" cursor, further emphasing the concept that the user is already on
+    the page that the link corresponds with.</p>
+ <p>Once again, this is fairly simple process with a very beneficial effect. I will definitely
+    be using this type of effect on all navigation schemes that I design.</p>
+    </div>
+</div>
+
+<div id="footer">
+    <div>
+   <!--#include virtual="/oldsite/modules/footer.inc" -->
+    </div>
+</div>
+
+</div>
+</div>
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Qualifications | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+<!--embedded style sheet -->
+<style type="text/css">
+#content{
+    width: 610px;
+    height: 300px;
+}
+
+#leftside{
+    background-color: #000000;
+    float: left;
+    width: 250px;
+}
+
+</style>
+
+</head>
+
+<body class="qualifications">
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div id="activitiesnav2">
+        <img src="/classes/cit230/spacecamp/images/graduatespacecamp.jpg" alt="Space Camp Grad" width="200" height="300" />
+    </div>
+</div>
+
+<div id="content">
+    <div>
+        <h1>Qualifications</h1>
+        <p>In preparing to apply to attend Space Camp, remember to consider the
+           following qualifications:</p>
+        <ul>
+            <li>A desire to learn more about space exploration!</li>
+            <li>13-15 age range for Junior Camp</li>
+            <li>16-19 age range for Senior Camp</li>
+            <li>Must be an honor roll student, especially in scince, math, and physical fitness.</li>
+            <li>Must be able to commit a full eight weeks at camp</li>
+            <li>No back or neck problems</li>
+            <li>No heart problems</li>
+            <li>Must be able to sustain reasonable physical activity(running, jumping, etc.)</li>
+            <li>The price for the camp is $4,000 dollars, but as these qualifications are met,
+                applicants may have their fees paid for by our <em>Future Space Explorer</em>
+                scolarship. <a href="/classes/cit230/spacecamp/pages/contact.php" title="ask us about Scolarship!">
+                Contact us</a> for more info.</li>
+        </ul>
+        
+        
+        <p>If there are questions about specific needs or special cases/exceptions, feel
+           free to <a href="/classes/cit230/spacecamp/pages/contact.php" title="Contact Us">contact us</a>.
+           <br /><br />
+           We also offer single-day and week-long mini-camps that are much more flexible
+           for special cases.</p>
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

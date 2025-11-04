@@ -1,0 +1,309 @@
+/* 
+    Document   : screen
+    Created on : Feb, 2010
+    Author     : coryfugate
+    Created for use with the homepage
+*/
+
+
+
+body {
+        margin: 0;
+        padding: 0;    
+        background-image: url("/oldsite/images/greyrisingsun.jpg");
+        background-repeat: no-repeat;
+
+}
+
+body {
+	font-family: Arial, Helvetica, Verdana, Sans-serif;
+	font-size: 12px;
+	color: #666666;
+	/*background: #c9c9c9;*/
+}
+
+.hidden {
+	display: none;
+}
+h1 {
+	margin: 0;
+	padding: 0;
+}
+
+#outercontainer{
+    position: relative;
+    margin: auto;
+    width: 776px;
+    top: 20px;
+    background: #FFFFFF 80%;
+    border: 1px solid #666666;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    box-shadow: 3px 3px 3px #666;
+    -moz-box-shadow: 3px 3px 3px #666;
+    -webkit-box-shadow: 3px 3px 3px #666;
+    -o-box-shadow: 3px 3px 3px #666;
+    padding: 5px;
+}
+
+#container{
+    width: 760px;
+    margin: auto;
+    top: 20px;
+    padding: 10px;
+}
+
+#header{
+    height: 195px;
+}
+
+#nav{
+    height: 40px;
+    font-size: 16px;
+     
+}
+
+#nav a {
+	color: #666666;
+	text-decoration: none;
+        font-weight: bold;
+	letter-spacing: 3px;
+        text-transform: uppercase;
+        text-decoration: none;
+}
+
+#nav a:hover {
+	color: #C00000;
+}
+
+#nav dl, #footer dl {
+margin:0;
+padding:0;
+list-style:none;
+}
+#nav dt, #footer dt {
+display:inline;
+margin:0;
+padding:0;
+}
+
+#homenav,
+#homenav a
+{
+  display:inline-block;
+  margin: 0 -2px;
+  padding: 0;
+  width: 85px;
+  height: 40px;
+  background: url("/oldsite/images/homenav.gif")
+}
+
+#aboutmenav,
+#aboutmenav a
+{
+  display:inline-block;
+  margin: 0 -2px;
+  padding: 0;
+  width: 110px;
+  height: 40px;
+  background: url("/oldsite/images/aboutmenav.gif")
+
+}
+
+#interestsnav,
+#interestsnav a
+{
+  display:inline-block;
+  margin: 0 -2px;
+  padding: 0;
+  width: 105px;
+  height: 40px;
+  background: url("/oldsite/images/interestsnav.gif")
+}
+
+#resumenav,
+#resumenav a
+{
+  display:inline-block;
+  margin: 0 -2px;
+  padding: 0;
+  width: 95px;
+  height: 40px;
+  background: url("/oldsite/images/resumenav.gif")
+}
+
+#portfolionav,
+#portfolionav a
+{
+  display:inline-block;
+  margin: 0 -2px;
+  padding: 0;
+  width: 105px;
+  height: 40px;
+  background: url("/oldsite/images/portfolionav.gif")
+}
+
+#assignmentsnav,
+#assignmentsnav a
+{
+  display:inline-block;
+  margin: 0 -2px;
+  padding: 0;
+  width: 130px;
+  height: 40px;
+  background: url("/oldsite/images/assignmentsnav.gif")
+}
+
+#contactmenav,
+#contactmenav a
+{
+  display:inline-block;
+  margin: 0 -2px;
+  padding: 0;
+  width: 130px;
+  height: 40px;
+  background: url("/oldsite/images/contactmenav.gif")
+}
+
+.home #homenav,
+.aboutme #aboutmenav,
+.interests #interestsnav,
+.resume #resumenav,
+.portfolio #portfolionav,
+.assignments #assignmentsnav,
+.contactme #contactmenav
+{
+ background-position: 0 -40px;
+ cursor: default;
+}
+
+#homenav:hover,
+#aboutmenav:hover,
+#interestsnav:hover,
+#resumenav:hover,
+#portfolionav:hover,
+#assignmentsnav:hover,
+#contactmenav:hover
+{
+ background-position: 0 -40px;
+}
+
+#homenav span,
+#aboutmenav span,
+#interestsnav span,
+#resumenav span,
+#portfolionav span,
+#assignmentsnav span,
+#contactmenav span
+{
+  display: none;
+}
+
+
+
+#secondarynav{
+font-family: Tahoma, Arial, Helvetica, Sans-serif;
+	font-size: 10px;
+	color: #c9c9c9;
+}
+
+#secondarynav a {
+	color: #c9c9c9;
+	text-decoration: none;
+}
+
+#secondarynav a:hover {
+	color: #C00000;
+}
+
+/*
+#aside {
+    top: 200px;
+    float: right;
+    width: 280px;
+    line-height: 16px;
+
+}
+
+#aside div {
+    padding: 25px;
+}
+*/
+
+#content {
+    float: left;
+    /*width: 480px;*/
+    line-height: 18px;
+
+}
+
+#content a{
+    color: #666666;
+}
+
+#content a:hover{
+    color: #C00000;
+}
+
+#content div {
+	padding: 20px;
+}
+
+
+#content h1 {
+	margin: 0;
+	padding: 0;
+        padding-bottom: 15px;
+
+}
+
+#content p {
+	margin: 0;
+	padding: 0;
+        padding-bottom: 15px;
+
+}
+
+#footer {
+    clear: both;
+    font-family: Tahoma, Arial, Helvetica, Sans-serif;
+	font-size: 10px;
+	color: #666666;
+    border-top: 3px solid #C00000;
+	padding: 13px 47px 13px 25px;
+	line-height: 12px;
+
+
+}
+
+#footer a {
+	color: #666666;
+	text-decoration: none;
+}
+
+#footer a:hover {
+	color: #C00000;
+}
+
+#footer #footernav {
+	width: 350px;
+	float: right;
+	text-align: right;
+}
+
+#footer img{
+    position: relative;
+    bottom: 12px;
+    left: 16px;
+
+}
+
+img {
+        border-style: none;
+        padding: 0;
+        margin: 0 -2px;
+}
+
+
+

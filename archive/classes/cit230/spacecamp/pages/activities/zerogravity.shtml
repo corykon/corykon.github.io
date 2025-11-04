@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Zero-Gravity Training | Space Camp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+
+<!--embedded style sheet -->
+<style type="text/css">
+#content{
+    width: 610px;
+    height: 345px;
+}
+
+#leftside{
+    background-color: #000000;
+    float: left;
+    width: 250px;
+    height: 385px;
+}
+
+#activitiesnav2{
+    height: 345px;
+}
+</style>
+
+</head>
+
+<body class="zerograv">
+
+<div id="container">
+<div id="header">
+    <div>
+        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
+    
+    </div>
+</div>
+    
+
+<div id="nav">
+    <div id="nav2">
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+    </div>
+</div>
+
+
+<div id="centercontainer">
+<div id="leftside">
+    <div id="activitiesnav2">
+        <!--#include virtual="/classes/cit230/spacecamp/modules/activitiesnav.inc" -->
+          <img src="/classes/cit230/spacecamp/images/zerogravity.jpg" alt="Zero Gravity Flight" width="205" height="215" />
+</div>
+</div>
+
+<div id="content">
+    <div>
+       <h1>Zero-Gravity Training</h1>
+        <p>Experience the feeling of weightlessness here in our Zero-Gravity Training
+            activity. We have a state-of-the-art jet which can
+            fly at speeds above the sound barrier and at incredibly high altitudes.
+            The right combination of speed and altitude enable us to eliminate the
+            effects of gravity for up to twenty seconds.</p>
+        <p>Duke Ford runs the Zero-Gravity prgram. It is one of the more exhilirating of all of our <strong> &copy;Space
+           Exploration</strong> activities, and so it is only available to those over
+           the age of 16.</p>
+       <br />
+       <img src="/classes/cit230/spacecamp/images/zerogravity2.jpg" class="centeredImage" width="241" height="175" alt="Zero-Gravity Flight" />
+       <br /><br />
+       <a href ="/classes/cit230/spacecamp/pages/activities/activities.shtml" id="miniLink" title="Back to Activities Main">
+           Back to Activities Main
+       </a>
+        
+    </div>
+</div>
+    
+<div id="footer">
+    <div>
+    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+    </div>
+</div>
+</div>
+</div>
+
+</body>
+</html>
