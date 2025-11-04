@@ -4,7 +4,7 @@
 <head>
 <title>Top Five Usability</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="/oldsite/css/usability.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="../css/usability.css" type="text/css" rel="stylesheet" media="screen" />
 </head>
 
 <body>
@@ -12,7 +12,7 @@
 <div id="container">
 <div id="header">
     <div>
-        <h1><img src="/oldsite/images/topfive.jpg" alt="logo" height="62" width="400"/></h1>
+        <h1><img src="../images/topfive.jpg" alt="logo" height="62" width="400"/></h1>
     </div>
 </div>
     

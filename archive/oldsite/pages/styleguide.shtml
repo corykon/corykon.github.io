@@ -5,7 +5,7 @@
 <title>Style Guide | coryfugate.com</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="../css/screen.css" type="text/css" rel="stylesheet" media="screen" />
 
 </head>
 
@@ -14,15 +14,67 @@
 <div id="container">
 <div id="header">
     <div>
-    <!--#include virtual="/oldsite/modules/header.inc" -->
+    <div>
+        <h5 style="float:right; border-radius: 5px; background-color: #eee; padding: 5px;">This is the old site! <a href="https://coryfugate.com" title="coryfugate.com">Check out the new one &raquo;<a/></h5>
+        <h1><img src="../images/headerlogo.png" width="500" height="55" alt="Logo for coryfugate.com" /></h1>
+        <img src="../images/headerbar.jpg" width="760" height="140" alt="Zoomed in Guitar" />
+    </div>
     </div>
 </div>
 
 
 <div id="nav">
-    <div>
-    <!--#include virtual="/oldsite/modules/nav.inc" -->
-    </div>
+    <dl>
+        <dt><a href ="../index.shtml" id="homenav" title="Homepage @ coryfugate.com">
+            <span>
+            <!--<img src="/images/homenav.png" alt="home" width="85" height="40" />-->
+            Home
+            </span>
+            </a>
+        </dt>
+        <dt><a href="./aboutme.shtml" id="aboutmenav" title="About Me @ coryfugate.com">
+            <span>
+            <!--<img src="/images/aboutmenav.png" alt="about me" width="110" height="40" />-->
+            About Me
+            </span>
+            </a>
+        </dt>
+        <dt><a href="./interests.shtml" id="interestsnav" title="Interests @ coryfugate.com">
+            <span>
+            <!--<img src="/images/interestsnav.png" alt="interests" width="105" height="40" />-->
+            Interests
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="./resume.shtml" id="resumenav" title="Resume @ coryfugate.com">
+            <span>
+            <!--<img src="/images/resumenav.png" alt="resume" width="95" height="40" />-->
+            Resume
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="./portfolio/portfolio.shtml" id="portfolionav" title="Portfolio @ coryfugate.com">
+            <span>
+            <!--<img src="/images/portfolionav.png" alt="portfolio" width="105" height="40" />-->
+            Portfolio
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="./assignments/assignments.shtml" id="assignmentsnav" title="Assignments for CIT 230 class @ coryfugate.com">
+            <span>
+            <!--<img src="/images/assignmentsnav.png" alt="assignments" width="130" height="40" />-->
+            Assignments
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="./contact.php" id="contactmenav" title="Contact Me">
+        <span>
+        <!--<img src="/images/contactmenav.png" alt="contactme" width="130" height="40" />-->
+        Contact Me
+        </span>
+        </a>
+        </dt>
+    </dl>
 </div>
 
 <div id="content">
@@ -84,7 +136,7 @@
     way, and tend lean towards a very simple and clean appearance. Extra divs may be created
     within the content div, but divs outside the main container are not to be created.</p>
     <h2>Logo</h2>
-    <p><img src="/oldsite/images/cflogo.gif" alt="coryfugate.com logo" /></p>
+    <p><img src="../images/cflogo.gif" alt="coryfugate.com logo" /></p>
     <p>The logos filename is cflogo.gif. It is a simple red box with a white lowercase
         cf aligned to the right. It should be seen on everypage and used in a professional
         way.</p>
@@ -96,7 +148,24 @@
 
 <div id="footer">
     <div>
-   <!--#include virtual="/oldsite/modules/footer.inc" -->
+   <a href ="./copyright.shtml" title="View Copyright Information">
+&copy;2010 Cory Fugate, All Rights Reserved.</a>
+<div id="footernav">
+<dl>
+    <dt><a href="mailto:cory.fugate@gmail.com" title="Contact Me">
+     Contact</a></dt>
+    <dt> | <a href="./colophon.shtml" title="View the Colophon for coryfugate.com">
+     Colophon</a></dt>
+    <dt> | <a href="./modularizationplan.shtml" title="View the Modularization Plan for coryfugate.com">
+     Modularization Plan</a></dt>
+    <dt> | <a href="./siteplan.shtml" title="View the Site Plan for coryfugate.com">
+     Site Plan</a></dt>
+     <dt> | <a href="./styleguide.shtml" title="View the Style Guide for coryfugate.com">
+     Style Guide</a> | </dt>
+</dl>
+
+    <a href="http://www.facebook.com/people/Cory-Fugate/100000152284103" title="Cory Fugate">
+      <img src="../images/facebook.png" alt="facebook" /></a>
     </div>
 </div>
 

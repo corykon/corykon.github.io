@@ -24,7 +24,7 @@ absolute- position relative to the window
 body {
         margin: 0;
         padding: 0;
-        background-image: url("/oldsite/images/greyrisingsun.jpg");
+        background-image: url("../images/greyrisingsun.jpg");
         background-repeat: no-repeat;
 }
 
@@ -116,7 +116,7 @@ padding:0;
   padding: 0;
   width: 85px;
   height: 40px;
-  background: url("/oldsite/images/homenav.gif")
+  background: url("../images/homenav.gif")
 }
 
 #aboutmenav,
@@ -127,7 +127,7 @@ padding:0;
   padding: 0;
   width: 110px;
   height: 40px;
-  background: url("/oldsite/images/aboutmenav.gif")
+  background: url("../images/aboutmenav.gif")
 
 }
 
@@ -139,7 +139,7 @@ padding:0;
   padding: 0;
   width: 105px;
   height: 40px;
-  background: url("/oldsite/images/interestsnav.gif")
+  background: url("../images/interestsnav.gif")
 }
 
 #resumenav,
@@ -150,7 +150,7 @@ padding:0;
   padding: 0;
   width: 95px;
   height: 40px;
-  background: url("/oldsite/images/resumenav.gif")
+  background: url("../images/resumenav.gif")
 }
 
 #portfolionav,
@@ -161,7 +161,7 @@ padding:0;
   padding: 0;
   width: 105px;
   height: 40px;
-  background: url("/oldsite/images/portfolionav.gif")
+  background: url("../images/portfolionav.gif")
 }
 
 #assignmentsnav,
@@ -172,7 +172,7 @@ padding:0;
   padding: 0;
   width: 130px;
   height: 40px;
-  background: url("/oldsite/images/assignmentsnav.gif")
+  background: url("../images/assignmentsnav.gif")
 }
 
 #contactmenav,
@@ -183,7 +183,7 @@ padding:0;
   padding: 0;
   width: 130px;
   height: 40px;
-  background: url("/oldsite/images/contactmenav.gif")
+  background: url("../images/contactmenav.gif")
 }
 
 .home #homenav,
@@ -239,7 +239,7 @@ padding:0;
   display: block;
   width: 141px;
   height: 150px;
-  background: url("/oldsite/images/resumeico3.gif")
+  background: url("../images/resumeico3.gif")
 
 }
 
@@ -258,7 +258,7 @@ padding:0;
   display: block;
   width: 140px;
   height: 155px;
-  background: url("/oldsite/images/portfolioico3.gif")
+  background: url("../images/portfolioico3.gif")
 
 }
 

@@ -4,7 +4,7 @@
 <head>
 <title>Crystal Clear Flyer Design | coryfugate.com</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="../../css/screen.css" type="text/css" rel="stylesheet" media="screen" />
 
 <!--embedded style sheet -->
 <style type="text/css">
@@ -54,20 +54,72 @@
 <div id="container">
 <div id="header">
     <div>
-    <!--#include virtual="/oldsite/modules/header.inc" -->
+    <div>
+        <h5 style="float:right; border-radius: 5px; background-color: #eee; padding: 5px;">This is the old site! <a href="https://coryfugate.com" title="coryfugate.com">Check out the new one &raquo;<a/></h5>
+        <h1><img src="../../images/headerlogo.png" width="500" height="55" alt="Logo for coryfugate.com" /></h1>
+        <img src="../../images/headerbar.jpg" width="760" height="140" alt="Zoomed in Guitar" />
+    </div>
     </div>
 </div>
     
 <div id="nav">
-    <div>
-    <!--#include virtual="/oldsite/modules/nav.inc" -->
-    </div>
+    <dl>
+        <dt><a href ="../../index.shtml" id="homenav" title="Homepage @ coryfugate.com">
+            <span>
+            <!--<img src="/images/homenav.png" alt="home" width="85" height="40" />-->
+            Home
+            </span>
+            </a>
+        </dt>
+        <dt><a href="../aboutme.shtml" id="aboutmenav" title="About Me @ coryfugate.com">
+            <span>
+            <!--<img src="/images/aboutmenav.png" alt="about me" width="110" height="40" />-->
+            About Me
+            </span>
+            </a>
+        </dt>
+        <dt><a href="../interests.shtml" id="interestsnav" title="Interests @ coryfugate.com">
+            <span>
+            <!--<img src="/images/interestsnav.png" alt="interests" width="105" height="40" />-->
+            Interests
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="../resume.shtml" id="resumenav" title="Resume @ coryfugate.com">
+            <span>
+            <!--<img src="/images/resumenav.png" alt="resume" width="95" height="40" />-->
+            Resume
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="../portfolio/portfolio.shtml" id="portfolionav" title="Portfolio @ coryfugate.com">
+            <span>
+            <!--<img src="/images/portfolionav.png" alt="portfolio" width="105" height="40" />-->
+            Portfolio
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="../assignments/assignments.shtml" id="assignmentsnav" title="Assignments for CIT 230 class @ coryfugate.com">
+            <span>
+            <!--<img src="/images/assignmentsnav.png" alt="assignments" width="130" height="40" />-->
+            Assignments
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="mailto:cory.fugate@gmail.com" id="contactmenav" title="Contact Me">
+        <span>
+        <!--<img src="/images/contactmenav.png" alt="contactme" width="130" height="40" />-->
+        Contact Me
+        </span>
+        </a>
+        </dt>
+    </dl>
 </div>
 
 <div id="content">
     <div>
         <h1>Flyer Design- Crystal Clear Window Washing</h1>
-         <img src="/oldsite/images/crystalclearthumb2.jpg" alt="Window Washing Flyer" align="middle" height="40" width="40" />
+         <img src="../../images/crystalclearthumb2.jpg" alt="Window Washing Flyer" align="middle" height="40" width="40" />
         <br /><br />
          <p>This project was for extra credit in my Visual Media class. It was designed
          for a couple of my roomates who are starting a window washing business in the
@@ -78,43 +130,60 @@
          a paint brush.</p>
         <p>Below are links to view PDF versions of the flyer and business card.</p>
         <p>
-            <a href ="/oldsite/files/crystalclear.pdf" target="_blank" alt="view pdf of crystal clear poster">View PDF version of CrystalClear Poster</a><br />
-            <a href ="/oldsite/files/crystalclearbusinesscard.pdf" target="_blank" alt="view pdf of crystal clear business card">View PDF version of CrystalClear Business Card</a><br />
+            <a href ="../../files/crystalclear.pdf" target="_blank" alt="view pdf of crystal clear poster">View PDF version of CrystalClear Poster</a><br />
+            <a href ="../../files/crystalclearbusinesscard.pdf" target="_blank" alt="view pdf of crystal clear business card">View PDF version of CrystalClear Business Card</a><br />
         </p>
         <hr />
         <div id="portnav">
             
              
-         <a href="/oldsite/pages/portfolio/flyerdesign.shtml" title="view logos, letterhead and business card">
-        <img src ="/oldsite/images/leadershipflyerthumb2.jpg" alt="Leadership Flyer" height="40" width="40" /></a>
-        <a href="/oldsite/pages/portfolio/logodesign.shtml" title="view logos, letterhead and business card">
-        <img src ="/oldsite/images/logothumb2.jpg" alt="Logo Design" height="40" width="40" /></a>
-           <a href="/oldsite/pages/portfolio/montagedesign.shtml" title="view montage created with photoshop">
-        <img src ="/oldsite/images/montagethumb2.jpg" alt="Montage" height="40" width="40" /></a>
-           <a href="/oldsite/pages/portfolio/photoediting.shtml" title="view photo editing">
-        <img src ="/oldsite/images/photoeditingthumb2.jpg" alt="Photo Editing" height="40" width="40" /></a>
-          <a href="/oldsite/pages/portfolio/brochuredesign.shtml" title="view brochure design">
-        <img src ="/oldsite/images/moviebrochurethumb2.jpg" alt="Brochure Design" height="40" width="40" /></a>
-        <a href="/oldsite/pages/portfolio/creativewriting.shtml" title="view creative writing sample">
-        <img src ="/oldsite/images/creativewritingthumb2.jpg" alt="Creative Writing" height="40" width="40" /></a>
-        <a href="/oldsite/pages/portfolio/webdesign.shtml" title="view website design">
-        <img src ="/oldsite/images/websitethumb2.jpg" alt="Website Design" height="40" width="40"/></a>
+         <a href="../../pages/portfolio/flyerdesign.shtml" title="view logos, letterhead and business card">
+        <img src ="../../images/leadershipflyerthumb2.jpg" alt="Leadership Flyer" height="40" width="40" /></a>
+        <a href="../../pages/portfolio/logodesign.shtml" title="view logos, letterhead and business card">
+        <img src ="../../images/logothumb2.jpg" alt="Logo Design" height="40" width="40" /></a>
+           <a href="../../pages/portfolio/montagedesign.shtml" title="view montage created with photoshop">
+        <img src ="../../images/montagethumb2.jpg" alt="Montage" height="40" width="40" /></a>
+           <a href="../../pages/portfolio/photoediting.shtml" title="view photo editing">
+        <img src ="../../images/photoeditingthumb2.jpg" alt="Photo Editing" height="40" width="40" /></a>
+          <a href="../../pages/portfolio/brochuredesign.shtml" title="view brochure design">
+        <img src ="../../images/moviebrochurethumb2.jpg" alt="Brochure Design" height="40" width="40" /></a>
+        <a href="../../pages/portfolio/creativewriting.shtml" title="view creative writing sample">
+        <img src ="../../images/creativewritingthumb2.jpg" alt="Creative Writing" height="40" width="40" /></a>
+        <a href="../../pages/portfolio/webdesign.shtml" title="view website design">
+        <img src ="../../images/websitethumb2.jpg" alt="Website Design" height="40" width="40"/></a>
         
-        <img src ="/oldsite/images/crystalclearthumb2.jpg" alt="Flyer Design" height="40" width="40" id="current"/>
-        <a href="/oldsite/pages/portfolio/promomanager.shtml" title="view promotions created for BYU-Idaho">
-        <img src ="/oldsite/images/promomanagerthumbmini.jpg" alt="Promotions Manager" height="40" width="40" /></a>
+        <img src ="../../images/crystalclearthumb2.jpg" alt="Flyer Design" height="40" width="40" id="current"/>
+        <a href="../../pages/portfolio/promomanager.shtml" title="view promotions created for BYU-Idaho">
+        <img src ="../../images/promomanagerthumbmini.jpg" alt="Promotions Manager" height="40" width="40" /></a>
 
 
         </div>
         
-        <a href="/oldsite/pages/portfolio/portfolio.shtml" title="Back to Portfolio Main" id="back">&#60; Back to Portfolio Main </a>
+        <a href="../../pages/portfolio/portfolio.shtml" title="Back to Portfolio Main" id="back">&#60; Back to Portfolio Main </a>
         
     </div>
 </div>
     
 <div id="footer">
     <div>
-    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    <a href ="../../pages/copyright.shtml" title="View Copyright Information">
+&copy;2010 Cory Fugate, All Rights Reserved.</a>
+<div id="footernav">
+<dl>
+    <dt><a href="mailto:cory.fugate@gmail.com" title="Contact Me">
+     Contact</a></dt>
+    <dt> | <a href="../../pages/colophon.shtml" title="View the Colophon for coryfugate.com">
+     Colophon</a></dt>
+    <dt> | <a href="../../pages/modularizationplan.shtml" title="View the Modularization Plan for coryfugate.com">
+     Modularization Plan</a></dt>
+    <dt> | <a href="../../pages/siteplan.shtml" title="View the Site Plan for coryfugate.com">
+     Site Plan</a></dt>
+     <dt> | <a href="../../pages/styleguide.shtml" title="View the Style Guide for coryfugate.com">
+     Style Guide</a> | </dt>
+</dl>
+
+    <a href="http://www.facebook.com/people/Cory-Fugate/100000152284103" title="Cory Fugate">
+      <img src="../../images/facebook.png" alt="facebook" /></a>
     </div>
 </div>
 </div>

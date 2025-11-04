@@ -52,7 +52,7 @@ if($_POST['btnMessage']){
 <head>
 <title>Contact | coryfugate.com</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="../css/screen.css" type="text/css" rel="stylesheet" media="screen" />
 </head>
 
 <body class="contactme">

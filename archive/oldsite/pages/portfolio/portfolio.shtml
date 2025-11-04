@@ -4,7 +4,7 @@
 <head>
 <title>Portfolio | coryfugate.com</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="/oldsite/css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="../../css/screen.css" type="text/css" rel="stylesheet" media="screen" />
 
 <meta name="description" content="Cory Fugate's online portfolio. Examples of visual media
             design and creative writing." />
@@ -36,14 +36,66 @@
 <div id="container">
 <div id="header">
     <div>
-    <!--#include virtual="/oldsite/modules/header.inc" -->
+    <div>
+        <h5 style="float:right; border-radius: 5px; background-color: #eee; padding: 5px;">This is the old site! <a href="https://coryfugate.com" title="coryfugate.com">Check out the new one &raquo;<a/></h5>
+        <h1><img src="../../images/headerlogo.png" width="500" height="55" alt="Logo for coryfugate.com" /></h1>
+        <img src="../../images/headerbar.jpg" width="760" height="140" alt="Zoomed in Guitar" />
+    </div>
     </div>
 </div>
     
 <div id="nav">
-    <div>
-    <!--#include virtual="/oldsite/modules/nav.inc" -->
-    </div>
+    <dl>
+        <dt><a href ="../../index.shtml" id="homenav" title="Homepage @ coryfugate.com">
+            <span>
+            <!--<img src="/images/homenav.png" alt="home" width="85" height="40" />-->
+            Home
+            </span>
+            </a>
+        </dt>
+        <dt><a href="../aboutme.shtml" id="aboutmenav" title="About Me @ coryfugate.com">
+            <span>
+            <!--<img src="/images/aboutmenav.png" alt="about me" width="110" height="40" />-->
+            About Me
+            </span>
+            </a>
+        </dt>
+        <dt><a href="../interests.shtml" id="interestsnav" title="Interests @ coryfugate.com">
+            <span>
+            <!--<img src="/images/interestsnav.png" alt="interests" width="105" height="40" />-->
+            Interests
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="../resume.shtml" id="resumenav" title="Resume @ coryfugate.com">
+            <span>
+            <!--<img src="/images/resumenav.png" alt="resume" width="95" height="40" />-->
+            Resume
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="../portfolio/portfolio.shtml" id="portfolionav" title="Portfolio @ coryfugate.com">
+            <span>
+            <!--<img src="/images/portfolionav.png" alt="portfolio" width="105" height="40" />-->
+            Portfolio
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="../assignments/assignments.shtml" id="assignmentsnav" title="Assignments for CIT 230 class @ coryfugate.com">
+            <span>
+            <!--<img src="/images/assignmentsnav.png" alt="assignments" width="130" height="40" />-->
+            Assignments
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="mailto:cory.fugate@gmail.com" id="contactmenav" title="Contact Me">
+        <span>
+        <!--<img src="/images/contactmenav.png" alt="contactme" width="130" height="40" />-->
+        Contact Me
+        </span>
+        </a>
+        </dt>
+    </dl>
 </div>
 
 <div id="content">
@@ -52,27 +104,27 @@
         <p>Click on a thumbnail below to view samples of work created for my Visual Media and
             Creative Writing classes during the Winter 2010 semester. Also included are samples of
             promotions created for on campus events at BYU-I, where I volunteer as a promotions manager for the
-            <a href="/oldsite/pages/portfolio/promomanager.shtml" title="view promotions created for events @ BYU-I">BYU-I SocialBoard.</a></p>
-        <a href="/oldsite/pages/portfolio/flyerdesign.shtml" title="view a flyer created with Adbobe InDesign">
-        <img src ="/oldsite/images/leadershipflyerthumb.jpg" alt="Leadership Flyer" /></a>
-        <a href="/oldsite/pages/portfolio/logodesign.shtml" title="view logos, letterhead and business card">
-        <img src ="/oldsite/images/logothumb.jpg" alt="Logo Design" /></a>
-        <a href="/oldsite/pages/portfolio/montagedesign.shtml" title="view montage created with photoshop">
-        <img src ="/oldsite/images/montagethumb.jpg" alt="Montage" /></a> <br />
+            <a href="../../pages/portfolio/promomanager.shtml" title="view promotions created for events @ BYU-I">BYU-I SocialBoard.</a></p>
+        <a href="../../pages/portfolio/flyerdesign.shtml" title="view a flyer created with Adbobe InDesign">
+        <img src ="../../images/leadershipflyerthumb.jpg" alt="Leadership Flyer" /></a>
+        <a href="../../pages/portfolio/logodesign.shtml" title="view logos, letterhead and business card">
+        <img src ="../../images/logothumb.jpg" alt="Logo Design" /></a>
+        <a href="../../pages/portfolio/montagedesign.shtml" title="view montage created with photoshop">
+        <img src ="../../images/montagethumb.jpg" alt="Montage" /></a> <br />
 
-        <a href="/oldsite/pages/portfolio/photoediting.shtml" title="view photo editing">
-        <img src ="/oldsite/images/photoeditingthumb.jpg" alt="Photo Editing" /></a>
-        <a href="/oldsite/pages/portfolio/brochuredesign.shtml" title="view brochure design">
-        <img src ="/oldsite/images/moviebrochurethumb.jpg" alt="Brochure Design" /></a>
-        <a href="/oldsite/pages/portfolio/creativewriting.shtml" title="view creative writing sample">
-        <img src ="/oldsite/images/creativewritingthumb.jpg" alt="Creative Writing" /></a> <br />
+        <a href="../../pages/portfolio/photoediting.shtml" title="view photo editing">
+        <img src ="../../images/photoeditingthumb.jpg" alt="Photo Editing" /></a>
+        <a href="../../pages/portfolio/brochuredesign.shtml" title="view brochure design">
+        <img src ="../../images/moviebrochurethumb.jpg" alt="Brochure Design" /></a>
+        <a href="../../pages/portfolio/creativewriting.shtml" title="view creative writing sample">
+        <img src ="../../images/creativewritingthumb.jpg" alt="Creative Writing" /></a> <br />
 
-        <a href="/oldsite/pages/portfolio/webdesign.shtml" title="view web design example">
-        <img src ="/oldsite/images/websitethumb.jpg" alt="Web Design" /></a>
-        <a href="/oldsite/pages/portfolio/crystalclear.shtml" title="view flyer design">
-        <img src ="/oldsite/images/crystalclearthumb.jpg" alt="Flyer Design" /></a>
-        <a href="/oldsite/pages/portfolio/promomanager.shtml" title="view promotions created for events @ BYU-I">
-        <img src ="/oldsite/images/promomanagerthumb.jpg" alt="Promotions for BYU-Idaho" /></a> <br />
+        <a href="../../pages/portfolio/webdesign.shtml" title="view web design example">
+        <img src ="../../images/websitethumb.jpg" alt="Web Design" /></a>
+        <a href="../../pages/portfolio/crystalclear.shtml" title="view flyer design">
+        <img src ="../../images/crystalclearthumb.jpg" alt="Flyer Design" /></a>
+        <a href="../../pages/portfolio/promomanager.shtml" title="view promotions created for events @ BYU-I">
+        <img src ="../../images/promomanagerthumb.jpg" alt="Promotions for BYU-Idaho" /></a> <br />
 
         
 
@@ -82,7 +134,24 @@
     
 <div id="footer">
     <div>
-    <!--#include virtual="/oldsite/modules/footer.inc" -->
+    <a href ="../../pages/copyright.shtml" title="View Copyright Information">
+&copy;2010 Cory Fugate, All Rights Reserved.</a>
+<div id="footernav">
+<dl>
+    <dt><a href="mailto:cory.fugate@gmail.com" title="Contact Me">
+     Contact</a></dt>
+    <dt> | <a href="../../pages/colophon.shtml" title="View the Colophon for coryfugate.com">
+     Colophon</a></dt>
+    <dt> | <a href="../../pages/modularizationplan.shtml" title="View the Modularization Plan for coryfugate.com">
+     Modularization Plan</a></dt>
+    <dt> | <a href="../../pages/siteplan.shtml" title="View the Site Plan for coryfugate.com">
+     Site Plan</a></dt>
+     <dt> | <a href="../../pages/styleguide.shtml" title="View the Style Guide for coryfugate.com">
+     Style Guide</a> | </dt>
+</dl>
+
+    <a href="http://www.facebook.com/people/Cory-Fugate/100000152284103" title="Cory Fugate">
+      <img src="../../images/facebook.png" alt="facebook" /></a>
     </div>
 </div>
 </div>
