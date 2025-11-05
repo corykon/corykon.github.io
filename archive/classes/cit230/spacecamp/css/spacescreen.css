@@ -10,7 +10,7 @@ body {
         position: relative;
         margin: 0;
         padding: 0;
-        background-image: url("/classes/cit230/spacecamp/images/spacebg.jpg");
+        background-image: url("../images/spacebg.jpg");
         font-family: Georgia, 'Times New Roman', serif;
 	font-size: 12px;
 	color: #292421;
@@ -35,7 +35,7 @@ h6 {
     margin: auto;
 
         top: 20px;
-    background-image: url("/classes/cit230/spacecamp/images/metaltexture1.gif");
+    background-image: url("../images/metaltexture1.gif");
     border: 2px solid #F26522;
     border-radius: 10px;
     -moz-border-radius: 10px;
@@ -66,7 +66,7 @@ h6 {
     
     top: 100px;
     height: 26px;
-    background-image: url("/classes/cit230/spacecamp/images/metaltexture2.jpg");
+    background-image: url("../images/metaltexture2.jpg");
     margin: 0;
     padding-top: 14px;
     
@@ -104,7 +104,7 @@ h6 {
 
 #activitiesnav2 {
     padding: 20px;
-    background-image: url('/classes/cit230/spacecamp/images/metaltexture5.jpg');
+    background-image: url('../images/metaltexture5.jpg');
     color: #000000;
     line-height: 20px;
 }
@@ -186,7 +186,7 @@ padding:0;
     padding: 12px 20px 12px 20px;
 
 	line-height: 12px;
-    background-image: url('/classes/cit230/spacecamp/images/metaltexture1.jpg');
+    background-image: url('../images/metaltexture1.jpg');
 
 
 }

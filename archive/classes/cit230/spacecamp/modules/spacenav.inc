@@ -1,23 +1,23 @@
 <dl>
-    <dt><a href ="/classes/cit230/spacecamp/index.shtml" id="homenav" title="Homepage @ Space Camp">
+    <dt><a href ="index.html" id="homenav" title="Homepage @ Space Camp">
 
-            <img src="/classes/cit230/spacecamp/images/homenav.png" alt="Home" />
+            <img src="images/homenav.png" alt="Home" />
         </a>
     </dt>
-    <dt><a href ="/classes/cit230/spacecamp/pages/activities/activities.shtml" id="activitiesnav" title="Activities @ Space Camp">
-        <img src="/classes/cit230/spacecamp/images/activitiesnav.png" alt="Activities" />
+    <dt><a href ="pages/activities/activities.html" id="activitiesnav" title="Activities @ Space Camp">
+        <img src="images/activitiesnav.png" alt="Activities" />
         </a>
     </dt>
-    <dt><a href ="/classes/cit230/spacecamp/pages/qualifications.shtml" id="qualificationsnav" title="How do you qualify? @ Space Camp">
-        <img src="/classes/cit230/spacecamp/images/qualificationsnav.png" alt="Qualifications" />
+    <dt><a href ="pages/qualifications.html" id="qualificationsnav" title="How do you qualify? @ Space Camp">
+        <img src="images/qualificationsnav.png" alt="Qualifications" />
         </a>
     </dt>
-    <dt><a href ="/classes/cit230/spacecamp/pages/staff.shtml" id="staffnav" title="Staff @ Space Camp">
-        <img src="/classes/cit230/spacecamp/images/staffnav.png" alt="Staff" />
+    <dt><a href ="pages/staff.html" id="staffnav" title="Staff @ Space Camp">
+        <img src="images/staffnav.png" alt="Staff" />
         </a>
     </dt>
-    <dt><a href ="/classes/cit230/spacecamp/pages/contact.php" id="contactnav" title="Contact us">
-        <img src="/classes/cit230/spacecamp/images/contactnav.png" alt="Contact" />
+    <dt><a href ="pages/contact.php" id="contactnav" title="Contact us">
+        <img src="images/contactnav.png" alt="Contact" />
         </a>
     </dt>
 </dl>

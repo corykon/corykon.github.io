@@ -4,7 +4,8 @@
 <head>
 <title>Zero-Gravity Training | Space Camp</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="../../css/spacescreen2.css" type="text/css" rel="stylesheet" media="screen" />
+<script src="../../js/smart-components.js"></script>
 
 <!--embedded style sheet -->
 <style type="text/css">
@@ -32,15 +33,14 @@
 <div id="container">
 <div id="header">
     <div>
-        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
-    
+        <space-header></space-header>
     </div>
 </div>
     
 
 <div id="nav">
     <div id="nav2">
-    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+        <space-nav></space-nav>
     </div>
 </div>
 
@@ -48,8 +48,8 @@
 <div id="centercontainer">
 <div id="leftside">
     <div id="activitiesnav2">
-        <!--#include virtual="/classes/cit230/spacecamp/modules/activitiesnav.inc" -->
-          <img src="/classes/cit230/spacecamp/images/zerogravity.jpg" alt="Zero Gravity Flight" width="205" height="215" />
+        <activities-nav></activities-nav>
+          <img src="../../images/zerogravity.jpg" alt="Zero Gravity Flight" width="205" height="215" />
 </div>
 </div>
 
@@ -65,9 +65,9 @@
            Exploration</strong> activities, and so it is only available to those over
            the age of 16.</p>
        <br />
-       <img src="/classes/cit230/spacecamp/images/zerogravity2.jpg" class="centeredImage" width="241" height="175" alt="Zero-Gravity Flight" />
+       <img src="../../images/zerogravity2.jpg" class="centeredImage" width="241" height="175" alt="Zero-Gravity Flight" />
        <br /><br />
-       <a href ="/classes/cit230/spacecamp/pages/activities/activities.shtml" id="miniLink" title="Back to Activities Main">
+       <a href ="activities.html" id="miniLink" title="Back to Activities Main">
            Back to Activities Main
        </a>
         
@@ -76,7 +76,7 @@
     
 <div id="footer">
     <div>
-    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+        <space-footer></space-footer>
     </div>
 </div>
 </div>

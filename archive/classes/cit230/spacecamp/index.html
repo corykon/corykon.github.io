@@ -4,7 +4,8 @@
 <head>
 <title>Home | Space Camp</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="/classes/cit230/spacecamp/css/spacescreen.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="css/spacescreen2.css" type="text/css" rel="stylesheet" media="screen" />
+<script src="js/smart-components.js"></script>
 <!--embedded style sheet -->
 <style type="text/css">
 
@@ -41,15 +42,14 @@
 <div id="container">
 <div id="header">
     <div>
-        <!--#include virtual="/classes/cit230/spacecamp/modules/spaceheader.inc" -->
-    
+        <space-header></space-header>
     </div>
 </div>
     
 
 <div id="nav">
     <div id="nav2">
-    <!--#include virtual="/classes/cit230/spacecamp/modules/spacenav.inc" -->
+        <space-nav></space-nav>
     </div>
 </div>
 
@@ -57,7 +57,7 @@
 <div id="centercontainer">
 <div id="leftside">
     <div>
-        <img src="/classes/cit230/spacecamp/images/boyastronaut.jpg" alt="Little Astronaut" width="500" height="310" />
+        <img src="images/boyastronaut.jpg" alt="Little Astronaut" width="500" height="310" />
     </div>
 </div>
 
@@ -75,7 +75,7 @@
     
 <div id="footer">
     <div>
-    <!--#include virtual="/classes/cit230/spacecamp/modules/spacefooter.inc" -->
+        <space-footer></space-footer>
     </div>
 </div>
 </div>
