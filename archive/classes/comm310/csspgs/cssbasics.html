@@ -4,13 +4,14 @@
         <meta charset="UTF-8">
         <title>CSS Basics | COMM310 Guide</title>
         <link rel ="stylesheet" href="../css/comm310style.css" />
+        <script src="../js/components.js"></script>
     </head>
 
     <body>
 
         <div id="header">
-            <!--#include virtual="../modules/comm310header.inc" -->
-            <!--#include virtual="../modules/comm310nav.inc" -->
+            <comm310-header></comm310-header>
+            <comm310-nav></comm310-nav>
         </div>
 
         <div id="content">
@@ -43,14 +44,13 @@ p {text-size: 1em;}
             <p>The first type of CSS selector is an HTML selector. This... </p>
             -->
 
-            <p><a href="index.shtml" title="CSS | coryfugate.com">Back to CSS index</a></p>
+            <p><a href="index.html" title="CSS | coryfugate.com">Back to CSS index</a></p>
 
 
 
         </div>
 
-        <!--#include virtual="../modules/comm310footer.inc" -->
+        <comm310-footer></comm310-footer>
 
     </body>
 </html>
-

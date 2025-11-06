@@ -4,13 +4,14 @@
         <meta charset="UTF-8">
         <title>Styling Text with CSS | COMM310 Guide</title>
         <link rel ="stylesheet" href="../css/comm310style.css" />
+        <script src="../js/components.js"></script>
     </head>
 
     <body>
 
         <div id="header">
-            <!--#include virtual="../modules/comm310header.inc" -->
-            <!--#include virtual="../modules/comm310nav.inc" -->
+            <comm310-header></comm310-header>
+            <comm310-nav></comm310-nav>
         </div>
 
         <div id="content">
@@ -104,14 +105,13 @@ h1 {
 
             <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
 
-            <p><a href="index.shtml" title="CSS | coryfugate.com">Back to CSS index</a></p>
+            <p><a href="index.html" title="CSS | coryfugate.com">Back to CSS index</a></p>
 
 
 
         </div>
 
-        <!--#include virtual="../modules/comm310footer.inc" -->
+        <comm310-footer></comm310-footer>
 
     </body>
 </html>
-

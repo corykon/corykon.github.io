@@ -4,13 +4,14 @@
         <meta charset="UTF-8">
         <title>Home | COMM310 Guide</title>
         <link rel ="stylesheet" href="css/comm310style.css" />
+        <script src="js/components.js"></script>
     </head>
 
     <body>
         
         <div id="header">
-            <!--#include virtual="modules/comm310header.inc" -->
-            <!--#include virtual="modules/comm310nav.inc" -->
+            <comm310-header></comm310-header>
+            <comm310-nav></comm310-nav>
         </div>
     
         <div id="content">
@@ -24,7 +25,7 @@
             <div id="content2"><p><img src="images/coolmac.jpg" alt="A cool mac setup" width="468" height="392" /></p></div>
         </div>
 
-        <!--#include virtual="modules/comm310footer.inc" -->
+        <comm310-footer></comm310-footer>
         
     </body>
 </html>

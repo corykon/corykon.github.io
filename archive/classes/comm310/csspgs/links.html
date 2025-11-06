@@ -4,18 +4,19 @@
         <meta charset="UTF-8">
         <title>Styling Links with CSS | COMM310 Guide</title>
         <link rel ="stylesheet" href="../css/comm310style.css" />
+        <script src="../js/components.js"></script>
     </head>
 
     <body>
 
         <div id="header">
-            <!--#include virtual="../modules/comm310header.inc" -->
-            <!--#include virtual="../modules/comm310nav.inc" -->
+            <comm310-header></comm310-header>
+            <comm310-nav></comm310-nav>
         </div>
 
         <div id="content">
             <h2>Styling Links with CSS</h2>
-            <p>Hyperlinks can be style by the same css properties explained in the <a href="text.shtml" title="Styling Text wit CSS">
+            <p>Hyperlinks can be style by the same css properties explained in the <a href="text.html" title="Styling Text wit CSS">
                     text</a> section, but there are a few points specific to hyperlinks that I'd like to explain here.
                     First of all, you need to be aware that the css styling of font-color applied to a paragraph
                     will not apply to the hyperlinks within that paragraph, because by default hyperlinks are blue. Similarly,
@@ -70,14 +71,13 @@ a:visited {
 
 </code></pre>
            
-            <p><a href="index.shtml" title="CSS | coryfugate.com">Back to CSS index</a></p>
+            <p><a href="index.html" title="CSS | coryfugate.com">Back to CSS index</a></p>
 
 
 
         </div>
 
-        <!--#include virtual="../modules/comm310footer.inc" -->
+        <comm310-footer></comm310-footer>
 
     </body>
 </html>
-

@@ -4,13 +4,14 @@
         <meta charset="UTF-8">
         <title>HTML | COMM310 Guide</title>
         <link rel ="stylesheet" href="../css/comm310style.css" />
+        <script src="../js/components.js"></script>
     </head>
 
     <body>
         
         <div id="header">
-            <!--#include virtual="../modules/comm310header.inc" -->
-            <!--#include virtual="../modules/comm310nav.inc" -->
+            <comm310-header></comm310-header>
+            <comm310-nav></comm310-nav>
         </div>
     
         <div id="content">
@@ -35,13 +36,13 @@
             <h3>Tutorials</h3>
             <p>Following are links to tutorials for some of the HTML concepts and code we have learned:</p>
             <ul>
-                <li><a href="htmlbasics.shtml" title ="HTML basics | CIT330 GUIDE">HTML basics</a></li>
-                <li><a href="text.shtml" title ="HTML Links | CIT330 GUIDE">Text</a></li>
-                <li><a href="links.shtml" title ="HTML Images | CIT330 GUIDE">Links</a></li>
+                <li><a href="htmlbasics.html" title ="HTML basics | CIT330 GUIDE">HTML basics</a></li>
+                <li><a href="text.html" title ="HTML Links | CIT330 GUIDE">Text</a></li>
+                <li><a href="links.html" title ="HTML Images | CIT330 GUIDE">Links</a></li>
             </ul>
 
         </div>
-       <!--#include virtual="../modules/comm310footer.inc" -->
+       <comm310-footer></comm310-footer>
     
         
     </body>

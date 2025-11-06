@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+         <title>PHP Primer | COMM310 Guide</title>
+        <link rel ="stylesheet" href="../css/comm310style.css" />
+        <script src="../js/components.js"></script>
+    </head>
+
+    <body>
+
+        <div id="header">
+            <comm310-header></comm310-header>
+            <comm310-nav></comm310-nav>
+        </div>
+
+        <div id="content">
+        <h2 id="top">PHP Primer</h2>
+        <p>This page covers some of the basics of the PHP scripting language, and is primarily to be
+           used as a reference for PHP syntax. Click on any of the following links to quickly reference
+           what you need, or read it all top to bottom to get a fairly thorough
+           rundown of the basics.</p>
+
+        <ul>
+            <li><a href="#intro" title="PHP Intro">Intro</a></li>
+            <li><a href="#howtocode" title="How to Code PHP">How to Code</a>
+                <ul>
+                    <li><a href="#basics" title="PHP basics">Basics</a></li>
+                    <li><a href="#variables" title="PHP Variables">Variables</a></li>
+                    <li><a href="#strings" title="PHP Strings">Strings</a></li>
+                    <li><a href="#arraysN" title="PHP Numeric Arrays">Arrays (Numeric)</a></li>
+                    <li><a href="#arraysA" title="PHP Associative Arrays">Arrays (Associative)</a></li>
+                    <li><a href="#arraysM" title="PHP Multidimensional Arrays">Arrays (Multidimensional)</a></li>
+                    <li><a href="#operators" title="PHP Operators">Operators</a></li>
+                    <li><a href="#operatorsC" title="PHP Comparison Operators">Operators (Comparison)</a></li>
+                    <li><a href="#operatorsL" title="PHP Logical Operators">Operators (Logical)</a></li>
+                    <li><a href="#conditional" title="PHP Conditional Statements">Conditional Statements</a></li>
+                    <li><a href="#loops" title="PHP Loops">Loops</a></li>
+                </ul>
+            <li><a href="#final" title="Last words on PHP...">Final Thoughts/Sources</a></li>
+        </ul>
+
+        <h3 id="intro">Intro</h3>
+        <p><strong>So, what is PHP?</strong> It's an open-source scripting language. <em>Open source</em>
+        means that the materials used to create the language are completely free and open to the
+        public, and <em>scripting</em> means it's a language that does not need to be precompiled to work;
+        the code is just <q cite="http://www.webmonkey.com/2010/02/php_tutorial_for_beginners/">
+        processed on the fly as necessary.</q></p>
+        <p><strong>What does PHP do?</strong> It's used for the <strong>dynamic</strong> aspects of
+        your website, the things that allow the user to really interact with the page. It can grab
+        information that the user inputs into forms and use it in lots of various ways, it can
+        change the look of a page based on the person viewing it, or even just based on the browser
+        being used. Things such as blogs or discussions threads often use PHP to store and display
+        user comments on a page.</p>
+        <p>I think it is also important to note that PHP code is executed by a server, not by your
+        browser. For this reason, when you are testing a PHP page on your local machine, you'll end
+        up with a blank page if you try simply loading it up on a browser. You must be running a server on
+        your computer, such as Apache, in order for the PHP statements to be executed. Most all hosts
+        have some type of server running to interpret PHP</p>
+
+        <h3 id="howtocode">How to Code</h3>
+        <h4 id="basics">PHP Basics (code block, comments)</h4>
+        <p>We'll start with how to begin and close a block of PHP code, and how to add
+        comment to the code. Similar to html and javascript, PHP needs to be contained within
+        an opening and closing "tag". Also comments can be used, which will be ignored by the server executing
+        the code. Here is what this looks like:</p>
+        <pre><code>
+&lt;?php
+
+    // This is a single line php comment
+
+    #  This is also a single line comment
+
+    /* This is a multiple
+
+    *  line comment
+
+    */
+&gt;</code></pre>
+
+        <p><em>Remember:</em> The opening
+        and closing PHP "tags" must be exactly as displayed above, otherwise it will not be recognized
+        as PHP. Also, be sure that the multi-line comment is closed, otherwise all the code located
+        after the comment will be ignored.<br>
+        Source: <a href="http://www.webmonkey.com/2010/02/php_tutorial_for_beginners/" title ="WebMonkey's PHP tutorial">
+            WebMonkey's PHP tutorial</a> and previous knowledge</p>
+        <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
+        
+
+        <h4 id="variables">Variables</h4>
+        <p>A variable is used to hold a value, kind of like a storage container, whether it be numbers,
+            text, or boolean values. In many programming languages a variable type must be declared,
+            but in PHP this is not necessary. Here is an example of the syntax for variables:</p>
+        <pre><code>
+&lt;?php
+
+    $var = 'This is a variable';
+
+    $another_var = 'This is another variable';
+
+    echo '$var';
+
+    // Will output:
+    // This is a variable
+
+?&gt;</code></pre>
+
+        <p><em>Remember:</em> All variable names must start with a dollar sign ($), be one word
+        (underscores can be used to separate multiple words), and no keywords can be used as
+        variable names.<br>
+        Source: <a href="http://www.webmonkey.com/2010/02/php_tutorial_for_beginners/" title ="WebMonkey's PHP tutorial">
+            WebMonkey's PHP tutorial</a> and previous knowledge</p>
+        <p class="totop"><a href="#top" title="To top of page">Back to Top</a></p>
+
+        <p><a href="index.html" title="PHP | coryfugate.com">Back to PHP index</a></p>
+
+        </div>
+
+        <comm310-footer></comm310-footer>
+    
+    </body>
+</html>
