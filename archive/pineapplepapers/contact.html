@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>:: Pineapple Papers :: Contact</title>
+        <link rel="stylesheet" href="css/style.css" media="screen">
+        <meta name="description" content="Contact Pineapple Papers via email with you questions, comments, and suggestions." />
+        <meta name="keywords" content="wedding, greeting, print, stationery, DIY, blog" />
+        <script src="js/header.js"></script>
+        <script src="js/nav.js"></script>
+        <script src="js/footer.js"></script>
+    </head>
+
+    <body class="contact">
+
+        <div id="container">
+            <header>
+                <div>
+                    <pp-header></pp-header>
+                    <pp-nav></pp-nav>
+                </div>
+            </header>
+
+            <div id="content">
+                <h1>contact</h1>
+                <img src="images/bigpineapple.gif" alt="Pineapple Paper's Logo" height="350px" width="289px" class="bigpineapple"/>
+                <p id="haveaq"><span>Have a question, comment, or suggestion?</span></p>
+                <h2 id="letshearit"><span>Let's hear it.</span></h2>
+                <form method="post" action="#" id="contactform" onsubmit="handleFormSubmit(event)">
+                    <fieldset>    
+                        <ul>    
+                            <li><label for="name">Name:</label><input type="text" name="name" id="name" size="45" required placeholder="Type first name">
+                            </li>
+                            <li><label for="contactemail">Email:</label><input type="email" name="contactemail" id="contactemail" size="45" required placeholder="Type email address">
+                            </li>
+                            <li><label for="subject">Subject:</label><input type="text" name="subject" id="subject" size="45" required placeholder="Type subject">
+                            </li>
+                            <li><label for="message" id="msglabel">Message:</label><textarea name="message" id="message" cols="40" rows="10" required placeholder="Type your message here."></textarea>
+                            </li>
+                                                                                                         
+                            <li><label for="submit">&nbsp;</label><input type="submit" name="submit" id="submit" value="Send Message"></li>                                         
+                         </ul>                                         
+                     </fieldset>                                         
+                 </form>
+                 
+                 <div id="form-message" style="display: none; padding: 10px; margin: 10px 0; border-radius: 5px;"></div>
+             </div>
+
+            <pp-footer></pp-footer>
+
+        </div>
+
+        <script>
+            function handleFormSubmit(event) {
+                event.preventDefault();
+                
+                // Get form data
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('contactemail').value;
+                const subject = document.getElementById('subject').value;
+                const message = document.getElementById('message').value;
+                
+                // Simple client-side validation
+                if (!name || !email || !subject || !message) {
+                    showMessage('Please fill in all fields.', 'error');
+                    return;
+                }
+                
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showMessage('Please enter a valid email address.', 'error');
+                    return;
+                }
+                
+                // Create mailto link (since this is now static HTML)
+                const mailtoLink = `mailto:ckfugate@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+                    `From: ${name} (${email})\n\nMessage:\n${message}`
+                )}`;
+                
+                // Open email client
+                window.location.href = mailtoLink;
+                
+                // Show success message
+                showMessage('Your email client should open with the message pre-filled. Please send the email to complete your message.', 'success');
+                
+                // Clear form
+                document.getElementById('contactform').reset();
+            }
+            
+            function showMessage(text, type) {
+                const messageDiv = document.getElementById('form-message');
+                messageDiv.textContent = text;
+                messageDiv.style.display = 'block';
+                messageDiv.style.backgroundColor = type === 'error' ? '#ffe6e6' : '#e6ffe6';
+                messageDiv.style.borderLeft = type === 'error' ? '4px solid #d32f2f' : '4px solid #388e3c';
+                messageDiv.style.color = type === 'error' ? '#d32f2f' : '#388e3c';
+                
+                // Hide message after 5 seconds
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
+        </script>
+
+    </body>
+
+</html>

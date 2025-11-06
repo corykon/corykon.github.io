@@ -6,6 +6,9 @@
         <link rel="stylesheet" href="css/style.css" media="screen">
         <meta name="description" content="Purchase printable do it yourself stationery for weddings, greetings, and prints." />
         <meta name="keywords" content="wedding, greeting, print, stationery, DIY" />
+        <script src="js/header.js"></script>
+        <script src="js/nav.js"></script>
+        <script src="js/footer.js"></script>
     </head>
 
     <body class="home">
@@ -13,20 +16,20 @@
         <div id="container">
             <header>
                 <div>
-                    <?php include 'modules/header.inc'; ?>
-                    <?php include 'modules/nav.inc'; ?>
+                    <pp-header></pp-header>
+                    <pp-nav></pp-nav>
                 </div>
             </header>
 
             <div id="content">
-                <section id = "homepagewelcome">
+                <section id="homepagewelcome">
                     <p class="banner"><span>printable stationery</span></p>
                     <p>for the <span class="boxed">DIY-ers.</span></p>
                     <img src="images/pineapplelogo.png" alt="Pineapple Papers | Prinatable Stationary Logo" height="250px" width="211px" />
 
                 </section>
 
-                <section id = "listofservices">
+                <section id="listofservices">
                         <section class="stationerylist">
 
                             <h2>Cards</h2>
@@ -43,9 +46,9 @@
                 </section>
             </div>
 
+            <pp-footer></pp-footer>
 
-            <?php include 'modules/footer.inc'; ?>
-
+        </div>
     </body>
 
 </html>

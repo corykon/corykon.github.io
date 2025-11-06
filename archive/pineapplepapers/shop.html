@@ -6,6 +6,9 @@
         <link rel="stylesheet" href="css/style.css" media="screen">
         <meta name="description" content="Purchase wedding, greeting, and print stationery from the Pineapple Papers Etsy Shop." />
         <meta name="keywords" content="wedding, greeting, print, stationery, DIY" />
+        <script src="js/header.js"></script>
+        <script src="js/nav.js"></script>
+        <script src="js/footer.js"></script>
     </head>
 
     <body class="shop">
@@ -13,8 +16,8 @@
         <div id="container">
             <header>
                 <div>
-                    <?php include 'modules/header.inc'; ?>
-                    <?php include 'modules/nav.inc'; ?>
+                    <pp-header></pp-header>
+                    <pp-nav></pp-nav>
                 </div>
             </header>
 
@@ -22,10 +25,10 @@
                 <h1>shop</h1>
                 <p>Visit our Etsy shop to make your purchase.</p>
                 <section id="btns">
-                    <a href="#" title ="to the Pineapple Papers Etsy shop">
+                    <a href="#" title="to the Pineapple Papers Etsy shop">
 
                         <div id="shopbtn">
-                            <img src="images/shopbtn.gif" alt ="purchase DIY wedding, greeting, and print stationery at the etsy shop" width="350" height="250" />
+                            <img src="images/shopbtn.gif" alt="purchase DIY wedding, greeting, and print stationery at the etsy shop" width="350" height="250" />
                             <h2>purchase do it yourself wedding, greeting, and print stationery</h2>
                         </div>
 
@@ -34,9 +37,9 @@
                 </section>
             </div>
 
+            <pp-footer></pp-footer>
 
-            <?php include 'modules/footer.inc'; ?>
-
+        </div>
     </body>
 
 </html>
