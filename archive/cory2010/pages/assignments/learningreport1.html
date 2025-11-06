@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Learning Report 1 | coryfugate.com</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript">
+     <!--#include virtual="/cory2010/scripts/buttons.js" -->
+</script>
+
+<link href="../../css/screen.css" type="text/css" rel="stylesheet" media="screen" />
+
+</head>
+
+<body class="assignments">
+<div id="outercontainer">
+<div id="container">
+<div id="header">
+    <div>
+    <div>
+        <h5 style="float:right; border-radius: 5px; background-color: #eee; padding: 5px;">This is the old site! <a href="https://coryfugate.com" title="coryfugate.com">Check out the new one &raquo;<a/></h5>
+        <h1><img src="../../images/headerlogo.png" width="500" height="55" alt="Logo for coryfugate.com" /></h1>
+        <img src="../../images/headerbar.jpg" width="760" height="140" alt="Zoomed in Guitar" />
+    </div>
+    </div>
+</div>
+
+<div id="nav">
+    <dl>
+        <dt><a href ="../../index.html" id="homenav" title="Homepage @ coryfugate.com">
+            <span>
+            <!--<img src="/images/homenav.png" alt="home" width="85" height="40" />-->
+            Home
+            </span>
+            </a>
+        </dt>
+        <dt><a href="../aboutme.html" id="aboutmenav" title="About Me @ coryfugate.com">
+            <span>
+            <!--<img src="/images/aboutmenav.png" alt="about me" width="110" height="40" />-->
+            About Me
+            </span>
+            </a>
+        </dt>
+        <dt><a href="../interests.html" id="interestsnav" title="Interests @ coryfugate.com">
+            <span>
+            <!--<img src="/images/interestsnav.png" alt="interests" width="105" height="40" />-->
+            Interests
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="../resume.html" id="resumenav" title="Resume @ coryfugate.com">
+            <span>
+            <!--<img src="/images/resumenav.png" alt="resume" width="95" height="40" />-->
+            Resume
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="../portfolio/portfolio.html" id="portfolionav" title="Portfolio @ coryfugate.com">
+            <span>
+            <!--<img src="/images/portfolionav.png" alt="portfolio" width="105" height="40" />-->
+            Portfolio
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="../assignments/assignments.html" id="assignmentsnav" title="Assignments for CIT 230 class @ coryfugate.com">
+            <span>
+            <!--<img src="/images/assignmentsnav.png" alt="assignments" width="130" height="40" />-->
+            Assignments
+            </span>
+            </a>
+        </dt>
+        <dt> <a href="mailto:cory.fugate@gmail.com" id="contactmenav" title="Contact Me">
+        <span>
+        <!--<img src="/images/contactmenav.png" alt="contactme" width="130" height="40" />-->
+        Contact Me
+        </span>
+        </a>
+        </dt>
+    </dl>
+</div>
+
+<div id = "centerbox">
+    <div id= "secondarynav">
+        <div>
+        <a href="./assignments.html" title ="Back to Assignments Main">Back to Assignments Main</a> |
+        <a href="./learningreport2.html" title="Learning Report 2">Next &#62;</a>
+        </div>
+    </div>
+<div id="content">
+<div>
+ <h1>Learning Report 1</h1>
+ <h2>JavaScript Animation</h2>
+ <h3>Resource:<a href ="http://www.w3schools.com/js/js_animation.asp">
+     http://www.w3schools.com/js/js_animation.asp
+ </a></h3>
+ <hr></hr>
+ <h3>What did I learn?</h3>
+ <p>This week I spent some time looking at tutorials about javascript on 
+w3schools.com. I have had a bit of experience in programming, specifically
+in Basic, C++ and Java, so I felt like I was able to catch on to things fairly
+easily. I didn't realize that browsers were capable of understanding and executing
+javascript right out of an html file, so I found that to be very interesting and useful
+information. There really is quite a bit that can be done outside of HTML to make
+websites much more interactive and dynamic. </p>
+ <p>One of the things that I learned about that I felt would be most applicable to your
+ average website were the JavaScript events, which allow your webpage to detect
+ things that are going on. For example, if a user rolls the mouse over a particular
+ part of the webpage, a function can be triggered which will execute lines of code
+ to display some text or another image. There lots of other useful things that
+ can be done using javascript, simple things like displaying the date or time,
+ or more complex such as creating cookies to be used whenever a particular user
+ visits the webpage.
+ </p>
+ <hr></hr>
+ <h3>How did I implement it?</h3>
+ <p>Using what I learned from the Javascript tutorials, I decided to try and create
+ a button that would change as the user rolled the mouse over it. The button would
+ be used as a link to bring the user to my site plan page. The first step was to
+ create two images; one to be displayed normally, and a second to be the alternate 
+ version which would be displayed when the mouse rolls over it. After creating the 
+ images, just a few simple lines of code would implement it. One bit of code is 
+ contained within the "img" tag, namely the Javascript events "MouseOver" and
+ "Mouseout", and calls to the javascript functions you'll write in a minute: </p>
+ <p>&#60;img src="/images/image1.jpg" alt"link"
+     <strong>id="b1" onmouseOver="mouseOver()" onmouseOut="mouseOut()"</strong>&#62;</p>
+
+ <p>The other section of code was placed in the head section of the page,
+ which contained the functions that the MouseOver and MouseOut events would call 
+ for. These functions contained the code that would change the image that is
+ displayed depending on whether or not the mouse was over it.</p>
+ <p>&#60;script type="text/javascript"&#62;<br />
+function mouseOver()
+{
+document.getElementById("b1").src ="image2.jpg";
+}<br />
+function mouseOut()
+{
+document.getElementById("b1").src ="image1.jpg";
+}<br />
+&#60;/script&#62;
+
+ </p>
+
+ <p>The end result is very simple, and in this case very amateur looking, but the
+ button appears to be depressed a bit when you roll the mouse over it. I feel like
+ even a simple features like this one can make a webpage much more visually exciting
+ for the user. I plan to use more javascript as I continue to build my webpage,
+ but will do a better job with the creation and implementation of the images. I
+ feel like javascript will be very useful for designing webpages, and I'm excited
+ to become better with it. I've built a website before using software that would
+ generate this type of code for me, but I feel much more confident now that I
+ understand how it works and will be able to write it myself.</p>
+ <hr />
+ <p><strong>The button as originally created is no longer being used, but here is what it looked
+     like:</strong></p>
+ <p>
+     <a href="/cory2010/siteplan.html" title="View the Site Plan of coryfugate.com">
+         <img src="/cory2010/images/siteplanbutton1.JPG" alt="Site Plan" id="siteplanbutton"
+          onmouseover="mouseOver()" onmouseout="mouseOut()" />
+     </a>
+
+ </p>
+
+    </div>
+</div>
+</div>
+    
+<div id="footer">
+    <div>
+   <a href ="../../pages/copyright.html" title="View Copyright Information">
+&copy;2010 Cory Fugate, All Rights Reserved.</a>
+<div id="footernav">
+<dl>
+    <dt><a href="mailto:cory.fugate@gmail.com" title="Contact Me">
+     Contact</a></dt>
+    <dt> | <a href="../../pages/colophon.html" title="View the Colophon for coryfugate.com">
+     Colophon</a></dt>
+    <dt> | <a href="../../pages/modularizationplan.html" title="View the Modularization Plan for coryfugate.com">
+     Modularization Plan</a></dt>
+    <dt> | <a href="../../pages/siteplan.html" title="View the Site Plan for coryfugate.com">
+     Site Plan</a></dt>
+     <dt> | <a href="../../pages/styleguide.html" title="View the Style Guide for coryfugate.com">
+     Style Guide</a> | </dt>
+</dl>
+
+    <a href="http://www.facebook.com/people/Cory-Fugate/100000152284103" title="Cory Fugate">
+      <img src="../../images/facebook.png" alt="facebook" /></a>
+    </div>
+</div>
+</div>
+</div>
+<!--Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15220341-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>
