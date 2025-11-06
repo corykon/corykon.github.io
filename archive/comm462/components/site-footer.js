@@ -9,6 +9,7 @@ class SiteFooter extends HTMLElement {
             <ul class="copyright">
                 <li><a href ="copyright.html" title="Copyright Stuff | coryfugate.com">&copy;2012 Cory Fugate</a> | </li>
                 <li><a href ="sitemap.html" title="Site Map | coryfugate.com">Site Map</a></li>
+                <li class="comm462">Made for COMM462</li>
             </ul>
         `;
     }

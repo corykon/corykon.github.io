@@ -591,6 +591,13 @@ a.linkedin{
     font-size: 12px;
 }
 
+#footer ul li.comm462 {
+    display: block;
+    font-weight: 300;
+    color: #707070;
+    margin-top: 2px;
+}
+
 #footer ul li a{
     text-decoration: none;
     color: #ccc;
