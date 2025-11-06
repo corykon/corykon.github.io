@@ -7,6 +7,8 @@
         <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href ="css/style.css" media="screen" />
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript" src="components/site-header.js"></script>
+        <script type="text/javascript" src="components/site-footer.js"></script>
         <script type="text/javascript">
              var _gaq = _gaq || [];
              _gaq.push(['_setAccount', 'UA-15220341-1']);
@@ -23,9 +25,7 @@
     <body class="resume">
     <div id="header">
         <div class="container">
-        <?php
-            include 'modules/header.inc';
-        ?>
+            <site-header></site-header>
         </div>
     </div>
     <div id="content">
@@ -115,9 +115,7 @@
 
     <div id="footer">
         <div class="container">
-            <?php
-             include 'modules/footer.inc';
-            ?>
+            <site-footer></site-footer>
         </div>
     </div>
     </body>

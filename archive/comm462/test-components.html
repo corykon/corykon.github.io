@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Web Components Test</title>
+    <script type="text/javascript" src="components/site-header.js"></script>
+    <script type="text/javascript" src="components/site-footer.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            line-height: 1.6; 
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 20px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+        }
+        .success { 
+            color: green; 
+            font-weight: bold; 
+        }
+        .error { 
+            color: red; 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Web Components Test Page</h1>
+    
+    <div class="test-section">
+        <h2>Header Component Test</h2>
+        <div style="border: 2px dashed #999; padding: 10px; margin: 10px 0;">
+            <site-header></site-header>
+        </div>
+        <p id="header-test" class="error">❌ Header component not loaded</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Footer Component Test</h2>
+        <div style="border: 2px dashed #999; padding: 10px; margin: 10px 0;">
+            <site-footer></site-footer>
+        </div>
+        <p id="footer-test" class="error">❌ Footer component not loaded</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Instructions</h2>
+        <p>If both components show green checkmarks above, the web components are working correctly and you can use the converted HTML files.</p>
+        <p>If you see red X marks, check:</p>
+        <ul>
+            <li>The component JavaScript files are in the correct location</li>
+            <li>Your browser supports Web Components (Chrome 54+, Firefox 63+, Safari 10.1+, Edge 79+)</li>
+            <li>You're serving this page from a web server (not file:// protocol)</li>
+        </ul>
+    </div>
+
+    <script>
+        // Test if components loaded
+        setTimeout(() => {
+            const headerEl = document.querySelector('site-header');
+            const footerEl = document.querySelector('site-footer');
+            
+            if (headerEl && headerEl.innerHTML.trim() !== '') {
+                document.getElementById('header-test').innerHTML = '✅ Header component loaded successfully';
+                document.getElementById('header-test').className = 'success';
+            }
+            
+            if (footerEl && footerEl.innerHTML.trim() !== '') {
+                document.getElementById('footer-test').innerHTML = '✅ Footer component loaded successfully';
+                document.getElementById('footer-test').className = 'success';
+            }
+        }, 100);
+    </script>
+</body>
+</html>
