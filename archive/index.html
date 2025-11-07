@@ -1,7 +1,3 @@
-<!--
-Author: Cory Fugate
-Date: 8/17/13
--->
 <!DOCTYPE html>
 <html>
   <head>
@@ -10,32 +6,269 @@ Date: 8/17/13
     <meta name="description" content="Archive">
     <meta name="author" content="Cory Fugate">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 2.5em;
+      }
+      
+      .subtitle {
+        text-align: center;
+        color: #7f8c8d;
+        margin-bottom: 40px;
+        font-size: 1.2em;
+      }
+      
+      .portfolio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 0;
+        list-style: none;
+      }
+      
+      .portfolio-item {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+      }
+      
+      .portfolio-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+      
+      .portfolio-item a {
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      
+      .screenshot-placeholder {
+        width: 100%;
+        height: 160px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+        font-weight: 500;
+      }
+      
+      .screenshot-thumbnail {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        background-color: #f0f0f0;
+      }
+      
+      .item-content {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+      
+      .item-title {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 6px;
+      }
+      
+      .item-description {
+        color: #7f8c8d;
+        font-size: 0.9em;
+        margin-bottom: 10px;
+        flex-grow: 1;
+      }
+      
+      .item-year {
+        color: #3498db;
+        font-size: 0.85em;
+        font-weight: 500;
+        margin-top: auto;
+      }
+      
+      @media (max-width: 768px) {
+        .portfolio-grid {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        
+        h1 {
+          font-size: 2em;
+        }
+        
+        .item-content {
+          padding: 14px;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>Archive</h1>
-    <p>Just a bunch of old stuff I've decided not to destroy, for posterity's sake.</p>
-    <ul>
-        <li><a href="cory2010/"><div>2010 - Portfolio Site<img src="./oldsite/images/sketch.jpg"></a></li>
-        <li><a href="classes/cit230/spacecamp/">2010 -Space Camp (CIT230)</a></li>
-        <li><a href="cory2011">2011 - Portfolio Site</a></li>
-        <li><a href="classes/fdrel261">2011 - Book of Remembrance (FDREL261)</a></li>
-        <li><a href="pineapplepapers">2011 - Pineapple Papers (Friend's personal project)</a></li>
-        <li>2011 - COMM310
-            <ul>
-                <li><a href="http://coryfugate.com/classes/comm310/assignmentpgs/">310 Assignment Guide</a></li>
-                <li><a href="http://coryfugate.com/classes/comm310/bigjuds/">Big Jud's</a></li>
-                <li><a href="http://coryfugate.com/classes/comm310/csszen/">CSS Zen</a></li>
-            </ul>
-        </li>
-        <li>2011 - COMM262
-            <ul>
-                <li><a href="https://coryfugate.wordpress.com/">Photo Blog</a></li>
-                <li><a href="http://coryfugate.com/classes/diphotobook/">Photography Class Photobook</a></li>
-            </ul>
-        </li>
-        <li><a href="comm462">2012 - Portfolio Site (COMM462)</a></li>
-        <li><a href="christmas">2017 - Christmas Countdown</a></li>
-    </ul>
+    <div class="container">
+      <h1>Archive</h1>
+      <p class="subtitle">A collection of older projects and experiments</p>
+      
+      <div class="portfolio-grid">
+        <div class="portfolio-item">
+          <a href="cory2010/">
+            <img src="archive-thumbs/cory2010.jpg" alt="Portfolio 2010" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">Portfolio Site 2010</div>
+              <div class="item-description">Early portfolio website design and development</div>
+              <div class="item-year">2010</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="classes/cit230/spacecamp/">
+            <img src="archive-thumbs/spacecamp.jpg" alt="Space Camp" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">Space Camp</div>
+              <div class="item-description">CIT230 class project</div>
+              <div class="item-year">2010</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="cory2011">
+            <img src="archive-thumbs/cory2011.png" alt="Portfolio 2011" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">Portfolio Site 2011</div>
+              <div class="item-description">Updated portfolio with improved design</div>
+              <div class="item-year">2011</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="classes/fdrel261">
+            <img src="archive-thumbs/bor.jpg" alt="Book of Remembrance" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">Book of Remembrance</div>
+              <div class="item-description">Personal and family history website (FDREL261)</div>
+              <div class="item-year">2011</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="pineapplepapers">
+            <img src="archive-thumbs/pineapplepapers.png" alt="Pineapple Papers" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">Pineapple Papers</div>
+              <div class="item-description">Friend's personal project - design and development</div>
+              <div class="item-year">2011</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="./classes/comm310/">
+            <img src="archive-thumbs/comm310guide.jpg" alt="COMM310 Assignment Guide" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">COMM310 Assignment Guide</div>
+              <div class="item-description">Web development assignments and project guide</div>
+              <div class="item-year">2011</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="./classes/comm310/bigjuds/">
+            <img src="archive-thumbs/bigjuds.png" alt="Big Jud's Website" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">Big Jud's Website</div>
+              <div class="item-description">Restaurant website design and development</div>
+              <div class="item-year">2011</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="./classes/comm310/csszen/">
+            <img src="archive-thumbs/csszen.jpg" alt="CSS Zen Garden" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">CSS Zen Garden</div>
+              <div class="item-description">CSS styling exercise and design challenge</div>
+              <div class="item-year">2011</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="https://coryfugate.wordpress.com/">
+            <img src="archive-thumbs/rocks.png" alt="Photography Blog" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">Photography Blog</div>
+              <div class="item-description">Personal photography blog and portfolio</div>
+              <div class="item-year">2011</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="./classes/diphotobook/">
+            <img src="archive-thumbs/photobook.jpg" alt="Digital Photobook" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">Digital Photobook</div>
+              <div class="item-description">Interactive photography class project</div>
+              <div class="item-year">2011</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="comm462">
+            <img src="archive-thumbs/comm462.png" alt="Portfolio Site 2012" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">Portfolio Site 2012</div>
+              <div class="item-description">Advanced portfolio project (COMM462)</div>
+              <div class="item-year">2012</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="portfolio-item">
+          <a href="christmas">
+            <img src="archive-thumbs/christmascountdown.jpg" alt="Christmas Countdown" class="screenshot-thumbnail">
+            <div class="item-content">
+              <div class="item-title">Christmas Countdown</div>
+              <div class="item-description">Holiday-themed interactive countdown</div>
+              <div class="item-year">2017</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

@@ -1,16 +1,3 @@
-<?php
-if (!$_SESSION) {
-    session_start();
-    $sessionid= session_id();
-}
-    $loginflag = $_SESSION['userlogin'];
-    $loginfirst = $_SESSION['userfirst'];
-    $loginlast = $_SESSION['userlast'];
-    $loginlevel = $_SESSION['userlevel'];
-
-    $cookiefirst = $_COOKIE['fname'];
-?>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -24,6 +11,9 @@ if (!$_SESSION) {
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
 	<script type="text/javascript" src="scripts/slimbox2.js"></script>
 	<link rel="stylesheet" href="css/slimbox2.css" type="text/css" media="screen" />
+        <script type="text/javascript" src="components/site-header.js"></script>
+        <script type="text/javascript" src="components/site-nav.js"></script>
+        <script type="text/javascript" src="components/site-footer.js"></script>
 
     <script type="text/javascript">
 
@@ -43,12 +33,8 @@ if (!$_SESSION) {
     <body class="resume">
     <div id="header">
         <div>
-        <?php
-            include 'modules/header.inc';
-        ?>
-        <?php
-            include 'modules/nav.inc';
-        ?>
+        <site-header></site-header>
+        <site-nav></site-nav>
         </div>
     </div>
     <div id="content">
@@ -59,7 +45,7 @@ if (!$_SESSION) {
         <section id="column1">
         <h3>Skills</h3>
         <article>
-            <img id="skillschart" src="images/skillschart.png" alt="List of skills" />
+            <img id="skillschart" src="./images/skillschart.png" alt="List of skills" />
         </article>
 
         <h3>Education</h3>
@@ -89,7 +75,7 @@ if (!$_SESSION) {
         <section id="column2">
             <h3>Work Experience</h3>
             <article>
-                <img src="images/byui-logo.jpg" alt="BYUI logo"/>
+                <img src="./images/byui-logo.jpg" alt="BYUI logo"/>
                 <h4>Web Programmer</h4>
                 <h5>at BYU-Idaho Academic Discovery Center [January 2012&mdash;Present]</h5>
                 <ul>
@@ -99,7 +85,7 @@ if (!$_SESSION) {
                 </ul>
             </article>
             <article>
-                <img src="images/domo-logo.jpg" alt="Domo Technologies"/>
+                <img src="./images/domo-logo.jpg" alt="Domo Technologies"/>
                 <h4>Quality Assurance Engineer</h4>
                 <h5>at Domo Technologies [April 2011&mdash;December 2011]</h5>
                 <ul>
@@ -111,7 +97,7 @@ if (!$_SESSION) {
                 </ul>
             </article>
             <article>
-                <img src="images/cory-logopiece.jpg" alt="Cory Fugate logo"/>
+                <img src="./images/cory-logopiece.jpg" alt="Cory Fugate logo"/>
                 <h4>Web and Media Development</h4>
                 <h5>Freelance</h5>
                 <ul>
@@ -121,7 +107,7 @@ if (!$_SESSION) {
                 </ul>
             </article>
             <article>
-                <img src="images/byui-logo.jpg" alt="BYUI logo"/>
+                <img src="./images/byui-logo.jpg" alt="BYUI logo"/>
                 <h4>Lab Assistant/Tutor</h4>
                 <h5>at BYU-Idaho CIT Department [January 2010&mdash;April 2011]</h5>
                 <ul>
@@ -137,9 +123,6 @@ if (!$_SESSION) {
         </div>
     </div>
 
-
-            <?php
-             include 'modules/footer.inc';
-            ?>
+    <site-footer></site-footer>
     </body>
 </html>
