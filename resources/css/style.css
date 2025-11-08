@@ -810,6 +810,14 @@ footer ul li .label.hov-label{
     background-position: center;
 }
 
+footer .archive-msg {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    font-size: 10px;
+    color: #a0a0a0;
+}
+
 .signature-container {
     position: absolute;
     display: flex;
