@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armor of God - Ephesians 6:10-18</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <!-- Audio Toggle Button -->
+    <button id="audioToggleBtn" class="audio-toggle-btn" title="Toggle Audio">
+        <img src="images/volume-on.svg" alt="Volume On" class="icon volume-on">
+        <img src="images/volume-off.svg" alt="Volume Off" class="icon volume-off">
+    </button>
+    
+    <div id="gameContainer">
+        <!-- Main Menu Screen -->
+        <div id="menuScreen" class="screen">
+            <h1>Armor of God</h1>
+            <p class="scripture">"Put on the whole armor of God, that ye may be able to stand against the wiles of the devil."<br>- Ephesians 6:11</p>
+            <div class="menu-options">
+                <button id="startBtn" class="menu-btn start-btn">Start Game</button>
+            </div>
+            <div class="instructions">
+                <h3>How to Play:</h3>
+                <p>↑ to jump, ↓ to duck, P to pause</p>
+                <p>Collect 3 scriptures to receive God's armor!</p>
+                <p>Avoid the arrows and reach the holy temple!</p>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen hidden">
+            <canvas id="gameCanvas" width="1200" height="600"></canvas>
+            <div id="gameUI">
+                <div id="armorStatus"></div>
+                <div id="levelInfo">Level 1</div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen hidden">
+            <h1>Game Over</h1>
+            <p id="gameOverMessage"></p>
+            <button id="restartBtn" class="menu-btn">Try Again</button>
+            <button id="mainMenuBtn" class="menu-btn">Main Menu</button>
+        </div>
+
+        <!-- Level Complete Screen -->
+        <div id="levelCompleteScreen" class="screen hidden">
+            <img src="./images/temple.png" alt="Holy Temple" id="victoryTempleImage" class="victory-temple">
+            <h1>Victory!</h1>
+            <p>You have successfully reached the holy temple!</p>
+            <p class="victory-message">"Well done, good and faithful servant!"</p>
+            <button id="nextLevelBtn" class="menu-btn">Next Level (Coming Soon)</button>
+            <button id="mainMenuBtn2" class="menu-btn">Main Menu</button>
+        </div>
+    </div>
+
+    <!-- Load modular game files -->
+    <script src="js/audio-manager.js"></script>
+    <script src="js/effects-manager.js"></script>
+    <script src="js/input-handler.js"></script>
+    <script src="js/world-manager.js"></script>
+    <script src="js/arrow-manager.js"></script>
+    <script src="js/ui-renderer.js"></script>
+    <script src="js/character-renderer.js"></script>
+    <script src="js/game-modular.js"></script>
+</body>
+</html>

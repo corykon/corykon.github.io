@@ -1,0 +1,352 @@
+/* Armor of God Game Styles */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Audio Toggle Button */
+.audio-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    font-family: inherit;
+}
+
+.audio-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.95);
+    border-color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+.audio-toggle-btn:hover .icon {
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
+}
+
+.audio-toggle-btn .icon {
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease;
+}
+
+/* Default state - show volume-on, hide volume-off */
+.audio-toggle-btn .volume-on {
+    display: block;
+}
+
+.audio-toggle-btn .volume-off {
+    display: none;
+}
+
+/* Muted state - hide volume-on, show volume-off */
+.audio-toggle-btn.muted {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: #888;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    opacity: 0.7;
+}
+
+.audio-toggle-btn.muted:hover {
+    background: rgba(0, 0, 0, 0.7);
+    border-color: #aaa;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
+}
+
+.audio-toggle-btn.muted .volume-on {
+    display: none;
+}
+
+.audio-toggle-btn.muted .volume-off {
+    display: block;
+}
+
+body {
+    font-family: 'Press Start 2P', monospace;
+    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    color: #fff;
+    overflow: hidden;
+}
+
+#gameContainer {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.screen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Menu Screen Styles */
+#menuScreen {
+    background: linear-gradient(135deg, #222, #444);
+}
+
+#menuScreen h1 {
+    font-size: 64px;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 0px #333;
+    color: #ffd700;
+}
+
+.scripture {
+    font-size: 16px;
+    line-height: 28px;
+    margin-bottom: 30px;
+    max-width: 600px;
+    color: #e6e6e6;
+}
+
+.menu-options {
+    margin-bottom: 40px;
+}
+
+.menu-options h2 {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.menu-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    padding: 15px 25px;
+    margin: 10px;
+    border: 3px solid #fff;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.menu-btn:hover {
+    background: #555;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.armor-btn {
+    background: #4a90e2;
+    border-color: #ffd700;
+    color: #ffd700;
+}
+
+.armor-btn:hover {
+    background: #5a9ff2;
+}
+
+.no-armor-btn {
+    background: #8b4513;
+    border-color: #d2691e;
+}
+
+.no-armor-btn:hover {
+    background: #a0522d;
+}
+
+.start-btn {
+    background: #228B22;
+    border-color: #32CD32;
+    color: #fff;
+    font-size: 16px;
+    padding: 20px 30px;
+}
+
+.start-btn:hover {
+    background: #32CD32;
+}
+
+.instructions {
+    max-width: 800px;
+    border: 1px solid gold;
+    padding: 32px;
+}
+
+.instructions h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #ffd700;
+}
+
+.instructions p {
+    font-size: 16px;
+    line-height: 15px;
+    margin-bottom: 16px;
+}
+
+/* Game Screen Styles */
+#gameScreen {
+    padding: 0;
+    background: #87ceeb;
+}
+
+#gameCanvas {
+    border: 4px solid #333;
+    background: #87ceeb;
+    display: block;
+    margin: 0 auto;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+#gameUI {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+#levelInfo {
+    font-size: 18px;
+    color: #ffd700;
+    text-shadow: 2px 2px 0px #333;
+}
+
+/* Game Over and Complete Screens */
+#gameOverScreen {
+    background: #000000 !important; /* Black background for game over screen */
+}
+
+#gameOverScreen h1,
+#levelCompleteScreen h1 {
+    font-size: 52px;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 0px #333;
+}
+
+#levelCompleteScreen h1 {
+    font-size: 36px;
+}
+
+#gameOverScreen h1 {
+    color: #ff4444;
+}
+
+#levelCompleteScreen h1 {
+    color: #44ff44;
+}
+
+#gameOverMessage {
+    font-size: 14px;
+    margin-bottom: 30px;
+    line-height: 20px;
+}
+
+.victory-message {
+    font-size: 12px;
+    color: #ffd700;
+    margin: 20px 0;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 1250px) {
+    #gameCanvas {
+        width: 95vw;
+        height: auto;
+    }
+    
+    .menu-btn {
+        font-size: 12px;
+        padding: 12px 20px;
+    }
+    
+    #menuScreen h1 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+    .scripture {
+        font-size: 10px;
+        line-height: 15px;
+    }
+    
+    .instructions p {
+        font-size: 8px;
+    }
+    
+    .menu-btn {
+        font-size: 10px;
+        padding: 10px 15px;
+        margin: 5px;
+    }
+}
+
+/* Victory Temple Image */
+.victory-temple {
+    width: 240px;
+    height: 248px;
+    margin-bottom: 20px;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 0 20px #ffd700);
+    animation: templeGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes templeGlow {
+    from { 
+        filter: drop-shadow(0 0 20px #ffd700) brightness(1);
+        transform: scale(1);
+    }
+    to { 
+        filter: drop-shadow(0 0 30px #ffff00) brightness(1.1);
+        transform: scale(1.02);
+    }
+}
+
+/* Animation Classes */
+.fadeIn {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.slideUp {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
