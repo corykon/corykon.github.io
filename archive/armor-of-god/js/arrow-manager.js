@@ -4,21 +4,21 @@ class ArrowManager {
         
         // Arrow spawning system
         this.arrowSpawnTimer = 0;
-        this.arrowSpawnDelay = 42; // Spawn arrow every ~0.7 seconds at 60fps (much slower spawning)
+        this.arrowSpawnDelay = 28; // Spawn arrow every ~0.47 seconds at 60fps (faster spawning)
         this.maxArrows = 30; // Maximum arrows on screen at once
         this.burstChance = 0.4; // 40% chance for burst spawning
         
-        // Arrow type definitions
+        // Arrow type definitions (speeds increased by 50% for faster gameplay)
         this.arrowTypes = [
-            { y: 440, speedX: -2.72, speedY: 0 }, // Ground level - duck under
-            { y: 380, speedX: -3.27, speedY: 0 }, // Head height - duck under  
-            { y: 460, speedX: -3.63, speedY: 0 }, // Low - duck under
-            { y: 280, speedX: -2.72, speedY: 1.45 }, // High - jump over
-            { y: 320, speedX: -2.18, speedY: 0.91 }, // Mid-high - jump over
-            { y: 410, speedX: -3.99, speedY: 0 }, // Body level - duck under
-            { y: 400, speedX: -3.03, speedY: 0.37 }, // Slightly arcing - duck under
-            { y: 350, speedX: -2.66, speedY: 0.97 }, // Mid-arc - jump over
-            { y: 450, speedX: -3.38, speedY: -0.24 }, // Dropping - duck under
+            { y: 440, speedX: -5.72, speedY: 0 }, // Ground level - duck under
+            { y: 380, speedX: -6.87, speedY: 0 }, // Head height - duck under  
+            { y: 460, speedX: -7.62, speedY: 0 }, // Low - duck under
+            { y: 280, speedX: -5.72, speedY: 3.05 }, // High - jump over
+            { y: 320, speedX: -4.58, speedY: 1.91 }, // Mid-high - jump over
+            { y: 410, speedX: -8.39, speedY: 0 }, // Body level - duck under
+            { y: 400, speedX: -6.36, speedY: 0.78 }, // Slightly arcing - duck under
+            { y: 350, speedX: -5.58, speedY: 2.04 }, // Mid-arc - jump over
+            { y: 450, speedX: -7.10, speedY: -0.51 }, // Dropping - duck under
         ];
     }
     
@@ -114,9 +114,9 @@ class ArrowManager {
             // Double arrow spawn rate when player has God's armor (increased difficulty)
             if (hasArmor) {
                 arrowsToSpawn *= 2; // Double the number of arrows
-                // Also add occasional extra arrow for more challenge
-                if (Math.random() < 0.3) {
-                    arrowsToSpawn += 1;
+                // Also add occasional extra arrows for more intense challenge
+                if (Math.random() < 0.5) {
+                    arrowsToSpawn += Math.floor(Math.random() * 2) + 1; // Add 1-2 more arrows
                 }
             }
             
@@ -127,8 +127,8 @@ class ArrowManager {
             
             this.arrowSpawnTimer = 0;
             
-            // Vary spawn rate for more randomness - much slower overall
-            this.arrowSpawnDelay = 42 + Math.random() * 58; // 0.7 to 1.67 seconds
+            // Vary spawn rate for more randomness - faster overall
+            this.arrowSpawnDelay = 28 + Math.random() * 39; // 0.47 to 1.12 seconds
         }
     }
     

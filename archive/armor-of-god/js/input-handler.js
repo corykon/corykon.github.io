@@ -121,20 +121,22 @@ class InputHandler {
     handleInput(player, cameraX, worldWidth, jumpPower, audioManager) {
         if (this.game.gameState !== 'playing') return;
         
-        // Horizontal movement (reduced by 50% for slower gameplay)
+        // Horizontal movement (armor enhances speed)
         player.isMoving = false;
+        const currentSpeed = this.game.getCurrentSpeed();
         if (this.keys['ArrowLeft'] && player.x > cameraX) {
-            player.x -= 2.42; // Reduced by 50% from 4.83
+            player.x -= currentSpeed;
             player.isMoving = true;
         }
         if (this.keys['ArrowRight'] && player.x < worldWidth - player.width) {
-            player.x += 2.42; // Reduced by 50% from 4.83
+            player.x += currentSpeed;
             player.isMoving = true;
         }
         
-        // Jumping
+        // Jumping (armor enhances jump height)
         if ((this.keysPressed['ArrowUp'] || this.keysPressed['Space']) && player.isGrounded && !player.isDucking) {
-            player.velocityY = jumpPower;
+            const currentJumpPower = this.game.getCurrentJumpPower();
+            player.velocityY = currentJumpPower;
             player.isJumping = true;
             player.isGrounded = false;
             audioManager.playSoundEffect('jump');

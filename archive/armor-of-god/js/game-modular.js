@@ -22,6 +22,13 @@ class ArmorOfGodGame {
         // Game physics constants
         this.gravity = 0.42;
         this.jumpPower = -13.34;
+        this.baseSpeed = 4;
+        this.baseJumpPower = -13.34;
+        
+        // Game speed control
+        this.gameSpeed = 1.0;
+        this.lastFrameTime = 0;
+        this.targetFrameRate = 60;
         
         // Castle/temple position
         this.castle = { x: 5700, y: 230, width: 240, height: 248 };
@@ -179,6 +186,23 @@ class ArmorOfGodGame {
         document.getElementById('audioToggleBtn').addEventListener('click', () => {
             this.toggleAudio();
         });
+        
+        // Speed control button
+        document.getElementById('speedToggleBtn').addEventListener('click', () => {
+            this.toggleSpeedDropdown();
+        });
+        
+        // Speed slider
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            this.setGameSpeed(parseFloat(e.target.value));
+        });
+        
+        // Close speed dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#speedToggleBtn') && !e.target.closest('#speedDropdown')) {
+                this.hideSpeedDropdown();
+            }
+        });
     }
     
     startGame() {
@@ -234,10 +258,22 @@ class ArmorOfGodGame {
     
     toggleAudio() {
         const shouldResumeMusic = this.audioManager.toggleAudio();
-        if (shouldResumeMusic && this.gameState === 'menu') {
-            this.audioManager.playMusic('menu');
-        } else if (shouldResumeMusic && this.gameState === 'playing') {
-            this.audioManager.playMusic('adventure');
+        if (shouldResumeMusic) {
+            // Resume the correct music based on current game state and armor status
+            if (this.gameState === 'menu') {
+                this.audioManager.playMusic('menu');
+            } else if (this.gameState === 'playing') {
+                // Check if player has armor for special armor march music
+                if (this.hasArmor) {
+                    this.audioManager.playMusic('armormarch');
+                } else {
+                    this.audioManager.playMusic('adventure');
+                }
+            } else if (this.gameState === 'levelComplete' || this.gameState === 'celebrating') {
+                this.audioManager.playMusic('winner');
+            } else if (this.gameState === 'gameOver') {
+                this.audioManager.playMusic('gameOver');
+            }
         }
         this.updateAudioButtonAppearance();
     }
@@ -252,6 +288,21 @@ class ArmorOfGodGame {
             audioBtn.classList.remove('muted');
             audioBtn.title = 'Disable Audio';
         }
+    }
+    
+    toggleSpeedDropdown() {
+        const dropdown = document.getElementById('speedDropdown');
+        dropdown.classList.toggle('hidden');
+    }
+    
+    hideSpeedDropdown() {
+        const dropdown = document.getElementById('speedDropdown');
+        dropdown.classList.add('hidden');
+    }
+    
+    setGameSpeed(speed) {
+        this.gameSpeed = speed;
+        document.querySelector('.speed-value').textContent = speed.toFixed(2) + 'x';
     }
     
     showScreen(screenName) {
@@ -269,10 +320,31 @@ class ArmorOfGodGame {
         document.getElementById(screens[screenName]).classList.remove('hidden');
     }
     
-    gameLoop() {
-        this.update();
-        this.render();
-        requestAnimationFrame(() => this.gameLoop());
+    // Armor enhancement methods
+    getCurrentSpeed() {
+        return this.hasArmor ? this.baseSpeed * 1.5 : this.baseSpeed;
+    }
+    
+    getCurrentJumpPower() {
+        return this.hasArmor ? this.baseJumpPower * 1.1 : this.baseJumpPower;
+    }
+    
+    gameLoop(currentTime = 0) {
+        // Calculate frame timing based on game speed
+        const speed = this.gameSpeed * 1.75;
+        const targetInterval = 1000 / (this.targetFrameRate * speed);
+        
+        if (currentTime - this.lastFrameTime >= targetInterval) {
+            // Run multiple updates for speeds > 1.0 to maintain smooth gameplay
+            const updateCount = Math.max(1, Math.floor(speed));
+            for (let i = 0; i < updateCount; i++) {
+                this.update();
+            }
+            this.render();
+            this.lastFrameTime = currentTime;
+        }
+        
+        requestAnimationFrame((time) => this.gameLoop(time));
     }
     
     update() {
@@ -301,6 +373,22 @@ class ArmorOfGodGame {
         );
         
         this.effectsManager.updateArmorActivation();
+        this.effectsManager.updateSparkleTrails();
+        
+        // Add sparkle trails when armor is active (more sparkles when moving)
+        if (this.hasArmor) {
+            this.effectsManager.addSparkleTrail(this.player.x, this.player.y, this.hasArmor);
+            this.effectsManager.addSparkleTrail(this.dog.x, this.dog.y, this.hasArmor);
+            
+            // Extra sparkles when moving for trail effect
+            if (this.player.isMoving) {
+                this.effectsManager.addSparkleTrail(this.player.x, this.player.y, this.hasArmor);
+            }
+            if (this.dog.isMoving) {
+                this.effectsManager.addSparkleTrail(this.dog.x, this.dog.y, this.hasArmor);
+            }
+        }
+        
         this.uiRenderer.update();
         this.characterRenderer.update();
         
@@ -389,11 +477,17 @@ class ArmorOfGodGame {
                 speed = this.dog.catchUpSpeed;
             }
             
+            // Armor enhances dog speed too
+            if (this.hasArmor) {
+                speed *= 1.5;
+            }
+            
             const moveDirection = this.dog.x < targetX ? 1 : -1;
             const shouldJump = this.shouldDogJump(moveDirection);
             
             if (shouldJump && this.dog.isGrounded) {
-                this.dog.velocityY = this.jumpPower * 0.8;
+                const jumpPower = this.hasArmor ? this.getCurrentJumpPower() * 0.8 : this.jumpPower * 0.8;
+                this.dog.velocityY = jumpPower;
                 this.dog.isGrounded = false;
             }
             
@@ -616,6 +710,12 @@ class ArmorOfGodGame {
             this.gameState,
             this.inputHandler.hoveredButton
         );
+        
+        // Render sparkles on top of everything (with camera translation)
+        this.ctx.save();
+        this.ctx.translate(-this.cameraX, 0);
+        this.effectsManager.renderSparkleTrails(this.ctx, 0); // Pass 0 since we already translated
+        this.ctx.restore();
     }
     
 

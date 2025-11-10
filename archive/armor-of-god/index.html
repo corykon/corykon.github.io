@@ -13,6 +13,20 @@
         <img src="images/volume-off.svg" alt="Volume Off" class="icon volume-off">
     </button>
     
+    <!-- Game Speed Control Button -->
+    <button id="speedToggleBtn" class="speed-toggle-btn" title="Game Speed">
+        <img src="images/rabbit-running-regular-full.svg" alt="Game Speed" class="icon">
+    </button>
+    
+    <!-- Speed Control Dropdown -->
+    <div id="speedDropdown" class="speed-dropdown hidden">
+        <div class="speed-dropdown-content">
+            <label for="speedSlider">Game Speed</label>
+            <input type="range" id="speedSlider" min="0.25" max="2.0" step="0.25" value="1.0">
+            <div class="speed-value">1.0x</div>
+        </div>
+    </div>
+    
     <div id="gameContainer">
         <!-- Main Menu Screen -->
         <div id="menuScreen" class="screen">

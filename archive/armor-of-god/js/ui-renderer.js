@@ -59,7 +59,7 @@ class UIRenderer {
             ctx.fillStyle = '#FFD700';
         } else {
             // Partial bar - blue as it fills
-            ctx.fillStyle = '#00AEFF';
+            ctx.fillStyle = '#007BFF';
         }
         ctx.fillRect(250, 30, scripturesWidth, 15);
         
@@ -67,7 +67,7 @@ class UIRenderer {
         if (booksCollected >= 3) {
             ctx.fillStyle = '#FFD700';
             ctx.font = '12px "Press Start 2P", monospace';
-            ctx.fillText('Armor Activated!', 250, 58);
+            ctx.fillText('Armor Activated!', 250, 64);
         } else {
             ctx.fillStyle = '#FFD700';
             ctx.font = '12px "Press Start 2P", monospace';

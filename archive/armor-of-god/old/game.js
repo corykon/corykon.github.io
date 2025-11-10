@@ -54,7 +54,7 @@ class ArmorOfGodGame {
         
         // Celebration properties
         this.celebrationTimer = 0;
-        this.celebrationDuration = 360; // 3 seconds at 60fps (doubled for 50% slower speed)
+        this.celebrationDuration = 250; // 3 seconds at 60fps (doubled for 50% slower speed)
         this.fireworks = [];
         
         // Armor activation properties
