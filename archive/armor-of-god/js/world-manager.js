@@ -115,18 +115,31 @@ class WorldManager {
     }
     
     renderPlatforms(ctx) {
-        // Draw platforms (grass)
-        ctx.fillStyle = '#228B22';
         this.platforms.forEach(platform => {
-            ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+            // Draw dirt base (underneath) - lighter for better dog visibility
+            ctx.fillStyle = '#D2B48C'; // Light tan/sandy brown for better contrast
+            ctx.fillRect(platform.x, platform.y + 8, platform.width, platform.height - 8);
             
-            // Add grass texture
-            ctx.fillStyle = '#32CD32';
+            // Add dirt texture/variation - lighter tones
+            ctx.fillStyle = '#DEB887'; // Burlywood - lighter brown texture
+            for (let i = 0; i < platform.width; i += 15) {
+                for (let j = 15; j < platform.height - 8; j += 12) {
+                    ctx.fillRect(platform.x + i, platform.y + 8 + j, 6, 4);
+                    ctx.fillRect(platform.x + i + 8, platform.y + 8 + j + 6, 4, 3);
+                }
+            }
+            
+            // Draw grass top layer
+            ctx.fillStyle = '#228B22'; // Forest green
+            ctx.fillRect(platform.x, platform.y, platform.width, 8);
+            
+            // Add grass texture on top
+            ctx.fillStyle = '#32CD32'; // Lime green grass blades
             for (let i = 0; i < platform.width; i += 10) {
                 ctx.fillRect(platform.x + i, platform.y, 2, 5);
                 ctx.fillRect(platform.x + i + 4, platform.y, 2, 8);
+                ctx.fillRect(platform.x + i + 7, platform.y, 1, 6);
             }
-            ctx.fillStyle = '#228B22';
         });
     }
     
@@ -139,6 +152,20 @@ class WorldManager {
                 
                 ctx.save();
                 ctx.translate(0, floatY);
+                
+                // Draw subtle glow behind scripture book
+                const glowRadius = 30;
+                const gradient = ctx.createRadialGradient(
+                    book.x + book.width/2, book.y + book.height/2, 0,
+                    book.x + book.width/2, book.y + book.height/2, glowRadius
+                );
+                gradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)'); // Gold glow
+                gradient.addColorStop(0.5, 'rgba(255, 215, 0, 0.1)');
+                gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(book.x - glowRadius/2, book.y - glowRadius/2, 
+                           book.width + glowRadius, book.height + glowRadius);
                 
                 // Draw Book of Mormon image if loaded, otherwise fallback to simple design
                 if (bomImage.complete) {
@@ -164,6 +191,22 @@ class WorldManager {
     }
     
     renderTemple(ctx, templeImage, castle) {
+        // Draw prominent divine glow behind temple
+        const glowRadius = 80; // Increased from 50 for larger glow
+        const gradient = ctx.createRadialGradient(
+            castle.x + castle.width/2, castle.y + castle.height/2, 0,
+            castle.x + castle.width/2, castle.y + castle.height/2, glowRadius
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.7)'); // Brighter white center
+        gradient.addColorStop(0.2, 'rgba(255, 215, 0, 0.6)'); // Strong gold
+        gradient.addColorStop(0.4, 'rgba(255, 215, 0, 0.4)'); // Medium gold
+        gradient.addColorStop(0.7, 'rgba(255, 215, 0, 0.2)'); // Softer gold
+        gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(castle.x - glowRadius/2, castle.y - glowRadius/2, 
+                   castle.width + glowRadius, castle.height + glowRadius);
+        
         if (templeImage.complete) {
             ctx.drawImage(templeImage, castle.x, castle.y, castle.width, castle.height);
         } else {

@@ -1,6 +1,7 @@
 class AudioManager {
     constructor() {
-        this.audioEnabled = true;
+        // Load audio setting from localStorage, default to true
+        this.audioEnabled = this.loadAudioSetting();
         this.currentMusic = null;
         
         // Load audio files with individual loop settings
@@ -8,10 +9,17 @@ class AudioManager {
             menu: new Audio('sounds/menu.mp3'),
             adventure: new Audio('sounds/adventure.mp3'),
             winner: new Audio('sounds/winner1.mp3'),
-            gameOver: new Audio('sounds/game-over2.mp3'),
+            gameOver: new Audio('sounds/gameover.mp3'),
             jump: new Audio('sounds/jump.wav'),
             armormarch: new Audio('sounds/armormarch.mp3'),
-            powerup: new Audio('sounds/powerup.mp3')
+            powerup: new Audio('sounds/powerup.mp3'),
+            bark1: new Audio('sounds/bark1.mp3'),
+            collect2: new Audio('sounds/collect2.wav'),
+            thud: new Audio('sounds/thud.mp3'),
+            thud2: new Audio('sounds/thud2.mp3'),
+            thud3: new Audio('sounds/thud3.mp3'),
+            ricochet: new Audio('sounds/ricochet.mp3'),
+            gameoversong: new Audio('sounds/gameoversong.mp3')
         };
         
         // Define loop and volume settings for each audio file
@@ -22,7 +30,14 @@ class AudioManager {
             gameOver: { loop: false, volume: 0.4 },
             jump: { loop: false, volume: 0.6 },
             armormarch: { loop: true, volume: 0.5 },
-            powerup: { loop: false, volume: 0.7 }
+            powerup: { loop: false, volume: 0.7 },
+            bark1: { loop: false, volume: 0.5 },
+            collect2: { loop: false, volume: 0.5 },
+            thud: { loop: false, volume: 0.5 },
+            thud2: { loop: false, volume: 0.5 },
+            thud3: { loop: false, volume: 0.5 },
+            ricochet: { loop: false, volume: 0.8 },
+            gameoversong: { loop: false, volume: 0.4 }
         };
         
         // Apply settings to each audio file
@@ -35,6 +50,7 @@ class AudioManager {
     
     toggleAudio() {
         this.audioEnabled = !this.audioEnabled;
+        this.saveAudioSetting(); // Save to localStorage
         
         if (!this.audioEnabled) {
             // Stop all music
@@ -97,6 +113,11 @@ class AudioManager {
         }
     }
     
+    // Alias for playSoundEffect for consistency
+    playSound(soundKey) {
+        this.playSoundEffect(soundKey);
+    }
+    
     pauseCurrentMusic() {
         if (this.currentMusic) {
             this.currentMusic.pause();
@@ -133,5 +154,37 @@ class AudioManager {
             audio.currentTime = 0;
         });
         this.currentMusic = null;
+    }
+    
+    playRandomThudSound() {
+        if (!this.audioEnabled) return;
+        
+        const thudSounds = ['thud', 'thud2', 'thud3'];
+        const randomThud = thudSounds[Math.floor(Math.random() * thudSounds.length)];
+        this.playSound(randomThud);
+    }
+    
+    playGameOverSequence() {
+        if (!this.audioEnabled) return;
+        
+        // First play the regular game over sound
+        this.pauseCurrentMusic();
+        this.playSound('gameOver');
+        
+        // Then after a longer delay, play the game over song
+        setTimeout(() => {
+            if (this.audioEnabled) {
+                this.playMusic('gameoversong');
+            }
+        }, 2000);
+    }
+    
+    loadAudioSetting() {
+        const saved = localStorage.getItem('armorOfGod_audioEnabled');
+        return saved !== null ? JSON.parse(saved) : true; // Default to true
+    }
+    
+    saveAudioSetting() {
+        localStorage.setItem('armorOfGod_audioEnabled', JSON.stringify(this.audioEnabled));
     }
 }

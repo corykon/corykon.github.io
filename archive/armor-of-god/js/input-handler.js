@@ -60,21 +60,21 @@ class InputHandler {
                 let hovered = false;
                 
                 // Check restart button hover
-                if (game.pauseRestartButton && 
-                    x >= game.pauseRestartButton.x && 
-                    x <= game.pauseRestartButton.x + game.pauseRestartButton.width &&
-                    y >= game.pauseRestartButton.y && 
-                    y <= game.pauseRestartButton.y + game.pauseRestartButton.height) {
+                if (game.uiRenderer && game.uiRenderer.pauseRestartButton && 
+                    x >= game.uiRenderer.pauseRestartButton.x && 
+                    x <= game.uiRenderer.pauseRestartButton.x + game.uiRenderer.pauseRestartButton.width &&
+                    y >= game.uiRenderer.pauseRestartButton.y && 
+                    y <= game.uiRenderer.pauseRestartButton.y + game.uiRenderer.pauseRestartButton.height) {
                     this.hoveredButton = 'restart';
                     hovered = true;
                 }
                 
                 // Check main menu button hover
-                if (game.pauseMainMenuButton && 
-                    x >= game.pauseMainMenuButton.x && 
-                    x <= game.pauseMainMenuButton.x + game.pauseMainMenuButton.width &&
-                    y >= game.pauseMainMenuButton.y && 
-                    y <= game.pauseMainMenuButton.y + game.pauseMainMenuButton.height) {
+                if (game.uiRenderer && game.uiRenderer.pauseMainMenuButton && 
+                    x >= game.uiRenderer.pauseMainMenuButton.x && 
+                    x <= game.uiRenderer.pauseMainMenuButton.x + game.uiRenderer.pauseMainMenuButton.width &&
+                    y >= game.uiRenderer.pauseMainMenuButton.y && 
+                    y <= game.uiRenderer.pauseMainMenuButton.y + game.uiRenderer.pauseMainMenuButton.height) {
                     this.hoveredButton = 'mainMenu';
                     hovered = true;
                 }
@@ -96,6 +96,13 @@ class InputHandler {
         // Handle pause toggle (only when playing)
         if (e.code === 'KeyP' && this.game.gameState === 'playing') {
             this.game.togglePause();
+            e.preventDefault();
+            return;
+        }
+        
+        // Handle petting (only when playing and not paused)
+        if (e.code === 'KeyD' && this.game.gameState === 'playing' && !this.game.isPaused) {
+            this.game.tryPetDog();
             e.preventDefault();
             return;
         }
@@ -127,10 +134,12 @@ class InputHandler {
         if (this.keys['ArrowLeft'] && player.x > cameraX) {
             player.x -= currentSpeed;
             player.isMoving = true;
+            player.facingRight = false; // Facing left
         }
         if (this.keys['ArrowRight'] && player.x < worldWidth - player.width) {
             player.x += currentSpeed;
             player.isMoving = true;
+            player.facingRight = true; // Facing right
         }
         
         // Jumping (armor enhances jump height)

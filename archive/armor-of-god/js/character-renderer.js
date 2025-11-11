@@ -56,7 +56,63 @@ class CharacterRenderer {
         // Animated Arms
         ctx.fillStyle = '#FDBCB4';
         
-        if (player.isJumping || !player.isGrounded) {
+        if (player.isPetting) {
+            // Petting animation - hand reaches out in the direction player is facing
+            if (player.facingRight) {
+                // Facing right - right hand reaches out
+                ctx.fillRect(player.x - 4, playerY + 4, 8, 20); // Left arm normal position
+                
+                // Right arm reaching out with petting motion
+                const pettingX = player.x + 32 + player.handOffset;
+                const pettingY = playerY + 8;
+                
+                // Upper arm
+                ctx.fillRect(player.x + 28, playerY + 4, 8, 16);
+                // Forearm extending outward (to the right)
+                ctx.fillRect(pettingX - 4, pettingY, 12, 8);
+                
+                // Hand/petting area
+                ctx.fillStyle = '#FDBCB4';
+                ctx.fillRect(pettingX + 6, pettingY - 2, 6, 12); // Hand
+                
+                // Show gentle petting motion with small particles
+                if (player.handOffset > 10) {
+                    ctx.fillStyle = 'rgba(255, 215, 0, 0.6)'; // Golden love particles
+                    for (let i = 0; i < 3; i++) {
+                        const heartX = pettingX + 8 + Math.sin(this.animationTime * 0.1 + i) * 4;
+                        const heartY = pettingY - 8 + Math.cos(this.animationTime * 0.1 + i) * 3;
+                        ctx.fillRect(heartX, heartY, 2, 2);
+                    }
+                }
+            } else {
+                // Facing left - left hand reaches out
+                ctx.fillRect(player.x + 28, playerY + 4, 8, 20); // Right arm normal position
+                
+                // Left arm reaching out with petting motion
+                const pettingX = player.x - 4 - player.handOffset;
+                const pettingY = playerY + 8;
+                
+                // Upper arm
+                ctx.fillRect(player.x - 4, playerY + 4, 8, 16);
+                // Forearm extending outward (to the left)
+                ctx.fillRect(pettingX - 8, pettingY, 12, 8);
+                
+                // Hand/petting area
+                ctx.fillStyle = '#FDBCB4';
+                ctx.fillRect(pettingX - 12, pettingY - 2, 6, 12); // Hand
+                
+                // Show gentle petting motion with small particles
+                if (player.handOffset > 10) {
+                    ctx.fillStyle = 'rgba(255, 215, 0, 0.6)'; // Golden love particles
+                    for (let i = 0; i < 3; i++) {
+                        const heartX = pettingX - 10 + Math.sin(this.animationTime * 0.1 + i) * 4;
+                        const heartY = pettingY - 8 + Math.cos(this.animationTime * 0.1 + i) * 3;
+                        ctx.fillRect(heartX, heartY, 2, 2);
+                    }
+                }
+            }
+            
+        } else if (player.isJumping || !player.isGrounded) {
             // Mario-style jumping pose - right hand up, left hand at side
             ctx.fillRect(player.x + 28, playerY - 8, 8, 16); // Right arm raised
             ctx.fillRect(player.x + 32, playerY - 16, 8, 12); // Forearm raised higher
@@ -301,8 +357,16 @@ class CharacterRenderer {
     }
     
     renderDogTail(ctx, dog, facingRight) {
-        // Animated tail wagging
-        const tailWag = Math.sin(this.animationTime * 0.4) * 2;
+        // Animated tail wagging - faster and more energetic when being petted
+        let wagSpeed = 0.4;
+        let wagIntensity = 2;
+        
+        if (dog.isBeingPetted) {
+            wagSpeed = 0.8; // Much faster wagging when being petted
+            wagIntensity = 4; // More intense wagging
+        }
+        
+        const tailWag = Math.sin(this.animationTime * wagSpeed) * wagIntensity;
         
         ctx.fillStyle = '#654321'; // Darker brown for tail
         

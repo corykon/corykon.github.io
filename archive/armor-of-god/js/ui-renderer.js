@@ -44,16 +44,29 @@ class UIRenderer {
         ctx.font = '12px "Press Start 2P", monospace';
         ctx.fillText(`Health: ${player.health}/${player.maxHealth}`, 30, 64);
         
-        // Scriptures UI Panel (made wider to fit "Armor Activated!" text)
+        // Scriptures UI Panel (dynamically sized for text)
+        const panelX = 240;
+        const panelY = 20;
+        const panelHeight = 50;
+        
+        // Calculate text width for proper panel sizing
+        ctx.font = '12px "Press Start 2P", monospace';
+        const armorText = 'Armor Activated!';
+        const scripturesText = `Scriptures: ${booksCollected}/3`;
+        const maxText = booksCollected >= 3 ? armorText : scripturesText;
+        const textWidth = ctx.measureText(maxText).width;
+        const panelWidth = Math.max(240, textWidth + 20); // At least 240px, or text width + 20px padding
+        
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.fillRect(240, 20, 240, 50);
+        ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
         
         // Scriptures bar background
         ctx.fillStyle = '#000';
-        ctx.fillRect(250, 30, 220, 15);
+        const barWidth = panelWidth - 20; // 10px padding on each side
+        ctx.fillRect(panelX + 10, 30, barWidth, 15);
         
         // Scriptures bar fill
-        const scripturesWidth = (booksCollected / 3) * 220;
+        const scripturesWidth = (booksCollected / 3) * barWidth;
         if (booksCollected >= 3) {
             // Full bar - turn gold when all 3 collected
             ctx.fillStyle = '#FFD700';
@@ -61,17 +74,17 @@ class UIRenderer {
             // Partial bar - blue as it fills
             ctx.fillStyle = '#007BFF';
         }
-        ctx.fillRect(250, 30, scripturesWidth, 15);
+        ctx.fillRect(panelX + 10, 30, scripturesWidth, 15);
         
         // Scriptures text (changes when armor is activated)
         if (booksCollected >= 3) {
             ctx.fillStyle = '#FFD700';
             ctx.font = '12px "Press Start 2P", monospace';
-            ctx.fillText('Armor Activated!', 250, 64);
+            ctx.fillText('Armor Activated!', panelX + 10, 64);
         } else {
-            ctx.fillStyle = '#FFD700';
+            ctx.fillStyle = '#FFFFFF';
             ctx.font = '12px "Press Start 2P", monospace';
-            ctx.fillText(`Scriptures: ${booksCollected}/3`, 250, 64);
+            ctx.fillText(`Scriptures: ${booksCollected}/3`, panelX + 10, 64);
         }
         
         // Render messages
@@ -90,14 +103,14 @@ class UIRenderer {
             
             // Message background
             ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillRect(400, 150 + yOffset, 400, 60);
+            ctx.fillRect(300, 150 + yOffset, 600, 60);
             
             // Message text
             ctx.fillStyle = message.color;
             ctx.globalAlpha = opacity;
             ctx.font = 'bold 24px "Press Start 2P", monospace';
             ctx.textAlign = 'center';
-            ctx.fillText(message.text, 600, 185 + yOffset);
+            ctx.fillText(message.text, 600, 198 + yOffset);
             ctx.textAlign = 'left';
             ctx.globalAlpha = 1.0;
             
@@ -148,7 +161,7 @@ class UIRenderer {
         
         // Calculate positions for stacked buttons
         const button1Y = centerY + 20;
-        const button2Y = button1Y + buttonHeight + buttonSpacing;
+        const button2Y = button1Y + buttonHeight + buttonSpacing - 15; // Move up by 15 pixels
         const buttonX = centerX - buttonWidth / 2;
         
         // Restart Level button (top)
@@ -161,6 +174,10 @@ class UIRenderer {
         
         // Add hover effect for restart button
         const isRestartHovered = hoveredButton === 'restart';
+        
+        // Black background for restart button
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillRect(buttonX, button1Y, buttonWidth, buttonHeight);
         
         // Hover background effect (slight glow)
         if (isRestartHovered) {
