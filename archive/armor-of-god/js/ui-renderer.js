@@ -25,7 +25,7 @@ class UIRenderer {
         });
     }
     
-    renderUI(ctx, player, booksCollected, audioManager, isPaused, gameState, hoveredButton = null) {
+    renderUI(ctx, player, booksCollected, audioManager, isPaused, gameState, hoveredButton = null, hasArmor = false, armorTimer = 0, armorDuration = 1800) {
         // Health UI Panel
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         ctx.fillRect(20, 20, 200, 50);
@@ -85,6 +85,51 @@ class UIRenderer {
             ctx.fillStyle = '#FFFFFF';
             ctx.font = '12px "Press Start 2P", monospace';
             ctx.fillText(`Scriptures: ${booksCollected}/3`, panelX + 10, 64);
+        }
+        
+        // Armor Timer (only show when armor is active)
+        if (hasArmor && armorTimer > 0) {
+            const timerX = panelX + panelWidth; // Position directly adjacent to scriptures panel
+            const timerY = 20;
+            const timerWidth = 120;
+            const timerHeight = 50;
+            
+            // Connecting line between panels
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.5)'; // Semi-transparent gold line
+            ctx.fillRect(panelX + panelWidth, panelY + 15, 4, 20); // Vertical connecting line
+            
+            // Timer panel background (connected to scripture panel)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(timerX, timerY, timerWidth, timerHeight);
+            
+            // Optional: Add a thin border to make connection more obvious
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(timerX, timerY, timerWidth, timerHeight);
+            
+            // Timer bar background
+            ctx.fillStyle = '#000';
+            ctx.fillRect(timerX + 10, 30, timerWidth - 20, 15);
+            
+            // Timer bar fill (golden, decreases as time runs out)
+            const timeRatio = armorTimer / armorDuration;
+            const timerBarWidth = (timerWidth - 20) * timeRatio;
+            
+            // Color changes as time runs out: green > yellow > red
+            if (timeRatio > 0.5) {
+                ctx.fillStyle = '#FFD700'; // Gold
+            } else if (timeRatio > 0.25) {
+                ctx.fillStyle = '#FFA500'; // Orange
+            } else {
+                ctx.fillStyle = '#FF4500'; // Red-Orange
+            }
+            ctx.fillRect(timerX + 10, 30, timerBarWidth, 15);
+            
+            // Timer text
+            const secondsLeft = Math.ceil(armorTimer / 60); // Convert frames to seconds
+            ctx.fillStyle = timeRatio > 0.25 ? '#FFD700' : '#FF4500';
+            ctx.font = '10px "Press Start 2P", monospace';
+            ctx.fillText(`Armor: ${secondsLeft}s`, timerX + 10, 64);
         }
         
         // Render messages

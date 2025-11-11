@@ -9,6 +9,8 @@ class ArmorOfGodGame {
         this.gameState = 'menu';
         this.isPaused = false;
         this.hasArmor = false;
+        this.armorTimer = 0;
+        this.armorDuration = 30 * 60; // 30 seconds at 60fps
         this.level = 1;
         this.cameraX = 0;
         this.booksCollected = 0;
@@ -232,6 +234,9 @@ class ArmorOfGodGame {
     }
     
     resetGame() {
+        // Cancel any pending game over sequence
+        this.audioManager.cancelGameOverSequence();
+        
         // Reset player
         this.player.x = 150;
         this.player.y = 420;
@@ -268,6 +273,7 @@ class ArmorOfGodGame {
         // Reset game state
         this.cameraX = 0;
         this.hasArmor = false;
+        this.armorTimer = 0;
         this.booksCollected = 0;
         this.isDying = false;
         this.deathTimer = 0;
@@ -456,6 +462,14 @@ class ArmorOfGodGame {
             if (this.player.invulnerabilityTimer >= this.player.invulnerabilityDuration) {
                 this.player.invulnerable = false;
                 this.player.invulnerabilityTimer = 0;
+            }
+        }
+        
+        // Update armor timer
+        if (this.hasArmor && this.armorTimer > 0) {
+            this.armorTimer--;
+            if (this.armorTimer <= 0) {
+                this.deactivateArmor();
             }
         }
         
@@ -763,12 +777,29 @@ class ArmorOfGodGame {
     
     activateArmor() {
         this.hasArmor = true;
+        this.armorTimer = this.armorDuration; // Start 30-second countdown
         this.player.color = this.player.armorColor;
         this.effectsManager.activateArmor(this.player, this.uiRenderer);
         
         // Play powerup sound effect and change music to armormarch.mp3
         this.audioManager.playSoundEffect('powerup');
         this.audioManager.playMusic('armormarch');
+    }
+    
+    deactivateArmor() {
+        this.hasArmor = false;
+        this.armorTimer = 0;
+        this.player.color = '#8b4513'; // Reset to normal color
+        
+        // Reset scripture collection - player can collect them again
+        this.booksCollected = 0;
+        this.worldManager.reset(); // Respawn all scripture books
+        
+        // Switch back to adventure music
+        this.audioManager.playMusic('adventure');
+        
+        // Show message to player
+        this.uiRenderer.showMessage('Collect scriptures for new armor.', 240, '#FFA500');
     }
     
     togglePause() {
@@ -875,7 +906,10 @@ class ArmorOfGodGame {
             this.audioManager, 
             this.isPaused, 
             this.gameState,
-            this.inputHandler.hoveredButton
+            this.inputHandler.hoveredButton,
+            this.hasArmor,
+            this.armorTimer,
+            this.armorDuration
         );
         
         // Render sparkles on top of everything (with camera translation)

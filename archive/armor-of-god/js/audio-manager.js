@@ -3,6 +3,7 @@ class AudioManager {
         // Load audio setting from localStorage, default to true
         this.audioEnabled = this.loadAudioSetting();
         this.currentMusic = null;
+        this.gameOverTimeout = null;
         
         // Load audio files with individual loop settings
         this.audio = {
@@ -171,12 +172,25 @@ class AudioManager {
         this.pauseCurrentMusic();
         this.playSound('gameOver');
         
+        // Clear any existing timeout
+        if (this.gameOverTimeout) {
+            clearTimeout(this.gameOverTimeout);
+        }
+        
         // Then after a longer delay, play the game over song
-        setTimeout(() => {
+        this.gameOverTimeout = setTimeout(() => {
             if (this.audioEnabled) {
                 this.playMusic('gameoversong');
             }
+            this.gameOverTimeout = null; // Clear the reference
         }, 2000);
+    }
+    
+    cancelGameOverSequence() {
+        if (this.gameOverTimeout) {
+            clearTimeout(this.gameOverTimeout);
+            this.gameOverTimeout = null;
+        }
     }
     
     loadAudioSetting() {
