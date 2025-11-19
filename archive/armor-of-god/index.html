@@ -33,15 +33,22 @@
             <img src="images/armorOfGodTitleImage.png" alt="Armor of God Title" class="title-image">
             <h1>Armor of God</h1>
             <p class="scripture">"Put on the whole armor of God, that ye may be able to stand against the wiles of the devil."<br>- Ephesians 6:11</p>
-            <div class="menu-options">
+            <div class="game-setup">
+                <div class="pet-selection">
+                    <span class="pet-label">Choose Companion:</span>
+                    <div class="pet-options">
+                        <button id="selectDog" class="pet-btn selected" data-pet="dog">
+                            <img src="images/dog-ico.svg" alt="Dog" class="pet-icon"> Dog
+                        </button>
+                        <button id="selectCat" class="pet-btn" data-pet="cat">
+                            <img src="images/cat-ico.svg" alt="Cat" class="pet-icon"> Cat
+                        </button>
+                    </div>
+                </div>
                 <button id="startBtn" class="menu-btn start-btn">Start Game</button>
+                <a href="#" id="instructionsLink" class="instructions-link">How to Play</a>
             </div>
-            <div class="instructions">
-                <h3>How to Play:</h3>
-                <p>↑ to jump, ↓ to duck, P to pause</p>
-                <p>Collect 3 scriptures to receive God's armor!</p>
-                <p>Avoid the arrows and reach the holy temple!</p>
-            </div>
+            <!-- Instructions moved to modal -->
             <div class="credits">
                 <p>Created by Maddox P. and Cory F.</p>
             </div>
@@ -55,7 +62,7 @@
                 <div id="levelInfo">Level 1</div>
             </div>
             <div id="controlsReminder" class="controls-reminder">
-                <p>↑ Jump  •  ↓ Duck  •  D Pet Dog  •  P Pause</p>
+                <p>↑ Jump  •  ↓ Duck  •  <span id="petControlText">D Pet Dog</span>  •  P Pause</p>
             </div>
         </div>
 
@@ -75,6 +82,37 @@
             <p class="victory-message">"Well done, good and faithful servant!"</p>
             <button id="nextLevelBtn" class="menu-btn">Next Level (Coming Soon)</button>
             <button id="mainMenuBtn2" class="menu-btn">Main Menu</button>
+        </div>
+    </div>
+
+    <!-- Instructions Modal -->
+    <div id="instructionsModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h2>How to Play</h2>
+            <div class="instructions-content">
+                <div class="instruction-item">
+                    <span class="key">↑</span>
+                    <span class="action">Jump over obstacles</span>
+                </div>
+                <div class="instruction-item">
+                    <span class="key">↓</span>
+                    <span class="action">Duck under arrows</span>
+                </div>
+                <div class="instruction-item">
+                    <span class="key">D</span>
+                    <span class="action">Pet your companion</span>
+                </div>
+                <div class="instruction-item">
+                    <span class="key">P</span>
+                    <span class="action">Pause the game</span>
+                </div>
+                <div class="game-objective">
+                    <h3>Objective:</h3>
+                    <p>Collect 3 scriptures to receive God's armor, then reach the holy temple!</p>
+                    <p>The armor protects you from arrows and enhances your abilities for 30 seconds.</p>
+                </div>
+            </div>
         </div>
     </div>
 

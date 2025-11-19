@@ -305,12 +305,106 @@ body {
     background: #228B22;
     border-color: #32CD32;
     color: #fff;
-    font-size: 16px;
-    padding: 20px 30px;
+    font-size: 18px;
+    padding: 15px 30px;
+    margin-top: 5px;
 }
 
 .start-btn:hover {
     background: #32CD32;
+}
+
+/* Game Setup Container */
+.game-setup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid gold;
+    max-width: 500px;
+}
+
+/* Pet Selection Styles */
+.pet-selection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.pet-label {
+    color: #ffd700;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.pet-options {
+    display: flex;
+    gap: 10px;
+}
+
+.pet-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 2px solid #666;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 80px;
+}
+
+.pet-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #ffd700;
+    transform: translateY(-2px);
+}
+
+.pet-btn.selected {
+    background: rgba(255, 215, 0, 0.3);
+    border-color: #ffd700;
+    color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Pet Icon Styles */
+.pet-icon {
+    width: 18px;
+    height: 18px;
+    margin-bottom: 3px;
+    vertical-align: middle;
+    filter: brightness(0.8);
+    transition: all 0.3s ease;
+}
+
+.pet-btn:hover .pet-icon {
+    filter: brightness(1.2);
+}
+
+.pet-btn.selected .pet-icon {
+    filter: brightness(1.5) drop-shadow(0 0 3px rgba(255, 215, 0, 0.8));
+}
+
+/* Instructions Link */
+.instructions-link {
+    color: #ffd700;
+    text-decoration: underline;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.instructions-link:hover {
+    color: #fff;
+    text-decoration: none;
 }
 
 .instructions {
@@ -510,4 +604,98 @@ body {
 @keyframes slideUp {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #222, #444);
+    border: 2px solid #ffd700;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffd700;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #fff;
+}
+
+.modal-content h2 {
+    color: #ffd700;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.instructions-content {
+    color: #fff;
+}
+
+.instruction-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 15px;
+}
+
+.key {
+    background: rgba(255, 215, 0, 0.2);
+    border: 1px solid #ffd700;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-weight: bold;
+    color: #ffd700;
+    min-width: 40px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.action {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.game-objective {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.game-objective h3 {
+    color: #ffd700;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.game-objective p {
+    margin-bottom: 10px;
+    line-height: 1.5;
+    font-size: 14px;
 }

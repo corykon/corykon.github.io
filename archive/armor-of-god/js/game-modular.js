@@ -14,6 +14,7 @@ class ArmorOfGodGame {
         this.level = 1;
         this.cameraX = 0;
         this.booksCollected = 0;
+        this.selectedPetType = 'dog'; // Default to dog
         
         // Load images
         this.templeImage = new Image();
@@ -64,8 +65,8 @@ class ArmorOfGodGame {
             facingRight: true // Player facing direction
         };
         
-        // Dog companion properties
-        this.dog = {
+        // Pet companion properties (can be dog or cat)
+        this.pet = {
             x: 100,
             y: 440,
             width: 24,
@@ -79,7 +80,8 @@ class ArmorOfGodGame {
             followDistance: 60,
             catchUpSpeed: 3.0,
             normalSpeed: 2.0,
-            facingRight: true,  // Dog starts facing right
+            facingRight: true,  // Pet starts facing right
+            type: 'dog', // Will be updated based on selection
             // Petting properties
             isBeingPetted: false,
             pettingTimer: 0,
@@ -181,7 +183,34 @@ class ArmorOfGodGame {
             this.hasArmor = false;
             this.player.color = '#8b4513';
             this.booksCollected = 0;
+            this.pet.type = this.selectedPetType; // Set pet type based on selection
             this.startGame();
+        });
+        
+        // Pet selection buttons
+        document.getElementById('selectDog').addEventListener('click', () => {
+            this.selectPet('dog');
+        });
+        
+        document.getElementById('selectCat').addEventListener('click', () => {
+            this.selectPet('cat');
+        });
+        
+        // Instructions modal
+        document.getElementById('instructionsLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showInstructionsModal();
+        });
+        
+        document.getElementById('closeModal').addEventListener('click', () => {
+            this.hideInstructionsModal();
+        });
+        
+        // Close modal when clicking outside content
+        document.getElementById('instructionsModal').addEventListener('click', (e) => {
+            if (e.target.id === 'instructionsModal') {
+                this.hideInstructionsModal();
+            }
         });
         
         document.getElementById('restartBtn').addEventListener('click', () => {
@@ -225,6 +254,25 @@ class ArmorOfGodGame {
         
         // Update UI to reflect saved settings
         this.updateUIFromSavedSettings();
+        
+        // Initialize pet control text
+        this.updatePetControlText();
+    }
+    
+    selectPet(petType) {
+        this.selectedPetType = petType;
+        
+        // Update UI to show selection
+        document.querySelectorAll('.pet-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        document.getElementById(`select${petType.charAt(0).toUpperCase() + petType.slice(1)}`).classList.add('selected');
+        
+        // Update controls text to show selected pet type
+        const petControlText = document.getElementById('petControlText');
+        if (petControlText) {
+            petControlText.textContent = `D Pet ${petType.charAt(0).toUpperCase() + petType.slice(1)}`;
+        }
     }
     
     startGame() {
@@ -255,20 +303,20 @@ class ArmorOfGodGame {
         this.player.handOffset = 0;
         this.player.facingRight = true;
         
-        // Reset dog
-        this.dog.x = 100;
-        this.dog.y = 440;
-        this.dog.velocityY = 0;
-        this.dog.isGrounded = true;
-        this.dog.animFrame = 0;
-        this.dog.animTimer = 0;
-        this.dog.isMoving = false;
-        this.dog.facingRight = true;
-        this.dog.isBeingPetted = false;
-        this.dog.pettingTimer = 0;
-        this.dog.tailWagTimer = 0;
-        this.dog.jumpCount = 0;
-        this.dog.jumpTimer = 0;
+        // Reset pet
+        this.pet.x = 100;
+        this.pet.y = 440;
+        this.pet.velocityY = 0;
+        this.pet.isGrounded = true;
+        this.pet.animFrame = 0;
+        this.pet.animTimer = 0;
+        this.pet.isMoving = false;
+        this.pet.facingRight = true;
+        this.pet.isBeingPetted = false;
+        this.pet.pettingTimer = 0;
+        this.pet.tailWagTimer = 0;
+        this.pet.jumpCount = 0;
+        this.pet.jumpTimer = 0;
         
         // Reset game state
         this.cameraX = 0;
@@ -418,14 +466,14 @@ class ArmorOfGodGame {
         // Add sparkle trails when armor is active (more sparkles when moving)
         if (this.hasArmor) {
             this.effectsManager.addSparkleTrail(this.player.x, this.player.y, this.hasArmor);
-            this.effectsManager.addSparkleTrail(this.dog.x, this.dog.y, this.hasArmor);
+            this.effectsManager.addSparkleTrail(this.pet.x, this.pet.y, this.hasArmor);
             
             // Extra sparkles when moving for trail effect
             if (this.player.isMoving) {
                 this.effectsManager.addSparkleTrail(this.player.x, this.player.y, this.hasArmor);
             }
-            if (this.dog.isMoving) {
-                this.effectsManager.addSparkleTrail(this.dog.x, this.dog.y, this.hasArmor);
+            if (this.pet.isMoving) {
+                this.effectsManager.addSparkleTrail(this.pet.x, this.pet.y, this.hasArmor);
             }
         }
         
@@ -492,8 +540,8 @@ class ArmorOfGodGame {
         // Update player animation
         this.updatePlayerAnimation();
         
-        // Update dog
-        this.updateDog();
+        // Update pet
+        this.updatePet();
     }
     
     updatePlayerAnimation() {
@@ -539,71 +587,71 @@ class ArmorOfGodGame {
         }
     }
     
-    updateDog() {
+    updatePet() {
         if (this.gameState !== 'playing') return;
         
         // Calculate target position
-        const targetX = this.player.x - this.dog.followDistance;
-        const distanceToTarget = Math.abs(this.dog.x - targetX);
+        const targetX = this.player.x - this.pet.followDistance;
+        const distanceToTarget = Math.abs(this.pet.x - targetX);
         
-        // Dog movement logic
+        // Pet movement logic
         if (distanceToTarget > 10) {
-            this.dog.isMoving = true;
+            this.pet.isMoving = true;
             
-            let speed = this.dog.normalSpeed;
+            let speed = this.pet.normalSpeed;
             if (distanceToTarget > 120) {
-                speed = this.dog.catchUpSpeed;
+                speed = this.pet.catchUpSpeed;
             }
             
-            // Armor enhances dog speed too
+            // Armor enhances pet speed too
             if (this.hasArmor) {
                 speed *= 1.5;
             }
             
-            const moveDirection = this.dog.x < targetX ? 1 : -1;
-            const shouldJump = this.shouldDogJump(moveDirection);
+            const moveDirection = this.pet.x < targetX ? 1 : -1;
+            const shouldJump = this.shouldPetJump(moveDirection);
             
-            if (shouldJump && this.dog.isGrounded) {
+            if (shouldJump && this.pet.isGrounded) {
                 const jumpPower = this.hasArmor ? this.getCurrentJumpPower() * 0.8 : this.jumpPower * 0.8;
-                this.dog.velocityY = jumpPower;
-                this.dog.isGrounded = false;
+                this.pet.velocityY = jumpPower;
+                this.pet.isGrounded = false;
             }
             
-            if (this.dog.x < targetX) {
-                this.dog.x += speed;
-                this.dog.facingRight = true; // Moving right
-            } else if (this.dog.x > targetX) {
-                this.dog.x -= speed;
-                this.dog.facingRight = false; // Moving left
+            if (this.pet.x < targetX) {
+                this.pet.x += speed;
+                this.pet.facingRight = true; // Moving right
+            } else if (this.pet.x > targetX) {
+                this.pet.x -= speed;
+                this.pet.facingRight = false; // Moving left
             }
         } else {
-            this.dog.isMoving = false;
+            this.pet.isMoving = false;
         }
         
-        // Apply gravity to dog
-        this.dog.velocityY += this.gravity;
-        this.dog.y += this.dog.velocityY;
+        // Apply gravity to pet
+        this.pet.velocityY += this.gravity;
+        this.pet.y += this.pet.velocityY;
         
-        // Platform collisions for dog
-        this.worldManager.checkPlatformCollisions(this.dog);
+        // Platform collisions for pet
+        this.worldManager.checkPlatformCollisions(this.pet);
         
-        // Update dog animation
-        this.updateDogAnimation();
+        // Update pet animation
+        this.updatePetAnimation();
     }
     
-    shouldDogJump(moveDirection) {
-        if (!this.dog.isGrounded) return false;
+    shouldPetJump(moveDirection) {
+        if (!this.pet.isGrounded) return false;
         
         const lookAheadDistance = 40;
-        const checkX = this.dog.x + (moveDirection * lookAheadDistance);
-        const checkY = this.dog.y + this.dog.height + 10;
+        const checkX = this.pet.x + (moveDirection * lookAheadDistance);
+        const checkY = this.pet.y + this.pet.height + 10;
         
         let groundAhead = false;
         
         // Check for ground ahead
         for (let platform of this.worldManager.platforms) {
             if (platform.y === this.worldManager.groundY && 
-                checkX + this.dog.width > platform.x && 
+                checkX + this.pet.width > platform.x && 
                 checkX < platform.x + platform.width &&
                 checkY >= platform.y && checkY <= platform.y + platform.height) {
                 groundAhead = true;
@@ -614,7 +662,7 @@ class ArmorOfGodGame {
         if (!groundAhead) {
             for (let platform of this.worldManager.platforms) {
                 if (platform.y < this.worldManager.groundY && 
-                    checkX + this.dog.width > platform.x && 
+                    checkX + this.pet.width > platform.x && 
                     checkX < platform.x + platform.width &&
                     checkY >= platform.y && checkY <= platform.y + platform.height) {
                     groundAhead = true;
@@ -623,79 +671,79 @@ class ArmorOfGodGame {
             }
         }
         
-        return !groundAhead && this.dog.isMoving;
+        return !groundAhead && this.pet.isMoving;
     }
     
-    updateDogAnimation() {
+    updatePetAnimation() {
         // Handle petting animation states
-        if (this.dog.isBeingPetted) {
-            this.dog.pettingTimer++;
+        if (this.pet.isBeingPetted) {
+            this.pet.pettingTimer++;
             
             // Tail wagging animation
-            this.dog.tailWagTimer++;
+            this.pet.tailWagTimer++;
             
             // Handle jumps after petting starts
-            if (this.dog.pettingTimer > 30 && this.dog.jumpCount < this.dog.maxJumps) { // Wait 0.5 seconds before first jump
-                this.dog.jumpTimer++;
-                if (this.dog.jumpTimer >= this.dog.jumpCooldown) {
-                    if (this.dog.isGrounded) {
+            if (this.pet.pettingTimer > 30 && this.pet.jumpCount < this.pet.maxJumps) { // Wait 0.5 seconds before first jump
+                this.pet.jumpTimer++;
+                if (this.pet.jumpTimer >= this.pet.jumpCooldown) {
+                    if (this.pet.isGrounded) {
                         // Little happy jump
-                        this.dog.velocityY = -8; // Smaller jump than regular jump
-                        this.dog.isGrounded = false;
-                        this.dog.jumpCount++;
-                        this.dog.jumpTimer = 0;
+                        this.pet.velocityY = -8; // Smaller jump than regular jump
+                        this.pet.isGrounded = false;
+                        this.pet.jumpCount++;
+                        this.pet.jumpTimer = 0;
                     }
                 }
             }
             
             // End petting state
-            if (this.dog.pettingTimer >= this.dog.pettingDuration) {
-                this.dog.isBeingPetted = false;
-                this.dog.pettingTimer = 0;
-                this.dog.tailWagTimer = 0;
-                this.dog.jumpCount = 0;
-                this.dog.jumpTimer = 0;
+            if (this.pet.pettingTimer >= this.pet.pettingDuration) {
+                this.pet.isBeingPetted = false;
+                this.pet.pettingTimer = 0;
+                this.pet.tailWagTimer = 0;
+                this.pet.jumpCount = 0;
+                this.pet.jumpTimer = 0;
             }
         } else {
             // Normal animation logic
-            if (this.dog.isMoving && this.dog.isGrounded) {
-                this.dog.animTimer++;
-                if (this.dog.animTimer >= this.dog.animSpeed) {
-                    this.dog.animFrame = (this.dog.animFrame + 1) % 4;
-                    this.dog.animTimer = 0;
+            if (this.pet.isMoving && this.pet.isGrounded) {
+                this.pet.animTimer++;
+                if (this.pet.animTimer >= this.pet.animSpeed) {
+                    this.pet.animFrame = (this.pet.animFrame + 1) % 4;
+                    this.pet.animTimer = 0;
                 }
             } else {
-                this.dog.animFrame = 0;
-                this.dog.animTimer = 0;
+                this.pet.animFrame = 0;
+                this.pet.animTimer = 0;
             }
         }
     }
     
-    tryPetDog() {
-        if (this.dog.isBeingPetted) return; // Already being petted
+    tryPetAnimal() {
+        if (this.pet.isBeingPetted) return; // Already being petted
         
-        // Check if player is close enough to the dog
-        const distance = Math.abs(this.player.x - this.dog.x);
+        // Check if player is close enough to the pet
+        const distance = Math.abs(this.player.x - this.pet.x);
         const petDistance = 60; // Must be within 60 pixels
         
         if (distance <= petDistance) {
-            // Start petting for both dog and player
-            this.dog.isBeingPetted = true;
-            this.dog.pettingTimer = 0;
-            this.dog.tailWagTimer = 0;
-            this.dog.jumpCount = 0;
-            this.dog.jumpTimer = 0;
+            // Start petting for both pet and player
+            this.pet.isBeingPetted = true;
+            this.pet.pettingTimer = 0;
+            this.pet.tailWagTimer = 0;
+            this.pet.jumpCount = 0;
+            this.pet.jumpTimer = 0;
             
-            // Position player appropriately next to dog, facing same direction
-            this.player.facingRight = this.dog.facingRight; // Match dog's direction
+            // Position player appropriately next to pet, facing same direction
+            this.player.facingRight = this.pet.facingRight; // Match pet's direction
             
-            // Position player slightly behind dog (same orientation)
-            if (this.dog.facingRight) {
-                // Dog facing right, player stands behind and to the left
-                this.player.x = this.dog.x - 40;
+            // Position player slightly behind pet (same orientation)
+            if (this.pet.facingRight) {
+                // Pet facing right, player stands behind and to the left
+                this.player.x = this.pet.x - 40;
             } else {
-                // Dog facing left, player stands behind and to the right  
-                this.player.x = this.dog.x + 40;
+                // Pet facing left, player stands behind and to the right  
+                this.player.x = this.pet.x + 40;
             }
             
             // Start player petting animation
@@ -703,8 +751,12 @@ class ArmorOfGodGame {
             this.player.pettingTimer = 0;
             this.player.handOffset = 0;
             
-            // Play bark sound
-            this.audioManager.playSound('bark1');
+            // Play appropriate sound based on pet type
+            if (this.pet.type === 'cat') {
+                this.audioManager.playSound('meow');
+            } else {
+                this.audioManager.playSound('bark1');
+            }
         }
     }
     
@@ -865,7 +917,7 @@ class ArmorOfGodGame {
         
         // Render characters
         this.characterRenderer.renderPlayer(this.ctx, this.player, this.hasArmor);
-        this.characterRenderer.renderDog(this.ctx, this.dog);
+        this.characterRenderer.renderPet(this.ctx, this.pet);
         
         // Render effects
         this.effectsManager.renderArmorExplosion(this.ctx);
@@ -876,23 +928,23 @@ class ArmorOfGodGame {
         
         this.ctx.restore();
         
-        // Show petting prompt if close enough to dog
+        // Show petting prompt if close enough to pet
         if (this.gameState === 'playing' && !this.isPaused) {
-            const distance = Math.abs(this.player.x - this.dog.x);
+            const distance = Math.abs(this.player.x - this.pet.x);
             const petDistance = 60;
             
-            if (distance <= petDistance && !this.dog.isBeingPetted) {
+            if (distance <= petDistance && !this.pet.isBeingPetted) {
                 this.ctx.save();
                 this.ctx.translate(-this.cameraX, 0); // Translate back for world coordinates
                 
-                // Show "Press D to pet!" above the dog
+                // Show "Press D to pet!" above the pet
                 this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-                this.ctx.fillRect(this.dog.x - 25, this.dog.y - 25, 80, 20);
+                this.ctx.fillRect(this.pet.x - 25, this.pet.y - 25, 80, 20);
                 
                 this.ctx.fillStyle = '#FFD700';
                 this.ctx.font = '12px Arial';
                 this.ctx.textAlign = 'center';
-                this.ctx.fillText('Press D to pet!', this.dog.x + 15, this.dog.y - 10);
+                this.ctx.fillText('Press D to pet!', this.pet.x + 15, this.pet.y - 10);
                 
                 this.ctx.restore();
             }
@@ -931,6 +983,22 @@ class ArmorOfGodGame {
             speedSlider.value = this.gameSpeed;
             speedValue.textContent = this.gameSpeed.toFixed(2) + 'x';
         }
+    }
+    
+    updatePetControlText() {
+        const petControlText = document.getElementById('petControlText');
+        if (petControlText) {
+            const petName = this.selectedPetType.charAt(0).toUpperCase() + this.selectedPetType.slice(1);
+            petControlText.textContent = `D Pet ${petName}`;
+        }
+    }
+    
+    showInstructionsModal() {
+        document.getElementById('instructionsModal').classList.remove('hidden');
+    }
+    
+    hideInstructionsModal() {
+        document.getElementById('instructionsModal').classList.add('hidden');
     }
     
     loadGameSpeedSetting() {

@@ -291,77 +291,87 @@ class CharacterRenderer {
         }
     }
     
-    renderDog(ctx, dog) {
-        // Use the dog's facingRight property to determine direction
-        const facingRight = dog.facingRight;
+    renderPet(ctx, pet) {
+        // Use the pet's facingRight property to determine direction
+        const facingRight = pet.facingRight;
+        
+        // Render different pets based on type
+        if (pet.type === 'cat') {
+            this.renderCat(ctx, pet, facingRight);
+        } else {
+            this.renderDog(ctx, pet, facingRight);
+        }
+    }
+    
+    renderDog(ctx, pet, facingRight) {
         
         // Dog body - main brown color
         ctx.fillStyle = '#8B4513';
-        ctx.fillRect(dog.x + 2, dog.y + 4, dog.width - 4, dog.height - 8);
+        ctx.fillRect(pet.x + 2, pet.y + 4, pet.width - 4, pet.height - 8);
         
         // Dog head (bigger now - 10x10 instead of 8x8)
         ctx.fillStyle = '#A0522D'; // Slightly lighter brown for head
         if (facingRight) {
             // Head at front when facing right (right side of body)
-            ctx.fillRect(dog.x + dog.width - 1, dog.y + 1, 10, 10);
+            ctx.fillRect(pet.x + pet.width - 1, pet.y + 1, 10, 10);
             
             // Dog ears (floppy)
             ctx.fillStyle = '#654321'; // Darker brown for ears
-            ctx.fillRect(dog.x + dog.width - 2, dog.y, 3, 6);
-            ctx.fillRect(dog.x + dog.width + 4, dog.y, 3, 6);
+            ctx.fillRect(pet.x + pet.width - 2, pet.y, 3, 6);
+            ctx.fillRect(pet.x + pet.width + 4, pet.y, 3, 6);
             
             // Dog nose and eyes (facing right)
             ctx.fillStyle = '#000000';
-            ctx.fillRect(dog.x + dog.width + 7, dog.y + 6, 2, 1); // Nose at front
-            ctx.fillRect(dog.x + dog.width + 2, dog.y + 4, 1, 1); // Left eye
-            ctx.fillRect(dog.x + dog.width + 5, dog.y + 4, 1, 1); // Right eye
+            ctx.fillRect(pet.x + pet.width + 7, pet.y + 6, 2, 1); // Nose at front
+            ctx.fillRect(pet.x + pet.width + 2, pet.y + 4, 1, 1); // Left eye
+            ctx.fillRect(pet.x + pet.width + 5, pet.y + 4, 1, 1); // Right eye
         } else {
             // Head at front when facing left (left side of body)
-            ctx.fillRect(dog.x - 9, dog.y + 1, 10, 10);
+            ctx.fillRect(pet.x - 9, pet.y + 1, 10, 10);
             
             // Dog ears (floppy)
             ctx.fillStyle = '#654321'; // Darker brown for ears
-            ctx.fillRect(dog.x - 5, dog.y, 3, 6);
-            ctx.fillRect(dog.x - 2, dog.y, 3, 6);
+            ctx.fillRect(pet.x - 5, pet.y, 3, 6);
+            ctx.fillRect(pet.x - 2, pet.y, 3, 6);
             
             // Dog nose and eyes (facing left)
             ctx.fillStyle = '#000000';
-            ctx.fillRect(dog.x - 9, dog.y + 6, 2, 1); // Nose at front
-            ctx.fillRect(dog.x - 6, dog.y + 4, 1, 1); // Left eye
-            ctx.fillRect(dog.x - 3, dog.y + 4, 1, 1); // Right eye
+            ctx.fillRect(pet.x - 9, pet.y + 6, 2, 1); // Nose at front
+            ctx.fillRect(pet.x - 6, pet.y + 4, 1, 1); // Left eye
+            ctx.fillRect(pet.x - 3, pet.y + 4, 1, 1); // Right eye
         }
         
         // Dog legs (animated when moving)
         ctx.fillStyle = '#8B4513';
-        if (dog.isMoving && dog.isGrounded) {
+        if (pet.isMoving && pet.isGrounded) {
             // Animated legs for walking
             const legOffset = Math.sin(this.animationTime * 0.3) * 1;
             
             // Front legs
-            ctx.fillRect(dog.x + 3, dog.y + dog.height - 6, 2, 6);
-            ctx.fillRect(dog.x + 7 + legOffset, dog.y + dog.height - 6, 2, 6);
+            ctx.fillRect(pet.x + 3, pet.y + pet.height - 6, 2, 6);
+            ctx.fillRect(pet.x + 7 + legOffset, pet.y + pet.height - 6, 2, 6);
             
             // Back legs
-            ctx.fillRect(dog.x + dog.width - 8, dog.y + dog.height - 6, 2, 6);
-            ctx.fillRect(dog.x + dog.width - 4 - legOffset, dog.y + dog.height - 6, 2, 6);
+            ctx.fillRect(pet.x + pet.width - 8, pet.y + pet.height - 6, 2, 6);
+            ctx.fillRect(pet.x + pet.width - 4 - legOffset, pet.y + pet.height - 6, 2, 6);
         } else {
             // Static legs
-            ctx.fillRect(dog.x + 3, dog.y + dog.height - 6, 2, 6);
-            ctx.fillRect(dog.x + 7, dog.y + dog.height - 6, 2, 6);
-            ctx.fillRect(dog.x + dog.width - 8, dog.y + dog.height - 6, 2, 6);
-            ctx.fillRect(dog.x + dog.width - 4, dog.y + dog.height - 6, 2, 6);
+            ctx.fillRect(pet.x + 3, pet.y + pet.height - 6, 2, 6);
+            ctx.fillRect(pet.x + 7, pet.y + pet.height - 6, 2, 6);
+            ctx.fillRect(pet.x + pet.width - 8, pet.y + pet.height - 6, 2, 6);
+            ctx.fillRect(pet.x + pet.width - 4, pet.y + pet.height - 6, 2, 6);
         }
         
         // Dog tail (always wagging!)
-        this.renderDogTail(ctx, dog, facingRight);
+        this.renderDogTail(ctx, pet, facingRight);
     }
     
-    renderDogTail(ctx, dog, facingRight) {
+    renderDogTail(ctx, pet, facingRight) {
         // Animated tail wagging - faster and more energetic when being petted
         let wagSpeed = 0.4;
         let wagIntensity = 2;
         
-        if (dog.isBeingPetted) {
+        if (pet.isBeingPetted) {
             wagSpeed = 0.8; // Much faster wagging when being petted
             wagIntensity = 4; // More intense wagging
         }
@@ -372,18 +382,117 @@ class CharacterRenderer {
         
         if (facingRight) {
             // Tail on the back (left side when facing right)
-            ctx.fillRect(dog.x - 1, dog.y + 6, 2, 4);
+            ctx.fillRect(pet.x - 1, pet.y + 6, 2, 4);
             
             // Tail tip (wagging)
-            ctx.fillRect(dog.x - 4 - tailWag, dog.y + 4 + Math.abs(tailWag * 0.5), 3, 2);
-            ctx.fillRect(dog.x - 5 - tailWag, dog.y + 2 + Math.abs(tailWag * 0.3), 2, 2);
+            ctx.fillRect(pet.x - 4 - tailWag, pet.y + 4 + Math.abs(tailWag * 0.5), 3, 2);
+            ctx.fillRect(pet.x - 5 - tailWag, pet.y + 2 + Math.abs(tailWag * 0.3), 2, 2);
         } else {
             // Tail on the back (right side when facing left)
-            ctx.fillRect(dog.x + dog.width - 1, dog.y + 6, 2, 4);
+            ctx.fillRect(pet.x + pet.width - 1, pet.y + 6, 2, 4);
             
             // Tail tip (wagging)
-            ctx.fillRect(dog.x + dog.width + 1 + tailWag, dog.y + 4 + Math.abs(tailWag * 0.5), 3, 2);
-            ctx.fillRect(dog.x + dog.width + 2 + tailWag, dog.y + 2 + Math.abs(tailWag * 0.3), 2, 2);
+            ctx.fillRect(pet.x + pet.width + 1 + tailWag, pet.y + 4 + Math.abs(tailWag * 0.5), 3, 2);
+            ctx.fillRect(pet.x + pet.width + 2 + tailWag, pet.y + 2 + Math.abs(tailWag * 0.3), 2, 2);
+        }
+    }
+    
+    renderCat(ctx, pet, facingRight) {
+        // Cat body - sleek gray color
+        ctx.fillStyle = '#696969';
+        ctx.fillRect(pet.x + 2, pet.y + 4, pet.width - 4, pet.height - 8);
+        
+        // Cat head (smaller and more triangular than dog)
+        ctx.fillStyle = '#778899'; // Slightly lighter gray for head
+        if (facingRight) {
+            // Head at front when facing right
+            ctx.fillRect(pet.x + pet.width - 1, pet.y + 2, 8, 8);
+            
+            // Cat ears (pointed and upright)
+            ctx.fillStyle = '#556B2F'; // Dark olive for ears
+            ctx.fillRect(pet.x + pet.width, pet.y, 2, 4);
+            ctx.fillRect(pet.x + pet.width + 4, pet.y, 2, 4);
+            
+            // Cat nose and eyes (facing right)
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(pet.x + pet.width + 6, pet.y + 6, 1, 1); // Small nose
+            ctx.fillRect(pet.x + pet.width + 1, pet.y + 4, 1, 1); // Left eye
+            ctx.fillRect(pet.x + pet.width + 4, pet.y + 4, 1, 1); // Right eye
+            
+            // Cat whiskers
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(pet.x + pet.width + 7, pet.y + 5, 2, 1); // Right whiskers
+            ctx.fillRect(pet.x + pet.width + 7, pet.y + 7, 2, 1);
+        } else {
+            // Head at front when facing left
+            ctx.fillRect(pet.x - 7, pet.y + 2, 8, 8);
+            
+            // Cat ears (pointed and upright)
+            ctx.fillStyle = '#556B2F';
+            ctx.fillRect(pet.x - 6, pet.y, 2, 4);
+            ctx.fillRect(pet.x - 2, pet.y, 2, 4);
+            
+            // Cat nose and eyes (facing left)
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(pet.x - 8, pet.y + 6, 1, 1); // Small nose
+            ctx.fillRect(pet.x - 5, pet.y + 4, 1, 1); // Left eye
+            ctx.fillRect(pet.x - 2, pet.y + 4, 1, 1); // Right eye
+            
+            // Cat whiskers
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(pet.x - 10, pet.y + 5, 2, 1); // Left whiskers
+            ctx.fillRect(pet.x - 10, pet.y + 7, 2, 1);
+        }
+        
+        // Cat legs (thinner than dog legs)
+        ctx.fillStyle = '#696969';
+        if (pet.isMoving && pet.isGrounded) {
+            // Animated legs for walking (more graceful than dog)
+            const legOffset = Math.sin(this.animationTime * 0.25) * 0.5;
+            
+            // Front legs
+            ctx.fillRect(pet.x + 4, pet.y + pet.height - 5, 1, 5);
+            ctx.fillRect(pet.x + 6 + legOffset, pet.y + pet.height - 5, 1, 5);
+            
+            // Back legs
+            ctx.fillRect(pet.x + pet.width - 7, pet.y + pet.height - 5, 1, 5);
+            ctx.fillRect(pet.x + pet.width - 5 - legOffset, pet.y + pet.height - 5, 1, 5);
+        } else {
+            // Static legs
+            ctx.fillRect(pet.x + 4, pet.y + pet.height - 5, 1, 5);
+            ctx.fillRect(pet.x + 6, pet.y + pet.height - 5, 1, 5);
+            ctx.fillRect(pet.x + pet.width - 7, pet.y + pet.height - 5, 1, 5);
+            ctx.fillRect(pet.x + pet.width - 5, pet.y + pet.height - 5, 1, 5);
+        }
+        
+        // Cat tail (curvy and expressive)
+        this.renderCatTail(ctx, pet, facingRight);
+    }
+    
+    renderCatTail(ctx, pet, facingRight) {
+        // Cat tail behavior - swishes when content, flicks when being petted
+        let tailSpeed = 0.2;
+        let tailIntensity = 1;
+        
+        if (pet.isBeingPetted) {
+            tailSpeed = 0.6; // Faster swishing when being petted
+            tailIntensity = 3; // More dramatic movement
+        }
+        
+        const tailSwish = Math.sin(this.animationTime * tailSpeed) * tailIntensity;
+        
+        ctx.fillStyle = '#556B2F'; // Dark olive for tail
+        
+        if (facingRight) {
+            // Tail curves upward and sways
+            ctx.fillRect(pet.x - 1, pet.y + 6, 1, 4);
+            ctx.fillRect(pet.x - 2, pet.y + 4 - tailSwish, 1, 3);
+            ctx.fillRect(pet.x - 3, pet.y + 2 - tailSwish * 0.5, 1, 2);
+        } else {
+            // Tail curves upward and sways
+            ctx.fillRect(pet.x + pet.width, pet.y + 6, 1, 4);
+            ctx.fillRect(pet.x + pet.width + 1, pet.y + 4 - tailSwish, 1, 3);
+            ctx.fillRect(pet.x + pet.width + 2, pet.y + 2 - tailSwish * 0.5, 1, 2);
         }
     }
 }

@@ -102,7 +102,7 @@ class InputHandler {
         
         // Handle petting (only when playing and not paused)
         if (e.code === 'KeyD' && this.game.gameState === 'playing' && !this.game.isPaused) {
-            this.game.tryPetDog();
+            this.game.tryPetAnimal();
             e.preventDefault();
             return;
         }
