@@ -202,11 +202,11 @@ class UIRenderer {
         // Stacked buttons with cool pixel art style
         const buttonWidth = 250;
         const buttonHeight = 50;
-        const buttonSpacing = 20;
+        const buttonSpacing = 16;
         
         // Calculate positions for stacked buttons
         const button1Y = centerY + 20;
-        const button2Y = button1Y + buttonHeight + buttonSpacing - 15; // Move up by 15 pixels
+        const button2Y = button1Y + buttonHeight + buttonSpacing;
         const buttonX = centerX - buttonWidth / 2;
         
         // Restart Level button (top)

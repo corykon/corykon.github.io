@@ -7,7 +7,7 @@ class AudioManager {
         
         // Load audio files with individual loop settings
         this.audio = {
-            menu: new Audio('sounds/menu.mp3'),
+            menu: new Audio('sounds/menu-song.mp3'),
             adventure: new Audio('sounds/adventure.mp3'),
             winner: new Audio('sounds/winner1.mp3'),
             gameOver: new Audio('sounds/gameover.mp3'),
@@ -21,7 +21,15 @@ class AudioManager {
             thud2: new Audio('sounds/thud2.mp3'),
             thud3: new Audio('sounds/thud3.mp3'),
             ricochet: new Audio('sounds/ricochet.mp3'),
-            gameoversong: new Audio('sounds/gameoversong.mp3')
+            ricochet2: new Audio('sounds/ricochet2.mp3'),
+            gameoversong: new Audio('sounds/gameoversong.mp3'),
+            startGameClick: new Audio('sounds/start-game.mp3'),
+            buttonClick: new Audio('sounds/button-click.mp3'),
+            modalClose: new Audio('sounds/modal-close.mp3'),
+            modalOpen: new Audio('sounds/modal-open.mp3'),
+            buttonHover: new Audio('sounds/button-hover.mp3'),
+            unpause: new Audio('sounds/unpause.mp3'),
+            pause: new Audio('sounds/pause.mp3'),
         };
         
         // Define loop and volume settings for each audio file
@@ -40,7 +48,16 @@ class AudioManager {
             thud2: { loop: false, volume: 0.5 },
             thud3: { loop: false, volume: 0.5 },
             ricochet: { loop: false, volume: 0.8 },
-            gameoversong: { loop: false, volume: 0.4 }
+            ricochet2: { loop: false, volume: 0.8 },
+            ricochet3: { loop: false, volume: 0.8 },
+            gameoversong: { loop: false, volume: 0.4 },
+            startGameClick: { loop: false, volume: 0.4 },
+            buttonClick: { loop: false, volume: 0.4 },
+            modalClose: { loop: false, volume: 0.4 },
+            modalOpen: { loop: false, volume: 0.4 },
+            buttonHover: { loop: false, volume: 0.4 },
+            unpause: { loop: false, volume: 0.4 },
+            pause: { loop: false, volume: 0.4 }
         };
         
         // Apply settings to each audio file

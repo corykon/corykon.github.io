@@ -22,27 +22,42 @@ class InputHandler {
         // Mouse events for pause menu buttons
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            // Convert mouse coordinates to canvas coordinates (account for scaling)
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
             
             // Check pause menu buttons (only when game is paused)
             if (game.isPaused && game.gameState === 'playing') {
-                // Check restart level button
-                if (game.uiRenderer && game.uiRenderer.pauseRestartButton && 
-                    x >= game.uiRenderer.pauseRestartButton.x && 
-                    x <= game.uiRenderer.pauseRestartButton.x + game.uiRenderer.pauseRestartButton.width &&
-                    y >= game.uiRenderer.pauseRestartButton.y && 
-                    y <= game.uiRenderer.pauseRestartButton.y + game.uiRenderer.pauseRestartButton.height) {
+                // Use EXACT same positioning as UI renderer
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+                const centerX = canvasWidth / 2;
+                const centerY = canvasHeight / 2;
+                
+                // Stacked buttons with cool pixel art style
+                const buttonWidth = 250;
+                const buttonHeight = 50;
+                const buttonSpacing = 16;
+                
+                // Calculate positions for stacked buttons (EXACT copy from ui-renderer.js)
+                const button1Y = centerY + 20;
+                const button2Y = button1Y + buttonHeight + buttonSpacing;
+                const buttonX = centerX - buttonWidth / 2;
+                
+                // Check restart level button (hardcoded position)
+                if (x >= buttonX && x <= buttonX + buttonWidth && 
+                    y >= button1Y && y <= button1Y + buttonHeight) {
+                    game.audioManager.playSoundEffect('buttonClick');
                     game.restartLevel();
                     return;
                 }
                 
-                // Check main menu button
-                if (game.uiRenderer && game.uiRenderer.pauseMainMenuButton && 
-                    x >= game.uiRenderer.pauseMainMenuButton.x && 
-                    x <= game.uiRenderer.pauseMainMenuButton.x + game.uiRenderer.pauseMainMenuButton.width &&
-                    y >= game.uiRenderer.pauseMainMenuButton.y && 
-                    y <= game.uiRenderer.pauseMainMenuButton.y + game.uiRenderer.pauseMainMenuButton.height) {
+                // Check main menu button (hardcoded position)
+                if (x >= buttonX && x <= buttonX + buttonWidth && 
+                    y >= button2Y && y <= button2Y + buttonHeight) {
+                    game.audioManager.playSoundEffect('buttonClick');
                     game.goToMainMenu();
                     return;
                 }
@@ -52,29 +67,48 @@ class InputHandler {
         // Mouse move events for hover effects
         canvas.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            // Convert mouse coordinates to canvas coordinates (account for scaling)
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
             
             // Track hover state for pause menu buttons
             if (game.isPaused && game.gameState === 'playing') {
                 let hovered = false;
                 
+                // Use EXACT same positioning as UI renderer
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+                const centerX = canvasWidth / 2;
+                const centerY = canvasHeight / 2;
+                
+                // Stacked buttons with cool pixel art style  
+                const buttonWidth = 250;
+                const buttonHeight = 50;
+                const buttonSpacing = 10;
+                
+                // Calculate positions for stacked buttons (EXACT copy from ui-renderer.js)
+                const button1Y = centerY + 20;
+                const button2Y = button1Y + buttonHeight + buttonSpacing - 15; // Move up by 15 pixels
+                const buttonX = centerX - buttonWidth / 2;
+                
                 // Check restart button hover
-                if (game.uiRenderer && game.uiRenderer.pauseRestartButton && 
-                    x >= game.uiRenderer.pauseRestartButton.x && 
-                    x <= game.uiRenderer.pauseRestartButton.x + game.uiRenderer.pauseRestartButton.width &&
-                    y >= game.uiRenderer.pauseRestartButton.y && 
-                    y <= game.uiRenderer.pauseRestartButton.y + game.uiRenderer.pauseRestartButton.height) {
+                if (x >= buttonX && x <= buttonX + buttonWidth && 
+                    y >= button1Y && y <= button1Y + buttonHeight) {
+                    if (this.hoveredButton !== 'restart') {
+                        game.audioManager.playSoundEffect('buttonHover');
+                    }
                     this.hoveredButton = 'restart';
                     hovered = true;
                 }
                 
                 // Check main menu button hover
-                if (game.uiRenderer && game.uiRenderer.pauseMainMenuButton && 
-                    x >= game.uiRenderer.pauseMainMenuButton.x && 
-                    x <= game.uiRenderer.pauseMainMenuButton.x + game.uiRenderer.pauseMainMenuButton.width &&
-                    y >= game.uiRenderer.pauseMainMenuButton.y && 
-                    y <= game.uiRenderer.pauseMainMenuButton.y + game.uiRenderer.pauseMainMenuButton.height) {
+                if (x >= buttonX && x <= buttonX + buttonWidth && 
+                    y >= button2Y && y <= button2Y + buttonHeight) {
+                    if (this.hoveredButton !== 'mainMenu') {
+                        game.audioManager.playSoundEffect('buttonHover');
+                    }
                     this.hoveredButton = 'mainMenu';
                     hovered = true;
                 }

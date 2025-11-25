@@ -1,5 +1,6 @@
 class ArrowManager {
-    constructor() {
+    constructor(audioManager) {
+        this.audioManager = audioManager;
         this.arrows = [];
         
         // Arrow spawning system
@@ -186,6 +187,9 @@ class ArrowManager {
                     // Arrow bounces off armor
                     arrow.speedX = -arrow.speedX;
                     arrow.speedY = -2; // Bounce up
+                    const ricochetSounds = ['ricochet', 'ricochet2'];
+                    const randomSound = ricochetSounds[Math.floor(Math.random() * ricochetSounds.length)];
+                    this.audioManager.playSound(randomSound);
                 } else {
                     // Player takes damage
                     collisions.push(arrow);

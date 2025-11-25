@@ -105,7 +105,7 @@ class ArmorOfGodGame {
         this.effectsManager = new EffectsManager();
         this.inputHandler = new InputHandler();
         this.worldManager = new WorldManager();
-        this.arrowManager = new ArrowManager();
+        this.arrowManager = new ArrowManager(this.audioManager);
         this.backgroundManager = new BackgroundManager();
         this.uiRenderer = new UIRenderer();
         this.characterRenderer = new CharacterRenderer();
@@ -180,6 +180,7 @@ class ArmorOfGodGame {
     
     setupMenuEvents() {
         document.getElementById('startBtn').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('startGameClick');
             this.hasArmor = false;
             this.player.color = '#8b4513';
             this.booksCollected = 0;
@@ -189,20 +190,45 @@ class ArmorOfGodGame {
         
         // Pet selection buttons
         document.getElementById('selectDog').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
             this.selectPet('dog');
+            this.audioManager.playSound('bark1');
         });
         
         document.getElementById('selectCat').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
             this.selectPet('cat');
+            this.audioManager.playSound('meow');
+        });
+        
+        // Add hover sound effects for main menu buttons
+        document.getElementById('startBtn').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
+        });
+        
+        document.getElementById('selectDog').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
+        });
+        
+        document.getElementById('selectCat').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
+        });
+        
+        document.getElementById('instructionsLink').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
         });
         
         // Instructions modal
         document.getElementById('instructionsLink').addEventListener('click', (e) => {
             e.preventDefault();
+            this.audioManager.playSoundEffect('buttonClick');
+            this.audioManager.playSoundEffect('modalOpen');
             this.showInstructionsModal();
         });
         
         document.getElementById('closeModal').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
+            this.audioManager.playSoundEffect('modalClose');
             this.hideInstructionsModal();
         });
         
@@ -799,16 +825,12 @@ class ArmorOfGodGame {
     
     takeDamage() {
         if (this.player.invulnerable) return;
-        
+
         // Play appropriate hit sound based on armor status
-        if (this.hasArmor) {
-            // Armor deflects the hit - play ricochet sound
-            this.audioManager.playSound('ricochet');
-        } else {
-            // No armor - play random thud sound
+        if (!this.hasArmor) {
             this.audioManager.playRandomThudSound();
         }
-        
+
         this.player.health--;
         this.player.invulnerable = true;
         this.player.invulnerabilityTimer = 0;
@@ -858,8 +880,10 @@ class ArmorOfGodGame {
         this.isPaused = !this.isPaused;
         
         if (this.isPaused) {
+            this.audioManager.playSoundEffect('pause');
             this.audioManager.pauseCurrentMusic();
         } else {
+            this.audioManager.playSoundEffect('unpause');
             this.audioManager.resumeCurrentMusic();
         }
     }
