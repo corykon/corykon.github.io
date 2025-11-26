@@ -55,7 +55,7 @@ class AudioManager {
             buttonClick: { loop: false, volume: 0.4 },
             modalClose: { loop: false, volume: 0.4 },
             modalOpen: { loop: false, volume: 0.4 },
-            buttonHover: { loop: false, volume: 0.4 },
+            buttonHover: { loop: false, volume: 0.25 },
             unpause: { loop: false, volume: 0.4 },
             pause: { loop: false, volume: 0.4 }
         };

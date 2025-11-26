@@ -62,7 +62,9 @@ class ArmorOfGodGame {
             pettingTimer: 0,
             pettingDuration: 60, // 1 second petting animation
             handOffset: 0,
-            facingRight: true // Player facing direction
+            facingRight: true, // Player facing direction
+            blockedLeft: false,
+            blockedRight: false
         };
         
         // Pet companion properties (can be dog or cat)
@@ -577,18 +579,35 @@ class ArmorOfGodGame {
             }
         }
         
+        // Reset blocking properties each frame
+        this.player.blockedLeft = false;
+        this.player.blockedRight = false;
+        
+        // Set player as not grounded when falling (before applying gravity)
+        if (this.player.velocityY > 0) {
+            this.player.isGrounded = false;
+            this.player.isJumping = false;
+        }
+        
         // Apply gravity to player
         this.player.velocityY += this.gravity;
         this.player.y += this.player.velocityY;
         
         // Check for pit death
         if (this.player.y > this.canvas.height + 50) {
-            this.gameOver('You fell into a pit! Stay on the platforms to survive.');
+            this.startDeath('You fell into a pit! Stay on the platforms to survive.');
             return;
         }
         
-        // Platform collisions for player
+        // Platform collisions for player (this will set isGrounded=true if landing on platform)
         this.worldManager.checkPlatformCollisions(this.player);
+        
+        // Check if player is falling off platform edges and restrict movement
+        // But only if they're not already deep in a pit (to avoid interfering with pit death)
+        if (!this.player.isGrounded && this.player.velocityY > 0 && this.player.y < this.canvas.height) {
+            // Player is falling but not in death zone - check for wall blocking
+            this.checkPlatformEdgeBlocking();
+        }
         
         // Update camera
         this.cameraX = Math.max(0, this.player.x - 300);
@@ -598,6 +617,31 @@ class ArmorOfGodGame {
         
         // Update pet
         this.updatePet();
+    }
+    
+    checkPlatformEdgeBlocking() {
+        // Only check for wall blocking when player is falling and might be against a pit wall
+        const checkDistance = 2; // Very small distance to detect wall contact
+        
+        // Check if player is directly against a platform wall
+        for (let platform of this.worldManager.platforms) {
+            // Check if player is vertically aligned with the platform (at wall height)
+            if (this.player.y < platform.y + platform.height && 
+                this.player.y + this.player.height > platform.y) {
+                
+                // Check left wall - player is just to the left of platform
+                if (this.player.x + this.player.width >= platform.x - checkDistance && 
+                    this.player.x + this.player.width <= platform.x + checkDistance) {
+                    this.player.blockedRight = true; // Block movement toward the wall
+                }
+                
+                // Check right wall - player is just to the right of platform  
+                if (this.player.x >= platform.x + platform.width - checkDistance && 
+                    this.player.x <= platform.x + platform.width + checkDistance) {
+                    this.player.blockedLeft = true; // Block movement toward the wall
+                }
+            }
+        }
     }
     
     updatePlayerAnimation() {
@@ -646,16 +690,43 @@ class ArmorOfGodGame {
     updatePet() {
         if (this.gameState !== 'playing') return;
         
-        // Calculate target position
-        const targetX = this.player.x - this.pet.followDistance;
-        const distanceToTarget = Math.abs(this.pet.x - targetX);
+        const distanceToPlayer = Math.abs(this.player.x - this.pet.x);
+        const playerMovingTowardsPet = this.player.isMoving && 
+            ((this.player.facingRight && this.pet.x > this.player.x) || 
+             (!this.player.facingRight && this.pet.x < this.player.x));
+        const playerMovingAwayFromPet = this.player.isMoving && 
+            ((this.player.facingRight && this.pet.x < this.player.x) || 
+             (!this.player.facingRight && this.pet.x > this.player.x));
+        const playerStill = !this.player.isMoving && this.player.isGrounded;
+        const playerTowardsPet = (this.player.facingRight && this.pet.x > this.player.x) || 
+                                (!this.player.facingRight && this.pet.x < this.player.x);
+        
+        let shouldMove = false;
+        let targetX, targetDistance;
+        
+        if (playerStill && playerTowardsPet && distanceToPlayer < 120 && distanceToPlayer > 25) {
+            // Player is facing pet and standing still - get closer for petting
+            targetX = this.player.facingRight ? this.player.x + 25 : this.player.x - 25;
+            targetDistance = Math.abs(this.pet.x - targetX);
+            shouldMove = true;
+        } else if (playerMovingAwayFromPet) {
+            // Only follow when player is moving away - never move when they're approaching
+            targetX = this.player.x - this.pet.followDistance;
+            targetDistance = Math.abs(this.pet.x - targetX);
+            shouldMove = targetDistance > 10; // Only move if significantly far from target
+        } else if (!this.player.isMoving && distanceToPlayer > 150) {
+            // Player stopped but is very far away - catch up
+            targetX = this.player.x - this.pet.followDistance;
+            targetDistance = Math.abs(this.pet.x - targetX);
+            shouldMove = true;
+        }
         
         // Pet movement logic
-        if (distanceToTarget > 10) {
+        if (shouldMove && targetDistance > 10) {
             this.pet.isMoving = true;
             
             let speed = this.pet.normalSpeed;
-            if (distanceToTarget > 120) {
+            if (targetDistance > 120) {
                 speed = this.pet.catchUpSpeed;
             }
             
@@ -690,6 +761,15 @@ class ArmorOfGodGame {
         
         // Platform collisions for pet
         this.worldManager.checkPlatformCollisions(this.pet);
+        
+        // Pet safety check - respawn if fallen off the world
+        if (this.pet.y > this.canvas.height + 50) {
+            // Respawn pet near player on solid ground
+            this.pet.x = this.player.x + (this.player.facingRight ? -60 : 60);
+            this.pet.y = this.player.y - 10;
+            this.pet.velocityY = 0;
+            this.pet.isGrounded = false; // Let it fall to find ground naturally
+        }
         
         // Update pet animation
         this.updatePetAnimation();
@@ -788,19 +868,12 @@ class ArmorOfGodGame {
             this.pet.pettingTimer = 0;
             this.pet.tailWagTimer = 0;
             this.pet.jumpCount = 0;
+            
+            // Start player petting animation
+            this.characterRenderer.startPettingAnimation();
             this.pet.jumpTimer = 0;
             
-            // Position player appropriately next to pet, facing same direction
-            this.player.facingRight = this.pet.facingRight; // Match pet's direction
-            
-            // Position player slightly behind pet (same orientation)
-            if (this.pet.facingRight) {
-                // Pet facing right, player stands behind and to the left
-                this.player.x = this.pet.x - 40;
-            } else {
-                // Pet facing left, player stands behind and to the right  
-                this.player.x = this.pet.x + 40;
-            }
+            // Keep player in their current position (no automatic repositioning)
             
             // Start player petting animation
             this.player.isPetting = true;
@@ -970,7 +1043,7 @@ class ArmorOfGodGame {
         this.worldManager.renderScriptureBooks(this.ctx, this.bomImage);
         
         // Render characters
-        this.characterRenderer.renderPlayer(this.ctx, this.player, this.hasArmor);
+        this.characterRenderer.renderPlayer(this.ctx, this.player, this.hasArmor, this.gameState);
         this.characterRenderer.renderPet(this.ctx, this.pet);
         
         // Render effects

@@ -195,12 +195,12 @@ class InputHandler {
         // Horizontal movement (armor enhances speed)
         player.isMoving = false;
         const currentSpeed = this.game.getCurrentSpeed();
-        if (this.keys['ArrowLeft'] && player.x > cameraX) {
+        if (this.keys['ArrowLeft'] && player.x > cameraX && !player.blockedLeft) {
             player.x -= currentSpeed;
             player.isMoving = true;
             player.facingRight = false; // Facing left
         }
-        if (this.keys['ArrowRight'] && player.x < worldWidth - player.width) {
+        if (this.keys['ArrowRight'] && player.x < worldWidth - player.width && !player.blockedRight) {
             player.x += currentSpeed;
             player.isMoving = true;
             player.facingRight = true; // Facing right

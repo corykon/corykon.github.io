@@ -219,8 +219,8 @@ class WorldManager {
     checkPlatformCollisions(entity) {
         let onGroundPlatform = false;
         
-        // Check ground collision - but only if entity is on a platform
-        if (entity.y >= this.groundY) {
+        // Check ground collision - but only if entity is on a platform AND close to ground level
+        if (entity.y >= this.groundY && entity.y <= this.groundY + 10) {
             // Check if entity is horizontally on any ground-level platform
             for (let platform of this.platforms) {
                 if (platform.y === this.groundY && 
@@ -244,13 +244,16 @@ class WorldManager {
         
         // Platform collisions for floating platforms
         this.platforms.forEach(platform => {
-            if (entity.x < platform.x + platform.width &&
-                entity.x + entity.width > platform.x &&
-                entity.y < platform.y + platform.height &&
-                entity.y + entity.height > platform.y) {
-                
-                // Landing on top of platform
-                if (entity.velocityY > 0 && entity.y < platform.y) {
+            // Check for horizontal overlap - more forgiving for edge landings
+            const horizontalOverlap = entity.x < platform.x + platform.width + 5 && entity.x + entity.width > platform.x - 5;
+            
+            if (horizontalOverlap) {
+                // Landing on top of platform (falling down onto it) - more forgiving edge detection
+                if (entity.velocityY > 0 && 
+                    entity.y <= platform.y && 
+                    entity.y + entity.height >= platform.y &&
+                    entity.y + entity.height <= platform.y + 15) { // Increased tolerance for landing
+                    
                     entity.y = platform.y - entity.height;
                     entity.velocityY = 0;
                     entity.isGrounded = true;
@@ -258,6 +261,37 @@ class WorldManager {
                         entity.isJumping = false;
                     }
                 }
+                // Side collision detection - only when entity is clearly at platform level (not landing on top)
+                else if (entity.velocityY >= 0 && 
+                         entity.y < platform.y + platform.height - 10 &&
+                         entity.y + entity.height > platform.y + 15) {
+                    
+                    // Determine which side we're hitting
+                    const entityCenterX = entity.x + entity.width / 2;
+                    const platformCenterX = platform.x + platform.width / 2;
+                    
+                    if (entityCenterX < platformCenterX) {
+                        // Hitting from the left - push entity left and block rightward movement
+                        entity.x = platform.x - entity.width - 2;
+                        if (entity.blockedRight !== undefined) entity.blockedRight = true;
+                    } else {
+                        // Hitting from the right - push entity right and block leftward movement
+                        entity.x = platform.x + platform.width + 2;
+                        if (entity.blockedLeft !== undefined) entity.blockedLeft = true;
+                    }
+                    
+                    // Ensure entity is not grounded and falls immediately
+                    entity.isGrounded = false;
+                    if (entity.isJumping !== undefined) {
+                        entity.isJumping = false;
+                    }
+                    
+                    // Add downward velocity to ensure falling
+                    if (entity.velocityY === 0) {
+                        entity.velocityY = 1;
+                    }
+                }
+                // When jumping up (velocityY < 0), allow passing through - no collision
             }
         });
         
