@@ -301,6 +301,7 @@ class ArmorOfGodGame {
         // Speed slider
         document.getElementById('speedSlider').addEventListener('input', (e) => {
             this.setGameSpeed(parseFloat(e.target.value));
+            this.audioManager.playSound('buttonClick2');
         });
         
         // Close speed dropdown when clicking outside
@@ -976,7 +977,7 @@ class ArmorOfGodGame {
         this.audioManager.playMusic('adventure');
         
         // Show message to player
-        this.uiRenderer.showMessage('Collect scriptures for new armor.', 240, '#FFA500');
+        this.uiRenderer.showMessage('Collect scriptures for new armor.', 240, '#FFA500', 18, 700);
     }
     
     togglePause() {

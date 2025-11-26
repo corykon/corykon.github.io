@@ -9,12 +9,14 @@ class UIRenderer {
         this.pauseMainMenuButton = null;
     }
     
-    showMessage(text, duration = 180, color = '#FFD700') {
+    showMessage(text, duration = 180, color = '#FFD700', fontSize = 24, backgroundWidth = 600) {
         this.messages.push({
             text: text,
             duration: duration,
             timer: 0,
-            color: color
+            color: color,
+            fontSize: fontSize,
+            backgroundWidth: backgroundWidth
         });
     }
     
@@ -145,17 +147,21 @@ class UIRenderer {
         let yOffset = 0;
         this.messages.forEach(message => {
             const opacity = Math.min(1.0, (message.duration - message.timer) / 60);
+            const fontSize = message.fontSize || 24;
+            const backgroundWidth = message.backgroundWidth || 600;
+            const backgroundX = (1200 - backgroundWidth) / 2; // Center the background
+            const textX = 600; // Keep text centered on screen
             
             // Message background
             ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillRect(300, 150 + yOffset, 600, 60);
+            ctx.fillRect(backgroundX, 150 + yOffset, backgroundWidth, 60);
             
             // Message text
             ctx.fillStyle = message.color;
             ctx.globalAlpha = opacity;
-            ctx.font = 'bold 24px "Press Start 2P", monospace';
+            ctx.font = `bold ${fontSize}px "Press Start 2P", monospace`;
             ctx.textAlign = 'center';
-            ctx.fillText(message.text, 600, 198 + yOffset);
+            ctx.fillText(message.text, textX, 198 + yOffset);
             ctx.textAlign = 'left';
             ctx.globalAlpha = 1.0;
             

@@ -39,10 +39,19 @@ class CharacterRenderer {
             'run8', 'run9', 'run10', 'run11', 'run12', 'run13', 'run14'
         ];
         
-        let loadedCount = 0;
-        const totalSprites = spriteNames.length;
+        const armorSpriteNames = [
+            'armor-standing', 'armor-jump', 'armor-drop',
+            'armor-pet1', 'armor-pet2', 'armor-pet3',
+            'armor-duck1', 'armor-duck2', 'armor-duck3',
+            'armor-run1', 'armor-run2', 'armor-run3', 'armor-run4',
+            'armor-run5', 'armor-run6', 'armor-run7', 'armor-run8'
+        ];
         
-        spriteNames.forEach(spriteName => {
+        const allSpriteNames = [...spriteNames, ...armorSpriteNames];
+        let loadedCount = 0;
+        const totalSprites = allSpriteNames.length;
+        
+        allSpriteNames.forEach(spriteName => {
             const img = new Image();
             img.onload = () => {
                 loadedCount++;
@@ -73,7 +82,7 @@ class CharacterRenderer {
     }
     
     // Get the current sprite based on player state
-    getCurrentSprite(player) {
+    getCurrentSprite(player, hasArmor = false) {
         if (!this.spritesLoaded) {
             return null; // Will fall back to rectangle rendering
         }
@@ -85,53 +94,67 @@ class CharacterRenderer {
             const currentFrameIndex = Math.min(this.petAnimFrame, petFrames.length - 1);
             const spriteIndex = petFrames[currentFrameIndex];
             
-            if (spriteIndex === 0) return this.sprites.pet1;
-            if (spriteIndex === 1) return this.sprites.pet2;
-            if (spriteIndex === 2) return this.sprites.pet3;
-            return this.sprites.standing;
+            const prefix = hasArmor ? 'armor-' : '';
+            if (spriteIndex === 0) return this.sprites[`${prefix}pet1`];
+            if (spriteIndex === 1) return this.sprites[`${prefix}pet2`];
+            if (spriteIndex === 2) return this.sprites[`${prefix}pet3`];
+            return this.sprites[`${prefix}standing`];
         }
         
         // Handle stopping animation
         if (this.stoppingAnimTimer > 0) {
-            return this.sprites.stopping;
+            const prefix = hasArmor ? 'armor-' : '';
+            return this.sprites[`${prefix}standing`]; // Use standing for armor since no armor-stopping
         }
         
         // Handle ducking states
         if (player.isDucking && player.isGrounded) {
+            const prefix = hasArmor ? 'armor-' : '';
             if (player.isMoving) {
                 // Cycle: duck2, duck1, duck3, duck1 when moving while ducking
                 const duckFrames = [1, 0, 2, 0]; // duck2=1, duck1=0, duck3=2, duck1=0
                 const spriteIndex = duckFrames[this.duckAnimFrame];
                 
-                if (spriteIndex === 0) return this.sprites.duck1;
-                if (spriteIndex === 1) return this.sprites.duck2;
-                if (spriteIndex === 2) return this.sprites.duck3;
-                return this.sprites.duck1;
+                if (spriteIndex === 0) return this.sprites[`${prefix}duck1`];
+                if (spriteIndex === 1) return this.sprites[`${prefix}duck2`];
+                if (spriteIndex === 2) return this.sprites[`${prefix}duck3`];
+                return this.sprites[`${prefix}duck1`];
             } else {
                 // Use duck1 when ducking at rest
-                return this.sprites.duck1;
+                return this.sprites[`${prefix}duck1`];
             }
         }
         
         // Handle jumping states
         if (!player.isGrounded) {
+            const prefix = hasArmor ? 'armor-' : '';
             if (player.velocityY < 0) {
-                return this.sprites.jump;
+                return this.sprites[`${prefix}jump`];
             } else {
                 // Check if this is a drop from ledge vs normal fall
-                return this.wasFalling ? this.sprites.drop : this.sprites.drop;
+                return this.wasFalling ? this.sprites[`${prefix}drop`] : this.sprites[`${prefix}drop`];
             }
         }
         
         // Handle movement
         if (player.isMoving) {
-            const runFrames = ['run1', 'run2', 'run3', 'run4', 'run5', 'run6', 'run7', 
-                              'run8', 'run9', 'run10', 'run11', 'run12', 'run13', 'run14'];
-            return this.sprites[runFrames[this.runAnimFrame]];
+            if (hasArmor) {
+                // Armor has 8 running frames
+                const armorRunFrames = ['armor-run1', 'armor-run2', 'armor-run3', 'armor-run4', 
+                                       'armor-run5', 'armor-run6', 'armor-run7', 'armor-run8'];
+                const frameIndex = this.runAnimFrame % armorRunFrames.length;
+                return this.sprites[armorRunFrames[frameIndex]];
+            } else {
+                // Regular has 14 running frames
+                const runFrames = ['run1', 'run2', 'run3', 'run4', 'run5', 'run6', 'run7', 
+                                  'run8', 'run9', 'run10', 'run11', 'run12', 'run13', 'run14'];
+                return this.sprites[runFrames[this.runAnimFrame]];
+            }
         }
         
         // Default standing
-        return this.sprites.standing;
+        const prefix = hasArmor ? 'armor-' : '';
+        return this.sprites[`${prefix}standing`];
     }
     
     update() {
@@ -151,12 +174,16 @@ class CharacterRenderer {
         }
         
         // Get current sprite
-        const currentSprite = this.getCurrentSprite(player);
+        const currentSprite = this.getCurrentSprite(player, hasArmor);
         
         if (currentSprite && this.spritesLoaded) {
+            // Check if this is the armor-jump frame which needs special scaling (45% taller)
+            const isArmorJump = hasArmor && currentSprite === this.sprites['armor-jump'];
+            const jumpScaleMultiplier = isArmorJump ? 1.45 : 1.0;
+            
             // Render sprite-based character (72.8% bigger total - 1.44 * 1.2 = 1.728)
             const renderWidth = player.width * 1.728;
-            const renderHeight = player.height * 1.728;
+            const renderHeight = player.height * 1.728 * jumpScaleMultiplier;
             const offsetX = (renderWidth - player.width) / 2;
             const offsetY = (renderHeight - player.height) / 2 + 5; // +5px to position above grass
             
