@@ -36,27 +36,41 @@ class InputHandler {
                 const centerX = canvasWidth / 2;
                 const centerY = canvasHeight / 2;
                 
-                // Stacked buttons with cool pixel art style
-                const buttonWidth = 250;
+                // Three button layout: wide Resume button on top, Restart and Main Menu side by side below
+                const wideButtonWidth = 300;
+                const narrowButtonWidth = 140;
                 const buttonHeight = 50;
-                const buttonSpacing = 16;
+                const verticalSpacing = 20;
+                const horizontalSpacing = 20;
                 
-                // Calculate positions for stacked buttons (EXACT copy from ui-renderer.js)
-                const button1Y = centerY + 20;
-                const button2Y = button1Y + buttonHeight + buttonSpacing;
-                const buttonX = centerX - buttonWidth / 2;
+                // Resume button positioning
+                const resumeButtonY = centerY;
+                const resumeButtonX = centerX - wideButtonWidth / 2;
                 
-                // Check restart level button (hardcoded position)
-                if (x >= buttonX && x <= buttonX + buttonWidth && 
-                    y >= button1Y && y <= button1Y + buttonHeight) {
+                // Bottom row buttons positioning
+                const bottomButtonY = resumeButtonY + buttonHeight + verticalSpacing;
+                const restartButtonX = centerX - narrowButtonWidth - horizontalSpacing/2;
+                const mainMenuButtonX = centerX + horizontalSpacing/2;
+                
+                // Check resume button
+                if (x >= resumeButtonX && x <= resumeButtonX + wideButtonWidth && 
+                    y >= resumeButtonY && y <= resumeButtonY + buttonHeight) {
+                    game.audioManager.playSoundEffect('buttonClick');
+                    game.togglePause(); // This will unpause the game
+                    return;
+                }
+                
+                // Check restart level button
+                if (x >= restartButtonX && x <= restartButtonX + narrowButtonWidth && 
+                    y >= bottomButtonY && y <= bottomButtonY + buttonHeight) {
                     game.audioManager.playSoundEffect('buttonClick');
                     game.restartLevel();
                     return;
                 }
                 
-                // Check main menu button (hardcoded position)
-                if (x >= buttonX && x <= buttonX + buttonWidth && 
-                    y >= button2Y && y <= button2Y + buttonHeight) {
+                // Check main menu button
+                if (x >= mainMenuButtonX && x <= mainMenuButtonX + narrowButtonWidth && 
+                    y >= bottomButtonY && y <= bottomButtonY + buttonHeight) {
                     game.audioManager.playSoundEffect('buttonClick');
                     game.goToMainMenu();
                     return;
@@ -83,19 +97,35 @@ class InputHandler {
                 const centerX = canvasWidth / 2;
                 const centerY = canvasHeight / 2;
                 
-                // Stacked buttons with cool pixel art style  
-                const buttonWidth = 250;
+                // Three button layout: wide Resume button on top, Restart and Main Menu side by side below
+                const wideButtonWidth = 300;
+                const narrowButtonWidth = 140;
                 const buttonHeight = 50;
-                const buttonSpacing = 10;
+                const verticalSpacing = 20;
+                const horizontalSpacing = 20;
                 
-                // Calculate positions for stacked buttons (EXACT copy from ui-renderer.js)
-                const button1Y = centerY + 20;
-                const button2Y = button1Y + buttonHeight + buttonSpacing - 15; // Move up by 15 pixels
-                const buttonX = centerX - buttonWidth / 2;
+                // Resume button positioning
+                const resumeButtonY = centerY;
+                const resumeButtonX = centerX - wideButtonWidth / 2;
+                
+                // Bottom row buttons positioning
+                const bottomButtonY = resumeButtonY + buttonHeight + verticalSpacing;
+                const restartButtonX = centerX - narrowButtonWidth - horizontalSpacing/2;
+                const mainMenuButtonX = centerX + horizontalSpacing/2;
+                
+                // Check resume button hover
+                if (x >= resumeButtonX && x <= resumeButtonX + wideButtonWidth && 
+                    y >= resumeButtonY && y <= resumeButtonY + buttonHeight) {
+                    if (this.hoveredButton !== 'resume') {
+                        game.audioManager.playSoundEffect('buttonHover');
+                    }
+                    this.hoveredButton = 'resume';
+                    hovered = true;
+                }
                 
                 // Check restart button hover
-                if (x >= buttonX && x <= buttonX + buttonWidth && 
-                    y >= button1Y && y <= button1Y + buttonHeight) {
+                if (x >= restartButtonX && x <= restartButtonX + narrowButtonWidth && 
+                    y >= bottomButtonY && y <= bottomButtonY + buttonHeight) {
                     if (this.hoveredButton !== 'restart') {
                         game.audioManager.playSoundEffect('buttonHover');
                     }
@@ -104,8 +134,8 @@ class InputHandler {
                 }
                 
                 // Check main menu button hover
-                if (x >= buttonX && x <= buttonX + buttonWidth && 
-                    y >= button2Y && y <= button2Y + buttonHeight) {
+                if (x >= mainMenuButtonX && x <= mainMenuButtonX + narrowButtonWidth && 
+                    y >= bottomButtonY && y <= bottomButtonY + buttonHeight) {
                     if (this.hoveredButton !== 'mainMenu') {
                         game.audioManager.playSoundEffect('buttonHover');
                     }

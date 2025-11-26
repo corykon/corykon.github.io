@@ -240,30 +240,60 @@ class ArmorOfGodGame {
         });
         
         document.getElementById('restartBtn').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
             this.resetGame();
             this.startGame();
         });
         
+        document.getElementById('restartBtn').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
+        });
+        
         document.getElementById('mainMenuBtn').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
             this.goToMainMenu();
+        });
+        
+        document.getElementById('mainMenuBtn').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
         });
         
         document.getElementById('mainMenuBtn2').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
             this.goToMainMenu();
         });
         
+        document.getElementById('mainMenuBtn2').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
+        });
+        
         document.getElementById('nextLevelBtn').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
             alert('More levels coming soon! Thanks for playing!');
+        });
+        
+        document.getElementById('nextLevelBtn').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
         });
         
         // Audio toggle button
         document.getElementById('audioToggleBtn').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
             this.toggleAudio();
+        });
+        
+        document.getElementById('audioToggleBtn').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
         });
         
         // Speed control button
         document.getElementById('speedToggleBtn').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
             this.toggleSpeedDropdown();
+        });
+        
+        document.getElementById('speedToggleBtn').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
         });
         
         // Speed slider

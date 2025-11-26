@@ -194,99 +194,136 @@ class UIRenderer {
         // Reset shadow for other text
         ctx.shadowBlur = 0;
         
-        // Instructions with monospace font
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.font = '16px "Press Start 2P", monospace';
-        ctx.fillText('Press P to resume', centerX, centerY - 30);
-        
-        // Stacked buttons with cool pixel art style
-        const buttonWidth = 250;
+        // Three button layout: wide Resume button on top, Restart and Main Menu side by side below
+        const wideButtonWidth = 300;
+        const narrowButtonWidth = 140;
         const buttonHeight = 50;
-        const buttonSpacing = 16;
+        const verticalSpacing = 20;
+        const horizontalSpacing = 20;
         
-        // Calculate positions for stacked buttons
-        const button1Y = centerY + 20;
-        const button2Y = button1Y + buttonHeight + buttonSpacing;
-        const buttonX = centerX - buttonWidth / 2;
+        // Resume button (top, wide, green)
+        const resumeButtonY = centerY;
+        const resumeButtonX = centerX - wideButtonWidth / 2;
         
-        // Restart Level button (top)
-        this.pauseRestartButton = { 
-            x: buttonX, 
-            y: button1Y, 
-            width: buttonWidth, 
+        this.pauseResumeButton = { 
+            x: resumeButtonX, 
+            y: resumeButtonY, 
+            width: wideButtonWidth, 
             height: buttonHeight 
         };
         
-        // Add hover effect for restart button
+        // Add hover effect for resume button
+        const isResumeHovered = hoveredButton === 'resume';
+        
+        // Green gradient background for resume button
+        const resumeGradient = ctx.createLinearGradient(resumeButtonX, resumeButtonY, resumeButtonX, resumeButtonY + buttonHeight);
+        if (isResumeHovered) {
+            resumeGradient.addColorStop(0, 'rgba(100, 255, 100, 1.0)');
+            resumeGradient.addColorStop(1, 'rgba(50, 200, 50, 1.0)');
+        } else {
+            resumeGradient.addColorStop(0, 'rgba(80, 220, 80, 0.9)');
+            resumeGradient.addColorStop(1, 'rgba(40, 160, 40, 0.9)');
+        }
+        ctx.fillStyle = resumeGradient;
+        ctx.fillRect(resumeButtonX, resumeButtonY, wideButtonWidth, buttonHeight);
+        
+        // Resume button border
+        ctx.strokeStyle = isResumeHovered ? '#90FF90' : '#60C060';
+        ctx.lineWidth = isResumeHovered ? 4 : 3;
+        ctx.strokeRect(resumeButtonX, resumeButtonY, wideButtonWidth, buttonHeight);
+        
+        // Resume button inner border
+        ctx.strokeStyle = isResumeHovered ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(resumeButtonX + 3, resumeButtonY + 3, wideButtonWidth - 6, buttonHeight - 6);
+        
+        // Resume button text
+        ctx.fillStyle = isResumeHovered ? '#FFFFFF' : '#F0FFF0';
+        ctx.font = 'bold 16px "Press Start 2P", monospace';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+        ctx.shadowBlur = isResumeHovered ? 4 : 2;
+        ctx.fillText('RESUME', centerX, resumeButtonY + buttonHeight/2);
+        ctx.shadowBlur = 0;
+        
+        // Bottom row buttons positioning
+        const bottomButtonY = resumeButtonY + buttonHeight + verticalSpacing;
+        const restartButtonX = centerX - narrowButtonWidth - horizontalSpacing/2;
+        const mainMenuButtonX = centerX + horizontalSpacing/2;
+        
+        // Restart Level button (bottom left, black)
+        this.pauseRestartButton = { 
+            x: restartButtonX, 
+            y: bottomButtonY, 
+            width: narrowButtonWidth, 
+            height: buttonHeight 
+        };
+        
         const isRestartHovered = hoveredButton === 'restart';
         
         // Black background for restart button
         ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.fillRect(buttonX, button1Y, buttonWidth, buttonHeight);
+        ctx.fillRect(restartButtonX, bottomButtonY, narrowButtonWidth, buttonHeight);
         
-        // Hover background effect (slight glow)
+        // Hover background effect
         if (isRestartHovered) {
             ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
-            ctx.fillRect(buttonX, button1Y, buttonWidth, buttonHeight);
+            ctx.fillRect(restartButtonX, bottomButtonY, narrowButtonWidth, buttonHeight);
         }
         
-        // Button border with pixel art style (brighter when hovered)
+        // Restart button border
         ctx.strokeStyle = isRestartHovered ? '#FFFF00' : '#FFD700';
         ctx.lineWidth = isRestartHovered ? 4 : 3;
-        ctx.strokeRect(buttonX, button1Y, buttonWidth, buttonHeight);
+        ctx.strokeRect(restartButtonX, bottomButtonY, narrowButtonWidth, buttonHeight);
         
-        // Inner border for depth (more prominent when hovered)
+        // Restart button inner border
         ctx.strokeStyle = isRestartHovered ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.5)';
         ctx.lineWidth = 1;
-        ctx.strokeRect(buttonX + 3, button1Y + 3, buttonWidth - 6, buttonHeight - 6);
+        ctx.strokeRect(restartButtonX + 3, bottomButtonY + 3, narrowButtonWidth - 6, buttonHeight - 6);
         
-        // Button text (brighter when hovered)
+        // Restart button text
         ctx.fillStyle = isRestartHovered ? '#FFFF00' : 'white';
-        ctx.font = 'bold 14px "Press Start 2P", monospace';
+        ctx.font = 'bold 12px "Press Start 2P", monospace';
         ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
         ctx.shadowBlur = isRestartHovered ? 4 : 2;
-        ctx.fillText('RESTART LEVEL', centerX, button1Y + buttonHeight/2);
+        ctx.fillText('RESTART', restartButtonX + narrowButtonWidth/2, bottomButtonY + buttonHeight/2);
         ctx.shadowBlur = 0;
         
-        // Main Menu button (bottom)
+        // Main Menu button (bottom right, black)
         this.pauseMainMenuButton = { 
-            x: buttonX, 
-            y: button2Y, 
-            width: buttonWidth, 
+            x: mainMenuButtonX, 
+            y: bottomButtonY, 
+            width: narrowButtonWidth, 
             height: buttonHeight 
         };
         
-        // Add hover effect for main menu button
         const isMainMenuHovered = hoveredButton === 'mainMenu';
         
-        // Cool gradient button background (brighter when hovered)
-        const menuGradient = ctx.createLinearGradient(buttonX, button2Y, buttonX, button2Y + buttonHeight);
-        if (isMainMenuHovered) {
-            menuGradient.addColorStop(0, 'rgba(255, 130, 130, 1.0)');
-            menuGradient.addColorStop(1, 'rgba(220, 80, 80, 1.0)');
-        } else {
-            menuGradient.addColorStop(0, 'rgba(255, 100, 100, 0.9)');
-            menuGradient.addColorStop(1, 'rgba(200, 50, 50, 0.9)');
-        }
-        ctx.fillStyle = menuGradient;
-        ctx.fillRect(buttonX, button2Y, buttonWidth, buttonHeight);
+        // Black background for main menu button
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillRect(mainMenuButtonX, bottomButtonY, narrowButtonWidth, buttonHeight);
         
-        // Button border with pixel art style (brighter when hovered)
+        // Hover background effect
+        if (isMainMenuHovered) {
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
+            ctx.fillRect(mainMenuButtonX, bottomButtonY, narrowButtonWidth, buttonHeight);
+        }
+        
+        // Main menu button border
         ctx.strokeStyle = isMainMenuHovered ? '#FFFF00' : '#FFD700';
         ctx.lineWidth = isMainMenuHovered ? 4 : 3;
-        ctx.strokeRect(buttonX, button2Y, buttonWidth, buttonHeight);
+        ctx.strokeRect(mainMenuButtonX, bottomButtonY, narrowButtonWidth, buttonHeight);
         
-        // Inner border for depth (more prominent when hovered)
+        // Main menu button inner border
         ctx.strokeStyle = isMainMenuHovered ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.5)';
         ctx.lineWidth = 1;
-        ctx.strokeRect(buttonX + 3, button2Y + 3, buttonWidth - 6, buttonHeight - 6);
+        ctx.strokeRect(mainMenuButtonX + 3, bottomButtonY + 3, narrowButtonWidth - 6, buttonHeight - 6);
         
-        // Button text (brighter when hovered)
+        // Main menu button text
         ctx.fillStyle = isMainMenuHovered ? '#FFFF00' : 'white';
-        ctx.font = 'bold 14px "Press Start 2P", monospace';
+        ctx.font = 'bold 12px "Press Start 2P", monospace';
         ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
         ctx.shadowBlur = isMainMenuHovered ? 4 : 2;
-        ctx.fillText('MAIN MENU', centerX, button2Y + buttonHeight/2);
+        ctx.fillText('MAIN MENU', mainMenuButtonX + narrowButtonWidth/2, bottomButtonY + buttonHeight/2);
         ctx.shadowBlur = 0;
         
         // Reset text properties
