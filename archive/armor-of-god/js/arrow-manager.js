@@ -34,13 +34,14 @@ class ArrowManager {
             const arrowType = this.arrowTypes[Math.floor(Math.random() * this.arrowTypes.length)];
             
             const newArrow = {
-                x: spawnX,
+                x: this.spawnPositions[i],
                 y: arrowType.y,
                 width: 40,
                 height: 8,
                 speedX: arrowType.speedX,
                 speedY: arrowType.speedY,
-                active: true
+                active: true,
+                hasPlayedRicochetSound: false
             };
             
             this.arrows.push(newArrow);
@@ -74,7 +75,8 @@ class ArrowManager {
             height: 8,
             speedX: arrowType.speedX * speedMultiplier,
             speedY: arrowType.speedY,
-            active: true
+            active: true,
+            hasPlayedRicochetSound: false
         };
         
         this.arrows.push(newArrow);
@@ -187,9 +189,14 @@ class ArrowManager {
                     // Arrow bounces off armor
                     arrow.speedX = -arrow.speedX;
                     arrow.speedY = -2; // Bounce up
-                    const ricochetSounds = ['ricochet', 'ricochet2'];
-                    const randomSound = ricochetSounds[Math.floor(Math.random() * ricochetSounds.length)];
-                    this.audioManager.playSound(randomSound);
+                    
+                    // Only play ricochet sound once per arrow
+                    if (!arrow.hasPlayedRicochetSound) {
+                        const ricochetSounds = ['ricochet', 'ricochet2'];
+                        const randomSound = ricochetSounds[Math.floor(Math.random() * ricochetSounds.length)];
+                        this.audioManager.playSound(randomSound);
+                        arrow.hasPlayedRicochetSound = true;
+                    }
                 } else {
                     // Player takes damage
                     collisions.push(arrow);
