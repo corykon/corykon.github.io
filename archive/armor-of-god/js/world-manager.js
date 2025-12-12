@@ -41,7 +41,6 @@ class WorldManager {
             { x: 4725, y: 468, width: 200, height: 135 },
             // GAP from 4925-5075 (150px pit)
             { x: 5075, y: 468, width: 225, height: 135 },
-            { x: 5400, y: 468, width: 200, height: 135 },
             { x: 5700, y: 468, width: 1400, height: 135 }, // Temple platform (4x larger for temple area)
             
             // Floating platforms - spread across both sections
@@ -56,7 +55,7 @@ class WorldManager {
             { x: 4000, y: 310, width: 120, height: 30 },
             { x: 4400, y: 360, width: 150, height: 30 },
             { x: 4800, y: 330, width: 180, height: 30 },
-            { x: 5200, y: 350, width: 120, height: 30 }
+            { x: 5200, y: 350, width: 280, height: 30 }
         ];
     }
     

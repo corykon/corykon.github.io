@@ -6,8 +6,13 @@ class ArmorOfGodGame {
         this.canvas.height = 600;
         
         // Game state
-        this.gameState = 'menu';
+        this.gameState = 'menu'; // menu, playing, gameOver, levelComplete, enteringTemple, celebrating
         this.isPaused = false;
+        
+        // Temple entrance sequence properties
+        this.templeEntranceTimer = 0;
+        this.templeEntranceSpeed = 2;
+        this.templeCenterX = 0; // Will be calculated based on castle position
         this.hasArmor = false;
         this.armorTimer = 0;
         this.armorDuration = 30 * 60; // 30 seconds at 60fps
@@ -512,14 +517,19 @@ class ArmorOfGodGame {
             this.gameState
         );
         
+        // Handle temple entrance sequence
+        if (this.gameState === 'enteringTemple') {
+            this.updateTempleEntrance();
+        }
+        
         this.effectsManager.updateArmorActivation();
         this.effectsManager.updateSparkleTrails();
         
         // Update background elements
         this.backgroundManager.updateElements(this.cameraX);
         
-        // Add sparkle trails when armor is active (more sparkles when moving)
-        if (this.hasArmor) {
+        // Add sparkle trails when armor is active (but not during temple entrance)
+        if (this.hasArmor && this.gameState !== 'enteringTemple') {
             this.effectsManager.addSparkleTrail(this.player.x, this.player.y, this.hasArmor);
             this.effectsManager.addSparkleTrail(this.pet.x, this.pet.y, this.hasArmor);
             
@@ -1013,6 +1023,84 @@ class ArmorOfGodGame {
     }
     
     levelComplete() {
+        this.gameState = 'enteringTemple';
+        this.templeEntranceTimer = 0;
+        this.templeCenterX = this.castle.x + this.castle.width / 2;
+        
+        // If pet is far away (more than 300 pixels), teleport it next to player
+        const distanceFromPlayer = Math.abs(this.pet.x - this.player.x);
+        if (distanceFromPlayer > 300) {
+            this.pet.x = this.player.x - 50; // Place pet slightly behind player
+            this.pet.y = this.worldManager.groundY - this.pet.height; // Place on ground
+            this.pet.isGrounded = true;
+            this.pet.velocityY = 0;
+        }
+        
+        // Initialize fade states
+        this.player.alpha = 1;
+        this.pet.alpha = 1;
+        this.waitingForPet = true;
+        this.movingTogether = false;
+        
+        // Make both face the temple
+        this.player.facingRight = true;
+        this.pet.facingRight = true;
+        this.pet.isMoving = true;
+        this.player.isMoving = false; // Player waits initially
+    }
+    
+    updateTempleEntrance() {
+        this.templeEntranceTimer++;
+        
+        const targetX = this.templeCenterX - this.player.width / 2;
+        
+        if (this.waitingForPet) {
+            // Pet catches up to player
+            if (this.pet.x < this.player.x - 20) {
+                this.pet.x += this.templeEntranceSpeed;
+            } else {
+                // Pet caught up - now move together
+                this.waitingForPet = false;
+                this.movingTogether = true;
+                this.player.isMoving = true;
+                this.pet.isMoving = true;
+            }
+        } else if (this.movingTogether) {
+            // Both move toward temple center together
+            if (this.player.x < targetX && this.pet.x < targetX - 30) {
+                this.player.x += this.templeEntranceSpeed;
+                this.pet.x += this.templeEntranceSpeed;
+            } else {
+                // Both reached the temple - start fading together
+                this.movingTogether = false;
+                this.templeEntranceTimer = 0; // Reset timer for fade sequence
+            }
+        } else {
+            // Fade both together
+            const fadeFrames = 30;
+            const fadeProgress = Math.min(this.templeEntranceTimer / fadeFrames, 1);
+            
+            this.player.alpha = 1 - fadeProgress;
+            this.pet.alpha = 1 - fadeProgress;
+            
+            // Once fully faded, start celebration
+            if (fadeProgress >= 1) {
+                this.startCelebration();
+            }
+        }
+    }
+    
+    startCelebration() {
+        this.gameState = 'celebrating';
+        this.effectsManager.initializeFireworks(this.castle);
+        this.audioManager.playMusic('winner');
+        
+        // Reset alpha values
+        this.player.alpha = 1;
+        this.pet.alpha = 1;
+    }
+    
+    startCelebration() {
         this.gameState = 'celebrating';
         this.effectsManager.initializeFireworks(this.castle);
         this.audioManager.playMusic('winner');
@@ -1021,7 +1109,7 @@ class ArmorOfGodGame {
     render() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        if (this.gameState !== 'playing' && this.gameState !== 'dying' && this.gameState !== 'celebrating') {
+        if (this.gameState !== 'playing' && this.gameState !== 'dying' && this.gameState !== 'celebrating' && this.gameState !== 'enteringTemple') {
             return;
         }
         

@@ -231,6 +231,11 @@ class CharacterRenderer {
             ctx.globalAlpha = 0.5;
         }
         
+        // Apply alpha transparency for temple entrance fade
+        if (player.alpha !== undefined && player.alpha !== 1) {
+            ctx.globalAlpha = player.alpha;
+        }
+        
         // Get current sprite
         const currentSprite = this.getCurrentSprite(player, hasArmor);
         
@@ -535,6 +540,11 @@ class CharacterRenderer {
         
         // Render the sprite
         ctx.save();
+        
+        // Apply alpha transparency for temple entrance fade
+        if (pet.alpha !== undefined && pet.alpha !== 1) {
+            ctx.globalAlpha = pet.alpha;
+        }
         
         // Calculate sprite scaling and positioning
         const spriteScale = 3;
