@@ -362,6 +362,7 @@ class ArmorOfGodGame {
         this.player.pettingTimer = 0;
         this.player.handOffset = 0;
         this.player.facingRight = true;
+        this.player.alpha = 1; // Reset visibility for level restart
         
         // Reset pet
         this.pet.x = 100;
@@ -377,6 +378,7 @@ class ArmorOfGodGame {
         this.pet.tailWagTimer = 0;
         this.pet.jumpCount = 0;
         this.pet.jumpTimer = 0;
+        this.pet.alpha = 1; // Reset visibility for level restart
         
         // Reset game state
         this.cameraX = 0;
