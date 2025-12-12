@@ -197,6 +197,12 @@ class UIRenderer {
         ctx.font = 'bold 48px "Press Start 2P", monospace';
         ctx.fillText('PAUSED', centerX, centerY - 80);
         
+        // Subtitle text
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '14px "Press Start 2P", monospace';
+        ctx.fillText("Press 'P' to resume the game.", centerX, centerY - 30);
+        
         // Reset shadow for other text
         ctx.shadowBlur = 0;
         

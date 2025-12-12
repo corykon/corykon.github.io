@@ -6,7 +6,7 @@ class WorldManager {
         
         // World properties
         this.groundY = 468;
-        this.worldWidth = 6000; // Level width - doubled for longer gameplay
+        this.worldWidth = 9000; // Level width - extended for larger temple platform
         
         // Initialize world objects
         this.createPlatforms();
@@ -42,7 +42,7 @@ class WorldManager {
             // GAP from 4925-5075 (150px pit)
             { x: 5075, y: 468, width: 225, height: 135 },
             { x: 5400, y: 468, width: 200, height: 135 },
-            { x: 5700, y: 468, width: 350, height: 135 }, // Temple platform (wider for temple)
+            { x: 5700, y: 468, width: 1400, height: 135 }, // Temple platform (4x larger for temple area)
             
             // Floating platforms - spread across both sections
             { x: 525, y: 375, width: 150, height: 30 },

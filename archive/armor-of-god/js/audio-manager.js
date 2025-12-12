@@ -75,15 +75,20 @@ class AudioManager {
         this.saveAudioSetting(); // Save to localStorage
         
         if (!this.audioEnabled) {
-            // Stop all music
-            Object.values(this.audio).forEach(audio => {
-                audio.pause();
-                audio.currentTime = 0;
-            });
-            this.currentMusic = null;
+            // Pause current music (don't reset currentTime to preserve position)
+            if (this.currentMusic) {
+                this.currentMusic.pause();
+            }
         } else {
-            // Resume appropriate music for current state (will be called by game)
-            return true; // Signal that game should call playMusicForState
+            // Resume current music if there was one playing
+            if (this.currentMusic) {
+                this.currentMusic.play().catch(error => {
+                    console.warn('Failed to resume audio:', error);
+                });
+                return false; // Don't need game to restart music
+            } else {
+                return true; // Signal that game should start appropriate music
+            }
         }
         return false;
     }

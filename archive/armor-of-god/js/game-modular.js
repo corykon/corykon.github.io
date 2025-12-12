@@ -33,8 +33,8 @@ class ArmorOfGodGame {
         this.lastFrameTime = 0;
         this.targetFrameRate = 60;
         
-        // Castle/temple position
-        this.castle = { x: 5700, y: 230, width: 240, height: 248 };
+        // Castle/temple position (towards end of temple platform)
+        this.castle = { x: 6400, y: 230, width: 240, height: 248 };
         
         // Player properties
         this.player = {
@@ -100,7 +100,7 @@ class ArmorOfGodGame {
         this.isDying = false;
         this.deathTimer = 0;
         this.deathMessage = '';
-        this.deathFreezeTime = 120;
+        this.deathFreezeTime = 60;
         
         // Initialize managers
         this.audioManager = new AudioManager();
@@ -246,21 +246,17 @@ class ArmorOfGodGame {
             this.resetGame();
             this.startGame();
         });
-        
+
         document.getElementById('restartBtn').addEventListener('mouseenter', () => {
             this.audioManager.playSoundEffect('buttonHover');
-        });
-        
-        document.getElementById('mainMenuBtn').addEventListener('click', () => {
+        });        document.getElementById('mainMenuBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
             this.goToMainMenu();
         });
-        
+
         document.getElementById('mainMenuBtn').addEventListener('mouseenter', () => {
             this.audioManager.playSoundEffect('buttonHover');
-        });
-        
-        document.getElementById('mainMenuBtn2').addEventListener('click', () => {
+        });        document.getElementById('mainMenuBtn2').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
             this.goToMainMenu();
         });

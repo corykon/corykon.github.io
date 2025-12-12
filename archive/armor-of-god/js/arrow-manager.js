@@ -34,7 +34,7 @@ class ArrowManager {
             const arrowType = this.arrowTypes[Math.floor(Math.random() * this.arrowTypes.length)];
             
             const newArrow = {
-                x: this.spawnPositions[i],
+                x: spawnX,
                 y: arrowType.y,
                 width: 40,
                 height: 8,

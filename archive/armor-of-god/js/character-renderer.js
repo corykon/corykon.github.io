@@ -20,10 +20,19 @@ class CharacterRenderer {
         this.duckAnimFrame = 0;
         this.duckAnimTimer = 0;
         
+        // Pet animation states
+        this.petRunAnimFrame = 0;
+        this.petRunAnimTimer = 0;
+        this.petTailWagFrame = 0;
+        this.petTailWagTimer = 0;
+        this.petTailWagCycle = 0;
+        
         // Animation speeds (higher = slower)
         this.runAnimSpeed = 3;
         this.petAnimSpeed = 8;
         this.duckAnimSpeed = 8;
+        this.petRunAnimSpeed = 5;
+        this.petTailWagSpeed = 15;
         this.stoppingAnimDuration = 6;
         
         // Load all sprite images
@@ -47,7 +56,17 @@ class CharacterRenderer {
             'armor-run5', 'armor-run6', 'armor-run7', 'armor-run8'
         ];
         
-        const allSpriteNames = [...spriteNames, ...armorSpriteNames];
+        // Pet sprites
+        const petSpriteNames = [
+            // Dog sprites
+            'dog-stand', 'dog-run1', 'dog-run2', 'dog-run3', 'dog-run4', 'dog-run5',
+            'dog-jump1', 'dog-jump2', 'dog-tailwag1', 'dog-tailwag2',
+            // Cat sprites  
+            'cat-stand', 'cat-run1', 'cat-run2', 'cat-run3', 'cat-run4',
+            'cat-jump1', 'cat-jump2', 'cat-tailwag1', 'cat-tailwag2'
+        ];
+        
+        const allSpriteNames = [...spriteNames, ...armorSpriteNames, ...petSpriteNames];
         let loadedCount = 0;
         const totalSprites = allSpriteNames.length;
         
@@ -161,9 +180,48 @@ class CharacterRenderer {
         this.animationTime++;
     }
     
+    // Update pet animations
+    updatePetAnimations(pet) {
+        // Update running animation
+        if (pet.isMoving) {
+            this.petRunAnimTimer++;
+            if (this.petRunAnimTimer >= this.petRunAnimSpeed) {
+                this.petRunAnimTimer = 0;
+                if (pet.type === 'cat') {
+                    this.petRunAnimFrame = (this.petRunAnimFrame + 1) % 4; // cat has 4 run frames
+                } else {
+                    this.petRunAnimFrame = (this.petRunAnimFrame + 1) % 5; // dog has 5 run frames
+                }
+            }
+        } else {
+            this.petRunAnimFrame = 0;
+            this.petRunAnimTimer = 0;
+        }
+        
+        // Update tail wag animation when idle
+        if (!pet.isMoving && !pet.isBeingPetted) {
+            this.petTailWagTimer++;
+            if (this.petTailWagTimer >= this.petTailWagSpeed) {
+                this.petTailWagTimer = 0;
+                
+                if (pet.type === 'cat') {
+                    // Cat cycle: stand, tailwag1, tailwag2, tailwag1, stand
+                    const catCycle = [0, 1, 2, 1, 0]; // 0=stand, 1=tailwag1, 2=tailwag2
+                    this.petTailWagCycle = (this.petTailWagCycle + 1) % catCycle.length;
+                    this.petTailWagFrame = catCycle[this.petTailWagCycle];
+                } else {
+                    // Dog cycle: stand, tailwag1, stand, tailwag2, stand, tailwag1
+                    const dogCycle = [0, 1, 0, 2, 0, 1]; // 0=stand, 1=tailwag1, 2=tailwag2
+                    this.petTailWagCycle = (this.petTailWagCycle + 1) % dogCycle.length;
+                    this.petTailWagFrame = dogCycle[this.petTailWagCycle];
+                }
+            }
+        }
+    }
+    
     renderPlayer(ctx, player, hasArmor, gameState) {
-        // Update animation states based on player movement (but freeze when dying)
-        if (gameState !== 'dying') {
+        // Update animation states based on player movement (but freeze when dying or celebrating)
+        if (gameState !== 'dying' && gameState !== 'celebrating') {
             this.updateAnimationStates(player);
         }
         
@@ -459,17 +517,91 @@ class CharacterRenderer {
     }
 
     renderPet(ctx, pet) {
-        // Determine facing direction based on movement or player proximity  
+        if (!this.spritesLoaded) {
+            // Fallback to old rendering if sprites aren't loaded
+            this.renderPetFallback(ctx, pet);
+            return;
+        }
+        
+        // Update pet animations
+        this.updatePetAnimations(pet);
+        
+        // Get the current sprite
+        const sprite = this.getCurrentPetSprite(pet);
+        if (!sprite) {
+            this.renderPetFallback(ctx, pet);
+            return;
+        }
+        
+        // Render the sprite
+        ctx.save();
+        
+        // Calculate sprite scaling and positioning
+        const spriteScale = 3;
+        const scaledWidth = pet.width * spriteScale;
+        const scaledHeight = pet.height * spriteScale;
+        
+        // Center the larger sprite on the pet's collision box
+        const offsetX = (scaledWidth - pet.width) / 2;
+        const offsetY = (scaledHeight - pet.height) / 2;
+        const spriteX = pet.x - offsetX;
+        const spriteY = pet.y - offsetY;
+        
+        // Handle facing direction
+        if (!pet.facingRight) {
+            // Flip horizontally around the center of the sprite
+            const centerX = spriteX + scaledWidth / 2;
+            ctx.translate(centerX, 0);
+            ctx.scale(-1, 1);
+            ctx.translate(-centerX, 0);
+        }
+        
+        ctx.drawImage(sprite, spriteX, spriteY, scaledWidth, scaledHeight);
+        
+        ctx.restore();
+    }
+    
+    getCurrentPetSprite(pet) {
+        const prefix = pet.type; // 'cat' or 'dog'
+        
+        // Handle jumping states
+        if (!pet.isGrounded) {
+            if (pet.velocityY < 0) {
+                return this.sprites[`${prefix}-jump1`]; // Going up
+            } else {
+                return this.sprites[`${prefix}-jump2`]; // Coming down
+            }
+        }
+        
+        // Handle running animation
+        if (pet.isMoving) {
+            const runFrame = this.petRunAnimFrame + 1; // Frames are 1-indexed
+            return this.sprites[`${prefix}-run${runFrame}`];
+        }
+        
+        // Handle idle tail wagging animation
+        if (this.petTailWagFrame === 1) {
+            return this.sprites[`${prefix}-tailwag1`];
+        } else if (this.petTailWagFrame === 2) {
+            return this.sprites[`${prefix}-tailwag2`];
+        }
+        
+        // Default standing position
+        return this.sprites[`${prefix}-stand`];
+    }
+    
+    // Fallback pet rendering for when sprites aren't loaded
+    renderPetFallback(ctx, pet) {
         const facingRight = pet.facingRight;
         
         if (pet.type === 'cat') {
-            this.renderCat(ctx, pet, facingRight);
+            this.renderCatFallback(ctx, pet, facingRight);
         } else {
-            this.renderDog(ctx, pet, facingRight);
+            this.renderDogFallback(ctx, pet, facingRight);
         }
     }
     
-    renderDog(ctx, pet, facingRight) {
+    renderDogFallback(ctx, pet, facingRight) {
         // Dog body - simple oval shape
         ctx.fillStyle = '#8B4513'; // Brown dog
         const bodyWidth = 16;
@@ -515,10 +647,10 @@ class CharacterRenderer {
         ctx.fillRect(bodyX + 14, bodyY + bodyHeight, legWidth, legHeight);
         
         // Render animated tail
-        this.renderDogTail(ctx, pet, facingRight);
+        this.renderDogTailFallback(ctx, pet, facingRight);
     }
     
-    renderDogTail(ctx, pet, facingRight) {
+    renderDogTailFallback(ctx, pet, facingRight) {
         ctx.fillStyle = '#8B4513'; // Same brown as body
         
         const bodyX = pet.x;
@@ -548,7 +680,7 @@ class CharacterRenderer {
         }
     }
     
-    renderCat(ctx, pet, facingRight) {
+    renderCatFallback(ctx, pet, facingRight) {
         // Cat body - sleeker than dog
         ctx.fillStyle = '#696969'; // Gray cat
         const bodyWidth = 14;
@@ -598,10 +730,10 @@ class CharacterRenderer {
         ctx.fillRect(bodyX + 11, bodyY + bodyHeight, legWidth, legHeight);
         
         // Render animated tail
-        this.renderCatTail(ctx, pet, facingRight);
+        this.renderCatTailFallback(ctx, pet, facingRight);
     }
     
-    renderCatTail(ctx, pet, facingRight) {
+    renderCatTailFallback(ctx, pet, facingRight) {
         ctx.fillStyle = '#696969'; // Same gray as body
         
         const bodyX = pet.x + 1;

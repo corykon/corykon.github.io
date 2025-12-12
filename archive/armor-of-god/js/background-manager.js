@@ -80,7 +80,7 @@ class BackgroundManager {
     
     initializeLayerElements(layer) {
         // Create elements across the world width plus extra for seamless scrolling
-        const worldWidth = 6000; // Game world width
+        const worldWidth = 9000; // Game world width - extended for temple platform
         const extraWidth = 1000; // Extra for smooth scrolling
         
         for (let x = -extraWidth; x < worldWidth + extraWidth; x += layer.spacing) {
