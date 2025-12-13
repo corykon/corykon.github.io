@@ -59,44 +59,33 @@ class WorldManager {
         this.platforms = [
             // Main ground platforms - first half (original section)
             { x: 0, y: 468, width: 300, height: 135, type: 'ground' },
-            { x: 300, y: 468, width: 200, height: 135, type: 'ground' },
-            // GAP from 500-650 (150px pit)
-            { x: 650, y: 468, width: 250, height: 135, type: 'ground' },
-            { x: 975, y: 468, width: 200, height: 135, type: 'ground' },
+            { x: 300, y: 468, width: 700, height: 135, type: 'ground' },
             // GAP from 1175-1325 (150px pit)  
-            { x: 1325, y: 468, width: 250, height: 135, type: 'ground' },
-            { x: 1650, y: 468, width: 200, height: 135, type: 'ground' },
+            { x: 1325, y: 468, width: 525, height: 135, type: 'ground' },
             { x: 1950, y: 468, width: 275, height: 135, type: 'ground' },
             // GAP from 2225-2375 (150px pit)
             { x: 2375, y: 468, width: 250, height: 135, type: 'ground' },
-            { x: 2625, y: 468, width: 275, height: 135, type: 'ground' },
-            
-            // Extended platforms - second half (armor testing section)
-            { x: 3000, y: 468, width: 275, height: 135, type: 'ground' },
+            { x: 2625, y: 468, width: 675, height: 135, type: 'ground' },
             // GAP from 3275-3425 (150px pit)
-            { x: 3425, y: 468, width: 200, height: 135, type: 'ground' },
-            { x: 3725, y: 468, width: 225, height: 135, type: 'ground' },
-            // GAP from 3950-4100 (150px pit)
-            { x: 4100, y: 468, width: 200, height: 135, type: 'ground' },
+            { x: 3425, y: 468, width: 825, height: 135, type: 'ground' },
             { x: 4400, y: 468, width: 225, height: 135, type: 'ground' },
             { x: 4725, y: 468, width: 200, height: 135, type: 'ground' },
             // GAP from 4925-5075 (150px pit)
             { x: 5075, y: 468, width: 225, height: 135, type: 'ground' },
-            { x: 5700, y: 468, width: 1400, height: 135, type: 'ground' }, // Temple platform
+            { x: 5760, y: 468, width: 1400, height: 135, type: 'ground' }, // Temple platform
             
             // Floating platforms
             { x: 525, y: 375, width: 150, height: 30, type: 'floating' },
-            { x: 1125, y: 330, width: 180, height: 30, type: 'floating' },
+            { x: 1070, y: 330, width: 180, height: 30, type: 'floating' },
             { x: 1500, y: 360, width: 120, height: 30, type: 'floating' },
-            { x: 1800, y: 300, width: 150, height: 30, type: 'floating' },
-            { x: 2200, y: 350, width: 150, height: 30, type: 'floating' },
-            { x: 2800, y: 320, width: 120, height: 30, type: 'floating' },
-            { x: 3200, y: 380, width: 150, height: 30, type: 'floating' },
+            { x: 1800, y: 300, width: 200, height: 30, type: 'floating' },
+            { x: 2200, y: 350, width: 200, height: 30, type: 'floating' },
+            { x: 2800, y: 320, width: 320, height: 30, type: 'floating' },
             { x: 3600, y: 340, width: 180, height: 30, type: 'floating' },
             { x: 4000, y: 310, width: 120, height: 30, type: 'floating' },
-            { x: 4400, y: 360, width: 150, height: 30, type: 'floating' },
-            { x: 4800, y: 330, width: 180, height: 30, type: 'floating' },
-            { x: 5200, y: 350, width: 280, height: 30, type: 'floating' }
+            { x: 4450, y: 360, width: 150, height: 30, type: 'floating' },
+            { x: 4900, y: 330, width: 60, height: 30, type: 'floating' },
+            { x: 5200, y: 350, width: 350, height: 30, type: 'floating' }
         ];
     }
     
@@ -234,7 +223,7 @@ class WorldManager {
         this.scriptureBooks = [
             { x: 400, y: 415, width: 50, height: 50, collected: false, verse: "Faith" },
             { x: 1500, y: 305, width: 50, height: 50, collected: false, verse: "Truth" },
-            { x: 2800, y: 265, width: 50, height: 50, collected: false, verse: "Righteousness" }
+            { x: 2840, y: 265, width: 50, height: 50, collected: false, verse: "Righteousness" }
         ];
     }
     
