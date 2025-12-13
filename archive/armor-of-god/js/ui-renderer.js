@@ -68,7 +68,7 @@ class UIRenderer {
         ctx.fillRect(panelX + 10, 30, barWidth, 15);
         
         // Scriptures bar fill
-        const scripturesWidth = (booksCollected / 3) * barWidth;
+        const scripturesWidth = Math.min((booksCollected / 3) * barWidth, barWidth); // Cap at 100%
         if (booksCollected >= 3) {
             // Full bar - turn gold when all 3 collected
             ctx.fillStyle = '#FFD700';

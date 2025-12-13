@@ -18,6 +18,11 @@
         <img src="images/rabbit-running-regular-full.svg" alt="Game Speed" class="icon">
     </button>
     
+    <!-- Level Selector Button (for testing) -->
+    <button id="levelSelectorBtn" class="level-selector-btn" title="Select Level">
+        <span class="level-text">L1</span>
+    </button>
+    
     <!-- Speed Control Dropdown -->
     <div id="speedDropdown" class="speed-dropdown hidden">
         <div class="speed-dropdown-content">
@@ -56,10 +61,10 @@
 
         <!-- Game Screen -->
         <div id="gameScreen" class="screen hidden">
+            <div id="levelInfo" class="level-indicator">Level 1</div>
             <canvas id="gameCanvas" width="1200" height="600"></canvas>
             <div id="gameUI">
                 <div id="armorStatus"></div>
-                <div id="levelInfo">Level 1</div>
             </div>
             <div id="controlsReminder" class="controls-reminder">
                 <p>↑ Jump  •  ↓ Duck  •  <span id="petControlText">D Pet Dog</span>  •  P Pause</p>

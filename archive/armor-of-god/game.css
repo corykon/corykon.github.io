@@ -114,6 +114,44 @@
     transition: all 0.3s ease;
 }
 
+/* Level Selector Button */
+.level-selector-btn {
+    position: fixed;
+    top: 20px;
+    right: 140px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    font-family: 'Press Start 2P', monospace;
+}
+
+.level-selector-btn:hover {
+    background: rgba(0, 0, 0, 0.95);
+    border-color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+.level-selector-btn .level-text {
+    color: #FFD700;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.level-selector-btn:hover .level-text {
+    color: #fff;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+}
+
 /* Speed Dropdown */
 .speed-dropdown {
     position: fixed;
@@ -471,6 +509,22 @@ body {
     font-size: 18px;
     color: #ffd700;
     text-shadow: 2px 2px 0px #333;
+}
+
+/* Level Indicator (above canvas) */
+.level-indicator {
+    text-align: center;
+    margin-bottom: 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: #FFD700;
+    text-shadow: 2px 2px 0px #333;
+    background: rgba(0, 0, 0, 0.7);
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 6px;
+    margin: 0 auto 10px auto;
+    position: relative;
 }
 
 /* Controls Reminder */

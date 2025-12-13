@@ -38,8 +38,8 @@ class ArmorOfGodGame {
         this.lastFrameTime = 0;
         this.targetFrameRate = 60;
         
-        // Castle/temple position (towards end of temple platform)
-        this.castle = { x: 6400, y: 230, width: 240, height: 248 };
+        // Castle/temple position (towards end of temple platform) - will be set based on level
+        this.setCastlePosition();
         
         // Player properties
         this.player = {
@@ -272,7 +272,11 @@ class ArmorOfGodGame {
         
         document.getElementById('nextLevelBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
-            alert('More levels coming soon! Thanks for playing!');
+            if (this.level === 1) {
+                this.startNextLevel();
+            } else {
+                alert('More levels coming soon! Thanks for playing!');
+            }
         });
         
         document.getElementById('nextLevelBtn').addEventListener('mouseenter', () => {
@@ -293,6 +297,16 @@ class ArmorOfGodGame {
         document.getElementById('speedToggleBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
             this.toggleSpeedDropdown();
+        });
+        
+        // Level selector button (for testing)
+        document.getElementById('levelSelectorBtn').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
+            this.cycleLevelSelector();
+        });
+        
+        document.getElementById('levelSelectorBtn').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
         });
         
         document.getElementById('speedToggleBtn').addEventListener('mouseenter', () => {
@@ -336,9 +350,14 @@ class ArmorOfGodGame {
     }
     
     startGame() {
+        // Reset game to initialize world with selected level
+        this.resetGame();
         this.gameState = 'playing';
         this.showScreen('game');
+        this.updateLevelIndicator();
         this.audioManager.playMusic('adventure');
+        // Spawn initial arrows after world is set up
+        this.arrowManager.spawnInitialArrows(this.player);
     }
     
     resetGame() {
@@ -390,16 +409,57 @@ class ArmorOfGodGame {
         this.deathMessage = '';
         this.isPaused = false;
         
+        // Reset castle position for current level
+        this.setCastlePosition();
+        
         // Reset managers
         this.effectsManager.reset();
         this.arrowManager.reset();
-        this.worldManager.reset();
-        this.backgroundManager.reset();
+        this.worldManager.setLevel(this.level);
+        this.backgroundManager.setLevel(this.level);
         
         // Spawn initial arrows
         this.arrowManager.spawnInitialArrows(this.player);
         
         this.gameState = 'menu';
+    }
+    
+    setCastlePosition() {
+        if (this.level === 1) {
+            // Castle level - original position
+            this.castle = { x: 6400, y: 230, width: 240, height: 248 };
+        } else if (this.level === 2) {
+            // Jungle level - temple at the end of the jungle clearing
+            this.castle = { x: 17200, y: 230, width: 240, height: 248 };
+        }
+    }
+    
+    cycleLevelSelector() {
+        // Cycle between levels 1 and 2 for testing
+        this.level = this.level === 1 ? 2 : 1;
+        this.updateLevelSelector();
+        this.updateLevelIndicator();
+        
+        // If we're in menu, just update the selector
+        // If we're in game, restart with new level
+        if (this.gameState === 'playing') {
+            this.resetGame();
+            this.gameState = 'playing';
+            this.showScreen('game');
+            this.audioManager.playMusic('adventure');
+            this.arrowManager.spawnInitialArrows(this.player);
+        }
+    }
+    
+    updateLevelSelector() {
+        const levelBtn = document.getElementById('levelSelectorBtn');
+        const levelText = levelBtn.querySelector('.level-text');
+        levelText.textContent = `L${this.level}`;
+    }
+    
+    updateLevelIndicator() {
+        const levelInfo = document.getElementById('levelInfo');
+        levelInfo.textContent = `Level ${this.level}`;
     }
     
     toggleAudio() {
@@ -911,13 +971,20 @@ class ArmorOfGodGame {
         this.worldManager.scriptureBooks.forEach(book => {
             if (!book.collected && this.checkCollision(this.player, book)) {
                 book.collected = true;
-                this.booksCollected++;
                 
                 // Play collection sound
                 this.audioManager.playSound('collect2');
                 
-                if (this.booksCollected >= 3 && !this.hasArmor) {
-                    this.activateArmor();
+                if (this.booksCollected < 3) {
+                    // Still collecting initial scriptures
+                    this.booksCollected++;
+                    if (this.booksCollected >= 3) {
+                        this.activateArmor();
+                    }
+                } else if (this.hasArmor) {
+                    // Already have armor - reset timer instead of incrementing count
+                    this.armorTimer = this.armorDuration;
+                    this.uiRenderer.showMessage('Armor Timer Reset!', 120, '#FFD700', 16, 400);
                 }
             }
         });
@@ -1009,8 +1076,22 @@ class ArmorOfGodGame {
         this.arrowManager.spawnInitialArrows(this.player);
     }
     
-    goToMainMenu() {
+    startNextLevel() {
+        // Advance to the next level
+        this.level++;
         this.resetGame();
+        this.gameState = 'playing';
+        this.showScreen('game');
+        this.updateLevelIndicator();
+        this.updateLevelSelector();
+        this.audioManager.playMusic('adventure');
+        this.arrowManager.spawnInitialArrows(this.player);
+    }
+
+    goToMainMenu() {
+        this.level = 1; // Reset to level 1 when going to main menu
+        this.resetGame();
+        this.updateLevelSelector();
         this.audioManager.playMusic('menu');
         this.showScreen('menu');
     }
