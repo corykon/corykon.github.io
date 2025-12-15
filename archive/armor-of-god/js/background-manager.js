@@ -159,10 +159,17 @@ class BackgroundManager {
         } else if (this.currentLevel === 2) {
             // Jungle level - sunset to night effect
             this.renderJungleSunset(ctx, cameraX, ctx.canvas.width, ctx.canvas.height);
+        } else {
+            // Fallback - render dark night background to avoid blue flashes
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         }
     }
     
     renderJungleSunset(ctx, cameraX, canvasWidth, canvasHeight) {
+        // Ensure we have valid canvas dimensions
+        if (!canvasWidth || !canvasHeight) return;
+        
         // Calculate progress based on elapsed time (0 = start, 1 = full cycle)
         if (!this.sunsetStartTime) {
             this.sunsetStartTime = Date.now();

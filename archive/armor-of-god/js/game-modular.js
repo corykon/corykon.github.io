@@ -6,7 +6,7 @@ class ArmorOfGodGame {
         this.canvas.height = 600;
         
         // Game state
-        this.gameState = 'menu'; // menu, playing, gameOver, levelComplete, enteringTemple, celebrating
+        this.gameState = 'menu'; // menu, playing, gameOver, levelComplete, waitingToEnterTemple, enteringTemple, celebrating
         this.isPaused = false;
         
         // Temple entrance sequence properties
@@ -20,6 +20,11 @@ class ArmorOfGodGame {
         this.cameraX = 0;
         this.booksCollected = 0;
         this.selectedPetType = 'dog'; // Default to dog
+        
+        // Debug variables
+        this.lastPlayerPos = null;
+        this.debugElement = null;
+        this.createDebugDisplay();
         
         // Load images
         this.templeImage = new Image();
@@ -548,6 +553,7 @@ class ArmorOfGodGame {
                 this.update();
             }
             this.render();
+            this.updateDebugDisplay();
             this.lastFrameTime = currentTime;
         }
         
@@ -578,6 +584,11 @@ class ArmorOfGodGame {
             this.canvas.width, 
             this.gameState
         );
+        
+        // Handle waiting to enter temple (letting player/pet fall to ground)
+        if (this.gameState === 'waitingToEnterTemple') {
+            this.updateWaitingToEnterTemple();
+        }
         
         // Handle temple entrance sequence
         if (this.gameState === 'enteringTemple') {
@@ -629,7 +640,7 @@ class ArmorOfGodGame {
             return;
         }
         
-        if (this.gameState !== 'playing') return;
+        if (this.gameState !== 'playing' && this.gameState !== 'waitingToEnterTemple') return;
         
         // Update invulnerability
         if (this.player.invulnerable) {
@@ -757,7 +768,7 @@ class ArmorOfGodGame {
     }
     
     updatePet() {
-        if (this.gameState !== 'playing') return;
+        if (this.gameState !== 'playing' && this.gameState !== 'waitingToEnterTemple') return;
         
         const distanceToPlayer = Math.abs(this.player.x - this.pet.x);
         const playerMovingTowardsPet = this.player.isMoving && 
@@ -1106,6 +1117,26 @@ class ArmorOfGodGame {
     }
     
     levelComplete() {
+        // Check if player or pet are in the air - if so, let them fall first
+        const playerGrounded = this.player.isGrounded || this.player.y >= this.worldManager.groundY - this.player.height;
+        const petGrounded = this.pet.isGrounded || this.pet.y >= this.worldManager.groundY - this.pet.height;
+        
+        if (!playerGrounded || !petGrounded) {
+            // Set a flag to indicate we're waiting for landing
+            this.gameState = 'waitingToEnterTemple';
+            
+            // Stop horizontal movement but allow falling
+            this.player.velocityX = 0;
+            this.pet.velocityX = 0;
+            
+            // Make sure they face the temple while falling
+            this.player.facingRight = true;
+            this.pet.facingRight = true;
+            
+            return; // Don't start temple sequence yet
+        }
+        
+        // Both are grounded, start temple entrance
         this.gameState = 'enteringTemple';
         this.templeEntranceTimer = 0;
         this.templeCenterX = this.castle.x + this.castle.width / 2;
@@ -1130,6 +1161,38 @@ class ArmorOfGodGame {
         this.pet.facingRight = true;
         this.pet.isMoving = true;
         this.player.isMoving = false; // Player waits initially
+    }
+    
+    updateWaitingToEnterTemple() {
+        // Check if both player and pet have landed
+        const playerGrounded = this.player.isGrounded || this.player.y >= this.worldManager.groundY - this.player.height;
+        const petGrounded = this.pet.isGrounded || this.pet.y >= this.worldManager.groundY - this.pet.height;
+        
+        // Ensure they face the temple while falling
+        this.player.facingRight = true;
+        this.pet.facingRight = true;
+        
+        // Stop horizontal movement
+        this.player.velocityX = 0;
+        this.pet.velocityX = 0;
+        
+        // If both have landed, start the temple entrance sequence
+        if (playerGrounded && petGrounded) {
+            // Make sure they're properly grounded
+            if (this.player.y > this.worldManager.groundY - this.player.height) {
+                this.player.y = this.worldManager.groundY - this.player.height;
+                this.player.isGrounded = true;
+                this.player.velocityY = 0;
+            }
+            if (this.pet.y > this.worldManager.groundY - this.pet.height) {
+                this.pet.y = this.worldManager.groundY - this.pet.height;
+                this.pet.isGrounded = true;
+                this.pet.velocityY = 0;
+            }
+            
+            // Now start the actual temple entrance
+            this.levelComplete();
+        }
     }
     
     updateTempleEntrance() {
@@ -1211,8 +1274,8 @@ class ArmorOfGodGame {
         this.worldManager.renderScriptureBooks(this.ctx, this.bomImage);
         
         // Render characters
-        this.characterRenderer.renderPlayer(this.ctx, this.player, this.hasArmor, this.gameState);
-        this.characterRenderer.renderPet(this.ctx, this.pet);
+        this.characterRenderer.renderPlayer(this.ctx, this.player, this.hasArmor, this.gameState, this.isPaused);
+        this.characterRenderer.renderPet(this.ctx, this.pet, this.isPaused);
         
         // Render effects
         this.effectsManager.renderArmorExplosion(this.ctx);
@@ -1303,6 +1366,35 @@ class ArmorOfGodGame {
     
     saveGameSpeedSetting() {
         localStorage.setItem('armorOfGod_gameSpeed', this.gameSpeed.toString());
+    }
+
+    createDebugDisplay() {
+        // Create debug display element in DOM
+        this.debugElement = document.createElement('div');
+        this.debugElement.style.position = 'fixed';
+        this.debugElement.style.bottom = '5px';
+        this.debugElement.style.right = '5px';
+        this.debugElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        this.debugElement.style.color = 'white';
+        this.debugElement.style.padding = '5px';
+        this.debugElement.style.fontFamily = 'monospace';
+        this.debugElement.style.fontSize = '12px';
+        this.debugElement.style.zIndex = '1000';
+        this.debugElement.textContent = 'X:0 Y:0';
+        document.body.appendChild(this.debugElement);
+    }
+
+    updateDebugDisplay() {
+        if (this.debugElement && this.player) {
+            const currentX = Math.round(this.player.x);
+            const currentY = Math.round(this.player.y);
+            
+            // Only update if position changed
+            if (!this.lastPlayerPos || this.lastPlayerPos.x !== currentX || this.lastPlayerPos.y !== currentY) {
+                this.lastPlayerPos = { x: currentX, y: currentY };
+                this.debugElement.textContent = `X:${currentX} Y:${currentY}`;
+            }
+        }
     }
 
 }

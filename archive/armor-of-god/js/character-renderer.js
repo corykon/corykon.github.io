@@ -219,9 +219,9 @@ class CharacterRenderer {
         }
     }
     
-    renderPlayer(ctx, player, hasArmor, gameState) {
-        // Update animation states based on player movement (but freeze when dying or celebrating)
-        if (gameState !== 'dying' && gameState !== 'celebrating') {
+    renderPlayer(ctx, player, hasArmor, gameState, isPaused = false) {
+        // Update animation states based on player movement (but freeze when dying, celebrating, or paused)
+        if (gameState !== 'dying' && gameState !== 'celebrating' && !isPaused) {
             this.updateAnimationStates(player);
         }
         
@@ -521,15 +521,17 @@ class CharacterRenderer {
         }
     }
 
-    renderPet(ctx, pet) {
+    renderPet(ctx, pet, isPaused = false) {
         if (!this.spritesLoaded) {
             // Fallback to old rendering if sprites aren't loaded
             this.renderPetFallback(ctx, pet);
             return;
         }
         
-        // Update pet animations
-        this.updatePetAnimations(pet);
+        // Update pet animations only if game is not paused
+        if (!isPaused) {
+            this.updatePetAnimations(pet);
+        }
         
         // Get the current sprite
         const sprite = this.getCurrentPetSprite(pet);

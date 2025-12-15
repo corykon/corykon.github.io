@@ -24,8 +24,7 @@ class ArrowManager {
     }
     
     spawnInitialArrows(player) {
-        // Spawn 4-6 arrows at the start of the game for immediate action
-        const initialArrowCount = 2 + Math.floor(Math.random() * 3); // 4-6 arrows
+        const initialArrowCount = 2 + Math.floor(Math.random());
         
         for (let i = 0; i < initialArrowCount; i++) {
             // Stagger the initial arrows across different distances

@@ -76,15 +76,15 @@ class WorldManager {
             
             // Floating platforms
             { x: 525, y: 375, width: 150, height: 30, type: 'floating' },
-            { x: 1070, y: 330, width: 180, height: 30, type: 'floating' },
+            { x: 1080, y: 330, width: 180, height: 30, type: 'floating' },
             { x: 1500, y: 360, width: 120, height: 30, type: 'floating' },
             { x: 1800, y: 300, width: 200, height: 30, type: 'floating' },
             { x: 2200, y: 350, width: 200, height: 30, type: 'floating' },
             { x: 2800, y: 320, width: 320, height: 30, type: 'floating' },
             { x: 3600, y: 340, width: 180, height: 30, type: 'floating' },
             { x: 4000, y: 310, width: 120, height: 30, type: 'floating' },
-            { x: 4450, y: 360, width: 150, height: 30, type: 'floating' },
-            { x: 4900, y: 330, width: 60, height: 30, type: 'floating' },
+            { x: 4440, y: 360, width: 150, height: 30, type: 'floating' },
+            { x: 4900, y: 330, width: 80, height: 30, type: 'floating' },
             { x: 5200, y: 350, width: 350, height: 30, type: 'floating' }
         ];
     }
@@ -98,7 +98,7 @@ class WorldManager {
         this.platforms = [
             // Starting ground section
             { x: 0, y: 468, width: 400, height: 135, type: 'ground' },
-            { x: 400, y: 468, width: 500, height: 135, type: 'ground' }, // Long flat section
+            { x: 400, y: 468, width: 550, height: 135, type: 'ground' }, // Long flat section
             
             // First floating block section for enemies
             { x: 1100, y: 380, width: 120, height: 30, type: 'tree_platform' },
@@ -106,7 +106,7 @@ class WorldManager {
             { x: 1600, y: 300, width: 120, height: 30, type: 'tree_platform' },
             
             // Ground continues
-            { x: 1900, y: 468, width: 600, height: 135, type: 'ground' }, // Another long flat
+            { x: 1900, y: 468, width: 4000, height: 135, type: 'ground' }, // Another long flat
             
             // Tree-top jumping section (no ground below)
             { x: 2700, y: 360, width: 180, height: 25, type: 'branch' },
@@ -118,14 +118,11 @@ class WorldManager {
             { x: 4380, y: 320, width: 140, height: 25, type: 'branch' },
             { x: 4640, y: 380, width: 160, height: 25, type: 'branch' },
             
-            // Landing back to ground
-            { x: 4900, y: 468, width: 900, height: 135, type: 'ground' },
-            
             // Mid-section with mixed platforms and floating blocks
             { x: 6000, y: 400, width: 100, height: 30, type: 'tree_platform' },
             { x: 6200, y: 360, width: 100, height: 30, type: 'tree_platform' },
             { x: 6400, y: 320, width: 100, height: 30, type: 'tree_platform' },
-            { x: 6600, y: 468, width: 300, height: 135, type: 'ground' },
+            { x: 6600, y: 468, width: 400, height: 135, type: 'ground' },
             
             // Another tree-top section
             { x: 7100, y: 340, width: 150, height: 25, type: 'branch' },
@@ -142,31 +139,29 @@ class WorldManager {
             { x: 9700, y: 320, width: 120, height: 30, type: 'tree_platform' },
             
             // Long ground section leading to temple
-            { x: 10000, y: 468, width: 800, height: 135, type: 'ground' },
+            { x: 10000, y: 468, width: 700, height: 135, type: 'ground' },
             
             // Additional floating elements for variety
-            { x: 11000, y: 380, width: 200, height: 30, type: 'tree_platform' },
-            { x: 11400, y: 380, width: 200, height: 30, type: 'tree_platform' },
+            { x: 10900, y: 380, width: 300, height: 30, type: 'tree_platform' },
+            { x: 11500, y: 380, width: 300, height: 30, type: 'tree_platform' },
             
             // More ground with gaps
-            { x: 11700, y: 468, width: 300, height: 135, type: 'ground' },
+            { x: 12000, y: 468, width: 600, height: 135, type: 'ground' },
             // GAP
-            { x: 12200, y: 468, width: 400, height: 135, type: 'ground' },
-            // GAP  
-            { x: 12800, y: 468, width: 350, height: 135, type: 'ground' },
+            { x: 12900, y: 468, width: 900, height: 135, type: 'ground' },
             
             // Final tree-top challenge before temple
-            { x: 13350, y: 380, width: 140, height: 25, type: 'branch' },
-            { x: 13580, y: 340, width: 130, height: 25, type: 'branch' },
-            { x: 13800, y: 300, width: 150, height: 25, type: 'branch' },
-            { x: 14050, y: 260, width: 140, height: 25, type: 'branch' },
-            { x: 14280, y: 220, width: 160, height: 25, type: 'branch' },
-            { x: 14540, y: 260, width: 150, height: 25, type: 'branch' },
-            { x: 14790, y: 320, width: 140, height: 25, type: 'branch' },
-            { x: 15030, y: 380, width: 160, height: 25, type: 'branch' },
+            { x: 13350, y: 380, width: 150, height: 25, type: 'branch' },
+            { x: 13680, y: 340, width: 150, height: 25, type: 'branch' },
+            { x: 14010, y: 300, width: 150, height: 25, type: 'branch' },
+            { x: 14340, y: 260, width: 150, height: 25, type: 'branch' },
+            { x: 14670, y: 220, width: 180, height: 25, type: 'branch' },
+            { x: 15030, y: 260, width: 150, height: 25, type: 'branch' },
+            { x: 15360, y: 320, width: 150, height: 25, type: 'branch' },
+            { x: 15690, y: 380, width: 150, height: 25, type: 'branch' },
             
             // Final ground section and temple clearing
-            { x: 15300, y: 468, width: 1200, height: 135, type: 'ground' }, // Long approach
+            { x: 15800, y: 468, width: 1200, height: 135, type: 'ground' }, // Long approach
             { x: 16700, y: 468, width: 1300, height: 135, type: 'ground' }  // Temple platform (clearing)
         ];
     }
@@ -229,17 +224,16 @@ class WorldManager {
     
     createLevel2ScriptureBooks() {
         this.scriptureBooks = [
-            // Early jungle books
-            { x: 600, y: 415, width: 50, height: 50, collected: false, verse: "Peace" },
-            { x: 1500, y: 150, width: 50, height: 50, collected: false, verse: "Salvation" }, // On tree platform
+            // Early jungle book
+            { x: 1500, y: 130, width: 50, height: 50, collected: false, verse: "Salvation" }, // On tree platform
             
             // Mid-level books
-            { x: 6100, y: 275, width: 50, height: 50, collected: false, verse: "Spirit" }, // Tree platform
-            { x: 8200, y: 205, width: 50, height: 50, collected: false, verse: "Light" }, // High branch
+            { x: 3860, y: 150, width: 50, height: 50, collected: false, verse: "Spirit" }, // Tree platform
+            { x: 8500, y: 180, width: 50, height: 50, collected: false, verse: "Light" }, // Jump off high branch
             
             // Late jungle books
-            { x: 10200, y: 415, width: 50, height: 50, collected: false, verse: "Hope" },
-            { x: 15800, y: 415, width: 50, height: 50, collected: false, verse: "Joy" }  // Temple approach
+            { x: 11300, y: 150, width: 50, height: 50, collected: false, verse: "Hope" },
+            { x: 16800, y: 415, width: 50, height: 50, collected: false, verse: "Joy" }  // Temple approach
         ];
     }
     
@@ -389,9 +383,26 @@ class WorldManager {
             // Jungle level - different platform types
             switch(platform.type) {
                 case 'ground':
-                    // Jungle ground - darker earth with jungle grass
+                    // Jungle ground - darker brown earth with jungle grass
                     ctx.fillStyle = '#654321'; // Dark brown earth
                     ctx.fillRect(platform.x, platform.y + 6, platform.width, platform.height - 6);
+                    
+                    // Add darker brown texture/variation - consistent pattern
+                    ctx.fillStyle = '#4A2C17'; // Darker brown texture
+                    for (let i = 0; i < platform.width; i += 18) {
+                        for (let j = 12; j < platform.height - 6; j += 15) {
+                            ctx.fillRect(platform.x + i, platform.y + 6 + j, 8, 5);
+                            ctx.fillRect(platform.x + i + 10, platform.y + 6 + j + 8, 6, 4);
+                        }
+                    }
+                    
+                    // Add medium brown patches - consistent pattern
+                    ctx.fillStyle = '#8B4513'; // Saddle brown patches
+                    for (let i = 5; i < platform.width; i += 22) {
+                        for (let j = 8; j < platform.height - 6; j += 18) {
+                            ctx.fillRect(platform.x + i, platform.y + 6 + j, 4, 6);
+                        }
+                    }
                     
                     // Add jungle grass on top
                     ctx.fillStyle = '#006400'; // Dark green jungle grass
