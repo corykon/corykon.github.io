@@ -89,11 +89,11 @@ class ArmorOfGodGame {
             animTimer: 0,
             animSpeed: 10,
             isMoving: false,
-            followDistance: 60,
-            catchUpSpeed: 3.0,
-            normalSpeed: 2.0,
-            facingRight: true,  // Pet starts facing right
-            type: 'dog', // Will be updated based on selection
+            followDistance: 25,
+            catchUpSpeed: 4.0,
+            normalSpeed: 2.5,
+            facingRight: true,
+            type: 'dog',
             // Petting properties
             isBeingPetted: false,
             pettingTimer: 0,
@@ -121,6 +121,7 @@ class ArmorOfGodGame {
         this.backgroundManager = new BackgroundManager();
         this.uiRenderer = new UIRenderer();
         this.characterRenderer = new CharacterRenderer();
+        this.petManager = new PetManager(this.pet, this);
         
         // Setup event listeners
         this.inputHandler.setupEventListeners(this.canvas, this);
@@ -696,7 +697,7 @@ class ArmorOfGodGame {
         this.updatePlayerAnimation();
         
         // Update pet
-        this.updatePet();
+        this.petManager.update();
     }
     
     checkPlatformEdgeBlocking() {
@@ -766,207 +767,10 @@ class ArmorOfGodGame {
             }
         }
     }
-    
-    updatePet() {
-        if (this.gameState !== 'playing' && this.gameState !== 'waitingToEnterTemple') return;
-        
-        const distanceToPlayer = Math.abs(this.player.x - this.pet.x);
-        const playerMovingTowardsPet = this.player.isMoving && 
-            ((this.player.facingRight && this.pet.x > this.player.x) || 
-             (!this.player.facingRight && this.pet.x < this.player.x));
-        const playerMovingAwayFromPet = this.player.isMoving && 
-            ((this.player.facingRight && this.pet.x < this.player.x) || 
-             (!this.player.facingRight && this.pet.x > this.player.x));
-        const playerStill = !this.player.isMoving && this.player.isGrounded;
-        const playerTowardsPet = (this.player.facingRight && this.pet.x > this.player.x) || 
-                                (!this.player.facingRight && this.pet.x < this.player.x);
-        
-        let shouldMove = false;
-        let targetX, targetDistance;
-        
-        if (playerStill && playerTowardsPet && distanceToPlayer < 120 && distanceToPlayer > 25) {
-            // Player is facing pet and standing still - get closer for petting
-            targetX = this.player.facingRight ? this.player.x + 25 : this.player.x - 25;
-            targetDistance = Math.abs(this.pet.x - targetX);
-            shouldMove = true;
-        } else if (playerMovingAwayFromPet) {
-            // Only follow when player is moving away - never move when they're approaching
-            targetX = this.player.x - this.pet.followDistance;
-            targetDistance = Math.abs(this.pet.x - targetX);
-            shouldMove = targetDistance > 10; // Only move if significantly far from target
-        } else if (!this.player.isMoving && distanceToPlayer > 150) {
-            // Player stopped but is very far away - catch up
-            targetX = this.player.x - this.pet.followDistance;
-            targetDistance = Math.abs(this.pet.x - targetX);
-            shouldMove = true;
-        }
-        
-        // Pet movement logic
-        if (shouldMove && targetDistance > 10) {
-            this.pet.isMoving = true;
-            
-            let speed = this.pet.normalSpeed;
-            if (targetDistance > 120) {
-                speed = this.pet.catchUpSpeed;
-            }
-            
-            // Armor enhances pet speed too
-            if (this.hasArmor) {
-                speed *= 1.5;
-            }
-            
-            const moveDirection = this.pet.x < targetX ? 1 : -1;
-            const shouldJump = this.shouldPetJump(moveDirection);
-            
-            if (shouldJump && this.pet.isGrounded) {
-                const jumpPower = this.hasArmor ? this.getCurrentJumpPower() * 0.8 : this.jumpPower * 0.8;
-                this.pet.velocityY = jumpPower;
-                this.pet.isGrounded = false;
-            }
-            
-            if (this.pet.x < targetX) {
-                this.pet.x += speed;
-                this.pet.facingRight = true; // Moving right
-            } else if (this.pet.x > targetX) {
-                this.pet.x -= speed;
-                this.pet.facingRight = false; // Moving left
-            }
-        } else {
-            this.pet.isMoving = false;
-        }
-        
-        // Apply gravity to pet
-        this.pet.velocityY += this.gravity;
-        this.pet.y += this.pet.velocityY;
-        
-        // Platform collisions for pet
-        this.worldManager.checkPlatformCollisions(this.pet);
-        
-        // Pet safety check - respawn if fallen off the world
-        if (this.pet.y > this.canvas.height + 50) {
-            // Respawn pet near player on solid ground
-            this.pet.x = this.player.x + (this.player.facingRight ? -60 : 60);
-            this.pet.y = this.player.y - 10;
-            this.pet.velocityY = 0;
-            this.pet.isGrounded = false; // Let it fall to find ground naturally
-        }
-        
-        // Update pet animation
-        this.updatePetAnimation();
-    }
-    
-    shouldPetJump(moveDirection) {
-        if (!this.pet.isGrounded) return false;
-        
-        const lookAheadDistance = 40;
-        const checkX = this.pet.x + (moveDirection * lookAheadDistance);
-        const checkY = this.pet.y + this.pet.height + 10;
-        
-        let groundAhead = false;
-        
-        // Check for ground ahead
-        for (let platform of this.worldManager.platforms) {
-            if (platform.y === this.worldManager.groundY && 
-                checkX + this.pet.width > platform.x && 
-                checkX < platform.x + platform.width &&
-                checkY >= platform.y && checkY <= platform.y + platform.height) {
-                groundAhead = true;
-                break;
-            }
-        }
-        
-        if (!groundAhead) {
-            for (let platform of this.worldManager.platforms) {
-                if (platform.y < this.worldManager.groundY && 
-                    checkX + this.pet.width > platform.x && 
-                    checkX < platform.x + platform.width &&
-                    checkY >= platform.y && checkY <= platform.y + platform.height) {
-                    groundAhead = true;
-                    break;
-                }
-            }
-        }
-        
-        return !groundAhead && this.pet.isMoving;
-    }
-    
-    updatePetAnimation() {
-        // Handle petting animation states
-        if (this.pet.isBeingPetted) {
-            this.pet.pettingTimer++;
-            
-            // Tail wagging animation
-            this.pet.tailWagTimer++;
-            
-            // Handle jumps after petting starts
-            if (this.pet.pettingTimer > 30 && this.pet.jumpCount < this.pet.maxJumps) { // Wait 0.5 seconds before first jump
-                this.pet.jumpTimer++;
-                if (this.pet.jumpTimer >= this.pet.jumpCooldown) {
-                    if (this.pet.isGrounded) {
-                        // Little happy jump
-                        this.pet.velocityY = -8; // Smaller jump than regular jump
-                        this.pet.isGrounded = false;
-                        this.pet.jumpCount++;
-                        this.pet.jumpTimer = 0;
-                    }
-                }
-            }
-            
-            // End petting state
-            if (this.pet.pettingTimer >= this.pet.pettingDuration) {
-                this.pet.isBeingPetted = false;
-                this.pet.pettingTimer = 0;
-                this.pet.tailWagTimer = 0;
-                this.pet.jumpCount = 0;
-                this.pet.jumpTimer = 0;
-            }
-        } else {
-            // Normal animation logic
-            if (this.pet.isMoving && this.pet.isGrounded) {
-                this.pet.animTimer++;
-                if (this.pet.animTimer >= this.pet.animSpeed) {
-                    this.pet.animFrame = (this.pet.animFrame + 1) % 4;
-                    this.pet.animTimer = 0;
-                }
-            } else {
-                this.pet.animFrame = 0;
-                this.pet.animTimer = 0;
-            }
-        }
-    }
+
     
     tryPetAnimal() {
-        if (this.pet.isBeingPetted) return; // Already being petted
-        
-        // Check if player is close enough to the pet
-        const distance = Math.abs(this.player.x - this.pet.x);
-        const petDistance = 60; // Must be within 60 pixels
-        
-        if (distance <= petDistance) {
-            // Start petting for both pet and player
-            this.pet.isBeingPetted = true;
-            this.pet.pettingTimer = 0;
-            this.pet.tailWagTimer = 0;
-            this.pet.jumpCount = 0;
-            
-            // Start player petting animation
-            this.characterRenderer.startPettingAnimation();
-            this.pet.jumpTimer = 0;
-            
-            // Keep player in their current position (no automatic repositioning)
-            
-            // Start player petting animation
-            this.player.isPetting = true;
-            this.player.pettingTimer = 0;
-            this.player.handOffset = 0;
-            
-            // Play appropriate sound based on pet type
-            if (this.pet.type === 'cat') {
-                this.audioManager.playSound('meow');
-            } else {
-                this.audioManager.playSound('bark1');
-            }
-        }
+        this.petManager.tryPetting();
     }
     
     checkCollisions() {
@@ -1288,10 +1092,12 @@ class ArmorOfGodGame {
         
         // Show petting prompt if close enough to pet
         if (this.gameState === 'playing' && !this.isPaused) {
-            const distance = Math.abs(this.player.x - this.pet.x);
+            const horizontalDistance = Math.abs(this.player.x - this.pet.x);
+            const verticalDistance = Math.abs(this.player.y - this.pet.y);
             const petDistance = 60;
+            const maxYDifference = 30; // Must be on similar Y level
             
-            if (distance <= petDistance && !this.pet.isBeingPetted) {
+            if (horizontalDistance <= petDistance && verticalDistance <= maxYDifference && !this.pet.isBeingPetted) {
                 this.ctx.save();
                 this.ctx.translate(-this.cameraX, 0); // Translate back for world coordinates
                 

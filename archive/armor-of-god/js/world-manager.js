@@ -216,7 +216,7 @@ class WorldManager {
     
     createLevel1ScriptureBooks() {
         this.scriptureBooks = [
-            { x: 400, y: 415, width: 50, height: 50, collected: false, verse: "Faith" },
+            { x: 575, y: 325, width: 50, height: 50, collected: false, verse: "Faith" },
             { x: 1500, y: 305, width: 50, height: 50, collected: false, verse: "Truth" },
             { x: 2840, y: 265, width: 50, height: 50, collected: false, verse: "Righteousness" }
         ];
