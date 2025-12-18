@@ -20,6 +20,7 @@ class WorldManager {
         this.platforms = [];
         this.clouds = [];
         this.scriptureBooks = [];
+        this.hearts = []; // Health restoration items
         
         // World properties
         this.groundY = 468;
@@ -29,6 +30,7 @@ class WorldManager {
         this.createPlatforms();
         this.createClouds();
         this.createScriptureBooks();
+        this.createHearts();
     }
     
     setLevelProperties() {
@@ -79,6 +81,7 @@ class WorldManager {
             { x: 1080, y: 330, width: 180, height: 30, type: 'floating' },
             { x: 1500, y: 360, width: 120, height: 30, type: 'floating' },
             { x: 1800, y: 300, width: 200, height: 30, type: 'floating' },
+            { x: 2020, y: 100, width: 60, height: 30, type: 'floating' },
             { x: 2200, y: 350, width: 200, height: 30, type: 'floating' },
             { x: 2800, y: 320, width: 320, height: 30, type: 'floating' },
             { x: 3600, y: 340, width: 180, height: 30, type: 'floating' },
@@ -117,6 +120,7 @@ class WorldManager {
             { x: 4100, y: 260, width: 160, height: 25, type: 'branch' },
             { x: 4380, y: 320, width: 140, height: 25, type: 'branch' },
             { x: 4640, y: 380, width: 160, height: 25, type: 'branch' },
+            { x: 4860, y: 180, width: 100, height: 20, type: 'tree_platform' },
             
             // Mid-section with mixed platforms and floating blocks
             { x: 6000, y: 400, width: 100, height: 30, type: 'tree_platform' },
@@ -214,6 +218,14 @@ class WorldManager {
         }
     }
     
+    createHearts() {
+        if (this.currentLevel === 1) {
+            this.createLevel1Hearts();
+        } else if (this.currentLevel === 2) {
+            this.createLevel2Hearts();
+        }
+    }
+    
     createLevel1ScriptureBooks() {
         this.scriptureBooks = [
             { x: 575, y: 325, width: 50, height: 50, collected: false, verse: "Faith" },
@@ -234,6 +246,22 @@ class WorldManager {
             // Late jungle books
             { x: 11300, y: 150, width: 50, height: 50, collected: false, verse: "Hope" },
             { x: 16800, y: 415, width: 50, height: 50, collected: false, verse: "Joy" }  // Temple approach
+        ];
+    }
+    
+    createLevel1Hearts() {
+        this.hearts = [
+            // Single heart in a tough-to-reach location on floating platform
+            { x: 2035, y: 60, width: 30, height: 30, collected: false, healthRestore: 1 } // High floating platform
+        ];
+    }
+    
+    createLevel2Hearts() {
+        this.hearts = [
+            // First heart on high tree branch - challenging jump required
+            { x: 4910, y: 140, width: 30, height: 30, collected: false, healthRestore: 1 }, // High branch
+            // Second heart near end, on difficult tree platform sequence
+            { x: 9960, y: 40, width: 30, height: 30, collected: false, healthRestore: 1 } // Very high branch near end
         ];
     }
     
@@ -498,6 +526,56 @@ class WorldManager {
         });
     }
     
+    renderHearts(ctx, heartImage) {
+        this.hearts.forEach(heart => {
+            if (!heart.collected) {
+                // Floating effect (same as scripture books but slightly different timing)
+                const time = Date.now() * 0.003; // Slightly faster float
+                const floatY = Math.sin(time + heart.x * 0.015) * 3; // Slightly more float amplitude
+                
+                // Pulsing scale effect
+                const pulseScale = 1.0 + Math.sin(time * 2 + heart.x * 0.02) * 0.1;
+                
+                ctx.save();
+                ctx.translate(0, floatY);
+                
+                // Draw glow behind heart
+                const glowRadius = 25;
+                const gradient = ctx.createRadialGradient(
+                    heart.x + heart.width/2, heart.y + heart.height/2, 0,
+                    heart.x + heart.width/2, heart.y + heart.height/2, glowRadius
+                );
+                gradient.addColorStop(0, 'rgba(255, 100, 100, 0.4)'); // Red glow
+                gradient.addColorStop(0.5, 'rgba(255, 100, 100, 0.2)');
+                gradient.addColorStop(1, 'rgba(255, 100, 100, 0)');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(heart.x - glowRadius/2, heart.y - glowRadius/2, 
+                           heart.width + glowRadius, heart.height + glowRadius);
+                
+                // Scale the heart for pulsing effect
+                const centerX = heart.x + heart.width/2;
+                const centerY = heart.y + heart.height/2;
+                ctx.translate(centerX, centerY);
+                ctx.scale(pulseScale, pulseScale);
+                ctx.translate(-centerX, -centerY);
+                
+                // Draw heart image if loaded, otherwise fallback to simple red rectangle
+                if (heartImage && heartImage.complete) {
+                    ctx.drawImage(heartImage, heart.x, heart.y, heart.width, heart.height);
+                } else {
+                    // Fallback: Simple red heart shape
+                    ctx.fillStyle = '#FF1744';
+                    ctx.fillRect(heart.x, heart.y, heart.width, heart.height);
+                }
+                
+                ctx.restore();
+            }
+        });
+    }
+    
+
+    
     renderTemple(ctx, templeImage, castle) {
         // Draw prominent divine glow behind temple
         const glowRadius = 80; // Increased from 50 for larger glow
@@ -611,6 +689,10 @@ class WorldManager {
         this.scriptureBooks.forEach(book => {
             book.collected = false;
         });
+        // Reset hearts
+        this.hearts.forEach(heart => {
+            heart.collected = false;
+        });
     }    
     setLevel(level) {
         this.currentLevel = level;
@@ -618,4 +700,5 @@ class WorldManager {
         this.createPlatforms();
         this.createClouds();
         this.createScriptureBooks();
+        this.createHearts();
     }}

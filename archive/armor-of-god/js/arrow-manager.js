@@ -1,13 +1,18 @@
 class ArrowManager {
-    constructor(audioManager) {
+    constructor(audioManager, arrowImage = null, brokenArrowImage = null) {
         this.audioManager = audioManager;
         this.arrows = [];
+        this.arrowImage = arrowImage;
+        this.brokenArrowImage = brokenArrowImage;
         
         // Arrow spawning system
         this.arrowSpawnTimer = 0;
         this.arrowSpawnDelay = 28; // Spawn arrow every ~0.47 seconds at 60fps (faster spawning)
         this.maxArrows = 30; // Maximum arrows on screen at once
         this.burstChance = 0.4; // 40% chance for burst spawning
+        
+        // Broken arrow effects
+        this.brokenArrows = [];
         
         // Arrow type definitions (speeds increased by 50% for faster gameplay)
         this.arrowTypes = [
@@ -36,7 +41,7 @@ class ArrowManager {
                 x: spawnX,
                 y: arrowType.y,
                 width: 40,
-                height: 8,
+                height: 24,
                 speedX: arrowType.speedX,
                 speedY: arrowType.speedY,
                 active: true,
@@ -71,7 +76,7 @@ class ArrowManager {
             x: spawnX,
             y: arrowType.y,
             width: 40,
-            height: 8,
+            height: 24,
             speedX: arrowType.speedX * speedMultiplier,
             speedY: arrowType.speedY,
             active: true,
@@ -96,6 +101,22 @@ class ArrowManager {
                 }
             }
         });
+        
+        // Update broken arrow effects
+        this.brokenArrows.forEach(brokenArrow => {
+            brokenArrow.timer++;
+            brokenArrow.opacity = Math.max(0, 1 - (brokenArrow.timer / brokenArrow.duration));
+            
+            // Apply physics - upward pop then falling
+            brokenArrow.y += brokenArrow.velocityY;
+            brokenArrow.velocityY += 0.3; // Gravity
+            
+            // Optional: slight rotation for more dramatic effect
+            brokenArrow.rotation = (brokenArrow.rotation || 0) + 0.05;
+        });
+        
+        // Remove finished broken arrow effects
+        this.brokenArrows = this.brokenArrows.filter(brokenArrow => brokenArrow.timer < brokenArrow.duration);
         
         // Clean up inactive arrows periodically
         if (Math.random() < 0.02) { // 2% chance each frame
@@ -135,38 +156,70 @@ class ArrowManager {
     }
     
     render(ctx) {
+        // Render active arrows
         this.arrows.forEach(arrow => {
             if (arrow.active) {
-                // Arrow shaft (brown wood)
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(arrow.x + 6, arrow.y + 2, arrow.width - 12, arrow.height - 4);
+                if (this.arrowImage && this.arrowImage.complete) {
+                    // Use the new fiery arrow image - flip horizontally since arrows fly left
+                    ctx.save();
+                    ctx.scale(-1, 1); // Flip horizontally
+                    ctx.drawImage(this.arrowImage, -arrow.x - arrow.width, arrow.y, arrow.width, arrow.height);
+                    ctx.restore();
+                } else {
+                    // Fallback to original arrow drawing
+                    // Arrow shaft (brown wood)
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(arrow.x + 6, arrow.y + 2, arrow.width - 12, arrow.height - 4);
+                    
+                    // Silver pointed arrowhead (triangle) - pointing LEFT since arrows fly left
+                    ctx.fillStyle = '#C0C0C0';
+                    // Main arrowhead body (at the left end)
+                    ctx.fillRect(arrow.x, arrow.y, 10, arrow.height);
+                    // Pointed tip triangle (extending left from main body)
+                    ctx.fillRect(arrow.x - 2, arrow.y + 1, 2, arrow.height - 2);
+                    ctx.fillRect(arrow.x - 4, arrow.y + 2, 2, arrow.height - 4);
+                    ctx.fillRect(arrow.x - 6, arrow.y + 3, 2, arrow.height - 6);
+                    
+                    // Red feather fletching at back (right end)
+                    ctx.fillStyle = '#DC143C'; // Crimson red
+                    // Upper feather
+                    ctx.fillRect(arrow.x + arrow.width - 8, arrow.y - 2, 8, 3);
+                    ctx.fillRect(arrow.x + arrow.width - 6, arrow.y - 3, 4, 2);
+                    // Lower feather  
+                    ctx.fillRect(arrow.x + arrow.width - 8, arrow.y + arrow.height - 1, 8, 3);
+                    ctx.fillRect(arrow.x + arrow.width - 6, arrow.y + arrow.height + 1, 4, 2);
+                    
+                    // Feather details (darker red)
+                    ctx.fillStyle = '#B22222';
+                    ctx.fillRect(arrow.x + arrow.width - 7, arrow.y - 1, 1, 2);
+                    ctx.fillRect(arrow.x + arrow.width - 5, arrow.y - 2, 1, 1);
+                    ctx.fillRect(arrow.x + arrow.width - 3, arrow.y - 1, 1, 1);
+                    ctx.fillRect(arrow.x + arrow.width - 7, arrow.y + arrow.height, 1, 2);
+                    ctx.fillRect(arrow.x + arrow.width - 5, arrow.y + arrow.height + 1, 1, 1);
+                    ctx.fillRect(arrow.x + arrow.width - 3, arrow.y + arrow.height, 1, 1);
+                }
+            }
+        });
+        
+        // Render broken arrow effects
+        this.brokenArrows.forEach(brokenArrow => {
+            if (this.brokenArrowImage && this.brokenArrowImage.complete) {
+                ctx.save();
+                ctx.globalAlpha = brokenArrow.opacity;
                 
-                // Silver pointed arrowhead (triangle) - pointing LEFT since arrows fly left
-                ctx.fillStyle = '#C0C0C0';
-                // Main arrowhead body (at the left end)
-                ctx.fillRect(arrow.x, arrow.y, 10, arrow.height);
-                // Pointed tip triangle (extending left from main body)
-                ctx.fillRect(arrow.x - 2, arrow.y + 1, 2, arrow.height - 2);
-                ctx.fillRect(arrow.x - 4, arrow.y + 2, 2, arrow.height - 4);
-                ctx.fillRect(arrow.x - 6, arrow.y + 3, 2, arrow.height - 6);
+                // Move to center of arrow for rotation
+                const centerX = brokenArrow.x + brokenArrow.width / 2;
+                const centerY = brokenArrow.y + brokenArrow.height / 2;
+                ctx.translate(centerX, centerY);
                 
-                // Red feather fletching at back (right end)
-                ctx.fillStyle = '#DC143C'; // Crimson red
-                // Upper feather
-                ctx.fillRect(arrow.x + arrow.width - 8, arrow.y - 2, 8, 3);
-                ctx.fillRect(arrow.x + arrow.width - 6, arrow.y - 3, 4, 2);
-                // Lower feather  
-                ctx.fillRect(arrow.x + arrow.width - 8, arrow.y + arrow.height - 1, 8, 3);
-                ctx.fillRect(arrow.x + arrow.width - 6, arrow.y + arrow.height + 1, 4, 2);
+                // Apply rotation
+                ctx.rotate(brokenArrow.rotation);
                 
-                // Feather details (darker red)
-                ctx.fillStyle = '#B22222';
-                ctx.fillRect(arrow.x + arrow.width - 7, arrow.y - 1, 1, 2);
-                ctx.fillRect(arrow.x + arrow.width - 5, arrow.y - 2, 1, 1);
-                ctx.fillRect(arrow.x + arrow.width - 3, arrow.y - 1, 1, 1);
-                ctx.fillRect(arrow.x + arrow.width - 7, arrow.y + arrow.height, 1, 2);
-                ctx.fillRect(arrow.x + arrow.width - 5, arrow.y + arrow.height + 1, 1, 1);
-                ctx.fillRect(arrow.x + arrow.width - 3, arrow.y + arrow.height, 1, 1);
+                // Flip horizontally to match arrow direction and draw from center
+                ctx.scale(-1, 1);
+                ctx.drawImage(this.brokenArrowImage, -brokenArrow.width / 2, -brokenArrow.height / 2, brokenArrow.width, brokenArrow.height);
+                
+                ctx.restore();
             }
         });
     }
@@ -184,22 +237,47 @@ class ArrowManager {
             };
             
             if (arrow.active && this.checkCollision(playerHitbox, arrow) && !player.invulnerable) {
-                if (hasArmor) {
-                    // Arrow bounces off armor
-                    arrow.speedX = -arrow.speedX;
-                    arrow.speedY = -2; // Bounce up
-                    
-                    // Only play ricochet sound once per arrow
-                    if (!arrow.hasPlayedRicochetSound) {
-                        const ricochetSounds = ['ricochet', 'ricochet2'];
-                        const randomSound = ricochetSounds[Math.floor(Math.random() * ricochetSounds.length)];
-                        this.audioManager.playSound(randomSound);
-                        arrow.hasPlayedRicochetSound = true;
-                    }
+                // Check if player is landing on top of arrow (breaking it)
+                const playerBottom = player.y + player.height;
+                const arrowTop = arrow.y;
+                const arrowBottom = arrow.y + arrow.height;
+                const playerCenterX = player.x + player.width / 2;
+                const arrowCenterX = arrow.x + arrow.width / 2;
+                
+                // More reliable top collision detection:
+                // 1. Player's bottom is within reasonable range of arrow's vertical area
+                // 2. Player is moving downward OR just recently was (small upward velocity ok)
+                // 3. Player is reasonably horizontally aligned with arrow (more forgiving)
+                // 4. Player is coming from above the arrow
+                const verticalOverlap = playerBottom >= arrowTop && playerBottom <= arrowBottom + 12;
+                const comingFromAbove = player.y < arrowTop + arrow.height / 2;
+                const horizontalAlignment = Math.abs(playerCenterX - arrowCenterX) < arrow.width * 0.85;
+                const downwardMovement = player.velocityY > -3; // Allow small upward velocity
+                
+                if (verticalOverlap && comingFromAbove && horizontalAlignment && downwardMovement) {
+                    // Break the arrow
+                    this.breakArrow(arrow);
+                    // Give player a little bounce
+                    player.velocityY = -6;
                 } else {
-                    // Player takes damage
-                    collisions.push(arrow);
-                    arrow.active = false; // Remove the arrow that hit
+                    // Side collision - normal damage or armor behavior
+                    if (hasArmor) {
+                        // Arrow bounces off armor
+                        arrow.speedX = -arrow.speedX;
+                        arrow.speedY = -2; // Bounce up
+                        
+                        // Only play ricochet sound once per arrow
+                        if (!arrow.hasPlayedRicochetSound) {
+                            const ricochetSounds = ['ricochet', 'ricochet2'];
+                            const randomSound = ricochetSounds[Math.floor(Math.random() * ricochetSounds.length)];
+                            this.audioManager.playSound(randomSound);
+                            arrow.hasPlayedRicochetSound = true;
+                        }
+                    } else {
+                        // Player takes damage
+                        collisions.push(arrow);
+                        arrow.active = false; // Remove the arrow that hit
+                    }
                 }
             }
         });
@@ -214,8 +292,30 @@ class ArrowManager {
                rect1.y + rect1.height > rect2.y;
     }
     
+    breakArrow(arrow) {
+        // Mark arrow as inactive
+        arrow.active = false;
+        
+        // Create broken arrow effect with upward pop physics
+        this.brokenArrows.push({
+            x: arrow.x,
+            y: arrow.y,
+            width: arrow.width,
+            height: arrow.height,
+            opacity: 1,
+            timer: 0,
+            duration: 60, // 1 second at 60fps
+            velocityY: -4 - Math.random() * 2, // Pop upward with slight randomness (-4 to -6)
+            rotation: 0
+        });
+        
+        // Play arrow smash sound (playbackRate configured in audio manager)
+        this.audioManager.playSound('arrowSmash');
+    }
+    
     reset() {
         this.arrows = [];
+        this.brokenArrows = [];
         this.arrowSpawnTimer = 0;
         this.arrowSpawnDelay = 42;
     }

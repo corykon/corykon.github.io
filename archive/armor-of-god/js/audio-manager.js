@@ -20,6 +20,7 @@ class AudioManager {
             thud: new Audio('sounds/thud.mp3'),
             thud2: new Audio('sounds/thud2.mp3'),
             thud3: new Audio('sounds/thud3.mp3'),
+            heal2: new Audio('sounds/heal2.wav'),
             ricochet: new Audio('sounds/ricochet.mp3'),
             ricochet2: new Audio('sounds/ricochet2.mp3'),
             gameoversong: new Audio('sounds/gameoversong.mp3'),
@@ -31,6 +32,7 @@ class AudioManager {
             buttonHover: new Audio('sounds/button-hover.mp3'),
             unpause: new Audio('sounds/unpause.mp3'),
             pause: new Audio('sounds/pause.mp3'),
+            arrowSmash: new Audio('sounds/smash.mp3'),
         };
         
         // Define loop and volume settings for each audio file
@@ -48,6 +50,7 @@ class AudioManager {
             thud: { loop: false, volume: 0.5 },
             thud2: { loop: false, volume: 0.5 },
             thud3: { loop: false, volume: 0.5 },
+            heal2: { loop: false, volume: 0.5 },
             ricochet: { loop: false, volume: 0.8 },
             ricochet2: { loop: false, volume: 0.8 },
             ricochet3: { loop: false, volume: 0.8 },
@@ -59,7 +62,8 @@ class AudioManager {
             modalOpen: { loop: false, volume: 0.4 },
             buttonHover: { loop: false, volume: 0.25 },
             unpause: { loop: false, volume: 0.4 },
-            pause: { loop: false, volume: 0.4 }
+            pause: { loop: false, volume: 0.4 },
+            arrowSmash: { loop: false, volume: 0.3, playbackRate: 4.0 }
         };
         
         // Apply settings to each audio file
@@ -67,7 +71,13 @@ class AudioManager {
             const settings = audioSettings[key];
             this.audio[key].loop = settings.loop;
             this.audio[key].volume = settings.volume;
+            if (settings.playbackRate) {
+                this.audio[key].playbackRate = settings.playbackRate;
+            }
         });
+        
+        // Store settings for later use in sound effects
+        this.audioSettings = audioSettings;
     }
     
     toggleAudio() {
@@ -127,6 +137,12 @@ class AudioManager {
             const soundClone = sound.cloneNode();
             soundClone.volume = sound.volume; // Use the original volume setting
             soundClone.loop = false; // Ensure sound effects don't loop
+            
+            // Apply playback rate if specified in settings
+            const settings = this.audioSettings[soundKey];
+            if (settings && settings.playbackRate) {
+                soundClone.playbackRate = settings.playbackRate;
+            }
             
             // Auto-stop the sound when it ends to prevent any repeats
             soundClone.addEventListener('ended', () => {

@@ -31,6 +31,12 @@ class ArmorOfGodGame {
         this.templeImage.src = 'images/temple.png';
         this.bomImage = new Image();
         this.bomImage.src = 'images/bom.png';
+        this.heartImage = new Image();
+        this.heartImage.src = 'images/heartUp.png';
+        this.arrowImage = new Image();
+        this.arrowImage.src = 'images/enemy-frames/fiery-arrow.png';
+        this.brokenArrowImage = new Image();
+        this.brokenArrowImage.src = 'images/enemy-frames/fiery-arrow-broken.png';
         
         // Game physics constants
         this.gravity = 0.42;
@@ -117,7 +123,7 @@ class ArmorOfGodGame {
         this.effectsManager = new EffectsManager();
         this.inputHandler = new InputHandler();
         this.worldManager = new WorldManager();
-        this.arrowManager = new ArrowManager(this.audioManager);
+        this.arrowManager = new ArrowManager(this.audioManager, this.arrowImage, this.brokenArrowImage);
         this.backgroundManager = new BackgroundManager();
         this.uiRenderer = new UIRenderer();
         this.characterRenderer = new CharacterRenderer();
@@ -804,6 +810,27 @@ class ArmorOfGodGame {
             }
         });
         
+        // Heart collisions (health restoration)
+        this.worldManager.hearts.forEach(heart => {
+            if (!heart.collected && this.checkCollision(this.player, heart)) {
+                heart.collected = true;
+                
+                // Play same collection sound as scripture books
+                this.audioManager.playSound('heal2');
+                
+                // Restore health (don't exceed max health)
+                const oldHealth = this.player.health;
+                this.player.health = Math.min(this.player.health + heart.healthRestore, this.player.maxHealth);
+                const healedAmount = this.player.health - oldHealth;
+                
+                if (healedAmount > 0) {
+                    this.uiRenderer.showMessage(`Health +${healedAmount}!`, 120, '#FF6B6B', 18, 300);
+                } else {
+                    this.uiRenderer.showMessage('Health Full!', 120, '#FFD700', 16, 300);
+                }
+            }
+        });
+        
         // Castle collision
         if (this.checkCollision(this.player, this.castle)) {
             this.levelComplete();
@@ -1076,6 +1103,7 @@ class ArmorOfGodGame {
         // Render game objects
         this.arrowManager.render(this.ctx);
         this.worldManager.renderScriptureBooks(this.ctx, this.bomImage);
+        this.worldManager.renderHearts(this.ctx, this.heartImage);
         
         // Render characters
         this.characterRenderer.renderPlayer(this.ctx, this.player, this.hasArmor, this.gameState, this.isPaused);

@@ -422,4 +422,30 @@ class PetManager {
             }
         }
     }
+    
+    stopPetting() {
+        // Stop pet petting animation
+        if (this.pet.isBeingPetted) {
+            this.pet.isBeingPetted = false;
+            this.pet.pettingTimer = 0;
+            this.pet.tailWagTimer = 0;
+            this.pet.jumpCount = 0;
+            this.pet.jumpTimer = 0;
+        }
+        
+        // Stop player petting animation
+        if (this.game.player.isPetting) {
+            this.game.player.isPetting = false;
+            this.game.player.pettingTimer = 0;
+            this.game.player.handOffset = 0;
+        }
+        
+        // Stop character renderer petting animation
+        if (this.game.characterRenderer.isPetting) {
+            this.game.characterRenderer.isPetting = false;
+            this.game.characterRenderer.petAnimCycles = 0;
+            this.game.characterRenderer.petAnimFrame = 0;
+            this.game.characterRenderer.petAnimTimer = 0;
+        }
+    }
 }

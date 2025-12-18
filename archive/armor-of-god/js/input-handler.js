@@ -199,11 +199,19 @@ class InputHandler {
             player.x -= currentSpeed;
             player.isMoving = true;
             player.facingRight = false; // Facing left
+            // Stop petting when player moves
+            if (player.isPetting || this.game.pet.isBeingPetted) {
+                this.game.petManager.stopPetting();
+            }
         }
         if (this.keys['ArrowRight'] && player.x < worldWidth - player.width && !player.blockedRight) {
             player.x += currentSpeed;
             player.isMoving = true;
             player.facingRight = true; // Facing right
+            // Stop petting when player moves
+            if (player.isPetting || this.game.pet.isBeingPetted) {
+                this.game.petManager.stopPetting();
+            }
         }
         
         // Jumping (armor enhances jump height)
@@ -213,6 +221,10 @@ class InputHandler {
             player.isJumping = true;
             player.isGrounded = false;
             audioManager.playSoundEffect('jump');
+            // Stop petting when player jumps
+            if (player.isPetting || this.game.pet.isBeingPetted) {
+                this.game.petManager.stopPetting();
+            }
             // Clear the key press flags so jump doesn't repeat
             this.keysPressed['ArrowUp'] = false;
             this.keysPressed['Space'] = false;
