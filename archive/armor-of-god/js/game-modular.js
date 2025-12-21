@@ -303,6 +303,15 @@ class ArmorOfGodGame {
             this.audioManager.playSoundEffect('buttonHover');
         });
         
+        document.getElementById('retryLevelBtn').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
+            this.retryCurrentLevel();
+        });
+        
+        document.getElementById('retryLevelBtn').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
+        });
+        
         // Audio toggle button
         document.getElementById('audioToggleBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
@@ -1009,6 +1018,16 @@ class ArmorOfGodGame {
         this.showScreen('game');
         this.updateLevelIndicator();
         this.updateLevelSelector();
+        this.audioManager.playMusic('adventure');
+        this.arrowManager.spawnInitialArrows(this.player);
+    }
+
+    retryCurrentLevel() {
+        // Restart the current level without advancing
+        this.resetGame();
+        this.gameState = 'playing';
+        this.showScreen('game');
+        this.updateLevelIndicator();
         this.audioManager.playMusic('adventure');
         this.arrowManager.spawnInitialArrows(this.player);
     }

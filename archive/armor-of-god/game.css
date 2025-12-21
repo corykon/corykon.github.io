@@ -346,6 +346,7 @@ body {
     font-size: 18px;
     padding: 15px 30px;
     margin-top: 5px;
+    min-width: 250px;
 }
 
 .start-btn:hover {
@@ -635,16 +636,51 @@ body {
     animation: templeGlow 2s ease-in-out infinite alternate;
 }
 
-/* Next Level Button - Green styling */
+/* Next Level Button - Green styling and double width */
 #nextLevelBtn {
     background: #28a745 !important;
     border-color: #1e7e34 !important;
     color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.next-level-wide {
+    width: 400px !important;
+}
+
+#nextLevelBtn .chevron-icon {
+    font-size: 16px;
+    margin-left: 5px;
+    position: relative;
+    top: -2px;
 }
 
 #nextLevelBtn:hover {
     background: #34ce57 !important;
     border-color: #28a745 !important;
+}
+
+/* Button row layout */
+.button-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+/* Half-width buttons */
+.half-width {
+    width: 182px !important;
+    font-size: 12px !important;
+    padding: 15px;
+}
+
+/* Remove old retry button styles */
+.retry-btn {
+    display: none;
 }
 
 /* Running Characters Animation - positioned below temple */
