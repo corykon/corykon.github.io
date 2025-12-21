@@ -82,6 +82,15 @@
         <!-- Level Complete Screen -->
         <div id="levelCompleteScreen" class="screen hidden">
             <img src="./images/temple.png" alt="Holy Temple" id="victoryTempleImage" class="victory-temple">
+            <!-- Running Characters Animation -->
+            <div id="victoryRunners" class="victory-runners hidden">
+                <div class="victory-pet">
+                    <img id="victoryPetImg" src="images/main-char-frames/dog-run1.png" alt="Pet Running" style="width: 100%; height: 100%; image-rendering: pixelated;">
+                </div>
+                <div class="victory-player">
+                    <img id="victoryPlayerImg" src="images/main-char-frames/run1.png" alt="Player Running" style="width: 100%; height: 100%; image-rendering: pixelated;">
+                </div>
+            </div>
             <h1>Victory!</h1>
             <p>You have successfully reached the holy temple!</p>
             <p class="victory-message">"Well done, good and faithful servant!"</p>
@@ -127,6 +136,7 @@
     <script src="js/input-handler.js"></script>
     <script src="js/world-manager.js"></script>
     <script src="js/arrow-manager.js"></script>
+    <script src="js/enemy-manager.js"></script>
     <script src="js/background-manager.js"></script>
     <script src="js/ui-renderer.js"></script>
     <script src="js/character-renderer.js"></script>

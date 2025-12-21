@@ -33,6 +33,11 @@ class AudioManager {
             unpause: new Audio('sounds/unpause.mp3'),
             pause: new Audio('sounds/pause.mp3'),
             arrowSmash: new Audio('sounds/smash.mp3'),
+            smash: new Audio('sounds/smash.mp3'),
+            snailYell: new Audio('sounds/snail-yell.wav'),
+            snailPop: new Audio('sounds/snail-pop.wav'),
+            falling: new Audio('sounds/falling.mp3'),
+            grunt1: new Audio('sounds/grunt1.mp3')
         };
         
         // Define loop and volume settings for each audio file
@@ -63,7 +68,12 @@ class AudioManager {
             buttonHover: { loop: false, volume: 0.25 },
             unpause: { loop: false, volume: 0.4 },
             pause: { loop: false, volume: 0.4 },
-            arrowSmash: { loop: false, volume: 0.3, playbackRate: 4.0 }
+            arrowSmash: { loop: false, volume: 0.3, playbackRate: 4.0 },
+            smash: { loop: false, volume: 0.3, playbackRate: 1.0 },
+            snailYell: { loop: false, volume: 0.5},
+            snailPop: { loop: false, volume: 0.5},
+            falling: { loop: false, volume: 0.5},
+            grunt1: { loop: false, volume: 0.3}
         };
         
         // Apply settings to each audio file

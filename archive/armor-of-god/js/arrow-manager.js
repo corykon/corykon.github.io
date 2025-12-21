@@ -18,7 +18,7 @@ class ArrowManager {
         this.arrowTypes = [
             { y: 440, speedX: -5.72, speedY: 0 }, // Ground level - duck under
             { y: 380, speedX: -6.87, speedY: 0 }, // Head height - duck under  
-            { y: 460, speedX: -7.62, speedY: 0 }, // Low - duck under
+            { y: 450, speedX: -7.62, speedY: 0 }, // Low - duck under
             { y: 280, speedX: -5.72, speedY: 3.05 }, // High - jump over
             { y: 320, speedX: -4.58, speedY: 1.91 }, // Mid-high - jump over
             { y: 410, speedX: -8.39, speedY: 0 }, // Body level - duck under
@@ -254,7 +254,7 @@ class ArrowManager {
                 const horizontalAlignment = Math.abs(playerCenterX - arrowCenterX) < arrow.width * 0.85;
                 const downwardMovement = player.velocityY > -3; // Allow small upward velocity
                 
-                if (verticalOverlap && comingFromAbove && horizontalAlignment && downwardMovement) {
+                if (verticalOverlap && comingFromAbove && horizontalAlignment && downwardMovement && !player.isGrounded) {
                     // Break the arrow
                     this.breakArrow(arrow);
                     // Give player a little bounce
@@ -275,7 +275,11 @@ class ArrowManager {
                         }
                     } else {
                         // Player takes damage
-                        collisions.push(arrow);
+                        collisions.push({
+                            source: arrow,
+                            x: arrow.x + arrow.width / 2,
+                            y: arrow.y + arrow.height / 2
+                        });
                         arrow.active = false; // Remove the arrow that hit
                     }
                 }

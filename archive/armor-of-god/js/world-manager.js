@@ -3,6 +3,7 @@
  * 
  * Level 1 (Castle): 9,000px width - Original castle theme with grass platforms
  * Level 2 (Jungle): 18,000px width - Jungle theme with sunset effects, tree platforms, and branches
+ * Level 3 (Mountains): 15,000px width - Mountain theme with rocky platforms, vertical climbing sections, and inclines
  * 
  * TO ADD NEW LEVELS:
  * 1. Add case in setLevelProperties() for world width and theme
@@ -43,6 +44,10 @@ class WorldManager {
                 this.worldWidth = 18000; // Jungle level - 2x longer
                 this.theme = 'jungle';
                 break;
+            case 3:
+                this.worldWidth = 15000; // Mountain level
+                this.theme = 'mountains';
+                break;
             default:
                 this.worldWidth = 9000;
                 this.theme = 'castle';
@@ -54,6 +59,8 @@ class WorldManager {
             this.createLevel1Platforms();
         } else if (this.currentLevel === 2) {
             this.createLevel2Platforms();
+        } else if (this.currentLevel === 3) {
+            this.createLevel3Platforms();
         }
     }
     
@@ -85,7 +92,7 @@ class WorldManager {
             { x: 2200, y: 350, width: 200, height: 30, type: 'floating' },
             { x: 2800, y: 320, width: 320, height: 30, type: 'floating' },
             { x: 3600, y: 340, width: 180, height: 30, type: 'floating' },
-            { x: 4000, y: 310, width: 120, height: 30, type: 'floating' },
+            { x: 4000, y: 310, width: 180, height: 30, type: 'floating' },
             { x: 4440, y: 360, width: 150, height: 30, type: 'floating' },
             { x: 4900, y: 330, width: 80, height: 30, type: 'floating' },
             { x: 5200, y: 350, width: 350, height: 30, type: 'floating' }
@@ -170,11 +177,109 @@ class WorldManager {
         ];
     }
     
+    createLevel3Platforms() {
+        // MOUNTAIN LEVEL 3 LAYOUT - ASCENDING ELEVATION
+        // Features: Multiple ground levels that ascend the mountain, vertical climbing section
+        // Ground level starts at 468, then rises to 400, then 330, then 260 for temple
+        // Night-to-sunrise background progression
+        // Total length: ~15,000px
+        
+        this.platforms = [
+            // SECTION 1: Base level (ground at 468)
+            { x: 0, y: 468, width: 600, height: 135, type: 'rock' },
+            { x: 600, y: 468, width: 500, height: 135, type: 'rock' },
+            // GAP
+            { x: 1200, y: 468, width: 400, height: 135, type: 'rock' },
+            
+            // Floating platforms to help ascend to next level
+            { x: 800, y: 420, width: 120, height: 30, type: 'rock_platform' },
+            { x: 1000, y: 380, width: 120, height: 30, type: 'rock_platform' },
+            { x: 1400, y: 420, width: 150, height: 30, type: 'rock_platform' },
+            
+            // SECTION 2: First elevation (ground at 400) - ~70px higher
+            { x: 1700, y: 400, width: 500, height: 203, type: 'rock' }, // Taller to reach new ground level
+            { x: 2300, y: 400, width: 600, height: 203, type: 'rock' },
+            { x: 3000, y: 400, width: 400, height: 203, type: 'rock' },
+            // GAP
+            { x: 3500, y: 400, width: 500, height: 203, type: 'rock' },
+            
+            // Floating platforms on this level
+            { x: 1900, y: 350, width: 120, height: 30, type: 'rock_platform' },
+            { x: 2500, y: 320, width: 140, height: 30, type: 'rock_platform' },
+            { x: 2800, y: 360, width: 130, height: 30, type: 'rock_platform' },
+            { x: 3200, y: 340, width: 150, height: 30, type: 'rock_platform' },
+            
+            // VERTICAL CLIMBING SECTION - Side to side jumps going up!
+            // This creates a challenging zigzag pattern going up the mountain
+            { x: 4100, y: 380, width: 120, height: 30, type: 'rock_platform' }, // Start right
+            { x: 3950, y: 340, width: 120, height: 30, type: 'rock_platform' }, // Jump left
+            { x: 4200, y: 300, width: 120, height: 30, type: 'rock_platform' }, // Jump right
+            { x: 3900, y: 260, width: 120, height: 30, type: 'rock_platform' }, // Jump left
+            { x: 4250, y: 220, width: 120, height: 30, type: 'rock_platform' }, // Jump right
+            { x: 3850, y: 180, width: 120, height: 30, type: 'rock_platform' }, // Jump left
+            { x: 4300, y: 140, width: 120, height: 30, type: 'rock_platform' }, // Jump right
+            { x: 3800, y: 100, width: 120, height: 30, type: 'rock_platform' }, // Jump left
+            { x: 4350, y: 60, width: 120, height: 30, type: 'rock_platform' },  // Jump right
+            
+            // SECTION 3: Second elevation (ground at 330) - another ~70px higher
+            { x: 4600, y: 330, width: 600, height: 273, type: 'rock' }, // Much taller platforms
+            { x: 5300, y: 330, width: 500, height: 273, type: 'rock' },
+            // GAP
+            { x: 5900, y: 330, width: 700, height: 273, type: 'rock' },
+            { x: 6700, y: 330, width: 600, height: 273, type: 'rock' },
+            
+            // Floating platforms on this higher level
+            { x: 4800, y: 280, width: 120, height: 30, type: 'rock_platform' },
+            { x: 5100, y: 250, width: 140, height: 30, type: 'rock_platform' },
+            { x: 5500, y: 290, width: 130, height: 30, type: 'rock_platform' },
+            { x: 5700, y: 260, width: 120, height: 30, type: 'rock_platform' },
+            { x: 6200, y: 270, width: 150, height: 30, type: 'rock_platform' },
+            { x: 6900, y: 240, width: 140, height: 30, type: 'rock_platform' },
+            
+            // Another smaller vertical section
+            { x: 7400, y: 310, width: 120, height: 30, type: 'rock_platform' },
+            { x: 7250, y: 270, width: 120, height: 30, type: 'rock_platform' },
+            { x: 7500, y: 230, width: 120, height: 30, type: 'rock_platform' },
+            { x: 7200, y: 190, width: 120, height: 30, type: 'rock_platform' },
+            { x: 7550, y: 150, width: 120, height: 30, type: 'rock_platform' },
+            
+            // SECTION 4: Continued middle elevation
+            { x: 7800, y: 330, width: 500, height: 273, type: 'rock' },
+            { x: 8400, y: 330, width: 600, height: 273, type: 'rock' },
+            // GAP
+            { x: 9100, y: 330, width: 700, height: 273, type: 'rock' },
+            
+            // More floating challenges
+            { x: 8000, y: 280, width: 130, height: 30, type: 'rock_platform' },
+            { x: 8600, y: 250, width: 140, height: 30, type: 'rock_platform' },
+            { x: 8900, y: 290, width: 120, height: 30, type: 'rock_platform' },
+            { x: 9300, y: 260, width: 150, height: 30, type: 'rock_platform' },
+            
+            // SECTION 5: Final ascent to temple level (ground at 260) - highest elevation
+            { x: 9900, y: 260, width: 600, height: 343, type: 'rock' }, // Very tall platforms
+            { x: 10600, y: 260, width: 500, height: 343, type: 'rock' },
+            // GAP
+            { x: 11200, y: 260, width: 800, height: 343, type: 'rock' },
+            
+            // High altitude floating platforms before temple
+            { x: 10200, y: 210, width: 120, height: 30, type: 'rock_platform' },
+            { x: 10800, y: 180, width: 140, height: 30, type: 'rock_platform' },
+            { x: 11000, y: 220, width: 130, height: 30, type: 'rock_platform' },
+            { x: 11400, y: 190, width: 150, height: 30, type: 'rock_platform' },
+            { x: 11700, y: 150, width: 140, height: 30, type: 'rock_platform' },
+            
+            // TEMPLE PLATFORM - At highest elevation (ground at 260)
+            { x: 12100, y: 260, width: 2900, height: 343, type: 'rock' } // Massive temple platform at peak
+        ];
+    }
+
     createClouds() {
         if (this.currentLevel === 1) {
             this.createLevel1Clouds();
         } else if (this.currentLevel === 2) {
             this.createLevel2Clouds();
+        } else if (this.currentLevel === 3) {
+            this.createLevel3Clouds();
         }
     }
     
@@ -210,11 +315,25 @@ class WorldManager {
         }
     }
     
+    createLevel3Clouds() {
+        this.clouds = [];
+        // Mountain clouds - more sparse, higher altitude
+        for (let x = 500; x < this.worldWidth; x += 600 + Math.random() * 300) {
+            this.clouds.push({
+                x: x + (Math.random() - 0.5) * 150,
+                y: 20 + Math.random() * 40, // Higher in the sky
+                size: 60 + Math.random() * 50 // Larger, more dramatic
+            });
+        }
+    }
+    
     createScriptureBooks() {
         if (this.currentLevel === 1) {
             this.createLevel1ScriptureBooks();
         } else if (this.currentLevel === 2) {
             this.createLevel2ScriptureBooks();
+        } else if (this.currentLevel === 3) {
+            this.createLevel3ScriptureBooks();
         }
     }
     
@@ -223,6 +342,8 @@ class WorldManager {
             this.createLevel1Hearts();
         } else if (this.currentLevel === 2) {
             this.createLevel2Hearts();
+        } else if (this.currentLevel === 3) {
+            this.createLevel3Hearts();
         }
     }
     
@@ -249,6 +370,19 @@ class WorldManager {
         ];
     }
     
+    createLevel3ScriptureBooks() {
+        this.scriptureBooks = [
+            // Early mountain book - on first rocky platform
+            { x: 1450, y: 280, width: 50, height: 50, collected: false, verse: "Courage" },
+            
+            // Mid-level book - on high mountain plateau after vertical climb
+            { x: 4700, y: 100, width: 50, height: 50, collected: false, verse: "Perseverance" },
+            
+            // Late mountain book - on challenging rocky platforms
+            { x: 8200, y: 170, width: 50, height: 50, collected: false, verse: "Strength" }
+        ];
+    }
+    
     createLevel1Hearts() {
         this.hearts = [
             // Single heart in a tough-to-reach location on floating platform
@@ -265,6 +399,15 @@ class WorldManager {
         ];
     }
     
+    createLevel3Hearts() {
+        this.hearts = [
+            // First heart on challenging vertical climb section
+            { x: 4325, y: 110, width: 30, height: 30, collected: false, healthRestore: 1 }, // High mountain platform
+            // Second heart on late mountain section
+            { x: 11475, y: 260, width: 30, height: 30, collected: false, healthRestore: 1 } // Rocky platform sequence
+        ];
+    }
+    
     renderBackground(ctx, cameraX, canvasWidth, canvasHeight) {
         if (this.currentLevel === 1) {
             // Draw simple sky blue background for castle level
@@ -273,6 +416,9 @@ class WorldManager {
         } else if (this.currentLevel === 2) {
             // Jungle sunset effect - changes as you progress
             this.renderJungleSunset(ctx, cameraX, canvasWidth, canvasHeight);
+        } else if (this.currentLevel === 3) {
+            // Mountain sunrise effect - starts at night, progresses to day
+            this.renderMountainSunrise(ctx, cameraX, canvasWidth, canvasHeight);
         }
     }
     
@@ -352,6 +498,157 @@ class WorldManager {
         ctx.beginPath();
         ctx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
         ctx.fill();
+    }
+    
+    renderMountainSunrise(ctx, cameraX, canvasWidth, canvasHeight) {
+        // Calculate progress through level (0 = night at start, 1 = day at end)
+        const progress = Math.min(cameraX / (this.worldWidth - 800), 1);
+        
+        // Create gradient that transitions from night to sunrise to day
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
+        
+        if (progress < 0.3) {
+            // Night phase (0-30% of level)
+            const nightProgress = progress / 0.3;
+            const starFade = 1 - nightProgress * 0.3; // Stars fade slowly
+            
+            gradient.addColorStop(0, `rgba(${5 + nightProgress * 10}, ${5 + nightProgress * 10}, ${25 + nightProgress * 20}, 1)`); // Very dark blue to dark blue
+            gradient.addColorStop(0.6, `rgba(${2 + nightProgress * 8}, ${2 + nightProgress * 8}, ${15 + nightProgress * 15}, 1)`);
+            gradient.addColorStop(1, `rgba(${0 + nightProgress * 5}, ${0 + nightProgress * 5}, ${8 + nightProgress * 12}, 1)`);
+            
+        } else if (progress < 0.7) {
+            // Sunrise phase (30-70% of level)
+            const sunriseProgress = (progress - 0.3) / 0.4;
+            
+            // Warm sunrise colors
+            gradient.addColorStop(0, `rgb(${50 + sunriseProgress * 100}, ${30 + sunriseProgress * 80}, ${60 + sunriseProgress * 100})`);
+            gradient.addColorStop(0.3, `rgb(${100 + sunriseProgress * 100}, ${50 + sunriseProgress * 100}, ${80 + sunriseProgress * 80})`);
+            gradient.addColorStop(0.6, `rgb(${150 + sunriseProgress * 80}, ${90 + sunriseProgress * 100}, ${70 + sunriseProgress * 100})`);
+            gradient.addColorStop(1, `rgb(${120 + sunriseProgress * 80}, ${80 + sunriseProgress * 100}, ${60 + sunriseProgress * 120})`);
+            
+        } else {
+            // Day phase (70-100% of level)
+            const dayProgress = (progress - 0.7) / 0.3;
+            
+            // Clear mountain day sky
+            gradient.addColorStop(0, `rgb(${135 + dayProgress * 20}, ${206 + dayProgress * 29}, ${235 + dayProgress * 20})`); // Sky blue
+            gradient.addColorStop(0.4, `rgb(${176 + dayProgress * 40}, ${224 + dayProgress * 26}, ${230 + dayProgress * 25})`); // Powder blue
+            gradient.addColorStop(0.8, `rgb(${230 + dayProgress * 25}, ${243 + dayProgress * 12}, ${255})`); // Light blue
+            gradient.addColorStop(1, `rgb(${240 + dayProgress * 15}, ${248 + dayProgress * 7}, ${255})`); // Alice blue
+        }
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(cameraX, 0, canvasWidth, canvasHeight);
+        
+        // Add mountain peaks silhouettes in background
+        this.renderMountainPeaks(ctx, cameraX, canvasWidth, canvasHeight, progress);
+        
+        // Add sun/moon based on progress
+        if (progress < 0.2) {
+            this.renderMountainMoon(ctx, cameraX, canvasWidth, canvasHeight, progress);
+        } else if (progress > 0.3) {
+            this.renderMountainSun(ctx, cameraX, canvasWidth, canvasHeight, progress);
+        }
+    }
+    
+    renderMountainPeaks(ctx, cameraX, canvasWidth, canvasHeight, progress) {
+        // Mountain silhouettes in background - darker when night, lighter when day
+        const opacity = progress < 0.3 ? 0.1 + progress * 0.2 : 0.3 + (progress - 0.3) * 0.4;
+        
+        ctx.fillStyle = `rgba(40, 40, 60, ${opacity})`;
+        ctx.beginPath();
+        
+        // Create jagged mountain peaks across the background
+        const peakHeight = canvasHeight * 0.4;
+        const baseY = canvasHeight - peakHeight;
+        
+        // Multiple mountain layers for parallax effect
+        for (let layer = 0; layer < 3; layer++) {
+            const layerOffset = cameraX * (0.1 + layer * 0.05); // Slower parallax for background
+            const layerOpacity = (opacity * (0.3 + layer * 0.2));
+            
+            ctx.fillStyle = `rgba(${40 + layer * 20}, ${40 + layer * 20}, ${60 + layer * 30}, ${layerOpacity})`;
+            ctx.beginPath();
+            
+            ctx.moveTo(cameraX - layerOffset, baseY + layer * 50);
+            
+            for (let x = cameraX - layerOffset; x < cameraX + canvasWidth + 200; x += 80 + layer * 40) {
+                const peakY = baseY + layer * 50 - (Math.sin(x * 0.01 + layer * 2) * 60) - (Math.random() * 40);
+                ctx.lineTo(x, peakY);
+            }
+            
+            ctx.lineTo(cameraX + canvasWidth, canvasHeight);
+            ctx.lineTo(cameraX - layerOffset, canvasHeight);
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
+    
+    renderMountainMoon(ctx, cameraX, canvasWidth, canvasHeight, progress) {
+        // Moon in early night phase
+        const moonX = cameraX + (canvasWidth * 0.8);
+        const moonY = 60 + progress * 40;
+        const moonRadius = 30;
+        
+        ctx.fillStyle = '#E6E6FA'; // Lavender moon
+        ctx.beginPath();
+        ctx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Moon glow
+        const glowGradient = ctx.createRadialGradient(moonX, moonY, moonRadius, moonX, moonY, moonRadius * 3);
+        glowGradient.addColorStop(0, 'rgba(230, 230, 250, 0.1)');
+        glowGradient.addColorStop(1, 'rgba(230, 230, 250, 0)');
+        ctx.fillStyle = glowGradient;
+        ctx.beginPath();
+        ctx.arc(moonX, moonY, moonRadius * 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    renderMountainSun(ctx, cameraX, canvasWidth, canvasHeight, progress) {
+        // Sun rises during sunrise and day phases
+        const sunriseStart = 0.3;
+        const sunProgress = Math.max(0, (progress - sunriseStart) / (1 - sunriseStart));
+        
+        // Sun position moves across sky as it rises
+        const sunX = cameraX + (canvasWidth * 0.2) + (canvasWidth * 0.6 * sunProgress);
+        const sunY = 200 - (sunProgress * 120); // Rises from horizon
+        const sunRadius = 35 + (sunProgress * 10); // Gets bigger as it rises
+        
+        // Sun color changes from orange to yellow
+        let sunColor;
+        if (sunProgress < 0.5) {
+            sunColor = `rgb(255, ${140 + sunProgress * 115}, 30)`; // Orange to yellow
+        } else {
+            sunColor = '#FFD700'; // Gold
+        }
+        
+        ctx.fillStyle = sunColor;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Sun rays during full daylight
+        if (sunProgress > 0.7) {
+            const rayOpacity = (sunProgress - 0.7) * 0.3;
+            ctx.strokeStyle = `rgba(255, 215, 0, ${rayOpacity})`;
+            ctx.lineWidth = 3;
+            
+            for (let i = 0; i < 8; i++) {
+                const angle = (i * Math.PI) / 4;
+                const rayLength = 60;
+                ctx.beginPath();
+                ctx.moveTo(
+                    sunX + Math.cos(angle) * (sunRadius + 10),
+                    sunY + Math.sin(angle) * (sunRadius + 10)
+                );
+                ctx.lineTo(
+                    sunX + Math.cos(angle) * (sunRadius + rayLength),
+                    sunY + Math.sin(angle) * (sunRadius + rayLength)
+                );
+                ctx.stroke();
+            }
+        }
     }
     
     renderClouds(ctx) {
@@ -473,6 +770,65 @@ class WorldManager {
                 default:
                     // Default to ground style
                     ctx.fillStyle = '#654321';
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                    break;
+            }
+        } else if (this.currentLevel === 3) {
+            // Mountain level - rocky platforms
+            switch(platform.type) {
+                case 'rock':
+                    // Rocky ground platforms
+                    ctx.fillStyle = '#696969'; // Dim gray
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                    
+                    // Add rock texture
+                    ctx.fillStyle = '#556B2F'; // Dark olive green (moss on rocks)
+                    for (let i = 0; i < platform.width; i += 25) {
+                        for (let j = 8; j < platform.height; j += 20) {
+                            // Use consistent offsets based on position instead of random
+                            const offsetX = ((platform.x + i) * 7) % 5;
+                            const offsetY = ((platform.y + j) * 3) % 3;
+                            ctx.fillRect(platform.x + i + offsetX, platform.y + j + offsetY, 6, 4);
+                        }
+                    }
+                    
+                    // Add darker rock patches
+                    ctx.fillStyle = '#2F4F4F'; // Dark slate gray
+                    for (let i = 10; i < platform.width; i += 30) {
+                        for (let j = 12; j < platform.height; j += 25) {
+                            ctx.fillRect(platform.x + i, platform.y + j, 8, 6);
+                        }
+                    }
+                    break;
+                    
+                case 'rock_platform':
+                    // Floating rocky platforms
+                    ctx.fillStyle = '#708090'; // Slate gray
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                    
+                    // Add jagged rocky edges
+                    ctx.fillStyle = '#2F4F4F'; // Dark slate gray
+                    for (let i = 0; i < platform.width; i += 15) {
+                        // Use consistent pattern based on position
+                        if (((platform.x + i) * 17) % 10 > 5) {
+                            ctx.fillRect(platform.x + i, platform.y - 2, 8, 4); // Top jagged edge
+                        }
+                        if (((platform.x + i) * 23) % 10 > 6) {
+                            ctx.fillRect(platform.x + i, platform.y + platform.height - 2, 6, 4); // Bottom jagged edge
+                        }
+                    }
+                    
+                    // Add rock texture spots
+                    ctx.fillStyle = '#696969';
+                    for (let i = 5; i < platform.width; i += 12) {
+                        ctx.fillRect(platform.x + i, platform.y + 4, 4, 3);
+                        ctx.fillRect(platform.x + i + 6, platform.y + 8, 3, 4);
+                    }
+                    break;
+                    
+                default:
+                    // Default rocky style
+                    ctx.fillStyle = '#696969';
                     ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
                     break;
             }
@@ -605,13 +961,13 @@ class WorldManager {
     checkPlatformCollisions(entity) {
         let onGroundPlatform = false;
         
-        // Check ground collision - but only if entity is on a platform AND close to ground level
-        if (entity.y >= this.groundY && entity.y <= this.groundY + 10) {
-            // Check if entity is horizontally on any ground-level platform
+        // Check ground collision - more forgiving detection for edge landings
+        if (entity.velocityY >= 0 && entity.y >= this.groundY - 20 && entity.y <= this.groundY + 15) {
+            // Check if entity is horizontally on any ground-level platform with more tolerance
             for (let platform of this.platforms) {
                 if (platform.y === this.groundY && 
-                    entity.x + entity.width > platform.x && 
-                    entity.x < platform.x + platform.width) {
+                    entity.x + entity.width > platform.x - 5 && 
+                    entity.x < platform.x + platform.width + 5) {
                     onGroundPlatform = true;
                     break;
                 }

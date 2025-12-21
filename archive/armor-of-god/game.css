@@ -552,6 +552,11 @@ body {
     background: #000000 !important; /* Black background for game over screen */
 }
 
+#levelCompleteScreen {
+    position: relative;
+    background: linear-gradient(135deg, #000000, #0f0a15, #1a0e2a) !important; /* Black to very subtle dark purple gradient */
+}
+
 #gameOverScreen h1,
 #levelCompleteScreen h1 {
     font-size: 52px;
@@ -568,7 +573,7 @@ body {
 }
 
 #levelCompleteScreen h1 {
-    color: #44ff44;
+    color: #FFD700;
 }
 
 #gameOverMessage {
@@ -621,12 +626,64 @@ body {
 .victory-temple {
     width: 240px;
     height: 248px;
-    margin-bottom: 20px;
+    margin-bottom: 90px;
+    margin-top: -80px; /* Move temple up */
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
     filter: drop-shadow(0 0 20px #ffd700);
     animation: templeGlow 2s ease-in-out infinite alternate;
+}
+
+/* Next Level Button - Green styling */
+#nextLevelBtn {
+    background: #28a745 !important;
+    border-color: #1e7e34 !important;
+    color: white !important;
+}
+
+#nextLevelBtn:hover {
+    background: #34ce57 !important;
+    border-color: #28a745 !important;
+}
+
+/* Running Characters Animation - positioned below temple */
+.victory-runners {
+    position: absolute;
+    margin-top: -100px;
+    animation: runAcross 2.56s linear forwards;
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+}
+
+.victory-player {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 5px;
+}
+
+.victory-pet {
+    width: 55px;
+    height: 40px;
+}
+
+@keyframes runAcross {
+    0% {
+        left: -120px;
+        transform: scaleX(1);
+        opacity: 1;
+    }
+    90% {
+        left: 90vw;
+        transform: scaleX(1);
+        opacity: 1;
+    }
+    100% {
+        left: 100vw;
+        transform: scaleX(1);
+        opacity: 0;
+    }
 }
 
 @keyframes templeGlow {

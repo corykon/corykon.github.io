@@ -18,6 +18,7 @@ class ArmorOfGodGame {
         this.armorDuration = 30 * 60; // 30 seconds at 60fps
         this.level = 1;
         this.cameraX = 0;
+        this.cameraY = 0;
         this.booksCollected = 0;
         this.selectedPetType = 'dog'; // Default to dog
         
@@ -111,6 +112,9 @@ class ArmorOfGodGame {
             jumpTimer: 0,
             jumpCooldown: 30 // 0.5 seconds between jumps
         };
+
+        // make accessible from window
+        window.game = this;
         
         // Death system
         this.isDying = false;
@@ -124,6 +128,7 @@ class ArmorOfGodGame {
         this.inputHandler = new InputHandler();
         this.worldManager = new WorldManager();
         this.arrowManager = new ArrowManager(this.audioManager, this.arrowImage, this.brokenArrowImage);
+        this.enemyManager = new EnemyManager(this.audioManager);
         this.backgroundManager = new BackgroundManager();
         this.uiRenderer = new UIRenderer();
         this.characterRenderer = new CharacterRenderer();
@@ -132,6 +137,9 @@ class ArmorOfGodGame {
         // Setup event listeners
         this.inputHandler.setupEventListeners(this.canvas, this);
         this.setupMenuEvents();
+        
+        // Initialize game state for current level
+        this.enemyManager.setLevel(this.level);
         
         // Initialize audio button appearance
         this.updateAudioButtonAppearance();
@@ -427,8 +435,10 @@ class ArmorOfGodGame {
         // Reset managers
         this.effectsManager.reset();
         this.arrowManager.reset();
+        this.enemyManager.reset();
         this.worldManager.setLevel(this.level);
         this.backgroundManager.setLevel(this.level);
+        this.enemyManager.setLevel(this.level);
         
         // Spawn initial arrows
         this.arrowManager.spawnInitialArrows(this.player);
@@ -447,8 +457,8 @@ class ArmorOfGodGame {
     }
     
     cycleLevelSelector() {
-        // Cycle between levels 1 and 2 for testing
-        this.level = this.level === 1 ? 2 : 1;
+        // Cycle between levels 1, 2, and 3 for testing
+        this.level = this.level === 1 ? 2 : (this.level === 2 ? 3 : 1);
         this.updateLevelSelector();
         this.updateLevelIndicator();
         
@@ -537,6 +547,13 @@ class ArmorOfGodGame {
         };
         
         document.getElementById(screens[screenName]).classList.remove('hidden');
+        
+        // Start running animation on victory screen
+        if (screenName === 'levelComplete') {
+            this.startVictoryRunningAnimation();
+        } else {
+            this.stopVictoryRunningAnimation();
+        }
     }
     
     // Armor enhancement methods
@@ -554,6 +571,9 @@ class ArmorOfGodGame {
         const targetInterval = 1000 / (this.targetFrameRate * speed);
         
         if (currentTime - this.lastFrameTime >= targetInterval) {
+            // Update background manager with pause state (needs to run even when paused)
+            this.backgroundManager.update(this.isPaused);
+            
             // Run multiple updates for speeds > 1.0 to maintain smooth gameplay
             const updateCount = Math.max(1, Math.floor(speed));
             for (let i = 0; i < updateCount; i++) {
@@ -591,6 +611,8 @@ class ArmorOfGodGame {
             this.canvas.width, 
             this.gameState
         );
+        
+        this.enemyManager.update(this.player, this.worldManager, this.gameState, this.cameraX, this.canvas.width);
         
         // Handle waiting to enter temple (letting player/pet fall to ground)
         if (this.gameState === 'waitingToEnterTemple') {
@@ -682,6 +704,8 @@ class ArmorOfGodGame {
         
         // Check for pit death
         if (this.player.y > this.canvas.height + 50) {
+            // Play falling sound when falling into pit
+            this.audioManager.playSound('falling');
             this.startDeath('You fell into a pit! Stay on the platforms to survive.');
             return;
         }
@@ -698,6 +722,35 @@ class ArmorOfGodGame {
         
         // Update camera
         this.cameraX = Math.max(0, this.player.x - 300);
+        
+        // Update camera Y for level 3 mountain ascent
+        if (this.level === 3) {
+            // Determine which ground level the player is on based on their position
+            let targetGroundLevel = 468; // Default base level
+            
+            if (this.player.x >= 1700) { // First ascent area
+                targetGroundLevel = 400;
+            }
+            if (this.player.x >= 4600) { // Second ascent area  
+                targetGroundLevel = 330;
+            }
+            if (this.player.x >= 9900) { // Temple peak area
+                targetGroundLevel = 260;
+            }
+            
+            // Calculate desired camera Y to keep ground level at 50% of canvas (300px)
+            const desiredCameraY = Math.max(0, targetGroundLevel - 300);
+            
+            // Smoothly transition camera Y
+            const cameraSpeed = 2;
+            if (this.cameraY < desiredCameraY) {
+                this.cameraY = Math.min(desiredCameraY, this.cameraY + cameraSpeed);
+            } else if (this.cameraY > desiredCameraY) {
+                this.cameraY = Math.max(desiredCameraY, this.cameraY - cameraSpeed);
+            }
+        } else {
+            this.cameraY = 0; // Reset for other levels
+        }
         
         // Update player animation
         this.updatePlayerAnimation();
@@ -785,7 +838,21 @@ class ArmorOfGodGame {
         // Arrow collisions
         const hitArrows = this.arrowManager.checkCollisions(this.player, this.hasArmor);
         if (hitArrows.length > 0) {
-            this.takeDamage();
+            // Calculate knockback direction from first arrow hit
+            const arrow = hitArrows[0];
+            const playerCenterX = this.player.x + this.player.width / 2;
+            const knockbackDirection = playerCenterX > arrow.x ? 1 : -1; // 1 for right, -1 for left
+            this.takeDamage(knockbackDirection);
+        }
+        
+        // Enemy collisions
+        const hitEnemies = this.enemyManager.checkCollisions(this.player, this.hasArmor);
+        if (hitEnemies.length > 0) {
+            // Calculate knockback direction from first enemy hit
+            const enemy = hitEnemies[0];
+            const playerCenterX = this.player.x + this.player.width / 2;
+            const knockbackDirection = playerCenterX > enemy.x ? 1 : -1; // 1 for right, -1 for left
+            this.takeDamage(knockbackDirection);
         }
         
         // Scripture book collisions
@@ -844,8 +911,24 @@ class ArmorOfGodGame {
                rect1.y + rect1.height > rect2.y;
     }
     
-    takeDamage() {
+    takeDamage(knockbackDirection = 0) {
         if (this.player.invulnerable) return;
+
+        // Play grunt sound when hurt
+        this.audioManager.playSound('grunt1');
+        console.log(`knockbackDirection: ${knockbackDirection}`);
+        // Apply knockback effect - move 10px away from the damage source and small vertical jump
+        if (knockbackDirection !== 0) {
+            // Apply immediate position changes for both horizontal and vertical knockback
+            this.player.x += knockbackDirection * 10;
+            this.player.y -= 5; // Move up 5px immediately
+            // Make sure player doesn't go off screen or through walls
+            this.player.x = Math.max(0, Math.min(this.player.x, 12000 - this.player.width));
+            // Add small vertical velocity for continued upward movement
+            this.player.velocityY = -3;
+            this.player.isJumping = true;
+            this.player.isGrounded = false;
+        }
 
         // Play appropriate hit sound based on armor status
         if (!this.hasArmor) {
@@ -1091,7 +1174,7 @@ class ArmorOfGodGame {
         }
         
         // Render parallax background (not translated by camera)
-        this.backgroundManager.render(this.ctx, this.cameraX);
+        this.backgroundManager.render(this.ctx, this.cameraX, this.gameState);
         
         this.ctx.save();
         this.ctx.translate(-this.cameraX, 0);
@@ -1102,6 +1185,7 @@ class ArmorOfGodGame {
         
         // Render game objects
         this.arrowManager.render(this.ctx);
+        this.enemyManager.render(this.ctx);
         this.worldManager.renderScriptureBooks(this.ctx, this.bomImage);
         this.worldManager.renderHearts(this.ctx, this.heartImage);
         
@@ -1127,7 +1211,7 @@ class ArmorOfGodGame {
             
             if (horizontalDistance <= petDistance && verticalDistance <= maxYDifference && !this.pet.isBeingPetted) {
                 this.ctx.save();
-                this.ctx.translate(-this.cameraX, 0); // Translate back for world coordinates
+                this.ctx.translate(-this.cameraX, -this.cameraY); // Translate back for world coordinates
                 
                 // Show "Press D to pet!" above the pet
                 this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
@@ -1158,7 +1242,7 @@ class ArmorOfGodGame {
         
         // Render sparkles on top of everything (with camera translation)
         this.ctx.save();
-        this.ctx.translate(-this.cameraX, 0);
+        this.ctx.translate(-this.cameraX, -this.cameraY);
         this.effectsManager.renderSparkleTrails(this.ctx, 0); // Pass 0 since we already translated
         this.ctx.restore();
     }
@@ -1228,6 +1312,58 @@ class ArmorOfGodGame {
                 this.lastPlayerPos = { x: currentX, y: currentY };
                 this.debugElement.textContent = `X:${currentX} Y:${currentY}`;
             }
+        }
+    }
+    
+    startVictoryRunningAnimation() {
+        const runnersEl = document.getElementById('victoryRunners');
+        const playerImgEl = document.getElementById('victoryPlayerImg');
+        const petImgEl = document.getElementById('victoryPetImg');
+        
+        if (!runnersEl || !playerImgEl || !petImgEl) return;
+        
+        // Set up pet image based on selected pet type
+        const petType = this.selectedPet === 'cat' ? 'cat' : 'dog';
+        petImgEl.src = `images/main-char-frames/${petType}-run1.png`;
+        
+        // Show the runners and start the animation
+        runnersEl.classList.remove('hidden');
+        
+        // Animate running sprites using same frames as game
+        let playerAnimFrame = 0;
+        let petAnimFrame = 0;
+        this.victoryAnimationInterval = setInterval(() => {
+            // Player has 14 running frames (like in game)
+            playerAnimFrame = (playerAnimFrame + 1) % 14;
+            const playerFrameNum = playerAnimFrame + 1;
+            playerImgEl.src = `images/main-char-frames/run${playerFrameNum}.png`;
+            
+            // Pet frames depend on type (like in game)
+            const maxPetFrames = petType === 'cat' ? 4 : 5;
+            petAnimFrame = (petAnimFrame + 1) % maxPetFrames;
+            const petFrameNum = petAnimFrame + 1;
+            petImgEl.src = `images/main-char-frames/${petType}-run${petFrameNum}.png`;
+        }, 80); // Same timing as game animations
+        
+        // Stop animation when CSS animation completes (2.56s)
+        setTimeout(() => {
+            if (this.victoryAnimationInterval) {
+                clearInterval(this.victoryAnimationInterval);
+                this.victoryAnimationInterval = null;
+            }
+        }, 2560);
+    }
+    
+    stopVictoryRunningAnimation() {
+        const runnersEl = document.getElementById('victoryRunners');
+        
+        if (runnersEl) {
+            runnersEl.classList.add('hidden');
+        }
+        
+        if (this.victoryAnimationInterval) {
+            clearInterval(this.victoryAnimationInterval);
+            this.victoryAnimationInterval = null;
         }
     }
 
