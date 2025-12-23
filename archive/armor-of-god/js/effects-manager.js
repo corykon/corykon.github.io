@@ -107,7 +107,7 @@ class EffectsManager {
         
         // Show armor activation message
         if (uiRenderer) {
-            uiRenderer.showMessage("ARMOR OF GOD ACTIVATED!", 240, '#FFD700');
+            uiRenderer.showMessage("Armor of God activated!", 240, '#FFD700', 15, 420);
         }
     }
     

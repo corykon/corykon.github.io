@@ -89,7 +89,7 @@ class ArmorOfGodGame {
             x: 100,
             y: 440,
             width: 24,
-            height: 20,
+            height: 22, // Increased to match visual representation (body 8 + legs 6 + head area)
             velocityY: 0,
             isGrounded: true,
             animFrame: 0,
@@ -292,7 +292,7 @@ class ArmorOfGodGame {
         
         document.getElementById('nextLevelBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
-            if (this.level === 1) {
+            if (this.level === 1 || this.level === 2) {
                 this.startNextLevel();
             } else {
                 alert('More levels coming soon! Thanks for playing!');
@@ -462,6 +462,9 @@ class ArmorOfGodGame {
         } else if (this.level === 2) {
             // Jungle level - temple at the end of the jungle clearing
             this.castle = { x: 17200, y: 230, width: 240, height: 248 };
+        } else if (this.level === 3) {
+            // Mountain level - temple on the peak platform
+            this.castle = { x: 13100, y: 0, width: 240, height: 248 };
         }
     }
     
@@ -623,11 +626,6 @@ class ArmorOfGodGame {
         
         this.enemyManager.update(this.player, this.worldManager, this.gameState, this.cameraX, this.canvas.width);
         
-        // Handle waiting to enter temple (letting player/pet fall to ground)
-        if (this.gameState === 'waitingToEnterTemple') {
-            this.updateWaitingToEnterTemple();
-        }
-        
         // Handle temple entrance sequence
         if (this.gameState === 'enteringTemple') {
             this.updateTempleEntrance();
@@ -678,7 +676,7 @@ class ArmorOfGodGame {
             return;
         }
         
-        if (this.gameState !== 'playing' && this.gameState !== 'waitingToEnterTemple') return;
+        if (this.gameState !== 'playing' && this.gameState !== 'enteringTemple') return;
         
         // Update invulnerability
         if (this.player.invulnerable) {
@@ -732,34 +730,6 @@ class ArmorOfGodGame {
         // Update camera
         this.cameraX = Math.max(0, this.player.x - 300);
         
-        // Update camera Y for level 3 mountain ascent
-        if (this.level === 3) {
-            // Determine which ground level the player is on based on their position
-            let targetGroundLevel = 468; // Default base level
-            
-            if (this.player.x >= 1700) { // First ascent area
-                targetGroundLevel = 400;
-            }
-            if (this.player.x >= 4600) { // Second ascent area  
-                targetGroundLevel = 330;
-            }
-            if (this.player.x >= 9900) { // Temple peak area
-                targetGroundLevel = 260;
-            }
-            
-            // Calculate desired camera Y to keep ground level at 50% of canvas (300px)
-            const desiredCameraY = Math.max(0, targetGroundLevel - 300);
-            
-            // Smoothly transition camera Y
-            const cameraSpeed = 2;
-            if (this.cameraY < desiredCameraY) {
-                this.cameraY = Math.min(desiredCameraY, this.cameraY + cameraSpeed);
-            } else if (this.cameraY > desiredCameraY) {
-                this.cameraY = Math.max(desiredCameraY, this.cameraY - cameraSpeed);
-            }
-        } else {
-            this.cameraY = 0; // Reset for other levels
-        }
         
         // Update player animation
         this.updatePlayerAnimation();
@@ -881,7 +851,7 @@ class ArmorOfGodGame {
                 } else if (this.hasArmor) {
                     // Already have armor - reset timer instead of incrementing count
                     this.armorTimer = this.armorDuration;
-                    this.uiRenderer.showMessage('Armor Timer Reset!', 120, '#FFD700', 16, 400);
+                    this.uiRenderer.showMessage('Armor Timer Reset!', 120, '#FFD700', 15, 400);
                 }
             }
         });
@@ -900,9 +870,9 @@ class ArmorOfGodGame {
                 const healedAmount = this.player.health - oldHealth;
                 
                 if (healedAmount > 0) {
-                    this.uiRenderer.showMessage(`Health +${healedAmount}!`, 120, '#FF6B6B', 18, 300);
+                    this.uiRenderer.showMessage(`Health +${healedAmount}!`, 120, '#FF6B6B', 15, 300);
                 } else {
-                    this.uiRenderer.showMessage('Health Full!', 120, '#FFD700', 16, 300);
+                    this.uiRenderer.showMessage('Health Full!', 120, '#FFD700', 15, 300);
                 }
             }
         });
@@ -986,7 +956,7 @@ class ArmorOfGodGame {
         this.audioManager.playMusic('adventure');
         
         // Show message to player
-        this.uiRenderer.showMessage('Collect scriptures for new armor.', 240, '#FFA500', 18, 700);
+        this.uiRenderer.showMessage('Collect scriptures for new armor.', 240, '#FFA500', 15, 700);
     }
     
     togglePause() {
@@ -1050,35 +1020,19 @@ class ArmorOfGodGame {
     }
     
     levelComplete() {
-        // Check if player or pet are in the air - if so, let them fall first
-        const playerGrounded = this.player.isGrounded || this.player.y >= this.worldManager.groundY - this.player.height;
-        const petGrounded = this.pet.isGrounded || this.pet.y >= this.worldManager.groundY - this.pet.height;
-        
-        if (!playerGrounded || !petGrounded) {
-            // Set a flag to indicate we're waiting for landing
-            this.gameState = 'waitingToEnterTemple';
-            
-            // Stop horizontal movement but allow falling
-            this.player.velocityX = 0;
-            this.pet.velocityX = 0;
-            
-            // Make sure they face the temple while falling
-            this.player.facingRight = true;
-            this.pet.facingRight = true;
-            
-            return; // Don't start temple sequence yet
-        }
-        
-        // Both are grounded, start temple entrance
+        // Start temple entrance immediately
         this.gameState = 'enteringTemple';
         this.templeEntranceTimer = 0;
         this.templeCenterX = this.castle.x + this.castle.width / 2;
+        
+        // Calculate the correct temple platform Y based on castle position
+        const templePlatformY = this.castle.y + this.castle.height;
         
         // If pet is far away (more than 300 pixels), teleport it next to player
         const distanceFromPlayer = Math.abs(this.pet.x - this.player.x);
         if (distanceFromPlayer > 300) {
             this.pet.x = this.player.x - 50; // Place pet slightly behind player
-            this.pet.y = this.worldManager.groundY - this.pet.height; // Place on ground
+            this.pet.y = templePlatformY - this.pet.height; // Place on temple platform
             this.pet.isGrounded = true;
             this.pet.velocityY = 0;
         }
@@ -1096,40 +1050,24 @@ class ArmorOfGodGame {
         this.player.isMoving = false; // Player waits initially
     }
     
-    updateWaitingToEnterTemple() {
-        // Check if both player and pet have landed
-        const playerGrounded = this.player.isGrounded || this.player.y >= this.worldManager.groundY - this.player.height;
-        const petGrounded = this.pet.isGrounded || this.pet.y >= this.worldManager.groundY - this.pet.height;
-        
-        // Ensure they face the temple while falling
-        this.player.facingRight = true;
-        this.pet.facingRight = true;
-        
-        // Stop horizontal movement
-        this.player.velocityX = 0;
-        this.pet.velocityX = 0;
-        
-        // If both have landed, start the temple entrance sequence
-        if (playerGrounded && petGrounded) {
-            // Make sure they're properly grounded
-            if (this.player.y > this.worldManager.groundY - this.player.height) {
-                this.player.y = this.worldManager.groundY - this.player.height;
-                this.player.isGrounded = true;
-                this.player.velocityY = 0;
-            }
-            if (this.pet.y > this.worldManager.groundY - this.pet.height) {
-                this.pet.y = this.worldManager.groundY - this.pet.height;
-                this.pet.isGrounded = true;
-                this.pet.velocityY = 0;
-            }
-            
-            // Now start the actual temple entrance
-            this.levelComplete();
-        }
-    }
+
     
     updateTempleEntrance() {
         this.templeEntranceTimer++;
+        
+        // Calculate the correct temple platform Y based on castle position
+        const templePlatformY = this.castle.y + this.castle.height;
+        
+        // Wait until both characters are grounded before starting movement
+        const playerGrounded = this.player.isGrounded || this.player.y >= templePlatformY - this.player.height;
+        const petGrounded = this.pet.isGrounded || this.pet.y >= templePlatformY - this.pet.height;
+        
+        if (!playerGrounded || !petGrounded) {
+            // Still waiting for landing - keep facing temple
+            this.player.facingRight = true;
+            this.pet.facingRight = true;
+            return;
+        }
         
         const targetX = this.templeCenterX - this.player.width / 2;
         
@@ -1196,7 +1134,7 @@ class ArmorOfGodGame {
         this.backgroundManager.render(this.ctx, this.cameraX, this.gameState);
         
         this.ctx.save();
-        this.ctx.translate(-this.cameraX, 0);
+        this.ctx.translate(-this.cameraX, -this.cameraY);
         
         // Render world platforms and objects
         this.worldManager.renderPlatforms(this.ctx);

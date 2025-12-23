@@ -9,13 +9,12 @@ class UIRenderer {
         this.pauseMainMenuButton = null;
     }
     
-    showMessage(text, duration = 180, color = '#FFD700', fontSize = 24, backgroundWidth = 600) {
+    showMessage(text, duration = 180, color = '#FFD700', backgroundWidth = 600) {
         this.messages.push({
             text: text,
             duration: duration,
             timer: 0,
             color: color,
-            fontSize: fontSize,
             backgroundWidth: backgroundWidth
         });
     }
@@ -147,25 +146,32 @@ class UIRenderer {
         let yOffset = 0;
         this.messages.forEach(message => {
             const opacity = Math.min(1.0, (message.duration - message.timer) / 60);
-            const fontSize = message.fontSize || 24;
-            const backgroundWidth = message.backgroundWidth || 600;
-            const backgroundX = (1200 - backgroundWidth) / 2; // Center the background
-            const textX = 600; // Keep text centered on screen
+            const fontSize = 15; // Fixed 15px font size
             
-            // Message background
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillRect(backgroundX, 150 + yOffset, backgroundWidth, 60);
+            // Calculate message width for proper background sizing
+            ctx.font = `bold ${fontSize}px "Press Start 2P", monospace`;
+            const textWidth = ctx.measureText(message.text).width;
+            const backgroundWidth = Math.max(200, textWidth + 20); // At least 200px like health bar, or text width + padding
+            const backgroundHeight = 50; // Same height as health bar panel
+            const backgroundX = ctx.canvas.width - backgroundWidth - 20; // Right side with margin
+            const backgroundY = 20 + yOffset; // Same Y as health/scripture bars
+            const textX = backgroundX + backgroundWidth / 2; // Center text in background
+            const textY = backgroundY + backgroundHeight / 2 + fontSize / 3; // Properly center text vertically
+            
+            // Message background - same style as other UI panels
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(backgroundX, backgroundY, backgroundWidth, backgroundHeight);
             
             // Message text
             ctx.fillStyle = message.color;
             ctx.globalAlpha = opacity;
             ctx.font = `bold ${fontSize}px "Press Start 2P", monospace`;
             ctx.textAlign = 'center';
-            ctx.fillText(message.text, textX, 198 + yOffset);
+            ctx.fillText(message.text, textX, textY);
             ctx.textAlign = 'left';
             ctx.globalAlpha = 1.0;
             
-            yOffset += 70;
+            yOffset += backgroundHeight + 5; // Small gap between messages
         });
     }
     

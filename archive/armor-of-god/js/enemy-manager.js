@@ -100,7 +100,7 @@ class EnemyManager {
                 platformWidth: 900
             }),
             new Snail({
-                x: 2800,
+                x: 2750,
                 y: 404,
                 platformX: 2370,
                 platformWidth: 900
@@ -176,240 +176,97 @@ class EnemyManager {
         this.snails.push(
             // Early mountain snails on ground platforms
             new Snail({
-                x: 500,
-                y: 410, // Adjusted for inclined platform
-                platformX: 400,
-                platformWidth: 300
-            }),
-            new Snail({
-                x: 800,
-                y: 400, // On inclined platform
-                platformX: 700,
-                platformWidth: 350
-            }),
-            new Snail({
-                x: 1800,
-                y: 370, // On higher inclined platform
-                platformX: 1600,
-                platformWidth: 400
-            }),
-            
-            // Snails on rocky floating platforms
-            new Snail({
-                x: 2500,
-                y: 320,
-                platformX: 2450,
-                platformWidth: 100,
-                width: 60, // Smaller for floating platforms
-                height: 40
-            }),
-            new Snail({
-                x: 2700,
-                y: 290,
-                platformX: 2650,
-                platformWidth: 120,
-                width: 60,
-                height: 40
-            }),
-            
-            // More ground snails
-            new Snail({
-                x: 3200,
-                y: 350,
-                platformX: 3050,
+                x: 300,
+                y: 440,
+                platformX: 0,
                 platformWidth: 500
             }),
             new Snail({
-                x: 3700,
-                y: 335,
-                platformX: 3550,
-                platformWidth: 400,
-                direction: -1
-            }),
-            
-            // Snails on high plateau after vertical climb
-            new Snail({
-                x: 4600,
-                y: 120,
-                platformX: 4550,
-                platformWidth: 600,
-                width: 80, // Bigger mountain snails
-                height: 55
-            }),
-            new Snail({
-                x: 4900,
-                y: 120,
-                platformX: 4550,
-                platformWidth: 600,
-                width: 80,
-                height: 55,
-                direction: -1
-            }),
-            
-            // Snails on descent platforms
-            new Snail({
-                x: 5450,
-                y: 220,
-                platformX: 5400,
-                platformWidth: 150,
-                width: 60,
-                height: 40
-            }),
-            new Snail({
-                x: 5650,
-                y: 270,
-                platformX: 5600,
-                platformWidth: 150,
-                width: 60,
-                height: 40
-            }),
-            
-            // More ground section snails
-            new Snail({
-                x: 6200,
-                y: 418,
-                platformX: 6000,
-                platformWidth: 500
-            }),
-            new Snail({
-                x: 6400,
-                y: 418,
-                platformX: 6000,
-                platformWidth: 500,
-                direction: -1
-            }),
-            new Snail({
-                x: 6800,
-                y: 408,
-                platformX: 6600,
-                platformWidth: 400
-            }),
-            new Snail({
-                x: 7400,
-                y: 390,
-                platformX: 7200,
-                platformWidth: 300
-            }),
-            new Snail({
-                x: 7700,
-                y: 370,
-                platformX: 7500,
-                platformWidth: 350,
-                direction: -1
-            }),
-            
-            // Second vertical section snails
-            new Snail({
-                x: 8100,
-                y: 270,
-                platformX: 8050,
-                platformWidth: 120,
-                width: 60,
-                height: 40
-            }),
-            new Snail({
-                x: 8250,
-                y: 190,
-                platformX: 8200,
-                platformWidth: 150,
-                width: 60,
-                height: 40
-            }),
-            
-            // Floating platform snails
-            new Snail({
-                x: 8650,
-                y: 350,
-                platformX: 8600,
-                platformWidth: 140,
-                width: 60,
-                height: 40
-            }),
-            new Snail({
-                x: 8900,
-                y: 290,
-                platformX: 8850,
-                platformWidth: 100,
-                width: 50,
-                height: 35
-            }),
-            
-            // Final approach snails
-            new Snail({
-                x: 9300,
-                y: 400,
-                platformX: 9100,
-                platformWidth: 400
-            }),
-            new Snail({
-                x: 9700,
+                x: 750,
                 y: 380,
-                platformX: 9500,
-                platformWidth: 400,
-                direction: -1
-            }),
-            new Snail({
-                x: 10100,
-                y: 350,
-                platformX: 9900,
-                platformWidth: 500
-            }),
-            new Snail({
-                x: 10300,
-                y: 350,
-                platformX: 9900,
-                platformWidth: 500,
-                direction: -1
-            }),
-            new Snail({
-                x: 10600,
-                y: 320,
-                platformX: 10400,
-                platformWidth: 400
+                platformX: 750,
+                platformWidth: 250
             }),
             
-            // Final challenge platform snails
             new Snail({
-                x: 11950,
-                y: 320,
-                platformX: 11900,
-                platformWidth: 150,
-                width: 60,
-                height: 40
-            }),
-            
-            // Temple approach ground snails
-            new Snail({
-                x: 12300,
-                y: 418,
-                platformX: 12100,
+                x: 2200,
+                y: 180,
+                platformX: 2000,
                 platformWidth: 800
             }),
             new Snail({
-                x: 12600,
-                y: 418,
-                platformX: 12100,
-                platformWidth: 800,
-                direction: -1
+                x: 2350,
+                y: 180,
+                platformX: 2000,
+                platformWidth: 800
             }),
             new Snail({
-                x: 13200,
-                y: 418,
-                platformX: 12900,
-                platformWidth: 600
+                x: 5450,
+                y: 220,
+                platformX: 5300,
+                platformWidth: 500,
             }),
             new Snail({
-                x: 14000,
-                y: 418,
-                platformX: 13500,
-                platformWidth: 1500
+                x: 5600,
+                y: 270,
+                platformX: 5300,
+                platformWidth: 500,
             }),
             new Snail({
-                x: 14500,
-                y: 418,
-                platformX: 13500,
+                x: 7000,
+                y: 100,
+                platformX: 7000,
+                platformWidth: 400,
+            }),
+            new Snail({
+                x: 7150,
+                y: 100,
+                platformX: 7000,
+                platformWidth: 400,
+            }),
+            new Snail({
+                x: 7300,
+                y: 100,
+                platformX: 7000,
+                platformWidth: 400,
+            }),
+            new Snail({
+                x: 8500,
+                y: 100,
+                platformX: 8500,
                 platformWidth: 1500,
-                direction: -1
+            }),
+            new Snail({
+                x: 8600,
+                y: 100,
+                platformX: 8500,
+                platformWidth: 1500,
+            }),
+            new Snail({
+                x: 8700,
+                y: 100,
+                platformX: 8500,
+                platformWidth: 1500,
+            }),
+            new Snail({
+                x: 8800,
+                y: 100,
+                platformX: 8500,
+                platformWidth: 1500,
+            }),
+            new Snail({
+                x: 8900,
+                y: 100,
+                platformX: 8500,
+                platformWidth: 1500,
+            }),
+            new Snail({
+                x: 11250,
+                y: 100,
+                platformX: 11250,
+                platformWidth: 500,
+                height: 150,
+                width: 225
             })
         );
     }
@@ -591,17 +448,16 @@ class EnemyManager {
                 // Check if player is jumping on snail (coming from above)
                 const playerBottom = player.y + player.height;
                 const snailTop = snail.y;
-                const snailBottom = snail.y + snail.height;
                 const playerCenterX = player.x + player.width / 2;
                 const snailCenterX = snail.x + snail.width / 2;
                 
-                // Much stricter "jumping on" detection
-                const comingFromAbove = player.y + player.height * 0.8 < snailTop + snail.height * 0.2; // Player's feet must be above snail's upper portion
-                const horizontalAlignment = Math.abs(playerCenterX - snailCenterX) < snail.width * 0.6; // Tighter horizontal alignment
+                // Proper "jumping on" detection
+                const landingOnTop = playerBottom >= snailTop && playerBottom <= snailTop + snail.height * 0.5; // Player's feet penetrate upper half of snail
+                const horizontalAlignment = Math.abs(playerCenterX - snailCenterX) < snail.width * 0.8; // More forgiving horizontal alignment
                 const downwardMovement = player.velocityY > 0; // Must be moving downward
-                const playerAboveSnail = player.y < snail.y - 10; // Player's top must be well above snail
+                const comingFromAbove = player.y < snailTop; // Player's top must be above snail's top
                 
-                if (comingFromAbove && horizontalAlignment && downwardMovement && playerAboveSnail) {
+                if (landingOnTop && horizontalAlignment && downwardMovement && comingFromAbove) {
                     // Player jumped on snail - kill it
                     this.killSnail(snail);
                     // Give player a bounce

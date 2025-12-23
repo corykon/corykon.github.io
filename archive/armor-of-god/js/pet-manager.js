@@ -89,12 +89,23 @@ class PetManager {
                 this.pet.isGrounded = false;
             }
             
-            if (this.pet.x < targetX) {
+            // Check for walls before moving
+            const canMoveLeft = !this.isWallBlocking(-1);
+            const canMoveRight = !this.isWallBlocking(1);
+            
+            if (this.pet.x < targetX && canMoveRight) {
                 this.pet.x += speed;
                 this.pet.facingRight = true; // Moving right
-            } else if (this.pet.x > targetX) {
+            } else if (this.pet.x > targetX && canMoveLeft) {
                 this.pet.x -= speed;
                 this.pet.facingRight = false; // Moving left
+            } else if (!canMoveLeft || !canMoveRight) {
+                // Blocked by wall - try to jump if grounded
+                if (this.pet.isGrounded) {
+                    const jumpPower = this.game.hasArmor ? this.game.getCurrentJumpPower() * 0.9 : this.game.jumpPower * 0.9;
+                    this.pet.velocityY = jumpPower;
+                    this.pet.isGrounded = false;
+                }
             }
         } else {
             this.pet.isMoving = false;
@@ -155,6 +166,37 @@ class PetManager {
             }
         }
         return null;
+    }
+    
+    // Helper function to check if there's a wall blocking movement
+    isWallBlocking(direction) {
+        const checkDistance = this.pet.normalSpeed + 5; // Check ahead by movement distance plus buffer
+        const checkX = direction > 0 ? 
+            this.pet.x + this.pet.width + checkDistance : 
+            this.pet.x - checkDistance;
+            
+        // Check if there's a platform blocking horizontally
+        for (let platform of this.game.worldManager.platforms) {
+            // Check if pet is at the right height to hit this platform wall
+            if (this.pet.y < platform.y + platform.height && 
+                this.pet.y + this.pet.height > platform.y) {
+                
+                // Check if moving would hit the wall
+                if (direction > 0) {
+                    // Moving right - check left wall of platform
+                    if (checkX >= platform.x && this.pet.x + this.pet.width <= platform.x) {
+                        return true;
+                    }
+                } else {
+                    // Moving left - check right wall of platform  
+                    if (checkX <= platform.x + platform.width && this.pet.x >= platform.x + platform.width) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
     }
     
     // Helper function to check if there's ground at a specific position

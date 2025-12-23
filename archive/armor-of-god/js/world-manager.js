@@ -186,90 +186,55 @@ class WorldManager {
         
         this.platforms = [
             // SECTION 1: Base level (ground at 468)
-            { x: 0, y: 468, width: 600, height: 135, type: 'rock' },
-            { x: 600, y: 468, width: 500, height: 135, type: 'rock' },
-            // GAP
-            { x: 1200, y: 468, width: 400, height: 135, type: 'rock' },
+            { x: 0, y: 500, width: 500, height: 135, type: 'rock' },
+            { x: 500, y: 460, width: 250, height: 175, type: 'rock' },
+            { x: 750, y: 420, width: 250, height: 215, type: 'rock' },
             
             // Floating platforms to help ascend to next level
-            { x: 800, y: 420, width: 120, height: 30, type: 'rock_platform' },
-            { x: 1000, y: 380, width: 120, height: 30, type: 'rock_platform' },
-            { x: 1400, y: 420, width: 150, height: 30, type: 'rock_platform' },
+            { x: 1200, y: 380, width: 200, height: 30, type: 'rock_platform' },
+            { x: 1600, y: 300, width: 200, height: 30, type: 'rock_platform' },
             
-            // SECTION 2: First elevation (ground at 400) - ~70px higher
-            { x: 1700, y: 400, width: 500, height: 203, type: 'rock' }, // Taller to reach new ground level
-            { x: 2300, y: 400, width: 600, height: 203, type: 'rock' },
-            { x: 3000, y: 400, width: 400, height: 203, type: 'rock' },
-            // GAP
-            { x: 3500, y: 400, width: 500, height: 203, type: 'rock' },
-            
-            // Floating platforms on this level
-            { x: 1900, y: 350, width: 120, height: 30, type: 'rock_platform' },
-            { x: 2500, y: 320, width: 140, height: 30, type: 'rock_platform' },
-            { x: 2800, y: 360, width: 130, height: 30, type: 'rock_platform' },
-            { x: 3200, y: 340, width: 150, height: 30, type: 'rock_platform' },
-            
-            // VERTICAL CLIMBING SECTION - Side to side jumps going up!
-            // This creates a challenging zigzag pattern going up the mountain
-            { x: 4100, y: 380, width: 120, height: 30, type: 'rock_platform' }, // Start right
-            { x: 3950, y: 340, width: 120, height: 30, type: 'rock_platform' }, // Jump left
-            { x: 4200, y: 300, width: 120, height: 30, type: 'rock_platform' }, // Jump right
-            { x: 3900, y: 260, width: 120, height: 30, type: 'rock_platform' }, // Jump left
-            { x: 4250, y: 220, width: 120, height: 30, type: 'rock_platform' }, // Jump right
-            { x: 3850, y: 180, width: 120, height: 30, type: 'rock_platform' }, // Jump left
-            { x: 4300, y: 140, width: 120, height: 30, type: 'rock_platform' }, // Jump right
-            { x: 3800, y: 100, width: 120, height: 30, type: 'rock_platform' }, // Jump left
-            { x: 4350, y: 60, width: 120, height: 30, type: 'rock_platform' },  // Jump right
-            
-            // SECTION 3: Second elevation (ground at 330) - another ~70px higher
-            { x: 4600, y: 330, width: 600, height: 273, type: 'rock' }, // Much taller platforms
-            { x: 5300, y: 330, width: 500, height: 273, type: 'rock' },
-            // GAP
-            { x: 5900, y: 330, width: 700, height: 273, type: 'rock' },
-            { x: 6700, y: 330, width: 600, height: 273, type: 'rock' },
+            { x: 1950, y: 220, width: 800, height: 415, type: 'rock' },
+
+            { x: 2750, y: 300, width: 50, height: 30, type: 'rock_platform' },
+
+            { x: 3000, y: 400, width: 200, height: 240, type: 'rock' },
+            { x: 3400, y: 400, width: 200, height: 240, type: 'rock' },
+            { x: 3800, y: 320, width: 200, height: 320, type: 'rock' },
+            { x: 4200, y: 240, width: 200, height: 400, type: 'rock' },
+
+            { x: 4600, y: 180, width: 400, height: 460, type: 'rock' },
+            { x: 5000, y: 260, width: 100, height: 400, type: 'rock' },
+            { x: 5100, y: 340, width: 100, height: 400, type: 'rock' },
+            { x: 5200, y: 420, width: 100, height: 400, type: 'rock' },
+            { x: 5300, y: 500, width: 500, height: 400, type: 'rock' },
             
             // Floating platforms on this higher level
-            { x: 4800, y: 280, width: 120, height: 30, type: 'rock_platform' },
-            { x: 5100, y: 250, width: 140, height: 30, type: 'rock_platform' },
-            { x: 5500, y: 290, width: 130, height: 30, type: 'rock_platform' },
-            { x: 5700, y: 260, width: 120, height: 30, type: 'rock_platform' },
-            { x: 6200, y: 270, width: 150, height: 30, type: 'rock_platform' },
-            { x: 6900, y: 240, width: 140, height: 30, type: 'rock_platform' },
+           
+            { x: 5900, y: 500, width: 100, height: 30, type: 'rock_platform' },
+            { x: 6100, y: 340, width: 100, height: 30, type: 'rock_platform' },
+            { x: 5900, y: 180, width: 100, height: 30, type: 'rock_platform' },
+            { x: 6300, y: 180, width: 1100, height: 30, type: 'rock_platform' },
+            { x: 7650, y: 180, width: 450, height: 30, type: 'rock_platform' },
+            { x: 8500, y: 500, width: 1500, height: 200, type: 'rock' },
             
-            // Another smaller vertical section
-            { x: 7400, y: 310, width: 120, height: 30, type: 'rock_platform' },
-            { x: 7250, y: 270, width: 120, height: 30, type: 'rock_platform' },
-            { x: 7500, y: 230, width: 120, height: 30, type: 'rock_platform' },
-            { x: 7200, y: 190, width: 120, height: 30, type: 'rock_platform' },
-            { x: 7550, y: 150, width: 120, height: 30, type: 'rock_platform' },
+            // SECTION 5: Final ascent to temple level (ground at 240) - highest elevation
+            { x: 10000, y: 300, width: 400, height: 363, type: 'rock' }, // Base stepping stone
             
-            // SECTION 4: Continued middle elevation
-            { x: 7800, y: 330, width: 500, height: 273, type: 'rock' },
-            { x: 8400, y: 330, width: 600, height: 273, type: 'rock' },
-            // GAP
-            { x: 9100, y: 330, width: 700, height: 273, type: 'rock' },
+            { x: 10600, y: 360, width: 300, height: 25, type: 'rock_platform' },
+            { x: 11000, y: 160, width: 90, height: 20, type: 'rock_platform' }, // heart platform
             
-            // More floating challenges
-            { x: 8000, y: 280, width: 130, height: 30, type: 'rock_platform' },
-            { x: 8600, y: 250, width: 140, height: 30, type: 'rock_platform' },
-            { x: 8900, y: 290, width: 120, height: 30, type: 'rock_platform' },
-            { x: 9300, y: 260, width: 150, height: 30, type: 'rock_platform' },
+            // Mega Snail Pit
+            { x: 11200, y: 240, width: 50, height: 383, type: 'rock' },
+            { x: 11250, y: 450, width: 750, height: 383, type: 'rock' },
+            { x: 12000, y: 240, width: 200, height: 383, type: 'rock' },
             
-            // SECTION 5: Final ascent to temple level (ground at 260) - highest elevation
-            { x: 9900, y: 260, width: 600, height: 343, type: 'rock' }, // Very tall platforms
-            { x: 10600, y: 260, width: 500, height: 343, type: 'rock' },
-            // GAP
-            { x: 11200, y: 260, width: 800, height: 343, type: 'rock' },
             
-            // High altitude floating platforms before temple
-            { x: 10200, y: 210, width: 120, height: 30, type: 'rock_platform' },
-            { x: 10800, y: 180, width: 140, height: 30, type: 'rock_platform' },
-            { x: 11000, y: 220, width: 130, height: 30, type: 'rock_platform' },
-            { x: 11400, y: 190, width: 150, height: 30, type: 'rock_platform' },
-            { x: 11700, y: 150, width: 140, height: 30, type: 'rock_platform' },
+            // Additional floating platforms for variety and challenge
+            { x: 11950, y: 300, width: 50, height: 25, type: 'rock_platform' },
             
-            // TEMPLE PLATFORM - At highest elevation (ground at 260)
-            { x: 12100, y: 260, width: 2900, height: 343, type: 'rock' } // Massive temple platform at peak
+            // TEMPLE PLATFORM - At highest elevation (ground at 240) - Wide and majestic
+            { x: 12200, y: 240, width: 2800, height: 423, type: 'rock' } // Massive temple platform at peak
         ];
     }
 
@@ -373,13 +338,15 @@ class WorldManager {
     createLevel3ScriptureBooks() {
         this.scriptureBooks = [
             // Early mountain book - on first rocky platform
-            { x: 1450, y: 280, width: 50, height: 50, collected: false, verse: "Courage" },
-            
-            // Mid-level book - on high mountain plateau after vertical climb
-            { x: 4700, y: 100, width: 50, height: 50, collected: false, verse: "Perseverance" },
-            
+            { x: 1450, y: 120, width: 50, height: 50, collected: false, verse: "Courage" },
+           
+            { x: 3880, y: 250, width: 50, height: 50, collected: false, verse: "Perseverance" },
+
             // Late mountain book - on challenging rocky platforms
-            { x: 8200, y: 170, width: 50, height: 50, collected: false, verse: "Strength" }
+            { x: 6800, y: 120, width: 50, height: 50, collected: false, verse: "Strength" },
+            
+            // Final scripture before temple - requires skillful platforming
+            { x: 11330, y: 80, width: 50, height: 50, collected: false, verse: "Victory" } // On highest challenge platform
         ];
     }
     
@@ -402,9 +369,10 @@ class WorldManager {
     createLevel3Hearts() {
         this.hearts = [
             // First heart on challenging vertical climb section
-            { x: 4325, y: 110, width: 30, height: 30, collected: false, healthRestore: 1 }, // High mountain platform
-            // Second heart on late mountain section
-            { x: 11475, y: 260, width: 30, height: 30, collected: false, healthRestore: 1 } // Rocky platform sequence
+            { x: 1460, y: 50, width: 30, height: 30, collected: false, healthRestore: 1 },
+            { x: 4290, y: 180, width: 30, height: 30, collected: false, healthRestore: 1 },
+            { x: 5940, y: 140, width: 30, height: 30, collected: false, healthRestore: 1 },
+            { x: 11030, y: 120, width: 30, height: 30, collected: false, healthRestore: 1 }
         ];
     }
     
@@ -990,11 +958,10 @@ class WorldManager {
             const horizontalOverlap = entity.x < platform.x + platform.width + 5 && entity.x + entity.width > platform.x - 5;
             
             if (horizontalOverlap) {
-                // Landing on top of platform (falling down onto it) - more forgiving edge detection
+                // Landing on top of platform (falling down onto it) - check if player crossed through platform this frame
                 if (entity.velocityY > 0 && 
-                    entity.y <= platform.y && 
                     entity.y + entity.height >= platform.y &&
-                    entity.y + entity.height <= platform.y + 15) { // Increased tolerance for landing
+                    entity.y + entity.height <= platform.y + Math.abs(entity.velocityY) + 15) { // Allow for movement distance this frame
                     
                     entity.y = platform.y - entity.height;
                     entity.velocityY = 0;
@@ -1003,35 +970,33 @@ class WorldManager {
                         entity.isJumping = false;
                     }
                 }
-                // Side collision detection - only when entity is clearly at platform level (not landing on top)
-                else if (entity.velocityY >= 0 && 
-                         entity.y < platform.y + platform.height - 10 &&
-                         entity.y + entity.height > platform.y + 15) {
+                // Side collision detection - only when entity is clearly hitting the side (not trying to land on top)
+                else if (entity.y + entity.height > platform.y + 20 && 
+                         entity.y < platform.y + platform.height - 10) {
                     
                     // Determine which side we're hitting
                     const entityCenterX = entity.x + entity.width / 2;
                     const platformCenterX = platform.x + platform.width / 2;
                     
-                    if (entityCenterX < platformCenterX) {
-                        // Hitting from the left - push entity left and block rightward movement
-                        entity.x = platform.x - entity.width - 2;
-                        if (entity.blockedRight !== undefined) entity.blockedRight = true;
+                    // Only block movement, don't teleport during jumps
+                    if (entity.isJumping || entity.velocityY < 0) {
+                        // Player is jumping - just set movement blocks without position changes
+                        if (entityCenterX < platformCenterX) {
+                            if (entity.blockedRight !== undefined) entity.blockedRight = true;
+                        } else {
+                            if (entity.blockedLeft !== undefined) entity.blockedLeft = true;
+                        }
                     } else {
-                        // Hitting from the right - push entity right and block leftward movement
-                        entity.x = platform.x + platform.width + 2;
-                        if (entity.blockedLeft !== undefined) entity.blockedLeft = true;
+                        // Player is walking on ground - prevent walking through platforms
+                        if (entityCenterX < platformCenterX) {
+                            entity.x = platform.x - entity.width - 2;
+                            if (entity.blockedRight !== undefined) entity.blockedRight = true;
+                        } else {
+                            entity.x = platform.x + platform.width + 2;
+                            if (entity.blockedLeft !== undefined) entity.blockedLeft = true;
+                        }
                     }
-                    
-                    // Ensure entity is not grounded and falls immediately
-                    entity.isGrounded = false;
-                    if (entity.isJumping !== undefined) {
-                        entity.isJumping = false;
-                    }
-                    
-                    // Add downward velocity to ensure falling
-                    if (entity.velocityY === 0) {
-                        entity.velocityY = 1;
-                    }
+                    // If at ground level, don't force falling - just block movement
                 }
                 // When jumping up (velocityY < 0), allow passing through - no collision
             }
