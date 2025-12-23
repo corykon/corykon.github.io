@@ -119,10 +119,17 @@ class PetManager {
         this.game.worldManager.checkPlatformCollisions(this.pet);
         
         // Pet safety check - respawn if fallen off the world or stuck too far from player
-        if (this.pet.y > this.game.canvas.height + 50 || 
-            (this.pet.y > this.game.canvas.height && distanceToPlayer > 500)) {
+        // Add cooldown to prevent rapid respawning
+        if (!this.petRespawnCooldown) {
+            this.petRespawnCooldown = 0;
+        }
+        
+        if ((this.pet.y > this.game.canvas.height + 50 || 
+            (this.pet.y > this.game.canvas.height && distanceToPlayer > 500)) &&
+            this.petRespawnCooldown <= 0) {
             
             try {
+                console.log(`Pet respawn triggered: y=${this.pet.y}, canvas.height=${this.game.canvas.height}, distance=${distanceToPlayer}`);
                 const respawnPosition = this.findSafeRespawnPosition();
                 if (respawnPosition && respawnPosition.x !== undefined && respawnPosition.y !== undefined) {
                     this.pet.x = respawnPosition.x;
@@ -130,9 +137,11 @@ class PetManager {
                     this.pet.velocityY = 0;
                     this.pet.isGrounded = true;
                     this.pet.isMoving = false; // Stop any movement
+                    this.petRespawnCooldown = 120; // 2 second cooldown at 60fps
                     
-                    // Debug log for testing
-                    console.log(`Pet respawned at (${respawnPosition.x}, ${respawnPosition.y})`);
+                    // Verify the respawn position is actually on solid ground
+                    const platformUnder = this.findPlatformUnderEntity(this.pet);
+                    console.log(`Pet respawned at (${respawnPosition.x}, ${respawnPosition.y}), platform under:`, platformUnder);
                 } else {
                     console.error('Failed to find valid respawn position');
                     // Emergency teleport to player
@@ -140,6 +149,7 @@ class PetManager {
                     this.pet.y = this.game.player.y;
                     this.pet.velocityY = 0;
                     this.pet.isGrounded = false; // Let it fall naturally
+                    this.petRespawnCooldown = 120;
                 }
             } catch (error) {
                 console.error('Error in pet respawn:', error);
@@ -148,7 +158,13 @@ class PetManager {
                 this.pet.y = this.game.player.y;
                 this.pet.velocityY = 0;
                 this.pet.isGrounded = false;
+                this.petRespawnCooldown = 120;
             }
+        }
+        
+        // Decrement respawn cooldown
+        if (this.petRespawnCooldown > 0) {
+            this.petRespawnCooldown--;
         }
         
         // Update pet animation
@@ -266,7 +282,7 @@ class PetManager {
                 if (testX >= safeLeft && testX <= safeRight) {
                     return {
                         x: testX,
-                        y: playerPlatform.y - this.pet.height
+                        y: playerPlatform.y - this.pet.height + 1  // Place pet ON platform, not inside it
                     };
                 }
             }
@@ -279,7 +295,7 @@ class PetManager {
             if (centerX >= safeLeft && centerX <= safeRight) {
                 return {
                     x: centerX,
-                    y: playerPlatform.y - this.pet.height
+                    y: playerPlatform.y - this.pet.height + 1
                 };
             }
         }
@@ -313,7 +329,7 @@ class PetManager {
             
             return {
                 x: safeX,
-                y: closestPlatform.y - this.pet.height
+                y: closestPlatform.y - this.pet.height + 1
             };
         }
         
@@ -324,7 +340,7 @@ class PetManager {
                 const safeX = anyPlatform.x + 15;
                 return {
                     x: safeX,
-                    y: anyPlatform.y - this.pet.height
+                    y: anyPlatform.y - this.pet.height + 1
                 };
             }
         }

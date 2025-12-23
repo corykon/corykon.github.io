@@ -81,7 +81,11 @@ class ArmorOfGodGame {
             handOffset: 0,
             facingRight: true, // Player facing direction
             blockedLeft: false,
-            blockedRight: false
+            blockedRight: false,
+            // Variable jump properties
+            jumpHeld: false,
+            minJumpHeight: 0.4, // Minimum jump as fraction of full jump
+            jumpCutSpeed: 0.5 // Speed at which jump is reduced when key released
         };
         
         // Pet companion properties (can be dog or cat)
@@ -411,6 +415,7 @@ class ArmorOfGodGame {
         this.player.handOffset = 0;
         this.player.facingRight = true;
         this.player.alpha = 1; // Reset visibility for level restart
+        this.player.jumpHeld = false;
         
         // Reset pet
         this.pet.x = 100;
@@ -703,6 +708,15 @@ class ArmorOfGodGame {
         if (this.player.velocityY > 0) {
             this.player.isGrounded = false;
             this.player.isJumping = false;
+        }
+        
+        // Variable jump physics - cut jump short if key not held
+        if (this.player.isJumping && this.player.velocityY < 0 && !this.player.jumpHeld) {
+            // Player is jumping upward but key was released - reduce upward velocity
+            const minVelocity = this.getCurrentJumpPower() * this.player.minJumpHeight;
+            if (this.player.velocityY < minVelocity) {
+                this.player.velocityY *= this.player.jumpCutSpeed;
+            }
         }
         
         // Apply gravity to player

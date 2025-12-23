@@ -214,12 +214,13 @@ class InputHandler {
             }
         }
         
-        // Jumping (armor enhances jump height)
+        // Jumping (armor enhances jump height) - Variable jump implementation
         if ((this.keysPressed['ArrowUp'] || this.keysPressed['Space']) && player.isGrounded && !player.isDucking) {
             const currentJumpPower = this.game.getCurrentJumpPower();
             player.velocityY = currentJumpPower;
             player.isJumping = true;
             player.isGrounded = false;
+            player.jumpHeld = true; // Track that jump key is being held
             audioManager.playSoundEffect('jump');
             // Stop petting when player jumps
             if (player.isPetting || this.game.pet.isBeingPetted) {
@@ -229,6 +230,9 @@ class InputHandler {
             this.keysPressed['ArrowUp'] = false;
             this.keysPressed['Space'] = false;
         }
+        
+        // Track if jump key is still held (for variable jump height)
+        player.jumpHeld = (this.keys['ArrowUp'] || this.keys['Space']) && player.isJumping;
         
         // Ducking
         player.isDucking = this.keys['ArrowDown'] && player.isGrounded;
