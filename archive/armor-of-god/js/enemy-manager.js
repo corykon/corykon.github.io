@@ -27,6 +27,8 @@ class Snail {
         this.health = 1;
         this.invulnerable = false;
         this.invulnerabilityTimer = 0;
+        this.killed = false; // Track if this specific snail has been killed
+        this.id = Math.random().toString(36).substr(2, 9); // Unique identifier
         
         // Hiding mechanics
         this.hidden = false;
@@ -44,8 +46,9 @@ class Snail {
 }
 
 class EnemyManager {
-    constructor(audioManager) {
+    constructor(audioManager, game = null) {
         this.audioManager = audioManager;
+        this.game = game;
         this.snails = [];
         this.defeatEffects = []; // For the crossfade "bad-guy-defeated.png" effect
         
@@ -484,6 +487,17 @@ class EnemyManager {
         snail.hidden = true;
         snail.hiddenTimer = 0;
         snail.shellDirection = snail.direction; // Remember which way snail was facing
+        snail.killed = true; // Mark this specific snail as killed
+        
+        // Add scoring based on snail type
+        if (this.game) {
+            const points = snail.isMega ? 1000 : 200;
+            this.game.addScore(points, "#E74C3C", "Snail");
+            
+            // Track enemy types killed for bonus (keep for backwards compatibility)
+            const enemyType = snail.isMega ? 'megaSnail' : 'snail';
+            this.game.enemiesKilled.add(enemyType);
+        }
         
         // Add enhanced pop-up effect with wiggle
         snail.groundY = snail.y; // Remember ground position

@@ -1,6 +1,7 @@
 class ArrowManager {
-    constructor(audioManager, arrowImage = null, brokenArrowImage = null) {
+    constructor(audioManager, arrowImage = null, brokenArrowImage = null, game = null) {
         this.audioManager = audioManager;
+        this.game = game;
         this.arrows = [];
         this.arrowImage = arrowImage;
         this.brokenArrowImage = brokenArrowImage;
@@ -299,6 +300,11 @@ class ArrowManager {
     breakArrow(arrow) {
         // Mark arrow as inactive
         arrow.active = false;
+        
+        // Add scoring for breaking arrow
+        if (this.game) {
+            this.game.addScore(300, "#E74C3C", "Arrow");
+        }
         
         // Create broken arrow effect with upward pop physics
         this.brokenArrows.push({

@@ -929,77 +929,56 @@ class WorldManager {
     checkPlatformCollisions(entity) {
         let onGroundPlatform = false;
         
-        // Check ground collision - more forgiving detection for edge landings
-        if (entity.velocityY >= 0 && entity.y >= this.groundY - 20 && entity.y <= this.groundY + 15) {
-            // Check if entity is horizontally on any ground-level platform with more tolerance
+        // Check ground collision - only when falling down and properly landing on top
+        if (entity.velocityY >= 0) {
+            // Check if entity is landing on top of ground-level platform
             for (let platform of this.platforms) {
-                if (platform.y === this.groundY && 
-                    entity.x + entity.width > platform.x - 5 && 
-                    entity.x < platform.x + platform.width + 5) {
-                    onGroundPlatform = true;
-                    break;
+                if (platform.y === this.groundY) {
+                    // Check horizontal overlap
+                    const horizontalOverlap = entity.x + entity.width > platform.x && 
+                                            entity.x < platform.x + platform.width;
+                    
+                    if (horizontalOverlap) {
+                        // Check if entity is landing on TOP of the platform
+                        if (entity.y + entity.height >= platform.y &&
+                            entity.y + entity.height <= platform.y + Math.abs(entity.velocityY) + 15) {
+                            
+                            entity.y = platform.y - entity.height; // Place entity ON TOP of ground
+                            entity.velocityY = 0;
+                            entity.isGrounded = true;
+                            if (entity.isJumping !== undefined) {
+                                entity.isJumping = false;
+                            }
+                            onGroundPlatform = true;
+                            break;
+                        }
+                    }
                 }
             }
-            
-            if (onGroundPlatform) {
-                entity.y = this.groundY;
-                entity.velocityY = 0;
-                entity.isGrounded = true;
-                if (entity.isJumping !== undefined) {
-                    entity.isJumping = false;
-                }
-            }
-            // If not on a platform, let entity continue falling (into pit)
         }
         
         // Platform collisions for floating platforms
         this.platforms.forEach(platform => {
-            // Check for horizontal overlap - more forgiving for edge landings
-            const horizontalOverlap = entity.x < platform.x + platform.width + 5 && entity.x + entity.width > platform.x - 5;
-            
-            if (horizontalOverlap) {
-                // Landing on top of platform (falling down onto it) - check if player crossed through platform this frame
-                if (entity.velocityY > 0 && 
-                    entity.y + entity.height >= platform.y &&
-                    entity.y + entity.height <= platform.y + Math.abs(entity.velocityY) + 15) { // Allow for movement distance this frame
-                    
-                    entity.y = platform.y - entity.height;
-                    entity.velocityY = 0;
-                    entity.isGrounded = true;
-                    if (entity.isJumping !== undefined) {
-                        entity.isJumping = false;
-                    }
-                }
-                // Side collision detection - only when entity is clearly hitting the side (not trying to land on top)
-                else if (entity.y + entity.height > platform.y + 20 && 
-                         entity.y < platform.y + platform.height - 10) {
-                    
-                    // Determine which side we're hitting
-                    const entityCenterX = entity.x + entity.width / 2;
-                    const platformCenterX = platform.x + platform.width / 2;
-                    
-                    // Only block movement, don't teleport during jumps
-                    if (entity.isJumping || entity.velocityY < 0) {
-                        // Player is jumping - just set movement blocks without position changes
-                        if (entityCenterX < platformCenterX) {
-                            if (entity.blockedRight !== undefined) entity.blockedRight = true;
-                        } else {
-                            if (entity.blockedLeft !== undefined) entity.blockedLeft = true;
-                        }
-                    } else {
-                        // Player is walking on ground - prevent walking through platforms
-                        if (entityCenterX < platformCenterX) {
-                            entity.x = platform.x - entity.width - 2;
-                            if (entity.blockedRight !== undefined) entity.blockedRight = true;
-                        } else {
-                            entity.x = platform.x + platform.width + 2;
-                            if (entity.blockedLeft !== undefined) entity.blockedLeft = true;
+            // Only check collisions when falling down
+            if (entity.velocityY >= 0) {
+                // Check for horizontal overlap - more forgiving for edge landings
+                const horizontalOverlap = entity.x < platform.x + platform.width + 5 && entity.x + entity.width > platform.x - 5;
+                
+                if (horizontalOverlap) {
+                    // Landing on top of platform (falling down onto it)
+                    if (entity.y + entity.height >= platform.y &&
+                        entity.y + entity.height <= platform.y + Math.abs(entity.velocityY) + 15) {
+                        
+                        entity.y = platform.y - entity.height;
+                        entity.velocityY = 0;
+                        entity.isGrounded = true;
+                        if (entity.isJumping !== undefined) {
+                            entity.isJumping = false;
                         }
                     }
-                    // If at ground level, don't force falling - just block movement
                 }
-                // When jumping up (velocityY < 0), allow passing through - no collision
             }
+            // When jumping up (velocityY < 0), always pass through - no collision at all
         });
         
         return onGroundPlatform;

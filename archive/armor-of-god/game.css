@@ -567,6 +567,7 @@ body {
 
 #levelCompleteScreen h1 {
     font-size: 36px;
+    margin-bottom: 10px;
 }
 
 #gameOverScreen h1 {
@@ -588,6 +589,52 @@ body {
     color: #ffd700;
     margin: 20px 0;
     font-style: italic;
+}
+
+/* Score Display on Victory Screen */
+.score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.score-label {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+#levelScore {
+    color: #00ff00;
+    font-weight: bold;
+}
+
+#totalScore {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+/* Small Score Display for Victory Screen */
+.score-display-small {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #ffd700;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 30px auto 20px;
+    width: 400px;
+    font-size: 12px;
+}
+
+.score-row-small {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.score-label-small {
+    color: #ffffff;
 }
 
 /* Responsive Design */
@@ -675,7 +722,7 @@ body {
     display: flex;
     gap: 5px;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 4px;
 }
 
 /* Half-width buttons */
@@ -693,7 +740,7 @@ body {
 /* Running Characters Animation - positioned below temple */
 .victory-runners {
     position: absolute;
-    margin-top: -100px;
+    margin-top: -200px;
     animation: runAcross 2.56s linear forwards;
     display: flex;
     flex-direction: row;

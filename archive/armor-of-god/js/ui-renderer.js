@@ -36,7 +36,7 @@ class UIRenderer {
         ctx.fillRect(30, 30, 180, 15);
         
         // Health bar fill
-        ctx.fillStyle = player.health <= 1 ? '#FF0000' : '#00FF00';
+        ctx.fillStyle = player.health <= 1 ? '#FF0000' : '#3ACF5D';
         const healthWidth = (player.health / player.maxHealth) * 180;
         ctx.fillRect(30, 30, healthWidth, 15);
         
@@ -110,6 +110,54 @@ class UIRenderer {
             ctx.fillText(`Scriptures: ${booksCollected}/3`, panelX + 10, 64);
         }
         
+        // Timer and Score UI Panels (top-right, flipped order - timer above score)
+        const uiWidth = 150; // Smaller width
+        const uiHeight = 40; // Smaller height
+        const uiX = ctx.canvas.width - uiWidth - 20;
+        const timerY = 20; // Timer on top
+        const scoreY = timerY + uiHeight + 5; // Score below timer
+        
+        // Timer panel background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(uiX, timerY, uiWidth, uiHeight);
+        
+        // Timer text
+        const levelTime = player.levelTime || 0;
+        const minutes = Math.floor(levelTime / 3600);
+        const seconds = Math.floor((levelTime % 3600) / 60);
+        const timeDisplay = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        ctx.fillStyle = 'white';
+        ctx.font = '12px "Press Start 2P", monospace';
+        
+        // Left-aligned label
+        ctx.textAlign = 'left';
+        ctx.fillText('Time:', uiX + 8, timerY + 25);
+        
+        // Right-aligned value
+        ctx.textAlign = 'right';
+        ctx.fillText(timeDisplay, uiX + uiWidth - 8, timerY + 25);
+        ctx.textAlign = 'left';
+        
+        // Score panel background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(uiX, scoreY, uiWidth, uiHeight);
+        
+        // Score text
+        ctx.fillStyle = 'white';
+        ctx.font = '12px "Press Start 2P", monospace';
+        
+        // Left-aligned label
+        ctx.textAlign = 'left';
+        ctx.fillText('Score:', uiX + 8, scoreY + 25);
+        
+        // Right-aligned value
+        ctx.textAlign = 'right';
+        ctx.fillText(`${player.score || 0}`, uiX + uiWidth - 8, scoreY + 25);
+        ctx.textAlign = 'left';
+        
+        // Render floating score indicators
+        this.renderFloatingScores(ctx, player.floatingScores || []);
+        
         // Render messages
         this.renderMessages(ctx);
         
@@ -130,8 +178,8 @@ class UIRenderer {
             const textWidth = ctx.measureText(message.text).width;
             const backgroundWidth = Math.max(200, textWidth + 20); // At least 200px like health bar, or text width + padding
             const backgroundHeight = 50; // Same height as health bar panel
-            const backgroundX = ctx.canvas.width - backgroundWidth - 20; // Right side with margin
-            const backgroundY = 20 + yOffset; // Same Y as health/scripture bars
+            const backgroundX = 20; // Left side with margin
+            const backgroundY = ctx.canvas.height - backgroundHeight - 20 - yOffset; // Bottom left
             const textX = backgroundX + backgroundWidth / 2; // Center text in background
             const textY = backgroundY + backgroundHeight / 2 + fontSize / 3; // Properly center text vertically
             
@@ -324,6 +372,61 @@ class UIRenderer {
         // Reset text properties
         ctx.textAlign = 'left';
         ctx.textBaseline = 'alphabetic';
+    }
+    
+    renderFloatingScores(ctx, floatingScores) {
+        // Fixed position for all floating scores - right aligned under score widget, 200px lower
+        const scoreX = ctx.canvas.width - 25; // Right side with margin
+        const startY = 275; // Start 200px lower than original position (75 + 200)
+        const scoreWidgetBottom = 105; // Bottom of score widget (scoreY + uiHeight = 65 + 40)
+        
+        floatingScores.forEach((scoreIndicator, index) => {
+            const baseOpacity = Math.max(0, (scoreIndicator.duration - scoreIndicator.timer) / scoreIndicator.duration);
+            const yOffset = scoreIndicator.timer * 2; // Float upward
+            const y = startY + (index * 25) - yOffset;
+            
+            // Additional fade out as scores approach the score widget
+            let finalOpacity = baseOpacity;
+            if (y <= scoreWidgetBottom + 50) { // Start fading 50px before reaching the widget
+                const distanceFromWidget = y - scoreWidgetBottom;
+                const fadeDistance = 50;
+                if (distanceFromWidget < fadeDistance) {
+                    const fadeRatio = Math.max(0, distanceFromWidget / fadeDistance);
+                    finalOpacity = baseOpacity * fadeRatio;
+                }
+            }
+            
+            // Skip rendering if completely faded
+            if (finalOpacity <= 0) return;
+            
+            // Use the score indicator's color, or default to yellow
+            ctx.fillStyle = scoreIndicator.color || '#FFD700';
+            ctx.globalAlpha = finalOpacity;
+            ctx.font = 'bold 12px "Press Start 2P", monospace';
+            ctx.textAlign = 'right'; // Right align the text
+            
+            // Add drop shadow
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 3;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            
+            // Create the display text with label if available
+            const displayText = scoreIndicator.label ? 
+                `${scoreIndicator.label} +${scoreIndicator.points}` : 
+                `+${scoreIndicator.points}`;
+            
+            ctx.fillText(displayText, scoreX, y);
+            
+            // Reset shadow
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            
+            ctx.textAlign = 'left';
+            ctx.globalAlpha = 1.0;
+        });
     }
     
     update() {

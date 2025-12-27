@@ -5,6 +5,7 @@ class PetManager {
     constructor(pet, game) {
         this.pet = pet;
         this.game = game; // Reference to main game for accessing other systems
+        this.respawnCooldown = 0;
     }
     
     update() {
@@ -118,53 +119,27 @@ class PetManager {
         // Platform collisions for pet
         this.game.worldManager.checkPlatformCollisions(this.pet);
         
-        // Pet safety check - respawn if fallen off the world or stuck too far from player
-        // Add cooldown to prevent rapid respawning
-        if (!this.petRespawnCooldown) {
-            this.petRespawnCooldown = 0;
-        }
+        // Simple pet safety check - respawn at player's feet if pet gets lost
+        const needsRespawn = (
+            this.pet.y > this.game.canvas.height + 50 || // Fell off screen
+            distanceToPlayer > 600 || // Too far from player
+            this.pet.y < -50 // Above screen
+        );
         
-        if ((this.pet.y > this.game.canvas.height + 50 || 
-            (this.pet.y > this.game.canvas.height && distanceToPlayer > 500)) &&
-            this.petRespawnCooldown <= 0) {
-            
-            try {
-                console.log(`Pet respawn triggered: y=${this.pet.y}, canvas.height=${this.game.canvas.height}, distance=${distanceToPlayer}`);
-                const respawnPosition = this.findSafeRespawnPosition();
-                if (respawnPosition && respawnPosition.x !== undefined && respawnPosition.y !== undefined) {
-                    this.pet.x = respawnPosition.x;
-                    this.pet.y = respawnPosition.y;
-                    this.pet.velocityY = 0;
-                    this.pet.isGrounded = true;
-                    this.pet.isMoving = false; // Stop any movement
-                    this.petRespawnCooldown = 120; // 2 second cooldown at 60fps
-                    
-                    // Verify the respawn position is actually on solid ground
-                    const platformUnder = this.findPlatformUnderEntity(this.pet);
-                    console.log(`Pet respawned at (${respawnPosition.x}, ${respawnPosition.y}), platform under:`, platformUnder);
-                } else {
-                    console.error('Failed to find valid respawn position');
-                    // Emergency teleport to player
-                    this.pet.x = this.game.player.x;
-                    this.pet.y = this.game.player.y;
-                    this.pet.velocityY = 0;
-                    this.pet.isGrounded = false; // Let it fall naturally
-                    this.petRespawnCooldown = 120;
-                }
-            } catch (error) {
-                console.error('Error in pet respawn:', error);
-                // Emergency teleport to player
-                this.pet.x = this.game.player.x;
-                this.pet.y = this.game.player.y;
-                this.pet.velocityY = 0;
-                this.pet.isGrounded = false;
-                this.petRespawnCooldown = 120;
-            }
+        if (needsRespawn && this.respawnCooldown <= 0 && this.game.player.isGrounded) {
+            // Simple spawn at player's feet (only when player is on solid ground)
+            this.pet.x = this.game.player.x;
+            this.pet.y = this.game.player.y;
+            this.pet.velocityY = 0;
+            this.pet.isGrounded = false; // Let it fall naturally to ground
+            this.pet.isMoving = false;
+            this.respawnCooldown = 120; // 2 second cooldown
+            console.log(`Pet respawned at player feet: (${this.pet.x}, ${this.pet.y})`);
         }
         
         // Decrement respawn cooldown
-        if (this.petRespawnCooldown > 0) {
-            this.petRespawnCooldown--;
+        if (this.respawnCooldown > 0) {
+            this.respawnCooldown--;
         }
         
         // Update pet animation
@@ -253,104 +228,6 @@ class PetManager {
         }
         
         return nearestPlatform;
-    }
-    
-    // Helper function to find a safe respawn position for the pet near the player
-    findSafeRespawnPosition() {
-        // Safety check - ensure we have platforms to work with
-        if (!this.game.worldManager || !this.game.worldManager.platforms || this.game.worldManager.platforms.length === 0) {
-            console.warn('No platforms available for pet respawn');
-            return { x: this.game.player.x, y: this.game.player.y };
-        }
-        
-        const playerPlatform = this.findPlatformUnderEntity(this.game.player);
-        
-        // Priority 1: Try to spawn on the same platform as the player
-        if (playerPlatform && playerPlatform.width > this.pet.width + 20) { // Ensure platform is big enough
-            // Try different positions on the player's platform
-            const preferredOffsets = [
-                this.game.player.facingRight ? -50 : 50,  // Behind player based on facing
-                this.game.player.facingRight ? 50 : -50,  // In front of player
-                -30, 30, -70, 70, 0                     // Various other positions including exact same spot
-            ];
-            
-            for (let offset of preferredOffsets) {
-                const testX = this.game.player.x + offset;
-                const safeLeft = playerPlatform.x + 15; // Increased margin
-                const safeRight = playerPlatform.x + playerPlatform.width - this.pet.width - 15;
-                
-                if (testX >= safeLeft && testX <= safeRight) {
-                    return {
-                        x: testX,
-                        y: playerPlatform.y - this.pet.height + 1  // Place pet ON platform, not inside it
-                    };
-                }
-            }
-            
-            // If no offset works, place at the safest spot on the platform
-            const safeLeft = playerPlatform.x + 15;
-            const safeRight = playerPlatform.x + playerPlatform.width - this.pet.width - 15;
-            const centerX = Math.max(safeLeft, Math.min(safeRight, this.game.player.x));
-            
-            if (centerX >= safeLeft && centerX <= safeRight) {
-                return {
-                    x: centerX,
-                    y: playerPlatform.y - this.pet.height + 1
-                };
-            }
-        }
-        
-        // Priority 2: Find the closest suitable platform to the player
-        let closestPlatform = null;
-        let minDistance = Infinity;
-        
-        for (let platform of this.game.worldManager.platforms) {
-            // Skip platforms that are too small
-            if (platform.width < this.pet.width + 30) continue;
-            
-            // Calculate distance from platform center to player
-            const platformCenterX = platform.x + platform.width / 2;
-            const distance = Math.abs(platformCenterX - this.game.player.x);
-            
-            // Prefer platforms at similar or lower height than player, but be more lenient
-            const heightDifference = platform.y - this.game.player.y;
-            if (heightDifference <= 200 && distance < minDistance) { // Increased height tolerance
-                minDistance = distance;
-                closestPlatform = platform;
-            }
-        }
-        
-        if (closestPlatform) {
-            // Place pet near the center of the closest platform
-            const safeLeft = closestPlatform.x + 15;
-            const safeRight = closestPlatform.x + closestPlatform.width - this.pet.width - 15;
-            const centerX = closestPlatform.x + closestPlatform.width / 2;
-            const safeX = Math.max(safeLeft, Math.min(safeRight, centerX));
-            
-            return {
-                x: safeX,
-                y: closestPlatform.y - this.pet.height + 1
-            };
-        }
-        
-        // Priority 3: Find ANY platform if height-based search failed
-        if (this.game.worldManager.platforms.length > 0) {
-            const anyPlatform = this.game.worldManager.platforms.find(p => p.width >= this.pet.width + 30);
-            if (anyPlatform) {
-                const safeX = anyPlatform.x + 15;
-                return {
-                    x: safeX,
-                    y: anyPlatform.y - this.pet.height + 1
-                };
-            }
-        }
-        
-        // Priority 4: Emergency fallback - spawn at player position but slightly offset
-        console.warn('No suitable platforms found, using emergency spawn');
-        return {
-            x: this.game.player.x + (this.game.player.facingRight ? -25 : 25),
-            y: this.game.player.y
-        };
     }
     
     shouldJump(moveDirection) {

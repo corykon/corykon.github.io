@@ -22,10 +22,24 @@ class ArmorOfGodGame {
         this.booksCollected = 0;
         this.selectedPetType = 'dog'; // Default to dog
         
+        // Scoring system
+        this.score = 0; // Current level score
+        this.totalScore = 0; // Total score across all levels
+        this.levelStartTime = 0;
+        this.levelEndTime = 0;
+        this.pauseStartTime = 0;
+        this.totalPausedTime = 0;
+        this.floatingScores = []; // For floating score indicators
+        this.damageTaken = 0; // Track damage for no-damage bonus
+        this.enemiesKilled = new Set(); // Track which enemy types killed for bonus
+        
         // Debug variables
         this.lastPlayerPos = null;
         this.debugElement = null;
         this.createDebugDisplay();
+        
+        // Initialize scoring system
+        this.initializeScoring();
         
         // Load images
         this.templeImage = new Image();
@@ -131,8 +145,8 @@ class ArmorOfGodGame {
         this.effectsManager = new EffectsManager();
         this.inputHandler = new InputHandler();
         this.worldManager = new WorldManager();
-        this.arrowManager = new ArrowManager(this.audioManager, this.arrowImage, this.brokenArrowImage);
-        this.enemyManager = new EnemyManager(this.audioManager);
+        this.arrowManager = new ArrowManager(this.audioManager, this.arrowImage, this.brokenArrowImage, this);
+        this.enemyManager = new EnemyManager(this.audioManager, this);
         this.backgroundManager = new BackgroundManager();
         this.uiRenderer = new UIRenderer();
         this.characterRenderer = new CharacterRenderer();
@@ -382,12 +396,116 @@ class ArmorOfGodGame {
         }
     }
     
+    // Scoring system methods
+    initializeScoring() {
+        this.score = 0; // Reset level score
+        this.levelStartTime = performance.now();
+        this.levelEndTime = 0; // Reset level end time
+        this.totalPausedTime = 0; // Reset paused time tracking
+        this.pauseStartTime = 0;
+        this.floatingScores = [];
+        this.damageTaken = 0; // Reset damage tracking
+        this.enemiesKilled = new Set(); // Reset enemy tracking
+    }
+    
+    addScore(points, color = '#FFD700', label = '') {
+        // Don't add to score immediately - wait for floating score to finish
+        
+        // Add floating score indicator (always add since we want all scores to show)
+        this.floatingScores.push({
+            points: points,
+            timer: 0,
+            duration: 300, // 5 seconds at 60fps
+            color: color,
+            label: label,
+            pendingPoints: points // Store points to add when animation completes
+        });
+    }
+    
+    updateFloatingScores() {
+        this.floatingScores = this.floatingScores.filter(scoreIndicator => {
+            scoreIndicator.timer++;
+            
+            // Calculate opacity to determine when to add points
+            const opacity = Math.max(0, (scoreIndicator.duration - scoreIndicator.timer) / scoreIndicator.duration);
+            
+            // Add points when the floating score starts to fade (opacity drops to 80%)
+            if (opacity <= 0.75 && scoreIndicator.pendingPoints) {
+                // Add the points to the actual score as it's fading
+                this.score += scoreIndicator.pendingPoints;
+                scoreIndicator.pendingPoints = null; // Mark as processed
+            }
+            
+            return scoreIndicator.timer < scoreIndicator.duration;
+        });
+    }
+    
+    getLevelTime() {
+        // Use stored end time if level is completed, otherwise calculate current time
+        const currentTime = this.levelEndTime > 0 ? this.levelEndTime : performance.now();
+        const activePausedTime = this.isPaused ? (currentTime - this.pauseStartTime) : 0;
+        const totalPaused = this.totalPausedTime + activePausedTime;
+        const actualElapsedTime = currentTime - this.levelStartTime - totalPaused;
+        return Math.floor(actualElapsedTime / 1000 * 60); // Convert to game frames
+    }
+    
+    calculateSpeedBonus() {
+        const levelTime = this.getLevelTime();
+        const targetTime = {
+            1: 1800, // 30 seconds (1800 frames at 60fps)
+            2: 2400, // 40 seconds
+            3: 3000  // 50 seconds
+        };
+        
+        const target = targetTime[this.level] || 3000;
+        if (levelTime <= target) {
+            const bonus = Math.max(0, Math.floor((target - levelTime) * 2));
+            return Math.min(bonus, 2000); // Cap at 2000 points
+        }
+        return 0;
+    }
+    
+    calculateAndDisplayBonuses() {
+        let bonusTotal = 0;
+
+        
+        // Check for no damage bonus
+        if (this.damageTaken === 0) {
+            this.addScore(1000, '#00FF00', 'No Damage Bonus');
+            bonusTotal += 1000;
+        }
+        
+        // Check for all enemies killed bonus - check if every individual snail has been killed
+        const allSnails = this.enemyManager.snails;
+        const totalSnails = allSnails.length;
+        const killedSnails = allSnails.filter(snail => snail.killed).length;
+        
+        if (totalSnails > 0 && killedSnails === totalSnails) {
+            this.addScore(1000, '#E74C3C', 'All Enemies Killed');
+            bonusTotal += 1000;
+        }
+        
+        // Calculate and add speed bonus
+        const speedBonus = this.calculateSpeedBonus();
+        if (speedBonus > 0) {
+            this.addScore(speedBonus, '#00FF00', 'Speed Bonus');
+            bonusTotal += speedBonus;
+        }
+        
+        // Update final scores after adding bonuses
+        this.finalLevelScore = this.score + bonusTotal;
+        this.finalTotalScore = this.totalScore + this.score + bonusTotal;
+    }
+    
     startGame() {
         // Reset game to initialize world with selected level
         this.resetGame();
         this.gameState = 'playing';
         this.showScreen('game');
         this.updateLevelIndicator();
+        
+        // Initialize scoring for this level
+        this.initializeScoring();
         this.audioManager.playMusic('adventure');
         // Spawn initial arrows after world is set up
         this.arrowManager.spawnInitialArrows(this.player);
@@ -567,7 +685,26 @@ class ArmorOfGodGame {
         
         // Start running animation on victory screen
         if (screenName === 'levelComplete') {
+            // Reset character alpha after screen transition
+            this.player.alpha = 1;
+            this.pet.alpha = 1;
+            
             this.startVictoryRunningAnimation();
+            // Update score displays
+            const levelScoreElement = document.getElementById('levelScore');
+            const totalScoreElement = document.getElementById('totalScore');
+            if (levelScoreElement) {
+                levelScoreElement.textContent = (this.finalLevelScore || this.score || 0).toLocaleString();
+            }
+            if (totalScoreElement) {
+                totalScoreElement.textContent = (this.finalTotalScore || this.totalScore || 0).toLocaleString();
+            }
+            
+            // Update the level score label to show which level
+            const levelScoreLabel = document.querySelector('.score-display-small .score-row-small:first-child .score-label-small');
+            if (levelScoreLabel) {
+                levelScoreLabel.textContent = `Level ${this.level}:`;
+            }
         } else {
             this.stopVictoryRunningAnimation();
         }
@@ -659,8 +796,17 @@ class ArmorOfGodGame {
         this.uiRenderer.update();
         this.characterRenderer.update();
         
+        // Update floating scores
+        this.updateFloatingScores();
+        
+        // Update player properties for UI
+        this.player.levelTime = this.getLevelTime();
+        this.player.score = this.score;
+        this.player.floatingScores = this.floatingScores;
+        
         if (this.gameState === 'celebrating') {
             if (this.effectsManager.updateCelebration()) {
+                // Celebration is complete, move to level complete screen
                 this.gameState = 'levelComplete';
                 this.showScreen('levelComplete');
             }
@@ -831,6 +977,12 @@ class ArmorOfGodGame {
         // Arrow collisions
         const hitArrows = this.arrowManager.checkCollisions(this.player, this.hasArmor);
         if (hitArrows.length > 0) {
+            // Add score for breaking arrows when armored
+            if (this.hasArmor) {
+                hitArrows.forEach(arrow => {
+                    this.addScore(300, '#E74C3C', 'Arrow');
+                });
+            }
             // Calculate knockback direction from first arrow hit
             const arrow = hitArrows[0];
             const playerCenterX = this.player.x + this.player.width / 2;
@@ -841,6 +993,18 @@ class ArmorOfGodGame {
         // Enemy collisions
         const hitEnemies = this.enemyManager.checkCollisions(this.player, this.hasArmor);
         if (hitEnemies.length > 0) {
+            // Add score for defeating enemies when armored
+            if (this.hasArmor) {
+                hitEnemies.forEach(enemy => {
+                    const points = enemy.isMegaSnail ? 1000 : 200; // Big snail +1000, regular +200
+                    const color = '#E74C3C'; // Red for all enemies defeated
+                    const label = enemy.isMegaSnail ? 'Mega Snail' : 'Snail';
+                    this.addScore(points, color, label);
+                    
+                    // Track enemy types killed for bonus calculation
+                    this.enemiesKilled.add(enemy.isMegaSnail ? 'megaSnail' : 'snail');
+                });
+            }
             // Calculate knockback direction from first enemy hit
             const enemy = hitEnemies[0];
             const playerCenterX = this.player.x + this.player.width / 2;
@@ -855,6 +1019,9 @@ class ArmorOfGodGame {
                 
                 // Play collection sound
                 this.audioManager.playSound('collect2');
+                
+                // Add score for collecting scripture
+                this.addScore(300, '#FFD700', 'Scripture');
                 
                 if (this.booksCollected < 3) {
                     // Still collecting initial scriptures
@@ -877,6 +1044,9 @@ class ArmorOfGodGame {
                 
                 // Play same collection sound as scripture books
                 this.audioManager.playSound('heal2');
+                
+                // Add score for collecting heart
+                this.addScore(500, '#FFD700', 'Heart');
                 
                 // Restore health (don't exceed max health)
                 const oldHealth = this.player.health;
@@ -906,6 +1076,9 @@ class ArmorOfGodGame {
     
     takeDamage(knockbackDirection = 0) {
         if (this.player.invulnerable) return;
+        
+        // Track damage for scoring
+        this.damageTaken++;
 
         // Play grunt sound when hurt
         this.audioManager.playSound('grunt1');
@@ -977,9 +1150,16 @@ class ArmorOfGodGame {
         this.isPaused = !this.isPaused;
         
         if (this.isPaused) {
+            // Starting a pause - record when it began
+            this.pauseStartTime = performance.now();
             this.audioManager.playSoundEffect('pause');
             this.audioManager.pauseCurrentMusic();
         } else {
+            // Ending a pause - add this pause duration to total
+            if (this.pauseStartTime > 0) {
+                this.totalPausedTime += performance.now() - this.pauseStartTime;
+                this.pauseStartTime = 0;
+            }
             this.audioManager.playSoundEffect('unpause');
             this.audioManager.resumeCurrentMusic();
         }
@@ -995,6 +1175,9 @@ class ArmorOfGodGame {
     }
     
     startNextLevel() {
+        // Add completed level score to total before advancing
+        this.totalScore = this.finalTotalScore || (this.totalScore + this.score);
+        
         // Advance to the next level
         this.level++;
         this.resetGame();
@@ -1004,6 +1187,9 @@ class ArmorOfGodGame {
         this.updateLevelSelector();
         this.audioManager.playMusic('adventure');
         this.arrowManager.spawnInitialArrows(this.player);
+        
+        // Initialize scoring for new level
+        this.initializeScoring();
     }
 
     retryCurrentLevel() {
@@ -1014,10 +1200,15 @@ class ArmorOfGodGame {
         this.updateLevelIndicator();
         this.audioManager.playMusic('adventure');
         this.arrowManager.spawnInitialArrows(this.player);
+        
+        // Initialize scoring for retry
+        this.initializeScoring();
     }
 
     goToMainMenu() {
         this.level = 1; // Reset to level 1 when going to main menu
+        this.totalScore = 0; // Reset total score when going to main menu
+        this.score = 0; // Reset level score
         this.resetGame();
         this.updateLevelSelector();
         this.audioManager.playMusic('menu');
@@ -1034,6 +1225,13 @@ class ArmorOfGodGame {
     }
     
     levelComplete() {
+        // Stop the level timer immediately when level is completed
+        this.levelEndTime = performance.now();
+        
+        // Store initial scores before bonuses (bonuses will be added during celebration)
+        this.finalLevelScore = this.score; // Will be updated with bonuses
+        this.finalTotalScore = this.totalScore; // Will be updated with bonuses
+        
         // Start temple entrance immediately
         this.gameState = 'enteringTemple';
         this.templeEntranceTimer = 0;
@@ -1126,15 +1324,11 @@ class ArmorOfGodGame {
         this.effectsManager.initializeFireworks(this.castle);
         this.audioManager.playMusic('winner');
         
-        // Reset alpha values
-        this.player.alpha = 1;
-        this.pet.alpha = 1;
-    }
-    
-    startCelebration() {
-        this.gameState = 'celebrating';
-        this.effectsManager.initializeFireworks(this.castle);
-        this.audioManager.playMusic('winner');
+        // Don't reset alpha values here - let the fade effect continue
+        // through the celebration until the level complete screen shows
+        
+        // Add bonuses immediately when celebration starts so they're visible
+        this.calculateAndDisplayBonuses();
     }
     
     render() {
