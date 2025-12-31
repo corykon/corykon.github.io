@@ -22,6 +22,7 @@ class WorldManager {
         this.clouds = [];
         this.scriptureBooks = [];
         this.hearts = []; // Health restoration items
+        this.foregroundSprites = []; // Decorative foreground elements
         
         // World properties
         this.groundY = 468;
@@ -373,6 +374,182 @@ class WorldManager {
             { x: 4290, y: 180, width: 30, height: 30, collected: false, healthRestore: 1 },
             { x: 5940, y: 140, width: 30, height: 30, collected: false, healthRestore: 1 },
             { x: 11030, y: 120, width: 30, height: 30, collected: false, healthRestore: 1 }
+        ];
+    }
+    
+    createForegroundSprites() {
+        if (this.currentLevel === 1) {
+            this.createLevel1ForegroundSprites();
+        } else if (this.currentLevel === 2) {
+            this.createLevel2ForegroundSprites();
+        } else if (this.currentLevel === 3) {
+            this.createLevel3ForegroundSprites();
+        }
+    }
+    
+    createLevel1ForegroundSprites() {
+        this.foregroundSprites = [
+            { x: 100, y: 430, width: 100, height: 40, image: 'long-bush.png' },
+            { x: 380, y: 430, width: 40, height: 40, image: 'round-bush.png' },
+            { x: 250, y: 320, width: 150, height: 150, image: 'short-tree.png' },
+            { x: 800, y: 430, width: 100, height: 40, image: 'long-bush.png' },
+            
+            { x: 1940, y: 255, width: 55, height: 55, image: 'spiky-bush.png', hazard: true, damage: 1 },
+            
+            { x: 2450, y: 310, width: 180, height: 180, image: 'rooty-tree.png' },
+            { x: 3100, y: 425, width: 55, height: 55, image: 'spiky-bush.png', hazard: true, damage: 1 },
+            { x: 3200, y: 425, width: 55, height: 55, image: 'spiky-bush.png', hazard: true, damage: 1 },
+            
+            
+            { x: 4020, y: 430, width: 40, height: 40, image: 'round-bush.png' },
+            { x: 4070, y: 430, width: 40, height: 40, image: 'round-bush.png' },
+            { x: 4120, y: 430, width: 40, height: 40, image: 'round-bush.png' },
+            { x: 5250, y: 310, width: 100, height: 40, image: 'long-bush.png' },
+            
+            { x: 6220, y: 373, width: 100, height: 100, image: 'tall-tree.png' },
+            { x: 6330, y: 363, width: 110, height: 110, image: 'tall-tree.png' },
+            { x: 6605, y: 363, width: 110, height: 110, image: 'tall-tree.png' },
+            { x: 6725, y: 373, width: 100, height: 100, image: 'tall-tree.png' }
+        ];
+    }
+    
+    createLevel2ForegroundSprites() {
+        this.foregroundSprites = [
+            // Dense jungle vegetation covering all ground platforms
+            // Starting ground section (0-950)
+            { x: 50, y: 220, width: 250, height: 270, image: 'jungle-tree-1.png' },
+            { x: 0, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 225, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 400, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 465, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 600, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 720, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 350, y: 380, width: 100, height: 100, image: 'jungle-bush.png' },
+            { x: 500, y: 430, width: 200, height: 38, image: 'jungle-foilage2.png' },
+            { x: 650, y: 270, width: 220, height: 220, image: 'jungle-tree-6.png' },
+            { x: 800, y: 440, width: 160, height: 45, image: 'jungle-foilage3.png' },
+            
+            // First long flat section (1900-5900)
+            // Base foilage-1 layer covering entire ground
+            { x: 1900, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 2125, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 2350, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 2575, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 2800, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 3025, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 3250, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 3475, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 3700, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 3925, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 4150, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 4375, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 4600, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 4825, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 5050, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 5275, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 5500, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 5670, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            // Decorative elements on top of base layer
+            { x: 1950, y: 290, width: 180, height: 180, image: 'jungle-tree-6.png' },
+            { x: 2200, y: 430, width: 240, height: 46, image: 'jungle-foilage2.png' },
+            { x: 2400, y: 428, width: 200, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 2520, y: 300, width: 180, height: 180, image: 'jungle-tree-4.png' },
+            { x: 2800, y: 423, width: 160, height: 45, image: 'jungle-foilage3.png' },
+            { x: 3000, y: 280, width: 200, height: 200, image: 'jungle-tree-2.png' },
+            { x: 3250, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 3450, y: 430, width: 200, height: 38, image: 'jungle-foilage2.png' },
+            { x: 3650, y: 400, width: 100, height: 100, image: 'jungle-bush.png' },
+            { x: 3750, y: 250, width: 230, height: 230, image: 'jungle-tree-5.png' },
+            { x: 4100, y: 423, width: 160, height: 45, image: 'jungle-foilage3.png' },
+            { x: 4250, y: 430, width: 240, height: 46, image: 'jungle-foilage-1.png' },
+            { x: 4450, y: 320, width: 180, height: 180, image: 'jungle-tree-3.png' },
+            { x: 4700, y: 428, width: 200, height: 65, image: 'jungle-foilage2.png' },
+            { x: 4900, y: 400, width: 100, height: 100, image: 'jungle-bush.png' },
+            { x: 5050, y: 430, width: 160, height: 38, image: 'jungle-foilage3.png' },
+            { x: 5200, y: 220, width: 260, height: 260, image: 'jungle-tree-6.png' },
+            { x: 5500, y: 423, width: 240, height: 45, image: 'jungle-foilage-1.png' },
+            { x: 5700, y: 430, width: 200, height: 38, image: 'jungle-foilage2.png' },
+            
+            // Mid-section ground (6600-7000)
+            // Base foilage-1 layer
+            { x: 6590, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 6725, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 6785, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            // Decorative elements on top
+            { x: 6650, y: 390, width: 100, height: 100, image: 'jungle-bush.png' },
+            { x: 6800, y: 290, width: 200, height: 200, image: 'jungle-tree-1.png' },
+            { x: 6750, y: 428, width: 160, height: 65, image: 'jungle-foilage3.png' },
+            
+            // Final approach ground (8600-9100)
+            // Base foilage-1 layer
+            { x: 8585, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 8755, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 8875, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            // Decorative elements on top
+            { x: 8650, y: 280, width: 180, height: 180, image: 'jungle-tree-2.png' },
+            { x: 8880, y: 428, width: 160, height: 45, image: 'jungle-foilage2.png' },
+            
+            // Long ground section (10000-10700)
+            // Base foilage-1 layer
+            { x: 9990, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 10200, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 10350, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 10470, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            // Decorative elements on top
+            { x: 10250, y: 300, width: 160, height: 160, image: 'jungle-tree-4.png' },
+            { x: 10500, y: 428, width: 200, height: 65, image: 'jungle-foilage3.png' },
+            
+            // More ground section (12000-12600)
+            // Base foilage-1 layer
+            { x: 11990, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 12200, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 12300, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 12370, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            // Decorative elements on top
+            { x: 12050, y: 300, width: 180, height: 180, image: 'jungle-tree-3.png' },
+            { x: 12400, y: 430, width: 160, height: 38, image: 'jungle-foilage3.png' },
+            
+            // Final ground section (12900-13800)
+            // Base foilage-1 layer
+            { x: 12890, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 13125, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 13350, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 13575, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            // Decorative elements on top
+            { x: 13070, y: 430, width: 160, height: 38, image: 'jungle-foilage3.png' },
+            { x: 13100, y: 230, width: 260, height: 260, image: 'jungle-tree-6.png' },
+            { x: 13450, y: 448, width: 100, height: 20, image: 'jungle-foilage-1.png' },
+            { x: 13600, y: 445, width: 120, height: 23, image: 'jungle-foilage2.png' },
+            
+            // Temple approach and clearing (15800-18000)
+            // Base foilage-1 layer covering entire temple approach
+            { x: 15790, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 16015, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 16250, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 16475, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 16700, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 16925, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 17150, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 17375, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 17600, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            { x: 17770, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
+            // Decorative elements on top
+            { x: 15850, y: 240, width: 230, height: 230, image: 'jungle-tree-5.png' },
+            { x: 16100, y: 448, width: 120, height: 20, image: 'jungle-foilage-1.png' },
+            { x: 16300, y: 445, width: 80, height: 23, image: 'jungle-foilage3.png' },
+            { x: 16500, y: 390, width: 100, height: 100, image: 'jungle-bush.png' },
+            { x: 16750, y: 340, width: 140, height: 140, image: 'jungle-tree-4.png' },
+            { x: 17000, y: 448, width: 100, height: 20, image: 'jungle-foilage2.png' },
+            { x: 17450, y: 445, width: 120, height: 23, image: 'jungle-foilage-1.png' },
+            { x: 17650, y: 290, width: 200, height: 200, image: 'jungle-tree-6.png' },
+            { x: 17120, y: 390, width: 100, height: 100, image: 'jungle-bush.png' },
+            { x: 17420, y: 390, width: 100, height: 100, image: 'jungle-bush.png' },
+        ];
+    }
+    
+    createLevel3ForegroundSprites() {
+        this.foregroundSprites = [
+            // Placeholder for level 3 - will add mountain-themed sprites later
         ];
     }
     
@@ -898,6 +1075,56 @@ class WorldManager {
         });
     }
     
+    renderForegroundSprites(ctx, foregroundImages) {
+        this.foregroundSprites.forEach(sprite => {
+            const image = foregroundImages[sprite.image];
+            if (image && image.complete) {
+                ctx.drawImage(image, sprite.x, sprite.y, sprite.width, sprite.height);
+            } else {
+                // Fallback: simple colored rectangle based on sprite type
+                ctx.fillStyle = this.getFallbackColor(sprite.image);
+                ctx.fillRect(sprite.x, sprite.y, sprite.width, sprite.height);
+            }
+        });
+    }
+    
+    getFallbackColor(imageName) {
+        // Return appropriate colors based on sprite type
+        if (imageName.includes('tree') || imageName.includes('palm')) {
+            return '#228B22'; // Forest green for trees
+        } else if (imageName.includes('bush') || imageName.includes('undergrowth')) {
+            return '#90EE90'; // Light green for bushes
+        } else if (imageName.includes('flower')) {
+            return '#FFB6C1'; // Light pink for flowers
+        } else if (imageName.includes('jungle')) {
+            return '#32CD32'; // Lime green for jungle vegetation
+        } else if (imageName.includes('rock')) {
+            return '#808080'; // Gray for rocks
+        }
+        return '#654321'; // Default brown
+    }
+    
+    checkHazardCollisions(entity) {
+        // Check collisions with hazardous foreground sprites
+        for (let sprite of this.foregroundSprites) {
+            if (sprite.hazard) {
+                // Check if entity overlaps with hazardous sprite
+                const horizontalOverlap = entity.x < sprite.x + sprite.width && 
+                                         entity.x + entity.width > sprite.x;
+                const verticalOverlap = entity.y < sprite.y + sprite.height && 
+                                       entity.y + entity.height > sprite.y;
+                
+                if (horizontalOverlap && verticalOverlap) {
+                    return {
+                        collision: true,
+                        damage: sprite.damage || 1,
+                        hazardType: 'spike'
+                    };
+                }
+            }
+        }
+        return { collision: false };
+    }
 
     
     renderTemple(ctx, templeImage, castle) {
@@ -993,6 +1220,7 @@ class WorldManager {
         this.hearts.forEach(heart => {
             heart.collected = false;
         });
+        // Foreground sprites don't need reset - they're decorative only
     }    
     setLevel(level) {
         this.currentLevel = level;
@@ -1001,4 +1229,5 @@ class WorldManager {
         this.createClouds();
         this.createScriptureBooks();
         this.createHearts();
+        this.createForegroundSprites();
     }}

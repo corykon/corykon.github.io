@@ -53,6 +53,10 @@ class ArmorOfGodGame {
         this.brokenArrowImage = new Image();
         this.brokenArrowImage.src = 'images/enemy-frames/fiery-arrow-broken.png';
         
+        // Load foreground images
+        this.foregroundImages = {};
+        this.loadForegroundImages();
+        
         // Game physics constants
         this.gravity = 0.42;
         this.jumpPower = -13.34;
@@ -591,6 +595,34 @@ class ArmorOfGodGame {
         }
     }
     
+    loadForegroundImages() {
+        // Load all foreground sprite images
+        const foregroundSprites = [
+            'rooty-tree.png', 
+            'round-bush.png',
+            'short-tree.png',
+            'spiky-bush.png',
+            'tall-tree.png',
+            'long-bush.png',
+            'jungle-bush.png',
+            'jungle-foilage-1.png',
+            'jungle-foilage2.png',
+            'jungle-foilage3.png',
+            'jungle-tree-1.png',
+            'jungle-tree-2.png',
+            'jungle-tree-3.png',
+            'jungle-tree-4.png',
+            'jungle-tree-5.png',
+            'jungle-tree-6.png'
+        ];
+        
+        foregroundSprites.forEach(filename => {
+            const img = new Image();
+            img.src = `images/foreground/${filename}`;
+            this.foregroundImages[filename] = img;
+        });
+    }
+    
     cycleLevelSelector() {
         // Cycle between levels 1, 2, and 3 for testing
         this.level = this.level === 1 ? 2 : (this.level === 2 ? 3 : 1);
@@ -703,7 +735,7 @@ class ArmorOfGodGame {
             // Update the level score label to show which level
             const levelScoreLabel = document.querySelector('.score-display-small .score-row-small:first-child .score-label-small');
             if (levelScoreLabel) {
-                levelScoreLabel.textContent = `Level ${this.level}:`;
+                levelScoreLabel.textContent = `Level ${this.level} Score:`;
             }
         } else {
             this.stopVictoryRunningAnimation();
@@ -879,6 +911,12 @@ class ArmorOfGodGame {
         
         // Platform collisions for player (this will set isGrounded=true if landing on platform)
         this.worldManager.checkPlatformCollisions(this.player);
+        
+        // Check for hazardous foreground sprite collisions
+        const hazardCollision = this.worldManager.checkHazardCollisions(this.player);
+        if (hazardCollision.collision && !this.hasArmor) {
+            this.handlePlayerDamage(hazardCollision.damage, hazardCollision.hazardType);
+        }
         
         // Check if player is falling off platform edges and restrict movement
         // But only if they're not already deep in a pit (to avoid interfering with pit death)
@@ -1107,6 +1145,41 @@ class ArmorOfGodGame {
         
         if (this.player.health <= 0) {
             this.startDeath('You have been struck down! Seek the armor of God for protection.');
+        }
+    }
+    
+    handlePlayerDamage(damage, hazardType) {
+        // Handle damage from environmental hazards
+        if (hazardType === 'spike') {
+            // Calculate knockback direction away from the spiky bush
+            // Find the closest spiky bush to determine knockback direction
+            let closestBush = null;
+            let closestDistance = Infinity;
+            
+            for (let sprite of this.worldManager.foregroundSprites) {
+                if (sprite.hazard && sprite.image === 'spiky-bush.png') {
+                    const bushCenterX = sprite.x + sprite.width / 2;
+                    const playerCenterX = this.player.x + this.player.width / 2;
+                    const distance = Math.abs(bushCenterX - playerCenterX);
+                    
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestBush = sprite;
+                    }
+                }
+            }
+            
+            if (closestBush) {
+                const bushCenterX = closestBush.x + closestBush.width / 2;
+                const playerCenterX = this.player.x + this.player.width / 2;
+                const knockbackDirection = playerCenterX < bushCenterX ? -1 : 1;
+                this.takeDamage(knockbackDirection);
+            } else {
+                this.takeDamage(0); // No knockback if we can't find the bush
+            }
+        } else {
+            // Default damage handling for other hazard types
+            this.takeDamage(0);
         }
     }
     
@@ -1346,6 +1419,7 @@ class ArmorOfGodGame {
         
         // Render world platforms and objects
         this.worldManager.renderPlatforms(this.ctx);
+        this.worldManager.renderForegroundSprites(this.ctx, this.foregroundImages);
         this.worldManager.renderTemple(this.ctx, this.templeImage, this.castle);
         
         // Render game objects

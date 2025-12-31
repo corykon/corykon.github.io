@@ -270,6 +270,18 @@ class EnemyManager {
                 platformWidth: 500,
                 height: 150,
                 width: 225
+            }),
+            new Snail({
+                x: 11350,
+                y: 100,
+                platformX: 11250,
+                platformWidth: 500,
+            }),
+            new Snail({
+                x: 11450,
+                y: 100,
+                platformX: 11250,
+                platformWidth: 500,
             })
         );
     }
