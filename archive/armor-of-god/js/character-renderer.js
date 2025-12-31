@@ -78,7 +78,7 @@ class CharacterRenderer {
                     this.spritesLoaded = true;
                 }
             };
-            img.src = `images/main-char-frames/${spriteName}.png`;
+            img.src = `images/sprites/main-char/${spriteName}.png`;
             this.sprites[spriteName] = img;
         });
     }

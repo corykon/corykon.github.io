@@ -58,20 +58,20 @@ class EnemyManager {
         
         // Load defeat effect image
         this.defeatImage = new Image();
-        this.defeatImage.src = 'images/enemy-frames/bad-guy-defeated.png';
+        this.defeatImage.src = 'images/sprites/enemy/bad-guy-defeated.png';
     }
     
     loadSnailImages() {
         // Load 6-frame animation cycle
         for (let i = 1; i <= 6; i++) {
             const img = new Image();
-            img.src = `images/enemy-frames/snail-crawl${i}.png`;
+            img.src = `images/sprites/enemy/snail-crawl${i}.png`;
             this.snailImages[`crawl${i}`] = img;
         }
         
         // Load shell image
         const shellImg = new Image();
-        shellImg.src = 'images/enemy-frames/snail-shell.png';
+        shellImg.src = 'images/sprites/enemy/snail-shell.png';
         this.snailImages.shell = shellImg;
     }
     

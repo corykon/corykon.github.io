@@ -43,15 +43,15 @@ class ArmorOfGodGame {
         
         // Load images
         this.templeImage = new Image();
-        this.templeImage.src = 'images/temple.png';
+        this.templeImage.src = 'images/sprites/temple.png';
         this.bomImage = new Image();
-        this.bomImage.src = 'images/bom.png';
+        this.bomImage.src = 'images/sprites/bom.png';
         this.heartImage = new Image();
-        this.heartImage.src = 'images/heartUp.png';
+        this.heartImage.src = 'images/sprites/heartUp.png';
         this.arrowImage = new Image();
-        this.arrowImage.src = 'images/enemy-frames/fiery-arrow.png';
+        this.arrowImage.src = 'images/sprites/enemy/fiery-arrow.png';
         this.brokenArrowImage = new Image();
-        this.brokenArrowImage.src = 'images/enemy-frames/fiery-arrow-broken.png';
+        this.brokenArrowImage.src = 'images/sprites/enemy/fiery-arrow-broken.png';
         
         // Load foreground images
         this.foregroundImages = {};
@@ -143,6 +143,10 @@ class ArmorOfGodGame {
         this.deathTimer = 0;
         this.deathMessage = '';
         this.deathFreezeTime = 60;
+        
+        // Last safe platform tracking for pit respawn
+        this.lastSafePlatform = { x: 50, y: 378 }; // Default spawn position
+        this.lastSafePlatformTimer = 0; // Timer to prevent immediate updates
         
         // Initialize managers
         this.audioManager = new AudioManager();
@@ -563,6 +567,11 @@ class ArmorOfGodGame {
         this.isDying = false;
         this.deathTimer = 0;
         this.deathMessage = '';
+        
+        // Reset last safe platform tracking
+        this.lastSafePlatform = { x: 50, y: 378 }; // Default spawn position
+        this.lastSafePlatformTimer = 0;
+        
         this.isPaused = false;
         
         // Reset castle position for current level
@@ -598,7 +607,9 @@ class ArmorOfGodGame {
     loadForegroundImages() {
         // Load all foreground sprite images
         const foregroundSprites = [
-            'rooty-tree.png', 
+            'rooty-tree.png',
+            'pine-tree1.png',
+            'pine-tree2.png',
             'round-bush.png',
             'short-tree.png',
             'spiky-bush.png',
@@ -618,7 +629,7 @@ class ArmorOfGodGame {
         
         foregroundSprites.forEach(filename => {
             const img = new Image();
-            img.src = `images/foreground/${filename}`;
+            img.src = `images/sprites/foreground/${filename}`;
             this.foregroundImages[filename] = img;
         });
     }
@@ -905,12 +916,15 @@ class ArmorOfGodGame {
         if (this.player.y > this.canvas.height + 50) {
             // Play falling sound when falling into pit
             this.audioManager.playSound('falling');
-            this.startDeath('You fell into a pit! Stay on the platforms to survive.');
+            this.handlePitFall();
             return;
         }
         
         // Platform collisions for player (this will set isGrounded=true if landing on platform)
         this.worldManager.checkPlatformCollisions(this.player);
+        
+        // Update last safe platform position when player is grounded
+        this.updateLastSafePlatform();
         
         // Check for hazardous foreground sprite collisions
         const hazardCollision = this.worldManager.checkHazardCollisions(this.player);
@@ -1190,6 +1204,102 @@ class ArmorOfGodGame {
             this.deathMessage = message;
             this.gameState = 'dying';
         }
+    }
+    
+    updateLastSafePlatform() {
+        // Only update if player is grounded and has been stable for a few frames
+        if (this.player.isGrounded) {
+            this.lastSafePlatformTimer++;
+            
+            // After being grounded for 10 frames, update the safe position
+            if (this.lastSafePlatformTimer > 10) {
+                this.lastSafePlatform = {
+                    x: this.player.x,
+                    y: this.player.y
+                };
+            }
+        } else {
+            // Reset timer when not grounded
+            this.lastSafePlatformTimer = 0;
+        }
+    }
+    
+    handlePitFall() {
+        // Don't handle pit fall if already in damage/death state
+        if (this.player.invulnerable || this.isDying) return;
+        
+        // Always take damage from pit falls (even when armored)
+        this.player.health--;
+        this.damageTaken++;
+        
+        // Play hurt sound
+        this.audioManager.playSound('grunt1');
+        this.audioManager.playRandomThudSound();
+        
+        // Check if player dies from pit fall
+        if (this.player.health <= 0) {
+            this.startDeath('You fell into a pit! Stay on the platforms to survive.');
+            return;
+        }
+        
+        // Find a safe respawn position on a ground platform
+        let safePosition = this.findSafeRespawnPosition();
+        
+        // Respawn at safe position
+        this.player.x = safePosition.x;
+        this.player.y = safePosition.y - this.player.height; // Place on top of platform
+        this.player.velocityY = 0;
+        this.player.isGrounded = true;
+        this.player.isJumping = false;
+        
+        // Apply invulnerability for 2 seconds
+        this.player.invulnerable = true;
+        this.player.invulnerabilityTimer = 0;
+        this.player.invulnerabilityDuration = 120; // 2 seconds at 60fps
+        
+        // Update camera to new position
+        this.cameraX = Math.max(0, this.player.x - 300);
+    }
+    
+    findSafeRespawnPosition() {
+        // Find the most recent ground platform behind the player's current position
+        let bestPlatform = null;
+        let bestDistance = Infinity;
+        
+        // Look for ground platforms
+        for (let platform of this.worldManager.platforms) {
+            if (platform.type === 'ground' && platform.x < this.player.x) {
+                const distance = this.player.x - (platform.x + platform.width/2);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestPlatform = platform;
+                }
+            }
+        }
+        
+        // If no ground platform found behind player, use the closest one ahead
+        if (!bestPlatform) {
+            for (let platform of this.worldManager.platforms) {
+                if (platform.type === 'ground') {
+                    const distance = Math.abs(this.player.x - (platform.x + platform.width/2));
+                    if (distance < bestDistance) {
+                        bestDistance = distance;
+                        bestPlatform = platform;
+                    }
+                }
+            }
+        }
+        
+        // Default to starting position if no platform found
+        if (!bestPlatform) {
+            return { x: 50, y: 468 };
+        }
+        
+        // Return center of the platform
+        return {
+            x: bestPlatform.x + bestPlatform.width/2 - this.player.width/2,
+            y: bestPlatform.y
+        };
     }
     
     activateArmor() {
@@ -1563,7 +1673,7 @@ class ArmorOfGodGame {
         
         // Set up pet image based on selected pet type
         const petType = this.selectedPet === 'cat' ? 'cat' : 'dog';
-        petImgEl.src = `images/main-char-frames/${petType}-run1.png`;
+        petImgEl.src = `images/sprites/main-char/${petType}-run1.png`;
         
         // Show the runners and start the animation
         runnersEl.classList.remove('hidden');
@@ -1575,13 +1685,13 @@ class ArmorOfGodGame {
             // Player has 14 running frames (like in game)
             playerAnimFrame = (playerAnimFrame + 1) % 14;
             const playerFrameNum = playerAnimFrame + 1;
-            playerImgEl.src = `images/main-char-frames/run${playerFrameNum}.png`;
+            playerImgEl.src = `images/sprites/main-char/run${playerFrameNum}.png`;
             
             // Pet frames depend on type (like in game)
             const maxPetFrames = petType === 'cat' ? 4 : 5;
             petAnimFrame = (petAnimFrame + 1) % maxPetFrames;
             const petFrameNum = petAnimFrame + 1;
-            petImgEl.src = `images/main-char-frames/${petType}-run${petFrameNum}.png`;
+            petImgEl.src = `images/sprites/main-char/${petType}-run${petFrameNum}.png`;
         }, 80); // Same timing as game animations
         
         // Stop animation when CSS animation completes (2.56s)

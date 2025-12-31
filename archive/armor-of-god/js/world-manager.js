@@ -391,16 +391,17 @@ class WorldManager {
         this.foregroundSprites = [
             { x: 100, y: 430, width: 100, height: 40, image: 'long-bush.png' },
             { x: 380, y: 430, width: 40, height: 40, image: 'round-bush.png' },
+            { x: 440, y: 430, width: 40, height: 40, image: 'round-bush.png' },
             { x: 250, y: 320, width: 150, height: 150, image: 'short-tree.png' },
             { x: 800, y: 430, width: 100, height: 40, image: 'long-bush.png' },
             
             { x: 1940, y: 255, width: 55, height: 55, image: 'spiky-bush.png', hazard: true, damage: 1 },
             
-            { x: 2450, y: 310, width: 180, height: 180, image: 'rooty-tree.png' },
+            { x: 2550, y: 340, width: 150, height: 150, image: 'rooty-tree.png' },
             { x: 3100, y: 425, width: 55, height: 55, image: 'spiky-bush.png', hazard: true, damage: 1 },
             { x: 3200, y: 425, width: 55, height: 55, image: 'spiky-bush.png', hazard: true, damage: 1 },
             
-            
+            { x: 3640, y: 355, width: 70, height: 120, image: 'pine-tree1.png' },
             { x: 4020, y: 430, width: 40, height: 40, image: 'round-bush.png' },
             { x: 4070, y: 430, width: 40, height: 40, image: 'round-bush.png' },
             { x: 4120, y: 430, width: 40, height: 40, image: 'round-bush.png' },
