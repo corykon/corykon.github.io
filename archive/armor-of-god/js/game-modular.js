@@ -461,8 +461,8 @@ class ArmorOfGodGame {
         const levelTime = this.getLevelTime();
         const targetTime = {
             1: 1800, // 30 seconds (1800 frames at 60fps)
-            2: 2400, // 40 seconds
-            3: 3000  // 50 seconds
+            2: 2700, // 45 seconds
+            3: 3900  // 65 seconds
         };
         
         const target = targetTime[this.level] || 3000;
@@ -608,17 +608,20 @@ class ArmorOfGodGame {
         // Load all foreground sprite images
         const foregroundSprites = [
             'rooty-tree.png',
-            'pine-tree1.png',
-            'pine-tree2.png',
+            'pine-tree-1.png',
+            'pine-tree-2.png',
+            'rock-1.png',
+            'rock-2.png',
+            'rock-3.png',
             'round-bush.png',
             'short-tree.png',
-            'spiky-bush.png',
+            'spikey-bush.png',
             'tall-tree.png',
             'long-bush.png',
             'jungle-bush.png',
             'jungle-foilage-1.png',
-            'jungle-foilage2.png',
-            'jungle-foilage3.png',
+            'jungle-foilage-2.png',
+            'jungle-foilage-3.png',
             'jungle-tree-1.png',
             'jungle-tree-2.png',
             'jungle-tree-3.png',
@@ -1165,13 +1168,13 @@ class ArmorOfGodGame {
     handlePlayerDamage(damage, hazardType) {
         // Handle damage from environmental hazards
         if (hazardType === 'spike') {
-            // Calculate knockback direction away from the spiky bush
-            // Find the closest spiky bush to determine knockback direction
+            // Calculate knockback direction away from the spikey bush
+            // Find the closest spikey bush to determine knockback direction
             let closestBush = null;
             let closestDistance = Infinity;
             
             for (let sprite of this.worldManager.foregroundSprites) {
-                if (sprite.hazard && sprite.image === 'spiky-bush.png') {
+                if (sprite.hazard && sprite.image === 'spikey-bush.png') {
                     const bushCenterX = sprite.x + sprite.width / 2;
                     const playerCenterX = this.player.x + this.player.width / 2;
                     const distance = Math.abs(bushCenterX - playerCenterX);
@@ -1262,13 +1265,17 @@ class ArmorOfGodGame {
     }
     
     findSafeRespawnPosition() {
-        // Find the most recent ground platform behind the player's current position
+        // Find the most recent solid platform behind the player's current position
         let bestPlatform = null;
         let bestDistance = Infinity;
         
-        // Look for ground platforms
+        // Look for solid platforms (ground, rock, tree_platform) behind the player
         for (let platform of this.worldManager.platforms) {
-            if (platform.type === 'ground' && platform.x < this.player.x) {
+            // Include all solid platform types, exclude small floating platforms
+            const isSolidPlatform = (platform.type === 'ground' || platform.type === 'rock' || platform.type === 'tree_platform') 
+                                   && platform.width >= 100; // Exclude tiny platforms
+            
+            if (isSolidPlatform && platform.x < this.player.x) {
                 const distance = this.player.x - (platform.x + platform.width/2);
                 if (distance < bestDistance) {
                     bestDistance = distance;
@@ -1277,10 +1284,13 @@ class ArmorOfGodGame {
             }
         }
         
-        // If no ground platform found behind player, use the closest one ahead
+        // If no solid platform found behind player, use the closest one ahead
         if (!bestPlatform) {
             for (let platform of this.worldManager.platforms) {
-                if (platform.type === 'ground') {
+                const isSolidPlatform = (platform.type === 'ground' || platform.type === 'rock' || platform.type === 'tree_platform') 
+                                       && platform.width >= 100; // Exclude tiny platforms
+                
+                if (isSolidPlatform) {
                     const distance = Math.abs(this.player.x - (platform.x + platform.width/2));
                     if (distance < bestDistance) {
                         bestDistance = distance;
@@ -1295,10 +1305,10 @@ class ArmorOfGodGame {
             return { x: 50, y: 468 };
         }
         
-        // Return center of the platform
+        // Return center of the platform, positioned on top
         return {
             x: bestPlatform.x + bestPlatform.width/2 - this.player.width/2,
-            y: bestPlatform.y
+            y: bestPlatform.y - this.player.height
         };
     }
     

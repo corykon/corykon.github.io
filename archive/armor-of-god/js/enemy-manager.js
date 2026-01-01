@@ -265,25 +265,28 @@ class EnemyManager {
             }),
             new Snail({
                 x: 11250,
-                y: 100,
+                y: 292, // Platform at y=450 minus snail height of 150 minus ground offset of 8 = 292
                 platformX: 11250,
-                platformWidth: 500,
+                platformWidth: 750, // Updated to match actual platform width
                 height: 150,
                 width: 225
             }),
             new Snail({
                 x: 11350,
-                y: 100,
+                y: 392, // Platform at y=450 minus snail height of 50 minus ground offset of 8 = 392
                 platformX: 11250,
-                platformWidth: 500,
+                platformWidth: 750, // Updated to match actual platform width
             }),
             new Snail({
                 x: 11450,
-                y: 100,
+                y: 392, // Platform at y=450 minus snail height of 50 minus ground offset of 8 = 392
                 platformX: 11250,
-                platformWidth: 500,
+                platformWidth: 750, // Updated to match actual platform width
             })
         );
+        
+        // Set isMega property for the large snail
+        this.snails.find(snail => snail.width === 225 && snail.height === 150).isMega = true;
     }
 
     update(player, worldManager, gameState, cameraX = 0, screenWidth = 1200) {

@@ -188,8 +188,8 @@ class WorldManager {
         this.platforms = [
             // SECTION 1: Base level (ground at 468)
             { x: 0, y: 500, width: 500, height: 135, type: 'rock' },
-            { x: 500, y: 460, width: 250, height: 175, type: 'rock' },
-            { x: 750, y: 420, width: 250, height: 215, type: 'rock' },
+            { x: 500, y: 460, width: 250, height: 175, type: 'rock', blockSides: true },
+            { x: 750, y: 420, width: 250, height: 215, type: 'rock', blockSides: true },
             
             // Floating platforms to help ascend to next level
             { x: 1200, y: 380, width: 200, height: 30, type: 'rock_platform' },
@@ -204,10 +204,10 @@ class WorldManager {
             { x: 3800, y: 320, width: 200, height: 320, type: 'rock' },
             { x: 4200, y: 240, width: 200, height: 400, type: 'rock' },
 
-            { x: 4600, y: 180, width: 400, height: 460, type: 'rock' },
-            { x: 5000, y: 260, width: 100, height: 400, type: 'rock' },
-            { x: 5100, y: 340, width: 100, height: 400, type: 'rock' },
-            { x: 5200, y: 420, width: 100, height: 400, type: 'rock' },
+            { x: 4600, y: 180, width: 400, height: 460, type: 'rock', blockSides: true },
+            { x: 5000, y: 260, width: 100, height: 400, type: 'rock', blockSides: true },
+            { x: 5100, y: 340, width: 100, height: 400, type: 'rock', blockSides: true },
+            { x: 5200, y: 420, width: 100, height: 400, type: 'rock', blockSides: true },
             { x: 5300, y: 500, width: 500, height: 400, type: 'rock' },
             
             // Floating platforms on this higher level
@@ -220,15 +220,15 @@ class WorldManager {
             { x: 8500, y: 500, width: 1500, height: 200, type: 'rock' },
             
             // SECTION 5: Final ascent to temple level (ground at 240) - highest elevation
-            { x: 10000, y: 300, width: 400, height: 363, type: 'rock' }, // Base stepping stone
+            { x: 10000, y: 300, width: 400, height: 363, type: 'rock', blockSides: true }, // Base stepping stone
             
             { x: 10600, y: 360, width: 300, height: 25, type: 'rock_platform' },
             { x: 11000, y: 160, width: 90, height: 20, type: 'rock_platform' }, // heart platform
             
             // Mega Snail Pit
-            { x: 11200, y: 240, width: 50, height: 383, type: 'rock' },
+            { x: 11200, y: 240, width: 50, height: 383, type: 'rock', blockSides: true }, // Left wall
             { x: 11250, y: 450, width: 750, height: 383, type: 'rock' },
-            { x: 12000, y: 240, width: 200, height: 383, type: 'rock' },
+            { x: 12000, y: 240, width: 200, height: 383, type: 'rock', blockSides: true }, // Right wall
             
             
             // Additional floating platforms for variety and challenge
@@ -384,6 +384,7 @@ class WorldManager {
             this.createLevel2ForegroundSprites();
         } else if (this.currentLevel === 3) {
             this.createLevel3ForegroundSprites();
+            this.addRockSpritePlatforms();
         }
     }
     
@@ -395,13 +396,14 @@ class WorldManager {
             { x: 250, y: 320, width: 150, height: 150, image: 'short-tree.png' },
             { x: 800, y: 430, width: 100, height: 40, image: 'long-bush.png' },
             
-            { x: 1940, y: 255, width: 55, height: 55, image: 'spiky-bush.png', hazard: true, damage: 1 },
+            { x: 1940, y: 255, width: 55, height: 55, image: 'spikey-bush.png', hazard: true, damage: 1 },
             
-            { x: 2550, y: 340, width: 150, height: 150, image: 'rooty-tree.png' },
-            { x: 3100, y: 425, width: 55, height: 55, image: 'spiky-bush.png', hazard: true, damage: 1 },
-            { x: 3200, y: 425, width: 55, height: 55, image: 'spiky-bush.png', hazard: true, damage: 1 },
+            { x: 2550, y: 340, width: 130, height: 130, image: 'short-tree.png' },
+            { x: 3100, y: 425, width: 55, height: 55, image: 'spikey-bush.png', hazard: true, damage: 1 },
+            { x: 3200, y: 425, width: 55, height: 55, image: 'spikey-bush.png', hazard: true, damage: 1 },
             
-            { x: 3640, y: 355, width: 70, height: 120, image: 'pine-tree1.png' },
+            { x: 3610, y: 355, width: 70, height: 120, image: 'pine-tree-1.png' },
+            { x: 3700, y: 355, width: 70, height: 120, image: 'pine-tree-1.png' },
             { x: 4020, y: 430, width: 40, height: 40, image: 'round-bush.png' },
             { x: 4070, y: 430, width: 40, height: 40, image: 'round-bush.png' },
             { x: 4120, y: 430, width: 40, height: 40, image: 'round-bush.png' },
@@ -426,9 +428,9 @@ class WorldManager {
             { x: 600, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
             { x: 720, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
             { x: 350, y: 380, width: 100, height: 100, image: 'jungle-bush.png' },
-            { x: 500, y: 430, width: 200, height: 38, image: 'jungle-foilage2.png' },
+            { x: 500, y: 430, width: 200, height: 38, image: 'jungle-foilage-2.png' },
             { x: 650, y: 270, width: 220, height: 220, image: 'jungle-tree-6.png' },
-            { x: 800, y: 440, width: 160, height: 45, image: 'jungle-foilage3.png' },
+            { x: 800, y: 440, width: 160, height: 45, image: 'jungle-foilage-3.png' },
             
             // First long flat section (1900-5900)
             // Base foilage-1 layer covering entire ground
@@ -452,24 +454,24 @@ class WorldManager {
             { x: 5670, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
             // Decorative elements on top of base layer
             { x: 1950, y: 290, width: 180, height: 180, image: 'jungle-tree-6.png' },
-            { x: 2200, y: 430, width: 240, height: 46, image: 'jungle-foilage2.png' },
+            { x: 2200, y: 430, width: 240, height: 46, image: 'jungle-foilage-2.png' },
             { x: 2400, y: 428, width: 200, height: 65, image: 'jungle-foilage-1.png' },
             { x: 2520, y: 300, width: 180, height: 180, image: 'jungle-tree-4.png' },
-            { x: 2800, y: 423, width: 160, height: 45, image: 'jungle-foilage3.png' },
+            { x: 2800, y: 423, width: 160, height: 45, image: 'jungle-foilage-3.png' },
             { x: 3000, y: 280, width: 200, height: 200, image: 'jungle-tree-2.png' },
             { x: 3250, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
-            { x: 3450, y: 430, width: 200, height: 38, image: 'jungle-foilage2.png' },
+            { x: 3450, y: 430, width: 200, height: 38, image: 'jungle-foilage-2.png' },
             { x: 3650, y: 400, width: 100, height: 100, image: 'jungle-bush.png' },
             { x: 3750, y: 250, width: 230, height: 230, image: 'jungle-tree-5.png' },
-            { x: 4100, y: 423, width: 160, height: 45, image: 'jungle-foilage3.png' },
+            { x: 4100, y: 423, width: 160, height: 45, image: 'jungle-foilage-3.png' },
             { x: 4250, y: 430, width: 240, height: 46, image: 'jungle-foilage-1.png' },
             { x: 4450, y: 320, width: 180, height: 180, image: 'jungle-tree-3.png' },
-            { x: 4700, y: 428, width: 200, height: 65, image: 'jungle-foilage2.png' },
+            { x: 4700, y: 428, width: 200, height: 65, image: 'jungle-foilage-2.png' },
             { x: 4900, y: 400, width: 100, height: 100, image: 'jungle-bush.png' },
-            { x: 5050, y: 430, width: 160, height: 38, image: 'jungle-foilage3.png' },
+            { x: 5050, y: 430, width: 160, height: 38, image: 'jungle-foilage-3.png' },
             { x: 5200, y: 220, width: 260, height: 260, image: 'jungle-tree-6.png' },
             { x: 5500, y: 423, width: 240, height: 45, image: 'jungle-foilage-1.png' },
-            { x: 5700, y: 430, width: 200, height: 38, image: 'jungle-foilage2.png' },
+            { x: 5700, y: 430, width: 200, height: 38, image: 'jungle-foilage-2.png' },
             
             // Mid-section ground (6600-7000)
             // Base foilage-1 layer
@@ -479,7 +481,7 @@ class WorldManager {
             // Decorative elements on top
             { x: 6650, y: 390, width: 100, height: 100, image: 'jungle-bush.png' },
             { x: 6800, y: 290, width: 200, height: 200, image: 'jungle-tree-1.png' },
-            { x: 6750, y: 428, width: 160, height: 65, image: 'jungle-foilage3.png' },
+            { x: 6750, y: 428, width: 160, height: 65, image: 'jungle-foilage-3.png' },
             
             // Final approach ground (8600-9100)
             // Base foilage-1 layer
@@ -488,7 +490,7 @@ class WorldManager {
             { x: 8875, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
             // Decorative elements on top
             { x: 8650, y: 280, width: 180, height: 180, image: 'jungle-tree-2.png' },
-            { x: 8880, y: 428, width: 160, height: 45, image: 'jungle-foilage2.png' },
+            { x: 8880, y: 428, width: 160, height: 45, image: 'jungle-foilage-2.png' },
             
             // Long ground section (10000-10700)
             // Base foilage-1 layer
@@ -498,7 +500,7 @@ class WorldManager {
             { x: 10470, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
             // Decorative elements on top
             { x: 10250, y: 300, width: 160, height: 160, image: 'jungle-tree-4.png' },
-            { x: 10500, y: 428, width: 200, height: 65, image: 'jungle-foilage3.png' },
+            { x: 10500, y: 428, width: 200, height: 65, image: 'jungle-foilage-3.png' },
             
             // More ground section (12000-12600)
             // Base foilage-1 layer
@@ -508,7 +510,7 @@ class WorldManager {
             { x: 12370, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
             // Decorative elements on top
             { x: 12050, y: 300, width: 180, height: 180, image: 'jungle-tree-3.png' },
-            { x: 12400, y: 430, width: 160, height: 38, image: 'jungle-foilage3.png' },
+            { x: 12400, y: 430, width: 160, height: 38, image: 'jungle-foilage-3.png' },
             
             // Final ground section (12900-13800)
             // Base foilage-1 layer
@@ -517,10 +519,10 @@ class WorldManager {
             { x: 13350, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
             { x: 13575, y: 428, width: 240, height: 65, image: 'jungle-foilage-1.png' },
             // Decorative elements on top
-            { x: 13070, y: 430, width: 160, height: 38, image: 'jungle-foilage3.png' },
+            { x: 13070, y: 430, width: 160, height: 38, image: 'jungle-foilage-3.png' },
             { x: 13100, y: 230, width: 260, height: 260, image: 'jungle-tree-6.png' },
             { x: 13450, y: 448, width: 100, height: 20, image: 'jungle-foilage-1.png' },
-            { x: 13600, y: 445, width: 120, height: 23, image: 'jungle-foilage2.png' },
+            { x: 13600, y: 445, width: 120, height: 23, image: 'jungle-foilage-2.png' },
             
             // Temple approach and clearing (15800-18000)
             // Base foilage-1 layer covering entire temple approach
@@ -537,10 +539,10 @@ class WorldManager {
             // Decorative elements on top
             { x: 15850, y: 240, width: 230, height: 230, image: 'jungle-tree-5.png' },
             { x: 16100, y: 448, width: 120, height: 20, image: 'jungle-foilage-1.png' },
-            { x: 16300, y: 445, width: 80, height: 23, image: 'jungle-foilage3.png' },
+            { x: 16300, y: 445, width: 80, height: 23, image: 'jungle-foilage-3.png' },
             { x: 16500, y: 390, width: 100, height: 100, image: 'jungle-bush.png' },
             { x: 16750, y: 340, width: 140, height: 140, image: 'jungle-tree-4.png' },
-            { x: 17000, y: 448, width: 100, height: 20, image: 'jungle-foilage2.png' },
+            { x: 17000, y: 448, width: 100, height: 20, image: 'jungle-foilage-2.png' },
             { x: 17450, y: 445, width: 120, height: 23, image: 'jungle-foilage-1.png' },
             { x: 17650, y: 290, width: 200, height: 200, image: 'jungle-tree-6.png' },
             { x: 17120, y: 390, width: 100, height: 100, image: 'jungle-bush.png' },
@@ -550,8 +552,94 @@ class WorldManager {
     
     createLevel3ForegroundSprites() {
         this.foregroundSprites = [
-            // Placeholder for level 3 - will add mountain-themed sprites later
+            // Base section (0-1000) - lower elevation - platforms at Y=500
+            { x: 100, y: 340, width: 120, height: 160, image: 'pine-tree-1.png' },
+            { x: 200, y: 355, width: 100, height: 145, image: 'pine-tree-1.png' },
+            { x: 320, y: 455, width: 50, height: 50, image: 'rock-1.png' },
+            { x: 380, y: 340, width: 120, height: 160, image: 'pine-tree-1.png' },
+            { x: 660, y: 405, width: 60, height: 60, image: 'spikey-bush.png', hazard: true, damage: 1 },
+            { x: 820, y: 280, width: 100, height: 140, image: 'pine-tree-2.png' },
+            { x: 920, y: 262, width: 120, height: 160, image: 'pine-tree-2.png' },
+            
+            // Mid-level section (1950-2750) - ascending platforms at Y=220
+            // Pine tree cluster 3 - multiple pine-tree-1
+            { x: 2000, y: 40, width: 140, height: 180, image: 'pine-tree-1.png' },
+            { x: 2140, y: 92, width: 90, height: 130, image: 'pine-tree-1.png' },
+            { x: 2450, y: 100, width: 100, height: 130, image: 'rooty-tree.png' },
+            
+            // Stepped platforms section (3000-4600) - platforms at Y=400
+            { x: 3100, y: 242, width: 120, height: 160, image: 'pine-tree-1.png' },
+            
+            { x: 3450, y: 252, width: 110, height: 150, image: 'pine-tree-2.png' },
+            
+            // Platform at Y=240
+            { x: 4250, y: 80, width: 140, height: 160, image: 'pine-tree-1.png' },
+            
+            // High plateau section (4600-6000) - platform at Y=180  
+            // Pine tree cluster 4 - multiple pine-tree-1
+            { x: 4650, y: 20, width: 140, height: 160, image: 'pine-tree-1.png' },
+            { x: 4750, y: 80, width: 120, height: 100, image: 'pine-tree-1.png' },
+            { x: 4840, y: 30, width: 120, height: 150, image: 'pine-tree-1.png' },
+            
+            { x: 5120, y: 285, width: 60, height: 60, image: 'spikey-bush.png', hazard: true, damage: 1 },
+            
+            
+            // Ground level platforms at Y=500
+            { x: 5500, y: 380, width: 100, height: 130, image: 'rooty-tree.png' },
+            
+            // Final ground section (8500-10000) - dense rocky area before temple - platforms at Y=500
+            // Pine tree cluster 7 - multiple pine-tree-1  
+            { x: 8550, y: 342, width: 130, height: 160, image: 'pine-tree-1.png' },
+            { x: 8690, y: 362, width: 110, height: 140, image: 'pine-tree-1.png' },
+            { x: 8800, y: 360, width: 110, height: 140, image: 'pine-tree-1.png' },
+            { x: 8820, y: 402, width: 90, height: 100, image: 'pine-tree-1.png' },
+            { x: 8860, y: 392, width: 90, height: 110, image: 'pine-tree-1.png' },
+            { x: 8920, y: 402, width: 90, height: 100, image: 'pine-tree-1.png' },
+            { x: 9000, y: 445, width: 60, height: 60, image: 'rock-1.png' },
+            { x: 9250, y: 445, width: 60, height: 60, image: 'spikey-bush.png', hazard: true, damage: 1 },
+            
+            // Pine tree cluster 8 - mixed with rooty tree
+            { x: 9400, y: 320, width: 120, height: 180, image: 'pine-tree-2.png' },
+            { x: 9520, y: 375, width: 90, height: 130, image: 'pine-tree-2.png' },
+            { x: 10200, y: 180, width: 100, height: 130, image: 'rooty-tree.png' },
+            
+            // Temple approach section (12200-15000) - majestic peak - platforms at Y=240
+            // Pine tree cluster 9 - multiple pine-tree-1
+            { x: 12250, y: 82, width: 140, height: 160, image: 'pine-tree-1.png' },
+            { x: 12400, y: 57, width: 130, height: 185, image: 'pine-tree-1.png' },
+            { x: 12540, y: 92, width: 120, height: 150, image: 'pine-tree-1.png' },
+            { x: 12700, y: 152, width: 90, height: 90, image: 'pine-tree-2.png' },
+            
+            { x: 12850, y: 87, width: 120, height: 155, image: 'pine-tree-1.png' },
+            { x: 12800, y: 65, width: 110, height: 180, image: 'pine-tree-2.png' },
+            
+            // Pine tree cluster 10 - multiple pine-tree-2 with rooty tree
+            { x: 13400, y: 87, width: 130, height: 155, image: 'pine-tree-2.png' },
+            { x: 13540, y: 92, width: 120, height: 150, image: 'pine-tree-2.png' },
+            
+            // Final pine tree cluster 11 - mixed types for temple majesty
+            { x: 14070, y: 92, width: 110, height: 150, image: 'pine-tree-2.png' },
+            { x: 13950, y: 137, width: 120, height: 100, image: 'pine-tree-1.png' },
+            { x: 14070, y: 137, width: 110, height: 100, image: 'pine-tree-2.png' },
+            { x: 14500, y: 82, width: 130, height: 160, image: 'pine-tree-1.png' },
+            { x: 14630, y: 87, width: 120, height: 155, image: 'pine-tree-2.png' },
         ];
+    }
+
+    addRockSpritePlatforms() {
+        // Dynamically add invisible rock_sprite platforms that match rock foreground sprites
+        this.foregroundSprites.forEach(sprite => {
+            if (sprite.image.includes('rock-')) {
+                // Add an invisible platform that matches the rock sprite's position and size
+                this.platforms.push({
+                    x: sprite.x,
+                    y: sprite.y,
+                    width: sprite.width,
+                    height: sprite.height,
+                    type: 'rock_sprite'
+                });
+            }
+        });
     }
     
     renderBackground(ctx, cameraX, canvasWidth, canvasHeight) {
@@ -650,38 +738,52 @@ class WorldManager {
         // Calculate progress through level (0 = night at start, 1 = day at end)
         const progress = Math.min(cameraX / (this.worldWidth - 800), 1);
         
-        // Create gradient that transitions from night to sunrise to day
+        // Create gradient that smoothly transitions from night to day
         const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
         
-        if (progress < 0.3) {
-            // Night phase (0-30% of level)
-            const nightProgress = progress / 0.3;
-            const starFade = 1 - nightProgress * 0.3; // Stars fade slowly
-            
-            gradient.addColorStop(0, `rgba(${5 + nightProgress * 10}, ${5 + nightProgress * 10}, ${25 + nightProgress * 20}, 1)`); // Very dark blue to dark blue
-            gradient.addColorStop(0.6, `rgba(${2 + nightProgress * 8}, ${2 + nightProgress * 8}, ${15 + nightProgress * 15}, 1)`);
-            gradient.addColorStop(1, `rgba(${0 + nightProgress * 5}, ${0 + nightProgress * 5}, ${8 + nightProgress * 12}, 1)`);
-            
-        } else if (progress < 0.7) {
-            // Sunrise phase (30-70% of level)
-            const sunriseProgress = (progress - 0.3) / 0.4;
-            
-            // Warm sunrise colors
-            gradient.addColorStop(0, `rgb(${50 + sunriseProgress * 100}, ${30 + sunriseProgress * 80}, ${60 + sunriseProgress * 100})`);
-            gradient.addColorStop(0.3, `rgb(${100 + sunriseProgress * 100}, ${50 + sunriseProgress * 100}, ${80 + sunriseProgress * 80})`);
-            gradient.addColorStop(0.6, `rgb(${150 + sunriseProgress * 80}, ${90 + sunriseProgress * 100}, ${70 + sunriseProgress * 100})`);
-            gradient.addColorStop(1, `rgb(${120 + sunriseProgress * 80}, ${80 + sunriseProgress * 100}, ${60 + sunriseProgress * 120})`);
-            
+        // Simple smooth color interpolation based on progress
+        const nightColors = {
+            top: [5, 5, 25],
+            mid: [2, 2, 15], 
+            bottom: [0, 0, 8]
+        };
+        
+        const sunriseColors = {
+            top: [150, 100, 160],
+            mid: [200, 120, 140],
+            bottom: [180, 90, 120]
+        };
+        
+        const dayColors = {
+            top: [135, 206, 235],
+            mid: [176, 224, 230],
+            bottom: [230, 243, 255]
+        };
+        
+        // Interpolate colors based on progress
+        let colors;
+        if (progress < 0.5) {
+            // Night to sunrise (0-50%)
+            const t = progress * 2; // 0-1
+            colors = {
+                top: nightColors.top.map((n, i) => n + (sunriseColors.top[i] - n) * t),
+                mid: nightColors.mid.map((n, i) => n + (sunriseColors.mid[i] - n) * t),
+                bottom: nightColors.bottom.map((n, i) => n + (sunriseColors.bottom[i] - n) * t)
+            };
         } else {
-            // Day phase (70-100% of level)
-            const dayProgress = (progress - 0.7) / 0.3;
-            
-            // Clear mountain day sky
-            gradient.addColorStop(0, `rgb(${135 + dayProgress * 20}, ${206 + dayProgress * 29}, ${235 + dayProgress * 20})`); // Sky blue
-            gradient.addColorStop(0.4, `rgb(${176 + dayProgress * 40}, ${224 + dayProgress * 26}, ${230 + dayProgress * 25})`); // Powder blue
-            gradient.addColorStop(0.8, `rgb(${230 + dayProgress * 25}, ${243 + dayProgress * 12}, ${255})`); // Light blue
-            gradient.addColorStop(1, `rgb(${240 + dayProgress * 15}, ${248 + dayProgress * 7}, ${255})`); // Alice blue
+            // Sunrise to day (50-100%)
+            const t = (progress - 0.5) * 2; // 0-1
+            colors = {
+                top: sunriseColors.top.map((s, i) => s + (dayColors.top[i] - s) * t),
+                mid: sunriseColors.mid.map((s, i) => s + (dayColors.mid[i] - s) * t),
+                bottom: sunriseColors.bottom.map((s, i) => s + (dayColors.bottom[i] - s) * t)
+            };
         }
+        
+        // Create gradient with interpolated colors
+        gradient.addColorStop(0, `rgb(${Math.round(colors.top[0])}, ${Math.round(colors.top[1])}, ${Math.round(colors.top[2])})`);
+        gradient.addColorStop(0.4, `rgb(${Math.round(colors.mid[0])}, ${Math.round(colors.mid[1])}, ${Math.round(colors.mid[2])})`);
+        gradient.addColorStop(1, `rgb(${Math.round(colors.bottom[0])}, ${Math.round(colors.bottom[1])}, ${Math.round(colors.bottom[2])})`);
         
         ctx.fillStyle = gradient;
         ctx.fillRect(cameraX, 0, canvasWidth, canvasHeight);
@@ -690,9 +792,9 @@ class WorldManager {
         this.renderMountainPeaks(ctx, cameraX, canvasWidth, canvasHeight, progress);
         
         // Add sun/moon based on progress
-        if (progress < 0.2) {
+        if (progress < 0.3) {
             this.renderMountainMoon(ctx, cameraX, canvasWidth, canvasHeight, progress);
-        } else if (progress > 0.3) {
+        } else if (progress > 0.4) {
             this.renderMountainSun(ctx, cameraX, canvasWidth, canvasHeight, progress);
         }
     }
@@ -972,6 +1074,10 @@ class WorldManager {
                     }
                     break;
                     
+                case 'rock_sprite':
+                    // Invisible platform type - no rendering, just collision
+                    break;
+                    
                 default:
                     // Default rocky style
                     ctx.fillStyle = '#696969';
@@ -1157,6 +1263,9 @@ class WorldManager {
     checkPlatformCollisions(entity) {
         let onGroundPlatform = false;
         
+        // First check side collisions to prevent walking through platform walls
+        this.checkPlatformSideCollisions(entity);
+        
         // Check ground collision - only when falling down and properly landing on top
         if (entity.velocityY >= 0) {
             // Check if entity is landing on top of ground-level platform
@@ -1210,6 +1319,39 @@ class WorldManager {
         });
         
         return onGroundPlatform;
+    }
+
+    checkPlatformSideCollisions(entity) {
+        // Check for side collisions only on platforms with blockSides property
+        this.platforms.forEach(platform => {
+            // Only check platforms that have blockSides set to true
+            if (!platform.blockSides) return;
+            
+            // Check if entity is vertically overlapping with the platform
+            const entityBottom = entity.y + entity.height;
+            const entityTop = entity.y;
+            const platformTop = platform.y;
+            const platformBottom = platform.y + platform.height;
+            
+            const verticalOverlap = entityBottom - 20 > platformTop && entityTop < platformBottom;
+            
+            if (verticalOverlap) {
+                const entityLeft = entity.x;
+                const entityRight = entity.x + entity.width;
+                const platformLeft = platform.x;
+                const platformRight = platform.x + platform.width;
+                
+                // Left side collision (entity trying to move right into platform)
+                if (entityRight > platformLeft && entityLeft < platformLeft) {
+                    entity.x = platformLeft - entity.width;
+                }
+                
+                // Right side collision (entity trying to move left into platform)
+                if (entityLeft < platformRight && entityRight > platformRight) {
+                    entity.x = platformRight;
+                }
+            }
+        });
     }
     
     reset() {
