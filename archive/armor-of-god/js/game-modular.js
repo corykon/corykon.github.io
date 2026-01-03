@@ -854,10 +854,12 @@ class ArmorOfGodGame {
             this.hasArmor, 
             this.cameraX, 
             this.canvas.width, 
-            this.gameState
+            this.gameState,
+            this.inputHandler,
+            this.getCurrentJumpPower()
         );
         
-        this.enemyManager.update(this.player, this.worldManager, this.gameState, this.cameraX, this.canvas.width);
+        this.enemyManager.update(this.player, this.worldManager, this.gameState, this.cameraX, this.canvas.width, this.inputHandler, () => this.getCurrentJumpPower());
         
         // Handle temple entrance sequence
         if (this.gameState === 'enteringTemple') {
@@ -1083,7 +1085,7 @@ class ArmorOfGodGame {
         if (this.gameState !== 'playing' && this.gameState !== 'dying') return;
         
         // Arrow collisions
-        const hitArrows = this.arrowManager.checkCollisions(this.player, this.hasArmor);
+        const hitArrows = this.arrowManager.checkCollisions(this.player, this.hasArmor, this.inputHandler, this.getCurrentJumpPower());
         if (hitArrows.length > 0) {
             // Add score for breaking arrows when armored
             if (this.hasArmor) {
@@ -1123,7 +1125,7 @@ class ArmorOfGodGame {
         }
         
         // Enemy collisions
-        const hitEnemies = this.enemyManager.checkCollisions(this.player, this.hasArmor);
+        const hitEnemies = this.enemyManager.checkCollisions(this.player, this.hasArmor, this.inputHandler, () => this.getCurrentJumpPower());
         if (hitEnemies.length > 0) {
             // Add score for defeating enemies when armored
             if (this.hasArmor) {

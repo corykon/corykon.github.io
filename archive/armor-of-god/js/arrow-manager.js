@@ -87,7 +87,7 @@ class ArrowManager {
         this.arrows.push(newArrow);
     }
     
-    update(player, castle, hasArmor, cameraX, canvasWidth, gameState) {
+    update(player, castle, hasArmor, cameraX, canvasWidth, gameState, inputHandler = null, currentJumpPower = null) {
         if (gameState !== 'playing') return;
         
         // Update arrows
@@ -225,7 +225,7 @@ class ArrowManager {
         });
     }
     
-    checkCollisions(player, hasArmor) {
+    checkCollisions(player, hasArmor, inputHandler = null, currentJumpPower = null) {
         const collisions = [];
         
         this.arrows.forEach(arrow => {
@@ -258,8 +258,12 @@ class ArrowManager {
                 if (verticalOverlap && comingFromAbove && horizontalAlignment && downwardMovement && !player.isGrounded) {
                     // Break the arrow
                     this.breakArrow(arrow);
-                    // Give player a little bounce
-                    player.velocityY = -6;
+                    // Give player a bounce - use full jump power if jump key is held
+                    const jumpKeyHeld = typeof inputHandler !== 'undefined' && inputHandler && inputHandler.keys && 
+                                       (inputHandler.keys['ArrowUp'] || inputHandler.keys['Space']);
+                    const jumpPower = (jumpKeyHeld && typeof currentJumpPower !== 'undefined' && currentJumpPower) ? 
+                                     currentJumpPower : -6;
+                    player.velocityY = jumpPower;
                 } else {
                     // Side collision - normal damage or armor behavior
                     if (hasArmor) {

@@ -615,7 +615,7 @@ class WorldManager {
             { x: 13050, y: 152, width: 70, height: 90, image: 'pine-tree-2.png' },
             { x: 13320, y: 152, width: 70, height: 90, image: 'pine-tree-2.png' },
 
-            { x: 13500, y: 122, width: 80, height: 110, image: 'pine-tree-2.png' },
+            { x: 13500, y: 133, width: 80, height: 110, image: 'pine-tree-2.png' },
             { x: 13580, y: 87, width: 120, height: 155, image: 'pine-tree-1.png' },
             { x: 13750, y: 82, width: 140, height: 160, image: 'pine-tree-1.png' }
         ];

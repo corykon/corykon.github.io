@@ -289,7 +289,7 @@ class EnemyManager {
         this.snails.find(snail => snail.width === 225 && snail.height === 150).isMega = true;
     }
 
-    update(player, worldManager, gameState, cameraX = 0, screenWidth = 1200) {
+    update(player, worldManager, gameState, cameraX = 0, screenWidth = 1200, inputHandler = null, getCurrentJumpPower = null) {
         if (gameState !== 'playing') return;
         
         // Update each snail
@@ -448,7 +448,7 @@ class EnemyManager {
         this.defeatEffects = this.defeatEffects.filter(effect => effect.timer < effect.duration);
     }
     
-    checkCollisions(player, hasArmor) {
+    checkCollisions(player, hasArmor, inputHandler = null, getCurrentJumpPower = null) {
         const collisions = [];
         
         this.snails.forEach(snail => {
@@ -478,8 +478,12 @@ class EnemyManager {
                 if (landingOnTop && horizontalAlignment && downwardMovement && comingFromAbove) {
                     // Player jumped on snail - kill it
                     this.killSnail(snail);
-                    // Give player a bounce
-                    player.velocityY = -6;
+                    // Give player a bounce - use full jump power if jump key is held
+                    const jumpKeyHeld = typeof inputHandler !== 'undefined' && inputHandler && inputHandler.keys && 
+                                       (inputHandler.keys['ArrowUp'] || inputHandler.keys['Space']);
+                    const jumpPower = (jumpKeyHeld && typeof getCurrentJumpPower !== 'undefined' && getCurrentJumpPower) ? 
+                                     getCurrentJumpPower() : -6;
+                    player.velocityY = jumpPower;
                 } else if (hasArmor) {
                     // Player has armor - armor kills snail on any contact
                     this.killSnail(snail);
