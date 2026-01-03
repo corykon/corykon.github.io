@@ -506,8 +506,31 @@ class EnemyManager {
         
         // Add scoring based on snail type
         if (this.game) {
-            const points = snail.isMega ? 1000 : 200;
-            this.game.addScore(points, "#E74C3C", "Snail");
+            const basePoints = snail.isMega ? 1000 : 200;
+            
+            // Handle combo system for arrow kills
+            if (!this.game.player.isGrounded && this.game.comboMode) {
+                // Continue combo - increase multiplier
+                this.game.comboMultiplier++;
+                this.game.airborneKills++;
+            } else if (!this.game.player.isGrounded && !this.game.comboMode) {
+                // Start combo mode if airborne
+                this.game.comboMode = true;
+                this.game.comboMultiplier = 1; // First kill is normal
+                this.game.airborneKills = 1;
+            }
+            
+            // Apply multiplier if in combo mode
+            const points = this.game.comboMode ? basePoints * this.game.comboMultiplier : basePoints;
+            const color = this.game.comboMode && this.game.comboMultiplier > 1 ? '#FF6B6B' : '#E74C3C';
+            
+            // Create label with multiplier if applicable
+            let label = "Snail";
+            if (this.game.comboMode && this.game.comboMultiplier > 1) {
+                label += ` x${this.game.comboMultiplier}`;
+            }
+            
+            this.game.addScore(points, color, label);
             
             // Track enemy types killed for bonus (keep for backwards compatibility)
             const enemyType = snail.isMega ? 'megaSnail' : 'snail';

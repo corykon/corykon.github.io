@@ -608,21 +608,16 @@ class WorldManager {
             { x: 12250, y: 82, width: 140, height: 160, image: 'pine-tree-1.png' },
             { x: 12400, y: 57, width: 130, height: 185, image: 'pine-tree-1.png' },
             { x: 12540, y: 92, width: 120, height: 150, image: 'pine-tree-1.png' },
-            { x: 12700, y: 152, width: 90, height: 90, image: 'pine-tree-2.png' },
-            
+            { x: 12750, y: 65, width: 110, height: 180, image: 'pine-tree-2.png' },
             { x: 12850, y: 87, width: 120, height: 155, image: 'pine-tree-1.png' },
-            { x: 12800, y: 65, width: 110, height: 180, image: 'pine-tree-2.png' },
             
             // Pine tree cluster 10 - multiple pine-tree-2 with rooty tree
-            { x: 13400, y: 87, width: 130, height: 155, image: 'pine-tree-2.png' },
-            { x: 13540, y: 92, width: 120, height: 150, image: 'pine-tree-2.png' },
-            
-            // Final pine tree cluster 11 - mixed types for temple majesty
-            { x: 14070, y: 92, width: 110, height: 150, image: 'pine-tree-2.png' },
-            { x: 13950, y: 137, width: 120, height: 100, image: 'pine-tree-1.png' },
-            { x: 14070, y: 137, width: 110, height: 100, image: 'pine-tree-2.png' },
-            { x: 14500, y: 82, width: 130, height: 160, image: 'pine-tree-1.png' },
-            { x: 14630, y: 87, width: 120, height: 155, image: 'pine-tree-2.png' },
+            { x: 13050, y: 152, width: 70, height: 90, image: 'pine-tree-2.png' },
+            { x: 13320, y: 152, width: 70, height: 90, image: 'pine-tree-2.png' },
+
+            { x: 13500, y: 122, width: 80, height: 110, image: 'pine-tree-2.png' },
+            { x: 13580, y: 87, width: 120, height: 155, image: 'pine-tree-1.png' },
+            { x: 13750, y: 82, width: 140, height: 160, image: 'pine-tree-1.png' }
         ];
     }
 
@@ -1286,6 +1281,14 @@ class WorldManager {
                             if (entity.isJumping !== undefined) {
                                 entity.isJumping = false;
                             }
+                            
+                            // Reset combo when landing (if this is the player)
+                            if (entity.game && entity.game.comboMode) {
+                                entity.game.comboMode = false;
+                                entity.game.comboMultiplier = 1;
+                                entity.game.airborneKills = 0;
+                            }
+                            
                             onGroundPlatform = true;
                             break;
                         }
@@ -1311,6 +1314,13 @@ class WorldManager {
                         entity.isGrounded = true;
                         if (entity.isJumping !== undefined) {
                             entity.isJumping = false;
+                        }
+                        
+                        // Reset combo when landing (if this is the player)
+                        if (entity.game && entity.game.comboMode) {
+                            entity.game.comboMode = false;
+                            entity.game.comboMultiplier = 1;
+                            entity.game.airborneKills = 0;
                         }
                     }
                 }

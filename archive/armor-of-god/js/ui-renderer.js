@@ -26,7 +26,7 @@ class UIRenderer {
         });
     }
     
-    renderUI(ctx, player, booksCollected, audioManager, isPaused, gameState, hoveredButton = null, hasArmor = false, armorTimer = 0, armorDuration = 1800) {
+    renderUI(ctx, player, booksCollected, audioManager, isPaused, gameState, hoveredButton = null, hasArmor = false, armorTimer = 0, armorDuration = 1800, comboMode = false, comboMultiplier = 1, airborneKills = 0) {
         // Health UI Panel
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         ctx.fillRect(20, 20, 200, 50);

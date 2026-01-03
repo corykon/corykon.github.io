@@ -33,6 +33,11 @@ class ArmorOfGodGame {
         this.damageTaken = 0; // Track damage for no-damage bonus
         this.enemiesKilled = new Set(); // Track which enemy types killed for bonus
         
+        // Combo system
+        this.comboMode = false; // Tracks if we're in combo mode
+        this.comboMultiplier = 1; // Current multiplier (starts at 1)
+        this.airborneKills = 0; // Number of kills while airborne
+        
         // Debug variables
         this.lastPlayerPos = null;
         this.debugElement = null;
@@ -92,6 +97,7 @@ class ArmorOfGodGame {
             invulnerable: false,
             invulnerabilityTimer: 0,
             invulnerabilityDuration: 120,
+            game: this, // Reference to game object for combo system
             // Petting animation properties
             isPetting: false,
             pettingTimer: 0,
@@ -1035,7 +1041,31 @@ class ArmorOfGodGame {
             // Add score for breaking arrows when armored
             if (this.hasArmor) {
                 hitArrows.forEach(arrow => {
-                    this.addScore(300, '#E74C3C', 'Arrow');
+                    const basePoints = 300;
+                    
+                    // Handle combo system for arrow deflections
+                    if (!this.player.isGrounded && this.comboMode) {
+                        // Continue combo - increase multiplier
+                        this.comboMultiplier++;
+                        this.airborneKills++;
+                    } else if (!this.player.isGrounded && !this.comboMode) {
+                        // Start combo mode if airborne
+                        this.comboMode = true;
+                        this.comboMultiplier = 1; // First deflection is normal
+                        this.airborneKills = 1;
+                    }
+                    
+                    // Apply multiplier if in combo mode
+                    const points = this.comboMode ? basePoints * this.comboMultiplier : basePoints;
+                    const color = this.comboMode && this.comboMultiplier > 1 ? '#FF6B6B' : '#E74C3C';
+                    
+                    // Create label with multiplier if applicable
+                    let label = 'Arrow';
+                    if (this.comboMode && this.comboMultiplier > 1) {
+                        label += ` x${this.comboMultiplier}`;
+                    }
+                    
+                    this.addScore(points, color, label);
                 });
             }
             // Calculate knockback direction from first arrow hit
@@ -1051,9 +1081,30 @@ class ArmorOfGodGame {
             // Add score for defeating enemies when armored
             if (this.hasArmor) {
                 hitEnemies.forEach(enemy => {
-                    const points = enemy.isMegaSnail ? 1000 : 200; // Big snail +1000, regular +200
-                    const color = '#E74C3C'; // Red for all enemies defeated
-                    const label = enemy.isMegaSnail ? 'Mega Snail' : 'Snail';
+                    const basePoints = enemy.isMegaSnail ? 1000 : 200;
+                    
+                    // Handle combo system
+                    if (!this.player.isGrounded && this.comboMode) {
+                        // Continue combo - increase multiplier
+                        this.comboMultiplier++;
+                        this.airborneKills++;
+                    } else if (!this.player.isGrounded && !this.comboMode) {
+                        // Start combo mode if airborne
+                        this.comboMode = true;
+                        this.comboMultiplier = 1; // First kill is normal
+                        this.airborneKills = 1;
+                    }
+                    
+                    // Apply multiplier if in combo mode
+                    const points = this.comboMode ? basePoints * this.comboMultiplier : basePoints;
+                    const color = this.comboMode && this.comboMultiplier > 1 ? '#FF6B6B' : '#E74C3C';
+                    
+                    // Create label with multiplier if applicable
+                    let label = enemy.isMegaSnail ? 'Mega Snail' : 'Snail';
+                    if (this.comboMode && this.comboMultiplier > 1) {
+                        label += ` x${this.comboMultiplier}`;
+                    }
+                    
                     this.addScore(points, color, label);
                     
                     // Track enemy types killed for bonus calculation
@@ -1596,7 +1647,10 @@ class ArmorOfGodGame {
             this.inputHandler.hoveredButton,
             this.hasArmor,
             this.armorTimer,
-            this.armorDuration
+            this.armorDuration,
+            this.comboMode,
+            this.comboMultiplier,
+            this.airborneKills
         );
         
         // Render sparkles on top of everything (with camera translation)
