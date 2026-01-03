@@ -17,6 +17,14 @@ class ArmorOfGodGame {
         this.armorTimer = 0;
         this.armorDuration = 30 * 60; // 30 seconds at 60fps
         this.level = 1;
+        
+        // Level data
+        this.levelData = {
+            1: { name: 'Clover Hills', image: 'images/level1.png' },
+            2: { name: 'Midnight Jungle', image: 'images/level2.png' },
+            3: { name: 'Granite Mountain Pass', image: 'images/level3.png' }
+        };
+        
         this.cameraX = 0;
         this.cameraY = 0;
         this.booksCollected = 0;
@@ -301,7 +309,7 @@ class ArmorOfGodGame {
         document.getElementById('restartBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
             this.resetGame();
-            this.startGame();
+            this.startGameAfterIntro();
         });
 
         document.getElementById('restartBtn').addEventListener('mouseenter', () => {
@@ -332,6 +340,14 @@ class ArmorOfGodGame {
         });
         
         document.getElementById('nextLevelBtn').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
+        });
+        
+        document.getElementById('startLevelBtn').addEventListener('click', () => {
+            this.startGameAfterIntro();
+        });
+        
+        document.getElementById('startLevelBtn').addEventListener('mouseenter', () => {
             this.audioManager.playSoundEffect('buttonHover');
         });
         
@@ -466,9 +482,9 @@ class ArmorOfGodGame {
     calculateSpeedBonus() {
         const levelTime = this.getLevelTime();
         const targetTime = {
-            1: 1800, // 30 seconds (1800 frames at 60fps)
-            2: 2700, // 45 seconds
-            3: 3900  // 65 seconds
+            1: 2400, // 40 seconds
+            2: 5400, // 90 seconds
+            3: 5400  // 90 seconds
         };
         
         const target = targetTime[this.level] || 3000;
@@ -512,6 +528,25 @@ class ArmorOfGodGame {
     }
     
     startGame() {
+        this.showLevelIntro();
+    }
+    
+    showLevelIntro() {
+        this.gameState = 'levelIntro';
+        this.showScreen('levelIntro');
+        
+        // Play level intro music
+        this.audioManager.playMusic('levelIntro');
+        
+        // Update intro screen content
+        const levelData = this.levelData[this.level];
+        document.getElementById('introLevelNumber').textContent = `LEVEL ${this.level}`;
+        document.getElementById('introLevelName').textContent = levelData.name.toUpperCase();
+        document.getElementById('introLevelImage').src = levelData.image;
+        document.getElementById('introLevelImage').alt = levelData.name;
+    }
+    
+    startGameAfterIntro() {
         // Reset game to initialize world with selected level
         this.resetGame();
         this.gameState = 'playing';
@@ -548,6 +583,7 @@ class ArmorOfGodGame {
         this.player.facingRight = true;
         this.player.alpha = 1; // Reset visibility for level restart
         this.player.jumpHeld = false;
+        this.player.fallingSoundPlayed = false; // Reset falling sound flag
         
         // Reset pet
         this.pet.x = 100;
@@ -652,11 +688,7 @@ class ArmorOfGodGame {
         // If we're in menu, just update the selector
         // If we're in game, restart with new level
         if (this.gameState === 'playing') {
-            this.resetGame();
-            this.gameState = 'playing';
-            this.showScreen('game');
-            this.audioManager.playMusic('adventure');
-            this.arrowManager.spawnInitialArrows(this.player);
+            this.showLevelIntro(); // Show intro for new level
         }
     }
     
@@ -667,8 +699,9 @@ class ArmorOfGodGame {
     }
     
     updateLevelIndicator() {
+        const levelData = this.levelData[this.level];
         const levelInfo = document.getElementById('levelInfo');
-        levelInfo.textContent = `Level ${this.level}`;
+        levelInfo.textContent = `Level ${this.level}: ${levelData.name}`;
     }
     
     toggleAudio() {
@@ -728,6 +761,7 @@ class ArmorOfGodGame {
         
         const screens = {
             'menu': 'menuScreen',
+            'levelIntro': 'levelIntroScreen',
             'game': 'gameScreen',
             'gameOver': 'gameOverScreen',
             'levelComplete': 'levelCompleteScreen'
@@ -795,6 +829,11 @@ class ArmorOfGodGame {
     
     update() {
         if (this.isPaused) return;
+        
+        // Only run game updates for playing states
+        if (this.gameState === 'menu' || this.gameState === 'levelIntro') {
+            return; // No game logic needed for menu/intro screens
+        }
         
         // Handle input
         this.inputHandler.handleInput(
@@ -923,14 +962,22 @@ class ArmorOfGodGame {
         
         // Check for pit death
         if (this.player.y > this.canvas.height + 50) {
-            // Play falling sound when falling into pit
-            this.audioManager.playSound('falling');
+            // Play falling sound when falling into pit (only once per fall)
+            if (!this.player.fallingSoundPlayed) {
+                this.audioManager.playSound('falling');
+                this.player.fallingSoundPlayed = true;
+            }
             this.handlePitFall();
             return;
         }
         
         // Platform collisions for player (this will set isGrounded=true if landing on platform)
         this.worldManager.checkPlatformCollisions(this.player);
+        
+        // Reset falling sound flag when player becomes grounded
+        if (this.player.isGrounded && this.player.fallingSoundPlayed) {
+            this.player.fallingSoundPlayed = false;
+        }
         
         // Update last safe platform position when player is grounded
         this.updateLastSafePlatform();
@@ -1424,13 +1471,8 @@ class ArmorOfGodGame {
         
         // Advance to the next level
         this.level++;
-        this.resetGame();
-        this.gameState = 'playing';
-        this.showScreen('game');
-        this.updateLevelIndicator();
+        this.showLevelIntro(); // Show intro for next level
         this.updateLevelSelector();
-        this.audioManager.playMusic('adventure');
-        this.arrowManager.spawnInitialArrows(this.player);
         
         // Initialize scoring for new level
         this.initializeScoring();

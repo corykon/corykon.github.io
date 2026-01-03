@@ -284,10 +284,10 @@ body {
 }
 
 .scripture {
-    font-size: 16px;
+    font-size: 14px;
     line-height: 28px;
     margin-bottom: 30px;
-    max-width: 600px;
+    max-width: 800px;
     color: #e6e6e6;
 }
 
@@ -446,6 +446,31 @@ body {
     text-decoration: none;
 }
 
+.enter-prompt {
+    color: #fff;
+    font-size: 11px;
+    margin-top: 0;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.instructions-link.bottom-link {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ffd700;
+    text-decoration: underline;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.instructions-link.bottom-link:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
 .instructions {
     max-width: 800px;
     border: 1px solid gold;
@@ -551,11 +576,38 @@ body {
 /* Game Over and Complete Screens */
 #gameOverScreen {
     background: #000000 !important; /* Black background for game over screen */
+    position: relative;
+    overflow: hidden;
+}
+
+#gameOverScreen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.15)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+    animation: stars 20s linear infinite;
+    pointer-events: none;
 }
 
 #levelCompleteScreen {
     position: relative;
     background: linear-gradient(135deg, #000000, #0f0a15, #1a0e2a) !important; /* Black to very subtle dark purple gradient */
+    overflow: hidden;
+}
+
+#levelCompleteScreen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.15)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+    animation: stars 20s linear infinite;
+    pointer-events: none;
 }
 
 #gameOverScreen h1,
@@ -568,10 +620,62 @@ body {
 #levelCompleteScreen h1 {
     font-size: 36px;
     margin-bottom: 10px;
+    opacity: 0;
+    animation: fadeInUp 0.4s ease-out 0.1s forwards;
+}
+
+.victory-temple {
+    animation: fadeInScale 0.4s ease-out 0.3s forwards;
+}
+
+.score-display-small {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #ffd700;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 30px auto 20px;
+    width: 400px;
+    font-size: 12px;
+    opacity: 0;
+    animation: fadeInUp 0.4s ease-out 0.5s forwards;
+}
+
+#levelCompleteScreen .menu-btn {
+    opacity: 0;
+    animation: fadeInScale 0.4s ease-out 0.7s forwards;
+    margin: 5px;
+}
+
+.game-over-image {
+    width: 300px;
+    height: auto;
+    margin: 20px 0;
+    opacity: 0;
+    animation: fadeInScale 0.4s ease-out 0.3s forwards;
+    image-rendering: pixelated;
+}
+
+#gameOverScreen .menu-btn {
+    opacity: 0;
+    animation: fadeInScale 0.4s ease-out 0.7s forwards;
+    margin: 10px;
+}
+
+#restartBtn {
+    background: #28a745 !important;
+    border-color: #1e7e34 !important;
+    color: white !important;
+}
+
+#restartBtn:hover {
+    background: #34ce57 !important;
+    border-color: #28a745 !important;
 }
 
 #gameOverScreen h1 {
     color: #ff4444;
+    opacity: 0;
+    animation: fadeInUp 0.4s ease-out 0.1s forwards;
 }
 
 #levelCompleteScreen h1 {
@@ -582,6 +686,8 @@ body {
     font-size: 14px;
     margin-bottom: 30px;
     line-height: 20px;
+    opacity: 0;
+    animation: fadeInUp 0.4s ease-out 0.5s forwards;
 }
 
 .victory-message {
@@ -589,6 +695,13 @@ body {
     color: #ffd700;
     margin: 20px 0;
     font-style: italic;
+    opacity: 0;
+    animation: fadeInUp 0.4s ease-out 0.5s forwards;
+}
+
+#levelCompleteScreen p:not(.victory-message) {
+    opacity: 0;
+    animation: fadeInUp 0.4s ease-out 0.4s forwards;
 }
 
 /* Score Display on Victory Screen */
@@ -650,7 +763,7 @@ body {
     }
     
     #menuScreen h1 {
-        font-size: 24px;
+        font-size: 36px;
     }
 }
 
@@ -898,4 +1011,234 @@ body {
     margin-bottom: 10px;
     line-height: 1.5;
     font-size: 14px;
+}
+
+/* Level Intro Screen Styles */
+#levelIntroScreen {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+#levelIntroScreen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.15)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+    animation: stars 20s linear infinite;
+}
+
+@keyframes stars {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-100px); }
+}
+
+.level-intro-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+.level-intro-content {
+    text-align: center;
+    max-width: 800px;
+    padding: 40px;
+}
+
+.level-number-container {
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.5s forwards;
+}
+
+.level-number {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 4rem;
+    color: #ffd700;
+    text-shadow: 
+        0 0 10px rgba(255, 215, 0, 0.6),
+        0 0 20px rgba(255, 215, 0, 0.4),
+        0 0 40px rgba(255, 215, 0, 0.2),
+        2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 4px;
+    margin: 0;
+}
+
+.level-name-container {
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 1s forwards;
+}
+
+.level-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 2rem;
+    color: #ffffff;
+    text-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.3),
+        2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+.level-image-container {
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeInScale 1.2s ease-out 1.5s forwards;
+}
+
+.level-image {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 15px;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(255, 215, 0, 0.2);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+}
+
+.continue-prompt {
+    opacity: 0;
+    animation: fadeInPulse 1s ease-out 3.0s forwards;
+}
+
+.continue-prompt p {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1rem;
+    color: #aaaaaa;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    animation: pulse 2s ease-in-out infinite;
+    margin-bottom: 0;
+}
+
+.start-level-btn {
+    opacity: 0;
+    animation: fadeInScale 1.2s ease-out 3s forwards;
+    margin: 20px 0;
+}
+
+#startLevelBtn {
+    background: #28a745 !important;
+    border-color: #1e7e34 !important;
+    color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+#startLevelBtn:hover {
+    background: #34ce57 !important;
+    border-color: #28a745 !important;
+}
+
+#startLevelBtn .chevron-icon {
+    font-size: 16px;
+    margin-left: 5px;
+    position: relative;
+    top: -2px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes fadeInPulse {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Start Level Button - Green styling with fade in timing */
+.start-level-btn {
+    opacity: 0;
+    animation: fadeInScale 1.2s ease-out 2.2s forwards;
+    margin: 20px auto;
+    display: block;
+}
+
+#startLevelBtn {
+    background: #28a745 !important;
+    border-color: #1e7e34 !important;
+    color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+#startLevelBtn:hover {
+    background: #34ce57 !important;
+    border-color: #28a745 !important;
+}
+
+#startLevelBtn .chevron-icon {
+    font-size: 16px;
+    margin-left: 5px;
+    position: relative;
+    top: -2px;
+}
+
+/* Responsive design for level intro */
+@media (max-width: 768px) {
+    .level-number {
+        font-size: 2.5rem;
+        letter-spacing: 2px;
+    }
+    
+    .level-name {
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+    }
+    
+    .continue-prompt p {
+        font-size: 0.9rem;
+    }
+    
+    .level-image {
+        max-height: 200px;
+    }
 }

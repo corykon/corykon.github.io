@@ -157,6 +157,24 @@ class InputHandler {
     }
     
     handleKeyDown(e) {
+        // Handle level intro screen
+        if (this.game.gameState === 'levelIntro') {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                this.game.startGameAfterIntro();
+                e.preventDefault();
+                return;
+            }
+        }
+        
+        // Handle level complete screen
+        if (this.game.gameState === 'levelComplete') {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                this.game.startNextLevel();
+                e.preventDefault();
+                return;
+            }
+        }
+        
         // Handle pause toggle (only when playing)
         if (e.code === 'KeyP' && this.game.gameState === 'playing') {
             this.game.togglePause();

@@ -51,17 +51,18 @@
                     </div>
                 </div>
                 <button id="startBtn" class="menu-btn start-btn">Start Game</button>
-                <a href="#" id="instructionsLink" class="instructions-link">How to Play</a>
+                <p class="enter-prompt">(Press enter to begin)</p>
             </div>
             <!-- Instructions moved to modal -->
             <div class="credits">
                 <p>Created by Maddox P. and Cory F.</p>
             </div>
+            <a href="#" id="instructionsLink" class="instructions-link bottom-link">How to Play</a>
         </div>
 
         <!-- Game Screen -->
         <div id="gameScreen" class="screen hidden">
-            <div id="levelInfo" class="level-indicator">Level 1</div>
+            <div id="levelInfo" class="level-indicator">Level 1: Clover Hills</div>
             <canvas id="gameCanvas" width="1200" height="600"></canvas>
             <div id="gameUI">
                 <div id="armorStatus"></div>
@@ -71,9 +72,30 @@
             </div>
         </div>
 
+        <!-- Level Intro Screen -->
+        <div id="levelIntroScreen" class="screen hidden">
+            <div class="level-intro-container">
+                <div class="level-intro-content">
+                    <div class="level-number-container">
+                        <h1 class="level-number" id="introLevelNumber">LEVEL 1</h1>
+                    </div>
+                    <div class="level-name-container">
+                        <h2 class="level-name" id="introLevelName">CLOVER HILLS</h2>
+                    </div>
+                    <div class="level-image-container">
+                        <img class="level-image" id="introLevelImage" src="images/level1.png" alt="Level Image">
+                    </div>
+                    <button id="startLevelBtn" class="menu-btn next-level-wide start-level-btn">Start Level <span class="chevron-icon">❯</span></button>
+                    <div class="continue-prompt">
+                        <p>(Press enter to begin)</p>
+                    </div>                </div>
+            </div>
+        </div>
+
         <!-- Game Over Screen -->
         <div id="gameOverScreen" class="screen hidden">
             <h1>Game Over</h1>
+            <img src="./images/game-over.png" alt="Game Over" class="game-over-image">
             <p id="gameOverMessage"></p>
             <button id="restartBtn" class="menu-btn">Try Again</button>
             <button id="mainMenuBtn" class="menu-btn">Main Menu</button>
