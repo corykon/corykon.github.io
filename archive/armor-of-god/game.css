@@ -454,23 +454,6 @@ body {
     font-style: italic;
 }
 
-.instructions-link.bottom-link {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #ffd700;
-    text-decoration: underline;
-    font-size: 12px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.instructions-link.bottom-link:hover {
-    color: #fff;
-    text-decoration: none;
-}
-
 .instructions {
     max-width: 800px;
     border: 1px solid gold;
@@ -489,20 +472,39 @@ body {
     margin-bottom: 16px;
 }
 
-/* Credits */
-.credits {
-    margin-top: 30px;
-    padding: 15px;
-    border-top: 1px solid rgba(255, 215, 0, 0.3);
+/* Bottom Footer */
+.bottom-footer {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
 }
 
-.credits p {
+.credits-text {
     font-family: 'Press Start 2P', monospace;
     font-size: 12px;
-    color: rgba(255, 215, 0, 0.7);
+    color: #ffd700;
     margin: 0;
-    text-align: center;
     letter-spacing: 1px;
+}
+
+.bottom-footer .instructions-link {
+    color: #ffd700;
+    text-decoration: underline;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 1px;
+}
+
+.bottom-footer .instructions-link:hover {
+    color: #fff;
+    text-decoration: none;
 }
 
 /* Game Screen Styles */

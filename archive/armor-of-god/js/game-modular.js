@@ -215,8 +215,8 @@ class ArmorOfGodGame {
         prompt.id = 'audioPrompt';
         prompt.style.cssText = `
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            top: 20px;
+            left: 20px;
             background: rgba(0,0,0,0.8);
             color: #FFD700;
             padding: 10px 15px;
