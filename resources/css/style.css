@@ -324,7 +324,9 @@ ul li.contactme .hov-label span{position:relative; top: 4px;}
 #mywork > div[data-workitem=mlbcollage] div.thumb{background: url('../images/thumbs/mlbcollage-thumb.jpg') no-repeat center center; background-size: cover;}
 #mywork > div[data-workitem=slctemple] div.thumb{background: url('../images/thumbs/slctemple-thumb.jpg') no-repeat center center; background-size: cover;}
 #mywork > div[data-workitem=cashmere] div.thumb{background: url('../images/thumbs/cashmere-thumb.jpg') no-repeat center center; background-size: cover;}
-#mywork > div[data-workitem=pb] div.thumb{background: url('../images/thumbs/pb-thumb.jpg') no-repeat center center; background-size: cover;}
+#mywork > div[data-workitem=daylear] div.thumb{background: url('../images/thumbs/daylear-thumb.png') no-repeat center center; background-size: cover;}
+#mywork > div[data-workitem=ignite] div.thumb{background: url('../images/thumbs/ignite-thumb.png') no-repeat center center; background-size: cover;}
+#mywork > div[data-workitem=pb] div.thumb{background: url('../images/thumbs/pb-thumb.png') no-repeat center center; background-size: cover;}
 #mywork > div[data-workitem=mtn] div.thumb{background: url('../images/thumbs/mtn-thumb.jpg') no-repeat center center; background-size: cover;}
 #mywork > div[data-workitem=cloud] div.thumb{background: url('../images/thumbs/cloud-thumb.jpg') no-repeat center center; background-size: cover;}
 #mywork > div[data-workitem=sk8] div.thumb{background: url('../images/thumbs/streetsk8-thumb.jpg') no-repeat center center; background-size: cover;}
@@ -629,7 +631,7 @@ ul.photo-container img {
     margin: 15px 0;
 }
 
-#portfolio-item a{
+#portfolio-item a:not(.simple-link){
     display: inline-block;
     font-weight: 400;
     text-decoration: none;
@@ -708,6 +710,11 @@ ul.photo-container img {
     margin: auto;
     max-width: 100%;
     margin-bottom: 24px;
+}
+
+#portfolio-item .screenshots p{
+    max-width: 600px;
+    margin: 10px auto;
 }
 
 #portfolio-item .screenshots h3{
@@ -1015,6 +1022,9 @@ textarea{
 #portfolio-item-content .sources-section ul { margin: 5px 30px; }
 #portfolio-item-content .sources-section li a { font-size: 13px; display: inline; background-color: none; height: auto; width: auto; padding: 0; background-color: transparent; color: #0076a3;}
 #portfolio-item-content .sources-section li a:hover { text-decoration: underline; }
+
+#portfolio-item a.simple-link, a.simple-link { display: inline; background-color: none; height: auto; font-weight: 500; width: auto; text-decoration: none; padding: 0; background-color: transparent; color: #0076a3;}
+#portfolio-item a.simple-link:hover, a.simple-link:hover { text-decoration: underline; background-color: none; }
 
 /**** Loading Placeholder ****/
 #loading{
