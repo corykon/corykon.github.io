@@ -257,7 +257,10 @@ function navigateOnItemClick(el){
 function navigateToWorkItem(workItem){
    $('#portfolio-grid').addClass('show-item');
    $('#portfolio-item').addClass('show-item');
-   $('#portfolio-item-content').load( "port-items/" + workItem + ".html" );
+   $('#portfolio-item-content').load( "port-items/" + workItem + ".html", function() {
+       // Initialize carousels after content is loaded
+       initializeCarousels();
+   });
 
    window.location.hash = workItem;
    $("html, body").animate({ scrollTop: 0 }, 600);
@@ -280,6 +283,71 @@ function emailSent(){
    $('#loading').hide();
    
    alert('Email sent. Thanks!');
+}
+
+// Initialize image carousels for dynamically loaded content
+function initializeCarousels() {
+    $('.image-carousel').each(function() {
+        const carousel = $(this);
+        const images = carousel.find('.carousel-image');
+        const prevBtn = carousel.find('.carousel-btn.prev');
+        const nextBtn = carousel.find('.carousel-btn.next');
+        const indicators = carousel.find('.carousel-indicators span');
+        let currentIndex = 0;
+
+        // Get the container width
+        const containerWidth = carousel.find('.carousel-container').width();
+
+        // Wrap each image in a slide div and then wrap all in track
+        images.each(function() {
+            $(this).wrap(`<div class="carousel-slide" style="width: ${containerWidth}px;"></div>`);
+        });
+        const slides = carousel.find('.carousel-slide');
+        slides.wrapAll('<div class="carousel-track"></div>');
+        const track = carousel.find('.carousel-track');
+
+        // Ensure track starts at 0 position
+        track.css('transform', 'translateX(0px)');
+
+        function showImage(index) {
+            // Calculate the transform value: first at +containerWidth, then 0, then negative values
+            const translateX = containerWidth * (1 - index);
+            track.css('transform', `translateX(${translateX}px)`);
+            
+            // Update indicators
+            indicators.removeClass('active');
+            indicators.eq(index).addClass('active');
+            
+            // Update button states
+            prevBtn.prop('disabled', index === 0);
+            nextBtn.prop('disabled', index === images.length - 1);
+        }
+
+        // Initialize first image
+        showImage(0);
+
+        // Previous button click
+        prevBtn.on('click', function() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                showImage(currentIndex);
+            }
+        });
+
+        // Next button click
+        nextBtn.on('click', function() {
+            if (currentIndex < images.length - 1) {
+                currentIndex++;
+                showImage(currentIndex);
+            }
+        });
+
+        // Indicator clicks
+        indicators.on('click', function() {
+            currentIndex = $(this).index();
+            showImage(currentIndex);
+        });
+    });
 }
 
 //Mobile Browser Detection (from http://detectmobilebrowsers.com/)

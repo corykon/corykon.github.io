@@ -768,11 +768,11 @@ ul.photo-container img {
 
 
 /**** Footer specifc styles ****/
-footer{
+footer {
     clear: left;
     background-color: #053046;
     color: rgb(255,255,255);
-    height: 100px;
+    height: 125px;
 }
 
 footer p{font-size: 12px;margin-top:40px;float:left;width: 50%;}
@@ -823,6 +823,25 @@ footer .archive-msg {
     left: 15px;
     font-size: 10px;
     color: #a0a0a0;
+}
+
+.sub-footer {
+    position: absolute;
+    bottom: 0;
+    height: 25px;
+    width: 100%;
+    background-color: #052534;
+}
+
+.sub-footer a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+.sub-footer a:hover {
+    opacity: 1;
 }
 
 .signature-container {
@@ -1026,6 +1045,103 @@ textarea{
 #portfolio-item a.simple-link, a.simple-link { display: inline; background-color: none; height: auto; font-weight: 500; width: auto; text-decoration: none; padding: 0; background-color: transparent; color: #0076a3;}
 #portfolio-item a.simple-link:hover, a.simple-link:hover { text-decoration: underline; background-color: none; }
 
+/**** Image Carousel ****/
+.image-carousel {
+    position: relative;
+    margin: 20px 0;
+    overflow: hidden;
+    border-top: 1px solid #e0e3e6;
+}
+
+.image-carousel:last-of-type {
+    border-bottom: 1px solid #e0e3e6;
+}
+
+.carousel-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease;
+    align-items: center;
+}
+
+.carousel-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.carousel-image {
+    height: auto;
+    display: block;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 44px 24px;
+}
+
+.carousel-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.carousel-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.carousel-btn i {
+    color: #0076a3;
+    font-size: 18px;
+}
+
+.carousel-btn.prev {
+    left: 10px;
+}
+
+.carousel-btn.next {
+    right: 10px;
+}
+
+.carousel-indicators {
+    text-align: center;
+    margin: -8px 0 16px;
+}
+
+.carousel-indicators span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ccc;
+    margin: 0 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.carousel-indicators span.active {
+    background: #0076a3;
+}
+
 /**** Loading Placeholder ****/
 #loading{
     font-weight: 300;
@@ -1146,6 +1262,8 @@ textarea{
         margin-left: 0;
     }
     footer ul li.contactme{display:none;}
+    .sub-footer a { margin-top: 4px; }
+    .carousel-btn {padding: 34px 12px; }
 }
 
 @media screen and (max-width: 650px) {
