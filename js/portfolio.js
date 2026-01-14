@@ -16,12 +16,32 @@ $(function(){
    $('#mywork').mixitup({targetSelector: '.work-item'});
 
    //****init portfolio item buttons
-   // On mobile devices, the first tap on the portfolio item thumbnail will fire the hover event, pulling up
-   // the title of the portfolio item. Because of that, we don't want the first click navigating them
-   // away. So, if we detect a mobile browser, the user must click the button to navigate, but on normal
-   // browsers,they can click anywhere on the thumbnail.
-   var portItemBtnSelector = jQuery.browser.mobile ? '.work-item .action-btn' : '.work-item';
-   $(portItemBtnSelector).click(function(){navigateOnItemClick(this);});
+   // On mobile devices, implement two-tap navigation: first tap reveals details, second tap navigates
+   // On desktop, single click navigates immediately
+   if(jQuery.browser.mobile) {
+       $('.work-item').click(function(e){
+           if(!$(this).hasClass('revealed')) {
+               e.preventDefault();
+               $('.work-item').removeClass('revealed'); // Reset all other items
+               $(this).addClass('revealed'); // Show this item's details
+           } else {
+               // Second tap - proceed with navigation
+               navigateOnItemClick(this);
+           }
+       });
+       
+       // Reset revealed states when clicking outside portfolio items
+       $(document).click(function(e) {
+           if (!$(e.target).closest('.work-item').length) {
+               $('.work-item').removeClass('revealed');
+           }
+       });
+   } else {
+       // Desktop behavior - single click to navigate
+       $('.work-item').click(function(){
+           navigateOnItemClick(this);
+       });
+   }
 
    //****init the hashchange event listener so that the back button works
    window.onhashchange = navigateOnHashChange;

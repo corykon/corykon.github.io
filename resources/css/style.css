@@ -399,6 +399,12 @@ ul li.contactme .hov-label span{position:relative; top: 4px;}
 #mywork > div:hover .action-btn{left: 25px;}
 #mywork > div:hover .thumb{transform: scale(1.2)}
 
+/* Mobile revealed state - mimics hover for two-tap navigation */
+#mywork > div.revealed .overlay{top: 0%;}
+#mywork > div.revealed .description{top: 0%;}
+#mywork > div.revealed .action-btn{left: 25px;}
+#mywork > div.revealed .thumb{transform: scale(1.2)}
+
 /**** About Me Page ****/
 .about-me-page h2, .about-me-page h3 {
     font-size: 21px;
@@ -1013,7 +1019,7 @@ textarea{
     font-size: 24px;
     position: absolute;
     right: 22px;
-    top: 18px;
+    top: 14px;
     text-transform: lowercase;
     font-weight: 100;
     line-height: 1.5;
@@ -1264,6 +1270,10 @@ textarea{
     footer ul li.contactme{display:none;}
     .sub-footer a { margin-top: 4px; }
     .carousel-btn {padding: 34px 12px; }
+
+    #sidebar h3 {
+        font-size: 21px;
+    }
 }
 
 @media screen and (max-width: 650px) {
