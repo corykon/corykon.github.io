@@ -1269,8 +1269,6 @@ textarea{
     }
     footer ul li.contactme{display:none;}
     .sub-footer a { margin-top: 4px; }
-    .carousel-btn {padding: 34px 12px; }
-
     #sidebar h3 {
         font-size: 21px;
     }
@@ -1319,6 +1317,8 @@ textarea{
     #portfolio-item #logos {height: auto;width: auto;}
     #portfolio-item #logos img{width: auto;float: none; margin:0 auto 15px !important;}
     
+    .carousel-btn.next { right: 0; }
+    .carousel-btn.prev { left: 0; }
     /*remove contact form from sidebar, just have social stuff and a "mailto" link */
 }
 

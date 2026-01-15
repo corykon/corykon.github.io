@@ -330,8 +330,9 @@ function initializeCarousels() {
         track.css('transform', 'translateX(0px)');
 
         function showImage(index) {
-            // Calculate the transform value: first at +containerWidth, then 0, then negative values
-            const translateX = containerWidth * (1 - index);
+            // Calculate the center position dynamically based on number of images
+            const centerPosition = Math.floor(images.length / 2);
+            const translateX = containerWidth * (centerPosition - index);
             track.css('transform', `translateX(${translateX}px)`);
             
             // Update indicators
