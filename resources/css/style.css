@@ -1272,6 +1272,14 @@ textarea{
     #sidebar h3 {
         font-size: 21px;
     }
+    .carousel-btn.next { right: 0; }
+    .carousel-btn.prev { left: 0; }
+    .carousel-btn.next, .carousel-btn.prev {
+        padding: 18px 24px;
+        bottom: 2px;
+        top: auto;
+        transform: none;
+    }
 }
 
 @media screen and (max-width: 650px) {
@@ -1316,9 +1324,6 @@ textarea{
 
     #portfolio-item #logos {height: auto;width: auto;}
     #portfolio-item #logos img{width: auto;float: none; margin:0 auto 15px !important;}
-    
-    .carousel-btn.next { right: 0; }
-    .carousel-btn.prev { left: 0; }
     /*remove contact form from sidebar, just have social stuff and a "mailto" link */
 }
 
