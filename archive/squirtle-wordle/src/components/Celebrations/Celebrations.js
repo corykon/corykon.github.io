@@ -1,14 +1,19 @@
 import React from 'react';
 import pokemonMasterImage from '../../assets/pokemon-master.png';
 import pokemonProgressImage from '../../assets/pokemon-progress.png';
+import trophyStarIcon from '../../assets/trophy-star.svg';
+import trophyIcon from '../../assets/trophy.svg';
 
 function Celebrations({ 
     showMasterCelebration, 
-    showProgressCelebration, 
+    showProgressCelebration,
+    showLegendCelebration,
     progressCount,
     onDismissMaster, 
     onDismissProgress,
-    onHoorayClick 
+    onDismissLegend,
+    onHoorayClick,
+    onLegendHoorayClick
 }) {
     const [confettiKey, setConfettiKey] = React.useState(0);
     const [hoorayFireworks, setHoorayFireworks] = React.useState(false);
@@ -16,11 +21,11 @@ function Celebrations({
 
     // Create confetti animation
     React.useEffect(() => {
-        if (showMasterCelebration || showProgressCelebration) {
+        if (showMasterCelebration || showProgressCelebration || showLegendCelebration) {
             setConfettiKey(prev => prev + 1);
             setIsFadingOut(false);
         }
-    }, [showMasterCelebration, showProgressCelebration]);
+    }, [showMasterCelebration, showProgressCelebration, showLegendCelebration]);
 
     const handleHoorayClick = () => {
         // Trigger more fireworks immediately
@@ -37,6 +42,21 @@ function Celebrations({
         }, 2000);
     };
 
+    const handleLegendHoorayClick = () => {
+        // Trigger more fireworks immediately
+        setHoorayFireworks(true);
+        setConfettiKey(prev => prev + 1);
+        
+        // Start fade out animation
+        setIsFadingOut(true);
+        
+        // Reset fireworks and dismiss after fade completes
+        setTimeout(() => {
+            setHoorayFireworks(false);
+            onLegendHoorayClick();
+        }, 2000);
+    };
+
     const handleProgressDismiss = () => {
         // Start fade out animation
         setIsFadingOut(true);
@@ -46,6 +66,61 @@ function Celebrations({
             onDismissProgress();
         }, 800);
     };
+
+    if (showLegendCelebration) {
+        return (
+            <div className={`celebration-overlay legend-celebration ${isFadingOut ? 'fade-out' : ''}`}>
+                <div className="confetti-container" key={`legend-${confettiKey}`}>
+                    {[...Array(100)].map((_, i) => (
+                        <div key={i} className="confetti-piece" style={{
+                            left: `${Math.random() * 100}%`,
+                            animationDelay: `${Math.random() * 3}s`,
+                            backgroundColor: ['#FFD700', '#FFA500', '#FF6347', '#FF69B4', '#00CED1'][Math.floor(Math.random() * 5)]
+                        }}></div>
+                    ))}
+                    {hoorayFireworks && [...Array(200)].map((_, i) => (
+                        <div key={`hooray-${i}`} className="confetti-piece hooray-confetti" style={{
+                            left: `${Math.random() * 100}%`,
+                            animationDelay: `${Math.random() * 0.3}s`,
+                            backgroundColor: ['#FFD700', '#FFA500', '#FF6347', '#32CD32', '#FF1493'][Math.floor(Math.random() * 5)]
+                        }}></div>
+                    ))}
+                </div>
+                
+                <div className="celebration-content legend-content">
+                    <h1 className="celebration-title legend-title">LEGEND.</h1>
+                    
+                    <div className="celebration-progress-container">
+                        <div className="celebration-progress-bar">
+                            <div 
+                                className="celebration-progress-fill legend-progress-fill"
+                                style={{ width: '100%' }}
+                            ></div>
+                        </div>
+                        <div className="celebration-progress-text">
+                            <span>151/151 Single Guesses</span> <img src={trophyStarIcon} alt="Trophy Star" style={{ width: '20px', height: '20px', marginLeft: '4px', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }} />
+                        </div>
+                    </div>
+                    
+                    <img 
+                        src={pokemonMasterImage} 
+                        alt="Pokemon Legend" 
+                        className="celebration-image legend-image"
+                        style={{ filter: 'sepia(1) saturate(2) hue-rotate(40deg)' }}
+                    />
+                    <p className="celebration-message legend-message">
+                        You've caught every pokemon with 1 guess. Incredible! <br />There are few Pokemon masters, even fewer <strong>legends</strong>.
+                    </p>
+                    <button 
+                        className="celebration-button legend-button" 
+                        onClick={handleLegendHoorayClick}
+                    >
+                        Legendary!
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     if (showMasterCelebration) {
         return (
@@ -78,7 +153,7 @@ function Celebrations({
                             ></div>
                         </div>
                         <div className="celebration-progress-text">
-                            151/151 (100%) 🏆
+                            <span>151/151 (100%)</span> <img src={trophyIcon} alt="Trophy" style={{ width: '20px', height: '20px', marginLeft: '4px', filter: 'sepia(1) saturate(3) hue-rotate(40deg) brightness(1.2)' }} />
                         </div>
                     </div>
                     

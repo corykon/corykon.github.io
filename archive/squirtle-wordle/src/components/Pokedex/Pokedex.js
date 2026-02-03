@@ -1,8 +1,9 @@
 import React from 'react';
 import pokeballIcon from '../../assets/pokeball.svg';
 import searchIcon from '../../assets/search.svg';
+import shareIcon from '../../assets/share.svg';
 
-function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, highlightPokemonId, isMaster, trophyIcon }) {
+function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessPokemon, highlightPokemonId, isMaster, trophyIcon, onSubmitGuess }) {
     const [searchTerm, setSearchTerm] = React.useState('');
     const [pokemonDescriptions, setPokemonDescriptions] = React.useState({});
     const [pokemonTypes, setPokemonTypes] = React.useState({});
@@ -13,6 +14,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, highlightPok
     const [showSortDropdown, setShowSortDropdown] = React.useState(false);
     const [catchCounts, setCatchCounts] = React.useState({});
     const [showScrollButton, setShowScrollButton] = React.useState(false);
+    const [hoveredShareButton, setHoveredShareButton] = React.useState(null);
     
     // Function to fetch and cache Pokemon types
     const fetchTypes = React.useCallback(async (pokemon) => {
@@ -354,10 +356,36 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, highlightPok
                                         }}
                                     />
                                     {isDiscovered && (
-                                        <div className="discovery-badge"></div>
+                                        <div className="discovery-badge" title="You've caught this Pokémon"></div>
+                                    )}
+                                    {isDiscovered && singleGuessPokemon && singleGuessPokemon.includes(pokemon.id) && (
+                                        <div className="single-guess-badge" title="Caught in a single guess">★</div>
                                     )}
                                     <div className="pokemon-number">#{pokemon.id.toString().padStart(3, '0')}</div>
-                                    <div className="pokemon-name">{pokemon.name}</div>                                <div 
+                                    <div className="pokemon-name-container">
+                                        <div className="pokemon-name">{pokemon.name}</div>
+                                        {onSubmitGuess && (
+                                            <div className="pokemon-share-container">
+                                                <button 
+                                                    className="pokemon-share-button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        onSubmitGuess(pokemon.name);
+                                                        onClose(); // Close Pokedex after submitting guess
+                                                    }}
+                                                    onMouseEnter={() => setHoveredShareButton(pokemon.id)}
+                                                    onMouseLeave={() => setHoveredShareButton(null)}
+                                                >
+                                                    <img src={shareIcon} alt="Submit guess" className="share-icon" />
+                                                </button>
+                                                {hoveredShareButton === pokemon.id && (
+                                                    <div className="share-tooltip">
+                                                        Submit {pokemon.name} as your guess
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>                                <div 
                                         className="pokemon-catch-count"
                                         style={{ opacity: isDiscovered && catchCounts[pokemon.id] ? 1 : 0 }}
                                         title={isDiscovered && catchCounts[pokemon.id] ? `You've caught ${catchCounts[pokemon.id]} ${pokemon.name}` : ''}

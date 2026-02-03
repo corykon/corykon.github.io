@@ -1,5 +1,8 @@
 {
     "yaml.customTags": [
         "!script"
-    ]
+    ],
+    "chat.tools.terminal.autoApprove": {
+        "pkill": true
+    }
 }

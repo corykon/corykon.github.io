@@ -4,6 +4,7 @@ import Header from '../Header';
 import Pokedex from '../Pokedex';
 import Celebrations from '../Celebrations';
 import trophyIcon from '../../assets/trophy.svg';
+import trophyStarIcon from '../../assets/trophy-star.svg';
 
 // Load test functions in development
 if (process.env.NODE_ENV === 'development') {
@@ -29,16 +30,54 @@ const saveDiscoveredPokemon = (discoveredList) => {
   }
 };
 
+// Helper functions for single-guess catches
+const getSingleGuessPokemon = () => {
+  try {
+    const stored = localStorage.getItem('single-guess-pokemon');
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.warn('Failed to read single-guess Pokemon from localStorage:', error);
+    return [];
+  }
+};
+
+const saveSingleGuessPokemon = (singleGuessList) => {
+  try {
+    localStorage.setItem('single-guess-pokemon', JSON.stringify(singleGuessList));
+  } catch (error) {
+    console.warn('Failed to save single-guess Pokemon to localStorage:', error);
+  }
+};
+
 function App() {
   const [gameKey, setGameKey] = React.useState(0);
   const [isPokedexOpen, setIsPokedexOpen] = React.useState(false);
   const [highlightPokemonId, setHighlightPokemonId] = React.useState(null);
   const [pokemonList, setPokemonList] = React.useState([]);
   const [discoveredPokemon, setDiscoveredPokemon] = React.useState(getDiscoveredPokemon());
+  const [singleGuessPokemon, setSingleGuessPokemon] = React.useState(getSingleGuessPokemon());
   const [showMasterCelebration, setShowMasterCelebration] = React.useState(false);
   const [showProgressCelebration, setShowProgressCelebration] = React.useState(false);
+  const [showLegendCelebration, setShowLegendCelebration] = React.useState(false);
   const [progressCount, setProgressCount] = React.useState(0);
   const [isMaster, setIsMaster] = React.useState(false);
+  const [isLegend, setIsLegend] = React.useState(false);
+  const [settings, setSettings] = React.useState(() => {
+    try {
+      const stored = localStorage.getItem('squirtle-wordle-settings');
+      return stored ? JSON.parse(stored) : {
+        hideHints: false,
+        noRepeatPokemon: false
+      };
+    } catch {
+      return {
+        hideHints: false,
+        noRepeatPokemon: false
+      };
+    }
+  });
+  
+  const gameRef = React.useRef();
 
   function handleReset() {
     setGameKey(prevKey => prevKey + 1);
@@ -54,13 +93,29 @@ function App() {
     setHighlightPokemonId(null);
   }
 
-  function handlePokemonDiscovered(pokemonId) {
+  function handlePokemonDiscovered(pokemonId, wasSingleGuess = false) {
     if (!discoveredPokemon.includes(pokemonId)) {
       const newDiscovered = [...discoveredPokemon, pokemonId];
       const newCount = newDiscovered.length;
       
       setDiscoveredPokemon(newDiscovered);
       saveDiscoveredPokemon(newDiscovered);
+      
+      // Check for legend celebration (all 151 caught with single guesses) - delay to let pokeball animation finish
+      if (wasSingleGuess && !singleGuessPokemon.includes(pokemonId)) {
+        const newSingleGuess = [...singleGuessPokemon, pokemonId];
+        setSingleGuessPokemon(newSingleGuess);
+        saveSingleGuessPokemon(newSingleGuess);
+        
+        // Check if user has become a legend (all 151 with single guesses)
+        if (newSingleGuess.length === 151) {
+          setTimeout(() => {
+            setIsLegend(true);
+            setShowLegendCelebration(true);
+          }, 3000);
+          return; // Exit early to show legend celebration instead of master
+        }
+      }
       
       // Check for master celebration (151 Pokemon) - delay to let pokeball animation finish
       if (newCount === 151) {
@@ -91,19 +146,67 @@ function App() {
     setShowProgressCelebration(false);
   }
 
+  function handleDismissLegend() {
+    setShowLegendCelebration(false);
+  }
+
+  function handleLegendHoorayClick() {
+    setShowLegendCelebration(false);
+  }
+
+  function handleSubmitGuess(pokemonName) {
+    if (gameRef.current && gameRef.current.isGameActive) {
+      gameRef.current.submitGuess(pokemonName);
+    }
+  }
+
   function handleHoorayClick() {
     setShowMasterCelebration(false);
   }
 
-  // Check if user is already a master on load
+  // Check if user is already a master or legend on load
   React.useEffect(() => {
     setIsMaster(discoveredPokemon.length === 151);
-  }, [discoveredPokemon.length]);
+    setIsLegend(singleGuessPokemon.length === 151);
+  }, [discoveredPokemon.length, singleGuessPokemon.length]);
+  // Listen for settings changes from localStorage
+  React.useEffect(() => {
+    const handleStorageChange = () => {
+      try {
+        const stored = localStorage.getItem('squirtle-wordle-settings');
+        if (stored) {
+          setSettings(JSON.parse(stored));
+        }
+      } catch {
+        // Keep current settings on parse error
+      }
+    };
 
+    // Listen for custom settings change events
+    const handleSettingsChange = () => {
+      handleStorageChange();
+    };
+
+    // Poll for localStorage changes (in case same-tab changes aren't triggering events)
+    const pollInterval = setInterval(handleStorageChange, 1000);
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('settingsChanged', handleSettingsChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('settingsChanged', handleSettingsChange);
+      clearInterval(pollInterval);
+    };
+  }, []);
   // Add event listeners for test functions
   React.useEffect(() => {
     const handleTestMaster = () => {
       setShowMasterCelebration(true);
+    };
+    
+    const handleTestLegend = () => {
+      setShowLegendCelebration(true);
     };
     
     const handleTestProgress = (event) => {
@@ -113,11 +216,19 @@ function App() {
     };
     
     window.addEventListener('testMasterCelebration', handleTestMaster);
+    window.addEventListener('testLegendCelebration', handleTestLegend);
     window.addEventListener('testProgressCelebration', handleTestProgress);
+    
+    // Add test function to window for legend celebration
+    window.testLegendCelebration = () => {
+      setShowLegendCelebration(true);
+    };
     
     return () => {
       window.removeEventListener('testMasterCelebration', handleTestMaster);
+      window.removeEventListener('testLegendCelebration', handleTestLegend);
       window.removeEventListener('testProgressCelebration', handleTestProgress);
+      delete window.testLegendCelebration;
     };
   }, []);
 
@@ -129,15 +240,18 @@ function App() {
         discoveredCount={discoveredPokemon.length}
         totalCount={pokemonList.length}
         isMaster={isMaster}
-        trophyIcon={trophyIcon}
+        isLegend={isLegend}
+        trophyIcon={isLegend ? trophyStarIcon : trophyIcon}
       />
 
       <div className="game-wrapper">
         <Game 
           key={gameKey}
+          ref={gameRef}
           onPokemonDiscovered={handlePokemonDiscovered}
           onPokemonListLoaded={handlePokemonListLoaded}
           onOpenPokedex={handleOpenPokedex}
+          settings={settings}
         />
       </div>
 
@@ -146,17 +260,20 @@ function App() {
         onClose={handleClosePokedex}
         pokemonList={pokemonList}
         discoveredPokemon={discoveredPokemon}
+        singleGuessPokemon={singleGuessPokemon}
         highlightPokemonId={highlightPokemonId}
         isMaster={isMaster}
-        trophyIcon={trophyIcon}
-      />
+        trophyIcon={trophyIcon}        onSubmitGuess={handleSubmitGuess}      />
       <Celebrations
         showMasterCelebration={showMasterCelebration}
         showProgressCelebration={showProgressCelebration}
+        showLegendCelebration={showLegendCelebration}
         progressCount={progressCount}
         onDismissMaster={handleDismissMaster}
         onDismissProgress={handleDismissProgress}
+        onDismissLegend={handleDismissLegend}
         onHoorayClick={handleHoorayClick}
+        onLegendHoorayClick={handleLegendHoorayClick}
       />
     </div>
   );

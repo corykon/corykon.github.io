@@ -148,7 +148,7 @@ async function fetchPokemonDescription(originalName) {
     }
 }
 
-function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex }) {
+const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex, settings }, ref) {
     const [pokemonList, setPokemonList] = React.useState([]);
     const [answer, setAnswer] = React.useState('');
     const [currentPokemon, setCurrentPokemon] = React.useState(null);
@@ -170,8 +170,19 @@ function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex }) {
         
         let selectedPokemon;
         
-        // If we've had 3 consecutive repeats, force selection from uncaught Pokemon
-        if (consecutiveRepeats >= 3) {
+        // Check if "No Repeat Pokemon" setting is enabled
+        if (settings?.noRepeatPokemon) {
+            const uncaughtPokemon = pokemonList.filter(pokemon => !discoveredPokemon.includes(pokemon.id));
+            
+            if (uncaughtPokemon.length > 0) {
+                selectedPokemon = sample(uncaughtPokemon);
+            } else {
+                // If all Pokemon are caught and no repeat is on, just pick randomly
+                selectedPokemon = sample(pokemonList);
+            }
+        }
+        // Original logic for when no-repeat is disabled
+        else if (consecutiveRepeats >= 3) {
             const uncaughtPokemon = pokemonList.filter(pokemon => !discoveredPokemon.includes(pokemon.id));
             
             if (uncaughtPokemon.length > 0) {
@@ -187,12 +198,18 @@ function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex }) {
         setCurrentPokemon(selectedPokemon);
         setAnswer(selectedPokemon.name);
         
-        // Update consecutive repeat counter
+        // Check if this Pokemon was previously caught
         const isPreviouslyCaught = discoveredPokemon.includes(selectedPokemon.id);
-        if (isPreviouslyCaught) {
-            setConsecutiveRepeats(prev => prev + 1);
+        
+        // Update consecutive repeat counter (only when no-repeat is disabled)
+        if (!settings?.noRepeatPokemon) {
+            if (isPreviouslyCaught) {
+                setConsecutiveRepeats(prev => prev + 1);
+            } else {
+                setConsecutiveRepeats(0); // Reset counter when we get a new Pokemon
+            }
         } else {
-            setConsecutiveRepeats(0); // Reset counter when we get a new Pokemon
+            setConsecutiveRepeats(0); // Always reset when no-repeat is enabled
         }
         
         // Load current catch count for this Pokemon
@@ -232,6 +249,16 @@ function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex }) {
 
     console.info('answer:', answer);
     
+    // Expose handleNewGuess to parent component
+    React.useImperativeHandle(ref, () => ({
+        submitGuess: (guess) => {
+            if (!gameIsOver) {
+                handleNewGuess(guess.toUpperCase());
+            }
+        },
+        isGameActive: !gameIsOver
+    }));
+    
     function handleNewGuess(newGuess) {
         const letters = checkGuess(newGuess, answer);
         const newGuesses = [...guesses, {id: crypto.randomUUID(), word: newGuess, letters}];
@@ -242,6 +269,9 @@ function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex }) {
             setGameIsWon(true);
             
             if (currentPokemon) {
+                // Check if this was a single guess (first try)
+                const wasSingleGuess = newGuesses.length === 1;
+                
                 // Get current catch counts
                 const catchCounts = JSON.parse(localStorage.getItem('pokemon-catch-counts') || '{}');
                 const currentCount = catchCounts[currentPokemon.id] || 0;
@@ -258,7 +288,7 @@ function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex }) {
                 setIsNewDiscovery(!wasAlreadyDiscovered);
                 
                 if (onPokemonDiscovered) {
-                    onPokemonDiscovered(currentPokemon.id);
+                    onPokemonDiscovered(currentPokemon.id, wasSingleGuess);
                 }
                 
                 // Auto-open Pokedex for new discoveries (but not if user clicked play again)
@@ -302,7 +332,7 @@ function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex }) {
     }
 
     return <>
-        {pokemonDescription && (
+        {pokemonDescription && !settings?.hideHints && (
             <div className="pokemon-hint">
                 <strong>Hint:</strong> {pokemonDescription}
             </div>
@@ -324,7 +354,7 @@ function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex }) {
         )}
         {gameIsOver ? (
                 <div className="play-again-container">
-                    <button className="main-play-again-button" onClick={resetGame}>
+                    <button className="primary-button" onClick={resetGame}>
                         <img src={refreshIcon} alt="Refresh" width="16" height="16" />
                         Play Again
                     </button>
@@ -338,6 +368,6 @@ function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex }) {
                 />
             )}
     </>;
-}
+});
 
 export default Game;
