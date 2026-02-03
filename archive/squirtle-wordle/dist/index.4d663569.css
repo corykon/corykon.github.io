@@ -289,6 +289,7 @@ h1 img {
   flex: 1;
   width: 100%;
   max-width: 800px;
+  max-height: calc(100vh - 65px);
   margin: 0 auto;
   display: flex;
 }

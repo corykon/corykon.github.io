@@ -298,6 +298,7 @@ h1 img {
     gap: var(--game-spacing);
     padding: var(--game-spacing) 32px;
     margin: 0 auto;
+    max-height: calc(100vh - 65px);
     max-width: 800px;
     width: 100%;
     box-sizing: border-box;
