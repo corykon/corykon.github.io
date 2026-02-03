@@ -20813,7 +20813,7 @@ $RefreshReg$(_c, "Header");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../assets/squirtle.png":"8G5bv","../../assets/trainer-scene.png":"5kTng","../../assets/refresh.svg":"hWuuE","../../assets/pokeball.svg":"g0Tu5","../../assets/elip.svg":"dem6i","../../assets/info.svg":"4Wkex","../../assets/cog.svg":"hc9AN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../assets/external-link.svg":"kLqXO"}],"8G5bv":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../assets/squirtle.png":"8G5bv","../../assets/trainer-scene.png":"5kTng","../../assets/refresh.svg":"hWuuE","../../assets/pokeball.svg":"g0Tu5","../../assets/elip.svg":"dem6i","../../assets/info.svg":"4Wkex","../../assets/cog.svg":"hc9AN","../../assets/external-link.svg":"kLqXO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"8G5bv":[function(require,module,exports) {
 module.exports = require("3352a55e2eb7da39").getBundleURL("bLxZJ") + "squirtle.3ef8d258.png" + "?" + Date.now();
 
 },{"3352a55e2eb7da39":"lgJ39"}],"5kTng":[function(require,module,exports) {

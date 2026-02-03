@@ -12,9 +12,16 @@ html {
   overflow-y: scroll;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   background: linear-gradient(45deg, #8ec5fc 0%, #8dd3ff 25%, #a1d8ff 50%, #c1d2ff 75%, #e0c3ff 100%);
+  margin: 0;
+  padding: 0;
   font-family: Open Sans, sans-serif;
+  overflow-x: hidden;
 }
 
 @media (height <= 600px) {
@@ -209,25 +216,78 @@ h1 img {
   }
 
   div.game-wrapper {
-    padding: 16px;
+    padding: 16px 12px;
   }
 
   div.side {
-    width: 16px;
+    width: 12px;
   }
 
   div.game-wrapper, div.guess-results {
-    max-width: 92vw;
+    max-width: 95vw;
+  }
+
+  header {
+    padding: 0 8px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h1 img {
+    height: 3rem;
+  }
+
+  .header-buttons {
+    gap: 8px;
+  }
+
+  .pokemon-count {
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+}
+
+@media (width <= 450px) {
+  :root {
+    --game-spacing: 16px;
+  }
+
+  div.game-wrapper {
+    padding: 12px 8px;
+  }
+
+  div.side {
+    width: 8px;
+  }
+
+  .header-buttons {
+    gap: 6px;
+  }
+}
+
+@media (width <= 400px) {
+  div.game-wrapper {
+    padding: 8px 4px;
+  }
+
+  div.side {
+    width: 4px;
+  }
+
+  header {
+    padding: 0 4px;
   }
 }
 
 .game-wrapper {
   gap: var(--game-spacing);
   padding: var(--game-spacing) 32px;
+  box-sizing: border-box;
   flex-direction: column;
   flex: 1;
   width: 100%;
-  min-width: 500px;
   max-width: 800px;
   margin: 0 auto;
   display: flex;
@@ -2490,14 +2550,23 @@ h1 img {
 }
 
 .modal-content {
+  box-sizing: border-box;
   background: #fff;
   border-radius: 12px;
-  width: 100%;
+  width: 90%;
   max-width: 600px;
   max-height: 80vh;
+  margin: 0 auto;
   padding: 24px;
   position: relative;
   overflow-y: auto;
+}
+
+@media (width <= 450px) {
+  .modal-content {
+    width: 95%;
+    padding: 16px;
+  }
 }
 
 .about-modal {

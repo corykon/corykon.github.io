@@ -20,9 +20,16 @@ html {
 /*
   Custom styles
 */
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Open Sans', sans-serif;
   background: linear-gradient(45deg, rgb(142, 197, 252) 0%, rgb(141, 211, 255) 25%, rgb(161, 216, 255) 50%, rgb(193, 210, 255) 75%, rgb(224, 195, 255) 100%);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 @media (max-height: 600px) {
@@ -219,14 +226,68 @@ h1 img {
   }
 
   div.game-wrapper {
-    padding: 16px;
+    padding: 16px 12px;
   }
+  
   div.side {
-    width: 16px;
+    width: 12px;
   }
 
   div.game-wrapper, div.guess-results {
-    max-width: 92vw;
+    max-width: 95vw;
+  }
+  
+  header {
+    padding: 0 8px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  h1 img {
+    height: 3rem;
+  }
+  
+  .header-buttons {
+    gap: 8px;
+  }
+  
+  .pokemon-count {
+    font-size: 12px;
+    padding: 2px 6px;
+  }
+}
+
+@media (max-width: 450px) {
+  :root {
+    --game-spacing: 16px;
+  }
+  
+  div.game-wrapper {
+    padding: 12px 8px;
+  }
+  
+  div.side {
+    width: 8px;
+  }
+
+  .header-buttons {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 400px) {
+  div.game-wrapper {
+    padding: 8px 4px;
+  }
+  
+  div.side {
+    width: 4px;
+  }
+  
+  header {
+    padding: 0 4px;
   }
 }
 
@@ -238,8 +299,8 @@ h1 img {
     padding: var(--game-spacing) 32px;
     margin: 0 auto;
     max-width: 800px;
-    min-width: 500px;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .guess-results {
@@ -2353,10 +2414,19 @@ h1 img {
   border-radius: 12px;
   padding: 24px;
   max-width: 600px;
-  width: 100%;
+  width: 90%;
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+@media (max-width: 450px) {
+  .modal-content {
+    padding: 16px;
+    width: 95%;
+  }
 }
 
 /* About Modal */
