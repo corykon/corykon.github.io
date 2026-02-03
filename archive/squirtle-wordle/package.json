@@ -18,6 +18,7 @@
     "predev": "rimraf .parcel-cache dist",
     "dev": "parcel public/index.html",
     "build": "parcel build public/index.html",
+    "build-gh": "parcel build public/index.html --public-url ./",
     "new-component": "new-component"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead"
