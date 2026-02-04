@@ -387,6 +387,7 @@ h1 img {
   border: 1px solid #ffffff4d;
   border-radius: 10px;
   width: 100%;
+  min-height: 44px;
   padding: 8px 16px;
   font-size: 2rem;
   transition: all .15s ease-in-out;

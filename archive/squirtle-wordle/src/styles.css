@@ -406,6 +406,7 @@ h1 img {
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
     will-change: transform, backdrop-filter;
     transition: all 150ms ease-in-out;
+    min-height: 44px;
 }
 
 .guess-input-wrapper input:hover {
