@@ -24,12 +24,6 @@ body {
   overflow-x: hidden;
 }
 
-@media (height <= 600px) {
-  body {
-    --game-spacing: 8px;
-  }
-}
-
 button {
   cursor: pointer;
   text-align: left;
@@ -199,6 +193,10 @@ h1 img {
     padding-right: 32px;
   }
 
+  .pokemon-share-container {
+    display: none;
+  }
+
   header .side {
     width: 32px;
   }
@@ -284,12 +282,12 @@ h1 img {
 .game-wrapper {
   gap: var(--game-spacing);
   padding: var(--game-spacing) 32px;
+  max-height: calc(100vh - var(--header-height)  - 5px);
   box-sizing: border-box;
   flex-direction: column;
   flex: 1;
   width: 100%;
   max-width: 800px;
-  max-height: calc(100vh - 65px);
   margin: 0 auto;
   display: flex;
 }
@@ -1039,7 +1037,7 @@ h1 img {
 
 .scroll-to-top-button {
   cursor: pointer;
-  z-index: 1003;
+  z-index: 20001;
   color: #fff;
   opacity: 0;
   visibility: hidden;
@@ -1097,83 +1095,83 @@ h1 img {
 }
 
 .type-badge.normal {
-  background-color: #98999e;
+  background-color: #9a9aa0;
 }
 
 .type-badge.fire {
-  background-color: #f08030;
+  background-color: #f0802a;
 }
 
 .type-badge.water {
-  background-color: #6890f0;
+  background-color: #2b63c6;
 }
 
 .type-badge.electric {
   color: #000;
-  background-color: #f8d030;
+  background-color: #f6d64a;
 }
 
 .type-badge.grass {
-  background-color: #78c850;
+  background-color: #6fc24a;
 }
 
 .type-badge.ice {
-  background-color: #40aeae;
+  background-color: #6bc7c7;
 }
 
 .type-badge.fighting {
-  background-color: #c03028;
+  background-color: #4a3f3f;
 }
 
 .type-badge.poison {
-  background-color: #a040a0;
+  background-color: #9b4aa3;
 }
 
 .type-badge.ground {
-  background-color: #8e5d1e;
+  background-color: #b0813a;
 }
 
 .type-badge.flying {
-  background-color: #537cb8;
+  background-color: #7db6d6;
 }
 
 .type-badge.psychic {
-  background-color: #6e53a3;
+  background-color: #453075;
 }
 
 .type-badge.bug {
-  background-color: #a8b820;
+  background-color: #9fb93c;
 }
 
 .type-badge.rock {
-  background-color: #554040;
+  background-color: #6b5555;
 }
 
 .type-badge.ghost {
-  background-color: #705898;
+  background-color: #7a64a8;
 }
 
 .type-badge.dragon {
-  background-color: #7038f8;
+  background-color: #d6af3f;
 }
 
 .type-badge.dark {
-  background-color: #705848;
+  background-color: #3a2f6b;
 }
 
 .type-badge.steel {
   color: #000;
-  background-color: #b8b8d0;
+  background-color: #c4c6dd;
 }
 
 .type-badge.fairy {
   color: #000;
-  background-color: #ee99ac;
+  background-color: #f0a8c0;
 }
 
 .pokemon-description-panel {
   backdrop-filter: blur(20px);
-  z-index: 1002;
+  z-index: 20000;
   background: #1e3c72f2;
   border-top: 1px solid #fff3;
   flex-direction: column;
@@ -1293,9 +1291,34 @@ h1 img {
 
 .pokemon-grid {
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
+  gap: 20px;
   padding-bottom: 100px;
   display: grid;
+}
+
+.pokedex-empty-state {
+  text-align: center;
+  flex-direction: column;
+  grid-column: 1 / -1;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  display: flex;
+}
+
+.empty-state-icon {
+  opacity: .3;
+  filter: grayscale();
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
+}
+
+.empty-state-message {
+  color: #ffffffb3;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .pokemon-card {
@@ -1345,6 +1368,14 @@ h1 img {
   margin: 4px 0;
   font-size: .9rem;
   font-weight: 600;
+}
+
+.search-highlight {
+  color: #333;
+  background-color: gold;
+  border-radius: 3px;
+  padding: 1px 3px;
+  font-weight: 700;
 }
 
 .pokemon-name-container {
@@ -1986,7 +2017,7 @@ h1 img {
 
   .pokemon-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
+    gap: 20px;
   }
 
   .pokemon-card {
@@ -2142,7 +2173,7 @@ h1 img {
 
 .celebration-overlay {
   -webkit-backdrop-filter: blur(8px) saturate(180%);
-  z-index: 10000;
+  z-index: 30000;
   background: #0009;
   justify-content: center;
   align-items: center;
@@ -2257,7 +2288,7 @@ h1 img {
 
 .confetti-container {
   pointer-events: none;
-  z-index: 1;
+  z-index: 30000;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -2540,7 +2571,7 @@ h1 img {
 }
 
 .modal-overlay {
-  z-index: 10010;
+  z-index: 30010;
   background: #000000bf;
   justify-content: center;
   align-items: center;
@@ -2801,5 +2832,153 @@ input:checked + .slider:before {
   color: #555;
   margin: 0 0 20px;
   line-height: 1.5;
+}
+
+@media (height <= 600px) {
+  body {
+    --game-spacing: 8px;
+  }
+}
+
+@media (height <= 930px) {
+  :root {
+    --game-spacing: 20px;
+    --header-height: 3.5rem;
+  }
+
+  .cell {
+    max-width: 9vh;
+    max-height: 9vh;
+    font-size: 1.8rem;
+  }
+
+  .pokemon-hint {
+    min-height: 70px;
+    margin-bottom: 12px;
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .guess-input-wrapper {
+    height: 5.5rem;
+  }
+
+  .guess-input-wrapper input {
+    padding: 6px 12px;
+    font-size: 1.8rem;
+  }
+
+  .pokemon-description {
+    margin-top: 6px;
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+
+@media (height <= 800px) {
+  :root {
+    --game-spacing: 16px;
+    --header-height: 3.5rem;
+  }
+
+  .cell {
+    max-width: 9vh;
+    max-height: 9vh;
+    font-size: 1.6rem;
+  }
+
+  .pokemon-hint {
+    min-height: 45px;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  .pokemon-hint strong {
+    letter-spacing: 1px;
+  }
+
+  .results-pokemon-name {
+    text-transform: capitalize;
+  }
+
+  .guess-input-wrapper {
+    height: 4.8rem;
+  }
+
+  .guess-input-wrapper input {
+    padding: 3px 8px;
+    font-size: 1.5rem;
+  }
+
+  .guess-input-wrapper label {
+    letter-spacing: 3px;
+    font-size: 18px;
+  }
+
+  .guess-input-desc {
+    font-size: 11px;
+  }
+
+  .pokemon-description {
+    margin-top: 3px;
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+
+  .play-again-container {
+    height: 4.8rem;
+    margin-bottom: 12px;
+  }
+}
+
+@media (height <= 700px) {
+  :root {
+    --game-spacing: 10px;
+    --header-height: 3.5rem;
+  }
+
+  .cell {
+    max-width: 8.5vh;
+    max-height: 8.5vh;
+    font-size: 1.4rem;
+  }
+
+  .guess-input-wrapper {
+    height: 4.5rem;
+  }
+
+  .guess-input-wrapper input {
+    padding: 2px 6px;
+    font-size: 1.3rem;
+  }
+
+  .guess-input-wrapper label {
+    letter-spacing: 2px;
+    font-size: 18px;
+  }
+
+  .guess-input-desc {
+    font-size: 12px;
+  }
+
+  .pokemon-description {
+    margin-top: 2px;
+    padding: 3px 4px;
+    font-size: 10px;
+  }
+
+  .play-again-container {
+    height: 4.5rem;
+    margin-bottom: 6px;
+  }
+
+  .pokemon-count {
+    padding: 1px 4px;
+    font-size: 11px;
+  }
+
+  .guess {
+    margin-bottom: 2px;
+  }
 }
 /*# sourceMappingURL=index.4d663569.css.map */

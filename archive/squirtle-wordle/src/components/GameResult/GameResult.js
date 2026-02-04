@@ -45,14 +45,14 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
                     </div>
                 </div>
                 <p className="caught-pokemon-message">
-                    <strong>You caught a {pokemonName || answer} in {guessCount} guess{guessCount !== 1 ? 'es' : ''}!</strong>
+                    <strong>You caught a <span className="results-pokemon-name">{pokemonName || answer}</span> in {guessCount} guess{guessCount !== 1 ? 'es' : ''}!</strong>
                 </p>
             </div>
             
             <p className="pokedex-link-message">
                 {catchCount > 1 && (
                     <span>
-                        You've caught {pokemonName || answer} {catchCount} times.
+                        You've caught <span className="results-pokemon-name">{pokemonName || answer}</span> {catchCount} times.
                     </span>
                 )}{' '}
                 {isNewDiscovery ? "It's been added to your" : "View it in your"}{' '}

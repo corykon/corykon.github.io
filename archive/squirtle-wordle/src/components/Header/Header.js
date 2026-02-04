@@ -161,7 +161,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
             <h2>About Squirtle Wordle</h2>
             <img src={trainerSceneImage} alt="Pokemon Trainer Scene" className="about-image" />
             <div className="about-text">
-              <p>Wordle-based Pokémon guessing game. Inspired by a project from the course "<a href="https://www.joyofreact.com/" target="_blank" rel="noopener noreferrer">Joy of React</a>".</p>
+              <p>A Pokémon guessing game based on Wordle. Inspired by a project from the course "<a href="https://www.joyofreact.com/" target="_blank" rel="noopener noreferrer">Joy of React</a>".</p>
               <p>Catch as many Pokemon as you can, and even better, try to get them in one guess. Use your Pokédex to track progress.</p>
             </div>
             <button className="primary-button modal-button" onClick={() => setShowAboutModal(false)}>
@@ -184,7 +184,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
               <div className="setting-item">
                 <div className="setting-label-container">
                   <div className="setting-label">Hide Hints</div>
-                  <div className="setting-description">Hard mode. Pokémon description hints won't be given.</div>
+                  <div className="setting-description">Hard mode. If turned on, pokémon description hints won't be given.</div>
                 </div>
                 <label className="toggle-switch">
                   <input 
@@ -198,7 +198,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
               <div className="setting-item">
                 <div className="setting-label-container">
                   <div className="setting-label">No Repeat Pokémon</div>
-                  <div className="setting-description">You'll only guess Pokémon you haven't caught yet.</div>
+                  <div className="setting-description">If turned on, you'll only guess Pokémon you haven't caught yet.</div>
                 </div>
                 <label className="toggle-switch">
                   <input 

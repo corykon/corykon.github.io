@@ -153,9 +153,72 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         }
     }, [isOpen]);
     
+    // Function to highlight matching tokens in pokemon names
+    const highlightSearchTerms = (name, searchTerms) => {
+        if (!searchTerms || searchTerms.length === 0) {
+            return name;
+        }
+        
+        // Create a list of all matches with their positions
+        const matches = [];
+        
+        searchTerms.forEach(token => {
+            if (token.length === 0) return;
+            
+            const regex = new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+            let match;
+            
+            while ((match = regex.exec(name)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0]
+                });
+            }
+        });
+        
+        // Sort matches by start position
+        matches.sort((a, b) => a.start - b.start);
+        
+        // Merge overlapping matches
+        const mergedMatches = [];
+        for (const match of matches) {
+            if (mergedMatches.length === 0) {
+                mergedMatches.push(match);
+            } else {
+                const last = mergedMatches[mergedMatches.length - 1];
+                if (match.start <= last.end) {
+                    // Overlapping or adjacent - merge them
+                    last.end = Math.max(last.end, match.end);
+                    last.text = name.substring(last.start, last.end);
+                } else {
+                    mergedMatches.push(match);
+                }
+            }
+        }
+        
+        // Build highlighted string from end to beginning to preserve indices
+        let result = name;
+        for (let i = mergedMatches.length - 1; i >= 0; i--) {
+            const match = mergedMatches[i];
+            const before = result.substring(0, match.start);
+            const highlighted = `<span class="search-highlight">${match.text}</span>`;
+            const after = result.substring(match.end);
+            result = before + highlighted + after;
+        }
+        
+        return result;
+    };
+    
+    // Parse search term into tokens
+    const searchTokens = searchTerm.trim().toLowerCase().split(/\s+/).filter(token => token.length > 0);
+    
     const filteredPokemon = pokemonList.filter(pokemon => {
-        const matchesSearch = pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            pokemon.id.toString().includes(searchTerm);
+        // Multi-token search: pokemon name must contain ALL tokens
+        const nameMatch = searchTokens.length === 0 || 
+            searchTokens.every(token => pokemon.name.toLowerCase().includes(token));
+        const idMatch = searchTerm === '' || pokemon.id.toString().includes(searchTerm);
+        const matchesSearch = nameMatch || idMatch;
         
         const isDiscovered = discoveredPokemon.includes(pokemon.id);
         
@@ -240,6 +303,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="pokedex-search"
+                                title="Tip: You can search for multiple distinct letters by separating with spaces. For example: 'B S R' will find 'Bulbasaur'"
                             />
                             {searchTerm && (
                                 <button 
@@ -330,71 +394,87 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                 
                 <div className="pokedex-content">
                     <div className="pokemon-grid">
-                        {filteredPokemon.map(pokemon => {
-                            const isDiscovered = discoveredPokemon.includes(pokemon.id);
-                            const isHighlighted = highlightPokemonId === pokemon.id;
-                            return (
-                                <div 
-                                    key={pokemon.id}
-                                    id={`pokemon-${pokemon.id}`} 
-                                    className={`pokemon-card ${isDiscovered ? 'discovered' : 'undiscovered'} ${isHighlighted ? 'highlighted' : ''}`}
-                                    onClick={() => {
-                                        setSelectedPokemon(pokemon);
-                                        if (isDiscovered) {
-                                            fetchDescription(pokemon);
-                                            fetchTypes(pokemon);
-                                        }
-                                    }}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <img
-                                        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`}
-                                        alt={pokemon.name}
-                                        className="pokemon-image"
-                                        onError={(e) => {
-                                            e.target.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+                        {filteredPokemon.length > 0 ? (
+                            filteredPokemon.map(pokemon => {
+                                const isDiscovered = discoveredPokemon.includes(pokemon.id);
+                                const isHighlighted = highlightPokemonId === pokemon.id;
+                                return (
+                                    <div 
+                                        key={pokemon.id}
+                                        id={`pokemon-${pokemon.id}`} 
+                                        className={`pokemon-card ${isDiscovered ? 'discovered' : 'undiscovered'} ${isHighlighted ? 'highlighted' : ''}`}
+                                        onClick={() => {
+                                            setSelectedPokemon(pokemon);
+                                            if (isDiscovered) {
+                                                fetchDescription(pokemon);
+                                                fetchTypes(pokemon);
+                                            }
                                         }}
-                                    />
-                                    {isDiscovered && (
-                                        <div className="discovery-badge" title="You've caught this Pokémon"></div>
-                                    )}
-                                    {isDiscovered && singleGuessPokemon && singleGuessPokemon.includes(pokemon.id) && (
-                                        <div className="single-guess-badge" title="Caught in a single guess">★</div>
-                                    )}
-                                    <div className="pokemon-number">#{pokemon.id.toString().padStart(3, '0')}</div>
-                                    <div className="pokemon-name-container">
-                                        <div className="pokemon-name">{pokemon.name}</div>
-                                        {onSubmitGuess && (
-                                            <div className="pokemon-share-container">
-                                                <button 
-                                                    className="pokemon-share-button"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        onSubmitGuess(pokemon.name);
-                                                        onClose(); // Close Pokedex after submitting guess
-                                                    }}
-                                                    onMouseEnter={() => setHoveredShareButton(pokemon.id)}
-                                                    onMouseLeave={() => setHoveredShareButton(null)}
-                                                >
-                                                    <img src={shareIcon} alt="Submit guess" className="share-icon" />
-                                                </button>
-                                                {hoveredShareButton === pokemon.id && (
-                                                    <div className="share-tooltip">
-                                                        Submit {pokemon.name} as your guess
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>                                <div 
-                                        className="pokemon-catch-count"
-                                        style={{ opacity: isDiscovered && catchCounts[pokemon.id] ? 1 : 0 }}
-                                        title={isDiscovered && catchCounts[pokemon.id] ? `You've caught ${catchCounts[pokemon.id]} ${pokemon.name}` : ''}
+                                        style={{ cursor: 'pointer' }}
                                     >
-                                        <img src={pokeballIcon} alt="Pokeball" className="catch-count-icon" />
-                                        {catchCounts[pokemon.id] || 0}
-                                    </div>                                </div>
-                            );
-                        })}
+                                        <img
+                                            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`}
+                                            alt={pokemon.name}
+                                            className="pokemon-image"
+                                            onError={(e) => {
+                                                e.target.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+                                            }}
+                                        />
+                                        {isDiscovered && (
+                                            <div className="discovery-badge" title="You've caught this Pokémon"></div>
+                                        )}
+                                        {isDiscovered && singleGuessPokemon && singleGuessPokemon.includes(pokemon.id) && (
+                                            <div className="single-guess-badge" title="Caught in a single guess">★</div>
+                                        )}
+                                        <div className="pokemon-number">#{pokemon.id.toString().padStart(3, '0')}</div>
+                                        <div className="pokemon-name-container">
+                                            <div 
+                                                className="pokemon-name" 
+                                                dangerouslySetInnerHTML={{
+                                                    __html: highlightSearchTerms(pokemon.name, searchTokens)
+                                                }}
+                                            />
+                                            {onSubmitGuess && (
+                                                <div className="pokemon-share-container">
+                                                    <button 
+                                                        className="pokemon-share-button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            onSubmitGuess(pokemon.name);
+                                                            onClose(); // Close Pokedex after submitting guess
+                                                        }}
+                                                        onMouseEnter={() => setHoveredShareButton(pokemon.id)}
+                                                        onMouseLeave={() => setHoveredShareButton(null)}
+                                                    >
+                                                        <img src={shareIcon} alt="Submit guess" className="share-icon" />
+                                                    </button>
+                                                    {hoveredShareButton === pokemon.id && (
+                                                        <div className="share-tooltip">
+                                                            Submit {pokemon.name} as your guess
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>                                <div 
+                                            className="pokemon-catch-count"
+                                            style={{ opacity: isDiscovered && catchCounts[pokemon.id] ? 1 : 0 }}
+                                            title={isDiscovered && catchCounts[pokemon.id] ? `You've caught ${catchCounts[pokemon.id]} ${pokemon.name}` : ''}
+                                        >
+                                            <img src={pokeballIcon} alt="Pokeball" className="catch-count-icon" />
+                                            {catchCounts[pokemon.id] || 0}
+                                        </div>                                </div>
+                                );
+                            })
+                        ) : (
+                            <div className="pokedex-empty-state">
+                                <img src={pokeballIcon} alt="Pokeball" className="empty-state-icon" />
+                                <div className="empty-state-message">
+                                    {activeFilter === 'caught' && 'No pokemon caught, yet.'}
+                                    {activeFilter === 'uncaught' && "Caught 'em all!"}
+                                    {activeFilter === 'all' && 'No pokemon found.'}
+                                </div>
+                            </div>
+                        )}
                     </div>
                     
                     <button 
