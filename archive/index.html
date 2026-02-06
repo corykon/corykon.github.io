@@ -6,159 +6,17 @@
     <meta name="description" content="Archive">
     <meta name="author" content="Cory Fugate">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-      
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        line-height: 1.6;
-        margin: 0;
-        padding: 20px;
-        background-color: #f8f9fa;
-        color: #333;
-      }
-      
-      .back-link {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 1000;
-      }
-      
-      .back-link a {
-        display: inline-flex;
-        align-items: center;
-        padding: 8px 16px;
-        background-color: rgba(255, 255, 255, 0.9);
-        color: #2c3e50;
-        text-decoration: none;
-        border-radius: 20px;
-        font-size: 0.9em;
-        font-weight: 500;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
-      }
-      
-      .back-link a:hover {
-        background-color: rgba(255, 255, 255, 1);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-      
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      
-      h1 {
-        text-align: center;
-        color: #2c3e50;
-        margin-bottom: 10px;
-        font-size: 2.5em;
-      }
-      
-      .subtitle {
-        text-align: center;
-        color: #7f8c8d;
-        margin-bottom: 40px;
-        font-size: 1.2em;
-      }
-      
-      .portfolio-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        padding: 0;
-        list-style: none;
-      }
-      
-      .portfolio-item {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-      }
-      
-      .portfolio-item:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-      }
-      
-      .portfolio-item a {
-        text-decoration: none;
-        color: inherit;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-      }
-      
-      .screenshot-placeholder {
-        width: 100%;
-        height: 160px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 16px;
-        font-weight: 500;
-      }
-      
-      .screenshot-thumbnail {
-        width: 100%;
-        height: 160px;
-        object-fit: cover;
-        background-color: #f0f0f0;
-      }
-      
-      .item-content {
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-      }
-      
-      .item-title {
-        font-size: 1.2em;
-        font-weight: 600;
-        color: #2c3e50;
-        margin-bottom: 6px;
-      }
-      
-      .item-description {
-        color: #7f8c8d;
-        font-size: 0.9em;
-        margin-bottom: 10px;
-        flex-grow: 1;
-      }
-      
-      .item-year {
-        color: #3498db;
-        font-size: 0.85em;
-        font-weight: 500;
-        margin-top: auto;
-      }
-      
-      @media (max-width: 768px) {
-        .portfolio-grid {
-          grid-template-columns: 1fr;
-          gap: 16px;
-        }
-        
-        h1 {
-          font-size: 2em;
-          margin-top: 48px;
-        }
-        
-        .item-content {
-          padding: 14px;
-        }
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@200;400;600;700;800;900&family=Playfair+Display:wght@400;600;700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/base-styles.css">
+    <link rel="stylesheet" href="css/default-theme.css">
+    <link rel="stylesheet" href="css/vintage-theme.css">
+    <link rel="stylesheet" href="css/artdeco-theme.css">
+    <link rel="stylesheet" href="css/forest-theme.css">
+    <link rel="stylesheet" href="css/cyberpunk-theme.css">
       <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQ0NT1894T"></script>
     <script>
@@ -169,169 +27,281 @@
       gtag('config', 'G-CQ0NT1894T');
     </script>
 </head>
-  <body>
-    <div class="back-link">
-      <a href="../">← Back to coryfugate.com</a>
-    </div>
+  <body class="vintage-theme">
+    <div class="scanline"></div>
+    
     <div class="container">
-      <h1>Archive</h1>
-      <p class="subtitle">A collection of older projects and experiments</p>
+      <div class="top-nav">
+        <div class="back-link">
+          <a href="../">← Back to coryfugate.com</a>
+        </div>
+        
+        <div class="theme-selector">
+          <label class="theme-label" for="themeSelector">Select theme:</label>
+          <select class="theme-dropdown" id="themeSelector">
+            <option value="default">Default theme</option>
+            <option value="vintage">Vintage Computer</option>
+            <option value="artdeco">Art Deco Luxury</option>
+            <option value="forest">Forest</option>
+            <option value="cyberpunk">Cyberpunk Synthwave</option>
+          </select>
+        </div>
+      </div>
       
-      <div class="portfolio-grid">
-        <div class="portfolio-item">
+      <div class="header-section">
+        <h1>Archive</h1>
+        <p class="subtitle">A collection of experiments and older projects</p>
+      </div>
+      
+      <div class="archive-grid">
+        <div class="archive-item">
           <a href="squirtle-wordle/dist">
-            <img src="archive-thumbs/squirtle.png" alt="Squirtle Wordle" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/squirtle.png" alt="Squirtle Wordle" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2026</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Squirtle Wordle</div>
               <div class="item-description">A Pokémon guessing game based on Wordle. Catch all 151!</div>
-              <div class="item-year">2026</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="armor-of-god">
-            <img src="archive-thumbs/armorOfGodTitleImage.png" alt="Armor of God" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/armorOfGodTitleImage.png" alt="Armor of God" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2025</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Armor of God</div>
               <div class="item-description">Vibe-coded platformer created w/ Maddox.</div>
-              <div class="item-year">2025</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="christmas">
-            <img src="archive-thumbs/christmascountdown.jpg" alt="Christmas Countdown" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/christmascountdown.jpg" alt="Christmas Countdown" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2017</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Christmas Countdown</div>
               <div class="item-description">Holiday-themed countdown with daily Christ-centered messages.</div>
-              <div class="item-year">2017</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="comm462">
-            <img src="archive-thumbs/comm462.png" alt="Portfolio Site 2012" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/comm462.png" alt="Portfolio Site 2012" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2012</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Portfolio Site 2012</div>
               <div class="item-description">Another updated portfolio, this one the final project for COMM462.</div>
-              <div class="item-year">2012</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="./classes/diphotobook/">
-            <img src="archive-thumbs/photobook.jpg" alt="Digital Photobook" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/photobook.jpg" alt="Digital Photobook" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2011</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Digital Photobook</div>
               <div class="item-description">Interactive photography class project built using Flash.</div>
-              <div class="item-year">2011</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="https://coryfugate.wordpress.com/">
-            <img src="archive-thumbs/photoblog.jpg" alt="Photography Blog" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/photoblog.jpg" alt="Photography Blog" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2011</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Photography Blog</div>
               <div class="item-description">A WordPress blog and portfolio created for a photography class.</div>
-              <div class="item-year">2011</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="./classes/comm310/csszen/">
-            <img src="archive-thumbs/csszen.jpg" alt="CSS Zen Garden" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/csszen.jpg" alt="CSS Zen Garden" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2011</div>
+            </div>
             <div class="item-content">
               <div class="item-title">CSS Zen Garden</div>
               <div class="item-description">A cool CSS styling exercise and design challenge.</div>
-              <div class="item-year">2011</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="./classes/comm310/bigjuds/">
-            <img src="archive-thumbs/bigjuds.png" alt="Big Jud's Website" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/bigjuds.png" alt="Big Jud's Website" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2011</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Big Jud's Website</div>
               <div class="item-description">A mock restaurant website created for COMM310.</div>
-              <div class="item-year">2011</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="./classes/comm310/">
-            <img src="archive-thumbs/comm310guide.jpg" alt="COMM310 Assignment Guide" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/comm310guide.jpg" alt="COMM310 Assignment Guide" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2011</div>
+            </div>
             <div class="item-content">
               <div class="item-title">COMM310 Guidebook</div>
               <div class="item-description">Web development assignments and project guide for COMM310.</div>
-              <div class="item-year">2011</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="pineapplepapers">
-            <img src="archive-thumbs/pineapplepapers.png" alt="Pineapple Papers" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/pineapplepapers.png" alt="Pineapple Papers" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2011</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Pineapple Papers</div>
               <div class="item-description">Site built for a friend's personal project, using PHP, HTML, CSS.</div>
-              <div class="item-year">2011</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="classes/fdrel261">
-            <img src="archive-thumbs/bor.jpg" alt="Book of Remembrance" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/bor.jpg" alt="Book of Remembrance" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2011</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Book of Remembrance</div>
               <div class="item-description">Personal and family history website created for my FDREL261 course.</div>
-              <div class="item-year">2011</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="cory2011">
-            <img src="archive-thumbs/cory2011.png" alt="Portfolio 2011" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/cory2011.png" alt="Portfolio 2011" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2011</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Portfolio Site 2011</div>
               <div class="item-description">An updated portfolio site with an entirely new design.</div>
-              <div class="item-year">2011</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="classes/cit230/spacecamp/">
-            <img src="archive-thumbs/spacecamp.jpg" alt="Space Camp" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/spacecamp.jpg" alt="Space Camp" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2010</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Space Camp</div>
               <div class="item-description">The final class project from CIT230.</div>
-              <div class="item-year">2010</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
         
-        <div class="portfolio-item">
+        <div class="archive-item">
           <a href="cory2010/">
-            <img src="archive-thumbs/cory2010.jpg" alt="Portfolio 2010" class="screenshot-thumbnail">
+            <div class="image-container">
+              <img src="archive-thumbs/cory2010.jpg" alt="Portfolio 2010" class="screenshot-thumbnail">
+              <div class="image-overlay"></div>
+              <div class="year-badge">2010</div>
+            </div>
             <div class="item-content">
               <div class="item-title">Portfolio Site 2010</div>
               <div class="item-description">My first dev portfolio website. Originally done in PHP.</div>
-              <div class="item-year">2010</div>
+              <div class="access-indicator">Access Project</div>
             </div>
           </a>
         </div>
       </div>
     </div>
+
+    <script>
+      // Theme switching functionality
+      const themeSelector = document.getElementById('themeSelector');
+      const body = document.body;
+      const html = document.documentElement;
+
+      // Load saved theme from localStorage
+      const savedTheme = localStorage.getItem('archiveTheme') || 'vintage';
+      
+      // Apply saved theme
+      function applyTheme(themeName) {
+        // Remove all theme classes first
+        body.classList.remove('vintage-theme', 'artdeco-theme', 'forest-theme', 'cyberpunk-theme');
+        html.classList.remove('vintage-theme', 'artdeco-theme', 'forest-theme', 'cyberpunk-theme');
+        
+        // Apply specific theme if not default
+        if (themeName !== 'default') {
+          body.classList.add(themeName + '-theme');
+          html.classList.add(themeName + '-theme');
+        }
+      }
+      
+      applyTheme(savedTheme);
+      
+      // Set the dropdown to match current theme
+      themeSelector.value = savedTheme;
+
+      // Theme change handler
+      themeSelector.addEventListener('change', function() {
+        const selectedTheme = this.value;
+        
+        applyTheme(selectedTheme);
+        
+        // Save theme preference
+        localStorage.setItem('archiveTheme', selectedTheme);
+      });
+    </script>
   </body>
 </html>
