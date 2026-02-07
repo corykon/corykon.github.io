@@ -125,16 +125,14 @@
 }
 
 .vintage-theme .back-link a {
-  padding: 12px 20px;
   background: rgba(16, 24, 32, 0.95);
   color: var(--crt-green);
   border: 1px solid var(--crt-green);
-  border-radius: 0px;
+  border-radius: 0;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85em;
-  backdrop-filter: blur(10px);
   text-transform: uppercase;
   letter-spacing: 1px;
+  backdrop-filter: blur(10px);
 }
 
 .vintage-theme .back-link a:hover {
@@ -150,7 +148,7 @@
 }
 
 .vintage-theme h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'JetBrains Mono', monospace;
   font-size: clamp(2.5rem, 8vw, 4.5rem);
   font-weight: 900;
   color: var(--crt-green);
@@ -240,7 +238,7 @@
 }
 
 .vintage-theme .item-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 1.4em;
   font-weight: 700;
   color: var(--text-primary);

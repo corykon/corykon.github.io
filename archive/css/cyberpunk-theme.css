@@ -194,27 +194,10 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
+  backdrop-filter: blur(10px);
   box-shadow: 
     0 0 20px var(--cyber-glow-pink),
     inset 0 1px 0 rgba(255, 0, 110, 0.2);
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-}
-
-.cyberpunk-theme .back-link a::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 0, 110, 0.3), transparent);
-  transition: left 0.5s ease;
-}
-
-.cyberpunk-theme .back-link a:hover::before {
-  left: 100%;
 }
 
 .cyberpunk-theme .back-link a:hover {
