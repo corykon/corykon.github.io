@@ -170,8 +170,16 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         
         let selectedPokemon;
         
+        // SPECIAL CASE: Force Pikachu (#25) as the first Pokemon for new players
+        if (discoveredPokemon.length === 0) {
+            selectedPokemon = pokemonList.find(pokemon => pokemon.id === 25); // Pikachu
+            if (!selectedPokemon) {
+                // Fallback if Pikachu not found in list
+                selectedPokemon = sample(pokemonList);
+            }
+        }
         // Check if "No Repeat Pokemon" setting is enabled
-        if (settings?.noRepeatPokemon) {
+        else if (settings?.noRepeatPokemon) {
             const uncaughtPokemon = pokemonList.filter(pokemon => !discoveredPokemon.includes(pokemon.id));
             
             if (uncaughtPokemon.length > 0) {

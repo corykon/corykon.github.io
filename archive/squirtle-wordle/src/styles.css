@@ -569,6 +569,20 @@ h1 img {
     animation: pokemonImageEntrance 800ms ease-out;
 }
 
+.clickable-pokemon {
+    transition: transform 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
+}
+
+.clickable-pokemon:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.clickable-pokemon:active {
+    transform: scale(0.98);
+}
+
 .happy.banner {
   background: #069a54;
   color: white;
@@ -2496,8 +2510,9 @@ h1 img {
 }
 
 .about-image {
-  width: auto;
-  height: 300px;
+  max-width: 100%;
+  width: 100%;
+  height: auto;
   margin: 0 0 20px 0;
 }
 
@@ -2550,6 +2565,8 @@ h1 img {
   margin: 0 0 20px 0;
   color: #333;
   font-size: 24px;
+  display: flex;
+  align-items: center;
 }
 
 

@@ -15,6 +15,8 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
     const [catchCounts, setCatchCounts] = React.useState({});
     const [showScrollButton, setShowScrollButton] = React.useState(false);
     const [hoveredShareButton, setHoveredShareButton] = React.useState(null);
+    const [pokemonCry, setPokemonCry] = React.useState(null);
+    const [isLoadingCry, setIsLoadingCry] = React.useState(false);
     
     // Function to fetch and cache Pokemon types
     const fetchTypes = React.useCallback(async (pokemon) => {
@@ -152,6 +154,111 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
             setHasAutoScrolled(false);
         }
     }, [isOpen]);
+    
+    // Load Pokemon cry when selectedPokemon changes
+    React.useEffect(() => {
+        if (selectedPokemon && discoveredPokemon.includes(selectedPokemon.id)) {
+            fetchPokemonCry(selectedPokemon.id);
+        } else {
+            // Clean up audio when no Pokemon is selected or Pokemon is undiscovered
+            if (pokemonCry) {
+                pokemonCry.pause();
+                pokemonCry.src = '';
+                pokemonCry.load();
+            }
+            setPokemonCry(null);
+            setIsLoadingCry(false);
+        }
+        
+        // Cleanup function
+        return () => {
+            if (pokemonCry) {
+                pokemonCry.pause();
+                pokemonCry.src = '';
+                pokemonCry.load();
+            }
+        };
+    }, [selectedPokemon, discoveredPokemon]);
+    
+    const fetchPokemonCry = async (pokemonId) => {
+        if (isLoadingCry) return; // Don't fetch if already loading
+        
+        // Clean up previous audio
+        if (pokemonCry) {
+            pokemonCry.pause();
+            pokemonCry.src = '';
+            pokemonCry.load();
+        }
+        
+        setIsLoadingCry(true);
+        setPokemonCry(null);
+        
+        try {
+            const cryUrl = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${pokemonId}.ogg`;
+            
+            const audio = new Audio();
+            audio.crossOrigin = 'anonymous';
+            audio.preload = 'auto';
+            
+            // Wait for audio to be ready
+            await new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => {
+                    reject(new Error('Audio load timeout'));
+                }, 5000);
+                
+                const cleanup = () => {
+                    clearTimeout(timeout);
+                    audio.removeEventListener('canplaythrough', onLoad);
+                    audio.removeEventListener('loadeddata', onLoad);
+                    audio.removeEventListener('error', onError);
+                };
+                
+                const onLoad = () => {
+                    cleanup();
+                    resolve();
+                };
+                
+                const onError = (e) => {
+                    cleanup();
+                    reject(new Error(`Audio load failed: ${e.type}`));
+                };
+                
+                audio.addEventListener('canplaythrough', onLoad, { once: true });
+                audio.addEventListener('loadeddata', onLoad, { once: true });
+                audio.addEventListener('error', onError, { once: true });
+                
+                // Set source after event listeners are attached
+                audio.src = cryUrl;
+            });
+            
+            setPokemonCry(audio);
+        } catch (error) {
+            console.warn(`Failed to load Pokemon cry for ID ${pokemonId}:`, error);
+            setPokemonCry(null);
+        } finally {
+            setIsLoadingCry(false);
+        }
+    };
+    
+    const handlePokemonImageClick = () => {
+        if (pokemonCry && !isLoadingCry) {
+            // Reset audio to beginning and play
+            pokemonCry.currentTime = 0;
+            pokemonCry.play().catch(error => {
+                console.warn('Failed to play Pokemon cry:', error);
+            });
+        }
+        // Click is always responsive, even if audio isn't ready
+    };
+    
+    const getPokemonImageTitle = () => {
+        if (!selectedPokemon || !discoveredPokemon.includes(selectedPokemon.id)) {
+            return selectedPokemon ? selectedPokemon.name : '';
+        }
+        if (isLoadingCry) return `Click to hear ${selectedPokemon.name}'s cry (loading...)`;
+        if (pokemonCry) return `Click to hear ${selectedPokemon.name}'s cry!`;
+        return `Click to hear ${selectedPokemon.name}'s cry (unavailable)`;
+    };
     
     // Function to highlight matching tokens in pokemon names
     const highlightSearchTerms = (name, searchTerms) => {
@@ -505,7 +612,9 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                 <img
                                     src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${selectedPokemon.id}.png`}
                                     alt={selectedPokemon.name}
-                                    className={`description-pokemon-image ${discoveredPokemon.includes(selectedPokemon.id) ? 'discovered' : 'undiscovered'}`}
+                                    className={`description-pokemon-image ${discoveredPokemon.includes(selectedPokemon.id) ? 'discovered clickable-pokemon' : 'undiscovered'}`}
+                                    onClick={discoveredPokemon.includes(selectedPokemon.id) ? handlePokemonImageClick : undefined}
+                                    title={getPokemonImageTitle()}
                                     onError={(e) => {
                                         e.target.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedPokemon.id}.png`;
                                     }}

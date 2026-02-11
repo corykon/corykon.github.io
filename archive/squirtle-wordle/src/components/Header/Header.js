@@ -179,7 +179,10 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
       {showSettingsModal && (
         <div className="modal-overlay" onClick={() => setShowSettingsModal(false)}>
           <div className="modal-content settings-modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Settings</h2>
+            <h2>
+              <img src={cogIcon} alt="" style={{ width: '24px', height: '24px', marginRight: '8px', verticalAlign: 'middle' }} />
+              Settings
+            </h2>
             <div className="settings-list">
               <div className="setting-item">
                 <div className="setting-label-container">

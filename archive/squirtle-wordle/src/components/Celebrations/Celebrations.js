@@ -8,12 +8,15 @@ function Celebrations({
     showMasterCelebration, 
     showProgressCelebration,
     showLegendCelebration,
+    showFirstPokemonCelebration,
     progressCount,
     onDismissMaster, 
     onDismissProgress,
     onDismissLegend,
+    onDismissFirstPokemon,
     onHoorayClick,
-    onLegendHoorayClick
+    onLegendHoorayClick,
+    meetPikaImage
 }) {
     const [confettiKey, setConfettiKey] = React.useState(0);
     const [hoorayFireworks, setHoorayFireworks] = React.useState(false);
@@ -21,11 +24,11 @@ function Celebrations({
 
     // Create confetti animation
     React.useEffect(() => {
-        if (showMasterCelebration || showProgressCelebration || showLegendCelebration) {
+        if (showMasterCelebration || showProgressCelebration || showLegendCelebration || showFirstPokemonCelebration) {
             setConfettiKey(prev => prev + 1);
             setIsFadingOut(false);
         }
-    }, [showMasterCelebration, showProgressCelebration, showLegendCelebration]);
+    }, [showMasterCelebration, showProgressCelebration, showLegendCelebration, showFirstPokemonCelebration]);
 
     const handleHoorayClick = () => {
         // Trigger more fireworks immediately
@@ -66,6 +69,55 @@ function Celebrations({
             onDismissProgress();
         }, 800);
     };
+
+    const handleFirstPokemonDismiss = () => {
+        // Start fade out animation
+        setIsFadingOut(true);
+        
+        // Dismiss after fade completes
+        setTimeout(() => {
+            onDismissFirstPokemon();
+        }, 800);
+    };
+
+    if (showFirstPokemonCelebration) {
+        return (
+            <div className={`celebration-overlay first-pokemon-celebration ${isFadingOut ? 'fade-out' : ''}`}>
+                <div className="confetti-container" key={`first-${confettiKey}`}>
+                    {[...Array(30)].map((_, i) => (
+                        <div key={i} className="confetti-piece" style={{
+                            left: `${Math.random() * 100}%`,
+                            animationDelay: `${Math.random() * 2}s`,
+                            backgroundColor: ['#FFD700', '#FF6B9D', '#4ECDC4', '#45B7D1', '#FFA07A'][Math.floor(Math.random() * 5)]
+                        }}></div>
+                    ))}
+                </div>
+                
+                <div className="celebration-content first-pokemon-content">
+                    <h2 className="celebration-title first-pokemon-title">Welcome!</h2>
+                    
+                    <img 
+                        src={meetPikaImage} 
+                        alt="Meet Pikachu" 
+                        className="celebration-image first-pokemon-image"
+                        style={{ maxWidth: '500px', width: '100%' }}
+                    />
+                    
+                    <p className="celebration-message first-pokemon-message">
+                        <strong>Congratulations on your first Pokémon!</strong><br />
+                        You caught Pikachu! You're on your way to becoming a Pokémon master.
+                    </p>
+                    
+                    <button 
+                        className="celebration-button first-pokemon-button" 
+                        onClick={handleFirstPokemonDismiss}
+                    >
+                        Let's catch 'em all!
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     if (showLegendCelebration) {
         return (
