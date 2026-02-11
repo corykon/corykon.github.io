@@ -553,6 +553,20 @@ h1 img {
   animation: .8s ease-out pokemonImageEntrance;
 }
 
+.clickable-pokemon {
+  cursor: pointer;
+  transition: transform .2s, filter .2s;
+}
+
+.clickable-pokemon:hover {
+  filter: brightness(1.1);
+  transform: scale(1.05);
+}
+
+.clickable-pokemon:active {
+  transform: scale(.98);
+}
+
 .happy.banner {
   color: #fff;
   background: #069a54;
@@ -2613,8 +2627,9 @@ h1 img {
 }
 
 .about-image {
-  width: auto;
-  height: 300px;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
   margin: 0 0 20px;
 }
 
@@ -2664,8 +2679,10 @@ h1 img {
 
 .settings-modal h2 {
   color: #333;
+  align-items: center;
   margin: 0 0 20px;
   font-size: 24px;
+  display: flex;
 }
 
 .setting-item {

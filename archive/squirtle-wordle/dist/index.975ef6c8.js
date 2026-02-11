@@ -18600,6 +18600,8 @@ var _trophySvg = require("../../assets/trophy.svg");
 var _trophySvgDefault = parcelHelpers.interopDefault(_trophySvg);
 var _trophyStarSvg = require("../../assets/trophy-star.svg");
 var _trophyStarSvgDefault = parcelHelpers.interopDefault(_trophyStarSvg);
+var _meetPikaPng = require("../../assets/meet-pika.png");
+var _meetPikaPngDefault = parcelHelpers.interopDefault(_meetPikaPng);
 var _s = $RefreshSig$();
 require("8cf3d9626b280245");
 // Helper functions for localStorage management
@@ -18647,6 +18649,7 @@ function App() {
     const [showMasterCelebration, setShowMasterCelebration] = (0, _reactDefault.default).useState(false);
     const [showProgressCelebration, setShowProgressCelebration] = (0, _reactDefault.default).useState(false);
     const [showLegendCelebration, setShowLegendCelebration] = (0, _reactDefault.default).useState(false);
+    const [showFirstPokemonCelebration, setShowFirstPokemonCelebration] = (0, _reactDefault.default).useState(false);
     const [progressCount, setProgressCount] = (0, _reactDefault.default).useState(0);
     const [isMaster, setIsMaster] = (0, _reactDefault.default).useState(false);
     const [isLegend, setIsLegend] = (0, _reactDefault.default).useState(false);
@@ -18698,19 +18701,22 @@ function App() {
                     setTimeout(()=>{
                         setIsLegend(true);
                         setShowLegendCelebration(true);
-                    }, 3000);
+                    }, 1500);
                     return; // Exit early to show legend celebration instead of master
                 }
             }
-            // Check for master celebration (151 Pokemon) - delay to let pokeball animation finish
-            if (newCount === 151) setTimeout(()=>{
+            // Special case: First Pokemon celebration
+            if (newCount === 1) setTimeout(()=>{
+                setShowFirstPokemonCelebration(true);
+            }, 1500);
+            else if (newCount === 151) setTimeout(()=>{
                 setIsMaster(true);
                 setShowMasterCelebration(true);
-            }, 3000);
+            }, 1500);
             else if (newCount % 10 === 0 && newCount >= 10) setTimeout(()=>{
                 setProgressCount(newCount);
                 setShowProgressCelebration(true);
-            }, 3000);
+            }, 1500);
         }
     }
     function handlePokemonListLoaded(list) {
@@ -18724,6 +18730,9 @@ function App() {
     }
     function handleDismissLegend() {
         setShowLegendCelebration(false);
+    }
+    function handleDismissFirstPokemon() {
+        setShowFirstPokemonCelebration(false);
     }
     function handleLegendHoorayClick() {
         setShowLegendCelebration(false);
@@ -18806,7 +18815,7 @@ function App() {
                 trophyIcon: isLegend ? (0, _trophyStarSvgDefault.default) : (0, _trophySvgDefault.default)
             }, void 0, false, {
                 fileName: "src/components/App/App.js",
-                lineNumber: 237,
+                lineNumber: 249,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18819,12 +18828,12 @@ function App() {
                     settings: settings
                 }, gameKey, false, {
                     fileName: "src/components/App/App.js",
-                    lineNumber: 248,
+                    lineNumber: 260,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "src/components/App/App.js",
-                lineNumber: 247,
+                lineNumber: 259,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pokedexDefault.default), {
@@ -18839,32 +18848,35 @@ function App() {
                 onSubmitGuess: handleSubmitGuess
             }, void 0, false, {
                 fileName: "src/components/App/App.js",
-                lineNumber: 258,
+                lineNumber: 270,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _celebrationsDefault.default), {
                 showMasterCelebration: showMasterCelebration,
                 showProgressCelebration: showProgressCelebration,
                 showLegendCelebration: showLegendCelebration,
+                showFirstPokemonCelebration: showFirstPokemonCelebration,
                 progressCount: progressCount,
                 onDismissMaster: handleDismissMaster,
                 onDismissProgress: handleDismissProgress,
                 onDismissLegend: handleDismissLegend,
+                onDismissFirstPokemon: handleDismissFirstPokemon,
                 onHoorayClick: handleHoorayClick,
-                onLegendHoorayClick: handleLegendHoorayClick
+                onLegendHoorayClick: handleLegendHoorayClick,
+                meetPikaImage: (0, _meetPikaPngDefault.default)
             }, void 0, false, {
                 fileName: "src/components/App/App.js",
-                lineNumber: 267,
+                lineNumber: 279,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/App/App.js",
-        lineNumber: 236,
+        lineNumber: 248,
         columnNumber: 5
     }, this);
 }
-_s(App, "veRD0vHPH2lOsO8vbFDGL/5So08=");
+_s(App, "4qMRbD8b1MN/6uABrLYnFyPaPR4=");
 _c = App;
 exports.default = App;
 var _c;
@@ -18875,7 +18887,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../Game":"ipYvB","../Header":"cxSZo","../Pokedex":"iNdgz","../Celebrations":"1Wh8F","../../assets/trophy.svg":"jcN8K","../../assets/trophy-star.svg":"87OKR","8cf3d9626b280245":"3Wlpi","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"ipYvB":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../Game":"ipYvB","../Header":"cxSZo","../Pokedex":"iNdgz","../Celebrations":"1Wh8F","../../assets/trophy.svg":"jcN8K","../../assets/trophy-star.svg":"87OKR","8cf3d9626b280245":"3Wlpi","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../assets/meet-pika.png":"6meB4"}],"ipYvB":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>(0, _gameDefault.default));
@@ -19056,8 +19068,12 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
     async function selectNewPokemon(pokemonList) {
         const discoveredPokemon = JSON.parse(localStorage.getItem("discovered-pokemon") || "[]");
         let selectedPokemon;
-        // Check if "No Repeat Pokemon" setting is enabled
-        if (settings?.noRepeatPokemon) {
+        // SPECIAL CASE: Force Pikachu (#25) as the first Pokemon for new players
+        if (discoveredPokemon.length === 0) {
+            selectedPokemon = pokemonList.find((pokemon)=>pokemon.id === 25); // Pikachu
+            if (!selectedPokemon) // Fallback if Pikachu not found in list
+            selectedPokemon = (0, _utils.sample)(pokemonList);
+        } else if (settings?.noRepeatPokemon) {
             const uncaughtPokemon = pokemonList.filter((pokemon)=>!discoveredPokemon.includes(pokemon.id));
             if (uncaughtPokemon.length > 0) selectedPokemon = (0, _utils.sample)(uncaughtPokemon);
             else // If all Pokemon are caught and no repeat is on, just pick randomly
@@ -19170,41 +19186,41 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 className: "ball"
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 326,
+                lineNumber: 334,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "half-ball"
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 327,
+                lineNumber: 335,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "big-button"
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 328,
+                lineNumber: 336,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "small-button"
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 329,
+                lineNumber: 337,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "horizon"
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 330,
+                lineNumber: 338,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/Game/Game.js",
-        lineNumber: 325,
+        lineNumber: 333,
         columnNumber: 16
     }, this);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
@@ -19216,7 +19232,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                         children: "Hint:"
                     }, void 0, false, {
                         fileName: "src/components/Game/Game.js",
-                        lineNumber: 337,
+                        lineNumber: 345,
                         columnNumber: 17
                     }, this),
                     " ",
@@ -19224,7 +19240,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 ]
             }, void 0, true, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 336,
+                lineNumber: 344,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _guessDisplayDefault.default), {
@@ -19232,7 +19248,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 answerLength: answer.length
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 340,
+                lineNumber: 348,
                 columnNumber: 9
             }, this),
             gameIsOver && showBanner && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _gameResultDefault.default), {
@@ -19248,7 +19264,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 catchCount: catchCount
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 342,
+                lineNumber: 350,
                 columnNumber: 13
             }, this),
             gameIsOver ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -19264,19 +19280,19 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                             height: "16"
                         }, void 0, false, {
                             fileName: "src/components/Game/Game.js",
-                            lineNumber: 358,
+                            lineNumber: 366,
                             columnNumber: 25
                         }, this),
                         "Play Again"
                     ]
                 }, void 0, true, {
                     fileName: "src/components/Game/Game.js",
-                    lineNumber: 357,
+                    lineNumber: 365,
                     columnNumber: 21
                 }, this)
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 356,
+                lineNumber: 364,
                 columnNumber: 17
             }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _guessInputDefault.default), {
                 onGuess: handleNewGuess,
@@ -19285,7 +19301,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 pokemonTypes: pokemonTypes
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 363,
+                lineNumber: 371,
                 columnNumber: 17
             }, this)
         ]
@@ -19693,8 +19709,102 @@ var _s = $RefreshSig$();
 function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonName, isNewDiscovery, onOpenPokedex, onClose, catchCount }) {
     _s();
     const [animationKey, setAnimationKey] = (0, _reactDefault.default).useState(0);
+    const [pokemonCry, setPokemonCry] = (0, _reactDefault.default).useState(null);
+    const [isLoadingCry, setIsLoadingCry] = (0, _reactDefault.default).useState(false);
     const handlePokeballClick = ()=>{
         setAnimationKey((prev)=>prev + 1);
+    };
+    // Function to fetch and cache Pokemon cry
+    (0, _reactDefault.default).useEffect(()=>{
+        if (pokemonId) fetchPokemonCry(pokemonId);
+        else {
+            // Clean up audio when no Pokemon ID
+            if (pokemonCry) {
+                pokemonCry.pause();
+                pokemonCry.src = "";
+                pokemonCry.load();
+            }
+            setPokemonCry(null);
+            setIsLoadingCry(false);
+        }
+        // Cleanup function
+        return ()=>{
+            if (pokemonCry) {
+                pokemonCry.pause();
+                pokemonCry.src = "";
+                pokemonCry.load();
+            }
+        };
+    }, [
+        pokemonId
+    ]);
+    const fetchPokemonCry = async (id)=>{
+        if (isLoadingCry) return; // Don't fetch if already loading
+        // Clean up previous audio
+        if (pokemonCry) {
+            pokemonCry.pause();
+            pokemonCry.src = "";
+            pokemonCry.load();
+        }
+        setIsLoadingCry(true);
+        setPokemonCry(null);
+        try {
+            const cryUrl = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+            const audio = new Audio();
+            audio.crossOrigin = "anonymous";
+            audio.preload = "auto";
+            // Wait for audio to be ready
+            await new Promise((resolve, reject)=>{
+                const timeout = setTimeout(()=>{
+                    reject(new Error("Audio load timeout"));
+                }, 5000);
+                const cleanup = ()=>{
+                    clearTimeout(timeout);
+                    audio.removeEventListener("canplaythrough", onLoad);
+                    audio.removeEventListener("loadeddata", onLoad);
+                    audio.removeEventListener("error", onError);
+                };
+                const onLoad = ()=>{
+                    cleanup();
+                    resolve();
+                };
+                const onError = (e)=>{
+                    cleanup();
+                    reject(new Error(`Audio load failed: ${e.type}`));
+                };
+                audio.addEventListener("canplaythrough", onLoad, {
+                    once: true
+                });
+                audio.addEventListener("loadeddata", onLoad, {
+                    once: true
+                });
+                audio.addEventListener("error", onError, {
+                    once: true
+                });
+                // Set source after event listeners are attached
+                audio.src = cryUrl;
+            });
+            setPokemonCry(audio);
+        } catch (error) {
+            console.warn(`Failed to load Pokemon cry for ID ${id}:`, error);
+            setPokemonCry(null);
+        } finally{
+            setIsLoadingCry(false);
+        }
+    };
+    const handlePokemonImageClick = ()=>{
+        if (pokemonCry && !isLoadingCry) {
+            // Reset audio to beginning and play
+            pokemonCry.currentTime = 0;
+            pokemonCry.play().catch((error)=>{
+                console.warn("Failed to play Pokemon cry:", error);
+            });
+        }
+    };
+    const getPokemonImageTitle = ()=>{
+        if (isLoadingCry) return "Loading Pok\xe9mon cry...";
+        if (pokemonCry) return "Click to hear this Pok\xe9mon's cry!";
+        return "Pok\xe9mon cry unavailable";
     };
     if (gameIsWon) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "happy banner",
@@ -19705,16 +19815,21 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                 children: "\xd7"
             }, void 0, false, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 15,
+                lineNumber: 118,
                 columnNumber: 13
             }, this),
             pokemonId && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
                 src: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`,
                 alt: answer,
-                className: "pokemon-result-image"
+                className: `pokemon-result-image ${pokemonCry && !isLoadingCry ? "clickable-pokemon" : ""}`,
+                onClick: handlePokemonImageClick,
+                title: getPokemonImageTitle(),
+                style: {
+                    cursor: pokemonCry && !isLoadingCry ? "pointer" : "default"
+                }
             }, void 0, false, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 17,
+                lineNumber: 120,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -19733,14 +19848,14 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                     className: "pokeball-catch-animation"
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 26,
+                                    lineNumber: 132,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                                     className: "pokeball-catch-circle"
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 31,
+                                    lineNumber: 137,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("svg", {
@@ -19757,23 +19872,23 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                         points: "20,6 9,17 4,12"
                                     }, void 0, false, {
                                         fileName: "src/components/GameResult/GameResult.js",
-                                        lineNumber: 43,
+                                        lineNumber: 149,
                                         columnNumber: 29
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 32,
+                                    lineNumber: 138,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, `success-${animationKey}`, true, {
                             fileName: "src/components/GameResult/GameResult.js",
-                            lineNumber: 25,
+                            lineNumber: 131,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 24,
+                        lineNumber: 130,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -19786,7 +19901,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                     children: pokemonName || answer
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 48,
+                                    lineNumber: 154,
                                     columnNumber: 42
                                 }, this),
                                 " in ",
@@ -19797,18 +19912,18 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                             ]
                         }, void 0, true, {
                             fileName: "src/components/GameResult/GameResult.js",
-                            lineNumber: 48,
+                            lineNumber: 154,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 47,
+                        lineNumber: 153,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 23,
+                lineNumber: 129,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -19822,7 +19937,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                 children: pokemonName || answer
                             }, void 0, false, {
                                 fileName: "src/components/GameResult/GameResult.js",
-                                lineNumber: 55,
+                                lineNumber: 161,
                                 columnNumber: 39
                             }, this),
                             " ",
@@ -19831,7 +19946,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                         ]
                     }, void 0, true, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 54,
+                        lineNumber: 160,
                         columnNumber: 21
                     }, this),
                     " ",
@@ -19844,14 +19959,14 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                         children: "pok\xe9dex"
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 59,
+                        lineNumber: 165,
                         columnNumber: 17
                     }, this),
                     "."
                 ]
             }, void 0, true, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 52,
+                lineNumber: 158,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -19868,20 +19983,20 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                         }
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 68,
+                        lineNumber: 174,
                         columnNumber: 17
                     }, this),
                     "Play again"
                 ]
             }, void 0, true, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 67,
+                lineNumber: 173,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/GameResult/GameResult.js",
-        lineNumber: 14,
+        lineNumber: 117,
         columnNumber: 16
     }, this);
     else return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -19893,16 +20008,21 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                 children: "\xd7"
             }, void 0, false, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 74,
+                lineNumber: 180,
                 columnNumber: 13
             }, this),
             pokemonId && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
                 src: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`,
                 alt: answer,
-                className: "pokemon-result-image sad-pokemon-image"
+                className: `pokemon-result-image sad-pokemon-image ${pokemonCry && !isLoadingCry ? "clickable-pokemon" : ""}`,
+                onClick: handlePokemonImageClick,
+                title: getPokemonImageTitle(),
+                style: {
+                    cursor: pokemonCry && !isLoadingCry ? "pointer" : "default"
+                }
             }, void 0, false, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 76,
+                lineNumber: 182,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -19921,7 +20041,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                     className: "pokeball-fail-animation"
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 85,
+                                    lineNumber: 194,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
@@ -19930,25 +20050,25 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                     className: "pokeball-open-animation"
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 90,
+                                    lineNumber: 199,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                                     className: "pokeball-explosion-ring"
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 95,
+                                    lineNumber: 204,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, `fail-${animationKey}`, true, {
                             fileName: "src/components/GameResult/GameResult.js",
-                            lineNumber: 84,
+                            lineNumber: 193,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 83,
+                        lineNumber: 192,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -19958,20 +20078,20 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                 children: answer
                             }, void 0, false, {
                                 fileName: "src/components/GameResult/GameResult.js",
-                                lineNumber: 98,
+                                lineNumber: 207,
                                 columnNumber: 49
                             }, this),
                             "."
                         ]
                     }, void 0, true, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 98,
+                        lineNumber: 207,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 82,
+                lineNumber: 191,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -19988,24 +20108,24 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                         }
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 101,
+                        lineNumber: 210,
                         columnNumber: 17
                     }, this),
                     "Play again"
                 ]
             }, void 0, true, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 100,
+                lineNumber: 209,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/GameResult/GameResult.js",
-        lineNumber: 73,
+        lineNumber: 179,
         columnNumber: 16
     }, this);
 }
-_s(GameResult, "922Q52K1BBrlqjp6pQf98lxQs9o=");
+_s(GameResult, "7qWzzwLWWK3E442LAUlpapQhtDs=");
 _c = GameResult;
 exports.default = GameResult;
 var _c;
@@ -20549,8 +20669,24 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                     onClick: (e)=>e.stopPropagation(),
                     children: [
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
-                            children: "Settings"
-                        }, void 0, false, {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
+                                    src: (0, _cogSvgDefault.default),
+                                    alt: "",
+                                    style: {
+                                        width: "24px",
+                                        height: "24px",
+                                        marginRight: "8px",
+                                        verticalAlign: "middle"
+                                    }
+                                }, void 0, false, {
+                                    fileName: "src/components/Header/Header.js",
+                                    lineNumber: 183,
+                                    columnNumber: 15
+                                }, this),
+                                "Settings"
+                            ]
+                        }, void 0, true, {
                             fileName: "src/components/Header/Header.js",
                             lineNumber: 182,
                             columnNumber: 13
@@ -20569,7 +20705,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                                     children: "Hide Hints"
                                                 }, void 0, false, {
                                                     fileName: "src/components/Header/Header.js",
-                                                    lineNumber: 186,
+                                                    lineNumber: 189,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -20577,13 +20713,13 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                                     children: "Hard mode. If turned on, pok\xe9mon description hints won't be given."
                                                 }, void 0, false, {
                                                     fileName: "src/components/Header/Header.js",
-                                                    lineNumber: 187,
+                                                    lineNumber: 190,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Header/Header.js",
-                                            lineNumber: 185,
+                                            lineNumber: 188,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
@@ -20595,26 +20731,26 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                                     onChange: ()=>handleSettingToggle("hideHints")
                                                 }, void 0, false, {
                                                     fileName: "src/components/Header/Header.js",
-                                                    lineNumber: 190,
+                                                    lineNumber: 193,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
                                                     className: "slider"
                                                 }, void 0, false, {
                                                     fileName: "src/components/Header/Header.js",
-                                                    lineNumber: 195,
+                                                    lineNumber: 198,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Header/Header.js",
-                                            lineNumber: 189,
+                                            lineNumber: 192,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/Header/Header.js",
-                                    lineNumber: 184,
+                                    lineNumber: 187,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -20628,7 +20764,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                                     children: "No Repeat Pok\xe9mon"
                                                 }, void 0, false, {
                                                     fileName: "src/components/Header/Header.js",
-                                                    lineNumber: 200,
+                                                    lineNumber: 203,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -20636,13 +20772,13 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                                     children: "If turned on, you'll only guess Pok\xe9mon you haven't caught yet."
                                                 }, void 0, false, {
                                                     fileName: "src/components/Header/Header.js",
-                                                    lineNumber: 201,
+                                                    lineNumber: 204,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Header/Header.js",
-                                            lineNumber: 199,
+                                            lineNumber: 202,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
@@ -20654,32 +20790,32 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                                     onChange: ()=>handleSettingToggle("noRepeatPokemon")
                                                 }, void 0, false, {
                                                     fileName: "src/components/Header/Header.js",
-                                                    lineNumber: 204,
+                                                    lineNumber: 207,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
                                                     className: "slider"
                                                 }, void 0, false, {
                                                     fileName: "src/components/Header/Header.js",
-                                                    lineNumber: 209,
+                                                    lineNumber: 212,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Header/Header.js",
-                                            lineNumber: 203,
+                                            lineNumber: 206,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/Header/Header.js",
-                                    lineNumber: 198,
+                                    lineNumber: 201,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "src/components/Header/Header.js",
-                            lineNumber: 183,
+                            lineNumber: 186,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -20695,7 +20831,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                                 children: "Clear All Data"
                                             }, void 0, false, {
                                                 fileName: "src/components/Header/Header.js",
-                                                lineNumber: 216,
+                                                lineNumber: 219,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -20703,13 +20839,13 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                                 children: "Remove all Pok\xe9mon progress and statistics."
                                             }, void 0, false, {
                                                 fileName: "src/components/Header/Header.js",
-                                                lineNumber: 217,
+                                                lineNumber: 220,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/Header/Header.js",
-                                        lineNumber: 215,
+                                        lineNumber: 218,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -20718,18 +20854,18 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                         children: "Clear data"
                                     }, void 0, false, {
                                         fileName: "src/components/Header/Header.js",
-                                        lineNumber: 219,
+                                        lineNumber: 222,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/Header/Header.js",
-                                lineNumber: 214,
+                                lineNumber: 217,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "src/components/Header/Header.js",
-                            lineNumber: 213,
+                            lineNumber: 216,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -20738,7 +20874,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                             children: "Done"
                         }, void 0, false, {
                             fileName: "src/components/Header/Header.js",
-                            lineNumber: 224,
+                            lineNumber: 227,
                             columnNumber: 13
                         }, this)
                     ]
@@ -20761,14 +20897,14 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                             children: "Clear All Data"
                         }, void 0, false, {
                             fileName: "src/components/Header/Header.js",
-                            lineNumber: 235,
+                            lineNumber: 238,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                             children: "Are you sure you want to delete all progress? This cannot be undone."
                         }, void 0, false, {
                             fileName: "src/components/Header/Header.js",
-                            lineNumber: 236,
+                            lineNumber: 239,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -20780,7 +20916,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                     children: "Cancel"
                                 }, void 0, false, {
                                     fileName: "src/components/Header/Header.js",
-                                    lineNumber: 238,
+                                    lineNumber: 241,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -20789,24 +20925,24 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                                     children: "Delete"
                                 }, void 0, false, {
                                     fileName: "src/components/Header/Header.js",
-                                    lineNumber: 241,
+                                    lineNumber: 244,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "src/components/Header/Header.js",
-                            lineNumber: 237,
+                            lineNumber: 240,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "src/components/Header/Header.js",
-                    lineNumber: 234,
+                    lineNumber: 237,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "src/components/Header/Header.js",
-                lineNumber: 233,
+                lineNumber: 236,
                 columnNumber: 9
             }, this)
         ]
@@ -20885,6 +21021,8 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
     const [catchCounts, setCatchCounts] = (0, _reactDefault.default).useState({});
     const [showScrollButton, setShowScrollButton] = (0, _reactDefault.default).useState(false);
     const [hoveredShareButton, setHoveredShareButton] = (0, _reactDefault.default).useState(null);
+    const [pokemonCry, setPokemonCry] = (0, _reactDefault.default).useState(null);
+    const [isLoadingCry, setIsLoadingCry] = (0, _reactDefault.default).useState(false);
     // Function to fetch and cache Pokemon types
     const fetchTypes = (0, _reactDefault.default).useCallback(async (pokemon)=>{
         if (pokemonTypes[pokemon.id]) return;
@@ -21010,6 +21148,101 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
     }, [
         isOpen
     ]);
+    // Load Pokemon cry when selectedPokemon changes
+    (0, _reactDefault.default).useEffect(()=>{
+        if (selectedPokemon && discoveredPokemon.includes(selectedPokemon.id)) fetchPokemonCry(selectedPokemon.id);
+        else {
+            // Clean up audio when no Pokemon is selected or Pokemon is undiscovered
+            if (pokemonCry) {
+                pokemonCry.pause();
+                pokemonCry.src = "";
+                pokemonCry.load();
+            }
+            setPokemonCry(null);
+            setIsLoadingCry(false);
+        }
+        // Cleanup function
+        return ()=>{
+            if (pokemonCry) {
+                pokemonCry.pause();
+                pokemonCry.src = "";
+                pokemonCry.load();
+            }
+        };
+    }, [
+        selectedPokemon,
+        discoveredPokemon
+    ]);
+    const fetchPokemonCry = async (pokemonId)=>{
+        if (isLoadingCry) return; // Don't fetch if already loading
+        // Clean up previous audio
+        if (pokemonCry) {
+            pokemonCry.pause();
+            pokemonCry.src = "";
+            pokemonCry.load();
+        }
+        setIsLoadingCry(true);
+        setPokemonCry(null);
+        try {
+            const cryUrl = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${pokemonId}.ogg`;
+            const audio = new Audio();
+            audio.crossOrigin = "anonymous";
+            audio.preload = "auto";
+            // Wait for audio to be ready
+            await new Promise((resolve, reject)=>{
+                const timeout = setTimeout(()=>{
+                    reject(new Error("Audio load timeout"));
+                }, 5000);
+                const cleanup = ()=>{
+                    clearTimeout(timeout);
+                    audio.removeEventListener("canplaythrough", onLoad);
+                    audio.removeEventListener("loadeddata", onLoad);
+                    audio.removeEventListener("error", onError);
+                };
+                const onLoad = ()=>{
+                    cleanup();
+                    resolve();
+                };
+                const onError = (e)=>{
+                    cleanup();
+                    reject(new Error(`Audio load failed: ${e.type}`));
+                };
+                audio.addEventListener("canplaythrough", onLoad, {
+                    once: true
+                });
+                audio.addEventListener("loadeddata", onLoad, {
+                    once: true
+                });
+                audio.addEventListener("error", onError, {
+                    once: true
+                });
+                // Set source after event listeners are attached
+                audio.src = cryUrl;
+            });
+            setPokemonCry(audio);
+        } catch (error) {
+            console.warn(`Failed to load Pokemon cry for ID ${pokemonId}:`, error);
+            setPokemonCry(null);
+        } finally{
+            setIsLoadingCry(false);
+        }
+    };
+    const handlePokemonImageClick = ()=>{
+        if (pokemonCry && !isLoadingCry) {
+            // Reset audio to beginning and play
+            pokemonCry.currentTime = 0;
+            pokemonCry.play().catch((error)=>{
+                console.warn("Failed to play Pokemon cry:", error);
+            });
+        }
+    // Click is always responsive, even if audio isn't ready
+    };
+    const getPokemonImageTitle = ()=>{
+        if (!selectedPokemon || !discoveredPokemon.includes(selectedPokemon.id)) return selectedPokemon ? selectedPokemon.name : "";
+        if (isLoadingCry) return `Click to hear ${selectedPokemon.name}'s cry (loading...)`;
+        if (pokemonCry) return `Click to hear ${selectedPokemon.name}'s cry!`;
+        return `Click to hear ${selectedPokemon.name}'s cry (unavailable)`;
+    };
     // Function to highlight matching tokens in pokemon names
     const highlightSearchTerms = (name, searchTerms)=>{
         if (!searchTerms || searchTerms.length === 0) return name;
@@ -21082,12 +21315,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                 points: "20,6 9,17 4,12"
             }, void 0, false, {
                 fileName: "src/components/Pokedex/Pokedex.js",
-                lineNumber: 254,
+                lineNumber: 361,
                 columnNumber: 13
             }, this)
         }, void 0, false, {
             fileName: "src/components/Pokedex/Pokedex.js",
-            lineNumber: 243,
+            lineNumber: 350,
             columnNumber: 9
         }, this);
     const handleOverlayClick = (e)=>{
@@ -21115,7 +21348,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                             children: "\xd7"
                         }, void 0, false, {
                             fileName: "src/components/Pokedex/Pokedex.js",
-                            lineNumber: 278,
+                            lineNumber: 385,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
@@ -21126,14 +21359,14 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                     alt: "Open Pok\xe9dex"
                                 }, void 0, false, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 279,
+                                    lineNumber: 386,
                                     columnNumber: 51
                                 }, this),
                                 "Pok\xe9dex"
                             ]
                         }, void 0, true, {
                             fileName: "src/components/Pokedex/Pokedex.js",
-                            lineNumber: 279,
+                            lineNumber: 386,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21145,12 +21378,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                         children: "Caught:"
                                     }, void 0, false, {
                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                        lineNumber: 282,
+                                        lineNumber: 389,
                                         columnNumber: 29
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 281,
+                                    lineNumber: 388,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21162,12 +21395,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                         }
                                     }, void 0, false, {
                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                        lineNumber: 285,
+                                        lineNumber: 392,
                                         columnNumber: 29
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 284,
+                                    lineNumber: 391,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21185,24 +21418,24 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                 className: "trophy-icon pokedex-trophy"
                                             }, void 0, false, {
                                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                                lineNumber: 293,
+                                                lineNumber: 400,
                                                 columnNumber: 46
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                        lineNumber: 291,
+                                        lineNumber: 398,
                                         columnNumber: 29
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 290,
+                                    lineNumber: 397,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "src/components/Pokedex/Pokedex.js",
-                            lineNumber: 280,
+                            lineNumber: 387,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21217,7 +21450,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                             className: "search-icon"
                                         }, void 0, false, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 299,
+                                            lineNumber: 406,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -21229,7 +21462,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                             title: "Tip: You can search for multiple distinct letters by separating with spaces. For example: 'B S R' will find 'Bulbasaur'"
                                         }, void 0, false, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 300,
+                                            lineNumber: 407,
                                             columnNumber: 29
                                         }, this),
                                         searchTerm && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -21239,13 +21472,13 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                             children: "\xd7"
                                         }, void 0, false, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 309,
+                                            lineNumber: 416,
                                             columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 298,
+                                    lineNumber: 405,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21266,12 +21499,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                         d: "M3 6h18M7 12h10m-7 6h4"
                                                     }, void 0, false, {
                                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                                        lineNumber: 332,
+                                                        lineNumber: 439,
                                                         columnNumber: 37
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                                    lineNumber: 324,
+                                                    lineNumber: 431,
                                                     columnNumber: 33
                                                 }, this),
                                                 sortBy,
@@ -21287,18 +21520,18 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                         points: "6,9 12,15 18,9"
                                                     }, void 0, false, {
                                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                                        lineNumber: 344,
+                                                        lineNumber: 451,
                                                         columnNumber: 37
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                                    lineNumber: 335,
+                                                    lineNumber: 442,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 320,
+                                            lineNumber: 427,
                                             columnNumber: 29
                                         }, this),
                                         showSortDropdown && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21313,7 +21546,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                     children: "Pokemon ID"
                                                 }, void 0, false, {
                                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                                    lineNumber: 349,
+                                                    lineNumber: 456,
                                                     columnNumber: 37
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -21325,25 +21558,25 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                     children: "Times Caught"
                                                 }, void 0, false, {
                                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                                    lineNumber: 358,
+                                                    lineNumber: 465,
                                                     columnNumber: 37
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 348,
+                                            lineNumber: 455,
                                             columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 319,
+                                    lineNumber: 426,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "src/components/Pokedex/Pokedex.js",
-                            lineNumber: 297,
+                            lineNumber: 404,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21359,7 +21592,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 374,
+                                    lineNumber: 481,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -21372,7 +21605,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 380,
+                                    lineNumber: 487,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -21385,19 +21618,19 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 386,
+                                    lineNumber: 493,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "src/components/Pokedex/Pokedex.js",
-                            lineNumber: 373,
+                            lineNumber: 480,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "src/components/Pokedex/Pokedex.js",
-                    lineNumber: 277,
+                    lineNumber: 384,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21431,7 +21664,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                             }
                                         }, void 0, false, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 415,
+                                            lineNumber: 522,
                                             columnNumber: 41
                                         }, this),
                                         isDiscovered && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21439,7 +21672,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                             title: "You've caught this Pok\xe9mon"
                                         }, void 0, false, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 424,
+                                            lineNumber: 531,
                                             columnNumber: 45
                                         }, this),
                                         isDiscovered && singleGuessPokemon && singleGuessPokemon.includes(pokemon.id) && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21448,7 +21681,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                             children: "\u2605"
                                         }, void 0, false, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 427,
+                                            lineNumber: 534,
                                             columnNumber: 45
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21459,7 +21692,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 429,
+                                            lineNumber: 536,
                                             columnNumber: 41
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21472,7 +21705,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                     }
                                                 }, void 0, false, {
                                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                                    lineNumber: 431,
+                                                    lineNumber: 538,
                                                     columnNumber: 45
                                                 }, this),
                                                 onSubmitGuess && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21493,12 +21726,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                                 className: "share-icon"
                                                             }, void 0, false, {
                                                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                                                lineNumber: 449,
+                                                                lineNumber: 556,
                                                                 columnNumber: 57
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                                            lineNumber: 439,
+                                                            lineNumber: 546,
                                                             columnNumber: 53
                                                         }, this),
                                                         hoveredShareButton === pokemon.id && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21510,19 +21743,19 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                                            lineNumber: 452,
+                                                            lineNumber: 559,
                                                             columnNumber: 57
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                                    lineNumber: 438,
+                                                    lineNumber: 545,
                                                     columnNumber: 49
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 430,
+                                            lineNumber: 537,
                                             columnNumber: 41
                                         }, this),
                                         "                                ",
@@ -21539,21 +21772,21 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                     className: "catch-count-icon"
                                                 }, void 0, false, {
                                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                                    lineNumber: 463,
+                                                    lineNumber: 570,
                                                     columnNumber: 45
                                                 }, this),
                                                 catchCounts[pokemon.id] || 0
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 458,
+                                            lineNumber: 565,
                                             columnNumber: 79
                                         }, this),
                                         "                                "
                                     ]
                                 }, pokemon.id, true, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 402,
+                                    lineNumber: 509,
                                     columnNumber: 37
                                 }, this);
                             }) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21565,7 +21798,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                         className: "empty-state-icon"
                                     }, void 0, false, {
                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                        lineNumber: 470,
+                                        lineNumber: 577,
                                         columnNumber: 33
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21577,18 +21810,18 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                        lineNumber: 471,
+                                        lineNumber: 578,
                                         columnNumber: 33
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                lineNumber: 469,
+                                lineNumber: 576,
                                 columnNumber: 29
                             }, this)
                         }, void 0, false, {
                             fileName: "src/components/Pokedex/Pokedex.js",
-                            lineNumber: 396,
+                            lineNumber: 503,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -21608,23 +21841,23 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                     points: "18,15 12,9 6,15"
                                 }, void 0, false, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 495,
+                                    lineNumber: 602,
                                     columnNumber: 29
                                 }, this)
                             }, void 0, false, {
                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                lineNumber: 485,
+                                lineNumber: 592,
                                 columnNumber: 25
                             }, this)
                         }, void 0, false, {
                             fileName: "src/components/Pokedex/Pokedex.js",
-                            lineNumber: 480,
+                            lineNumber: 587,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "src/components/Pokedex/Pokedex.js",
-                    lineNumber: 395,
+                    lineNumber: 502,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21639,26 +21872,28 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
                                             src: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${selectedPokemon.id}.png`,
                                             alt: selectedPokemon.name,
-                                            className: `description-pokemon-image ${discoveredPokemon.includes(selectedPokemon.id) ? "discovered" : "undiscovered"}`,
+                                            className: `description-pokemon-image ${discoveredPokemon.includes(selectedPokemon.id) ? "discovered clickable-pokemon" : "undiscovered"}`,
+                                            onClick: discoveredPokemon.includes(selectedPokemon.id) ? handlePokemonImageClick : undefined,
+                                            title: getPokemonImageTitle(),
                                             onError: (e)=>{
                                                 e.target.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedPokemon.id}.png`;
                                             }
                                         }, void 0, false, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 505,
+                                            lineNumber: 612,
                                             columnNumber: 33
                                         }, this),
                                         discoveredPokemon.includes(selectedPokemon.id) && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                                             className: "description-discovery-badge"
                                         }, void 0, false, {
                                             fileName: "src/components/Pokedex/Pokedex.js",
-                                            lineNumber: 514,
+                                            lineNumber: 623,
                                             columnNumber: 37
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 504,
+                                    lineNumber: 611,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21677,7 +21912,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                                        lineNumber: 521,
+                                                        lineNumber: 630,
                                                         columnNumber: 45
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21690,12 +21925,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                                         children: typeInfo.name
                                                                     }, index, false, {
                                                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                                                        lineNumber: 525,
+                                                                        lineNumber: 634,
                                                                         columnNumber: 57
                                                                     }, this))
                                                             }, void 0, false, {
                                                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                                                lineNumber: 523,
+                                                                lineNumber: 632,
                                                                 columnNumber: 49
                                                             }, this),
                                                             catchCounts[selectedPokemon.id] && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21708,26 +21943,26 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                                         className: "description-catch-icon"
                                                                     }, void 0, false, {
                                                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                                                        lineNumber: 532,
+                                                                        lineNumber: 641,
                                                                         columnNumber: 57
                                                                     }, this),
                                                                     catchCounts[selectedPokemon.id]
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                                                lineNumber: 531,
+                                                                lineNumber: 640,
                                                                 columnNumber: 53
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/components/Pokedex/Pokedex.js",
-                                                        lineNumber: 522,
+                                                        lineNumber: 631,
                                                         columnNumber: 45
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                                lineNumber: 520,
+                                                lineNumber: 629,
                                                 columnNumber: 41
                                             }, this),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21735,7 +21970,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                 children: pokemonDescriptions[selectedPokemon.id] || "Loading description..."
                                             }, void 0, false, {
                                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                                lineNumber: 538,
+                                                lineNumber: 647,
                                                 columnNumber: 41
                                             }, this)
                                         ]
@@ -21751,12 +21986,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                                    lineNumber: 545,
+                                                    lineNumber: 654,
                                                     columnNumber: 45
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                                lineNumber: 544,
+                                                lineNumber: 653,
                                                 columnNumber: 41
                                             }, this),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21764,20 +21999,20 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                 children: "Catch this Pok\xe9mon to learn more"
                                             }, void 0, false, {
                                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                                lineNumber: 547,
+                                                lineNumber: 656,
                                                 columnNumber: 41
                                             }, this)
                                         ]
                                     }, void 0, true)
                                 }, void 0, false, {
                                     fileName: "src/components/Pokedex/Pokedex.js",
-                                    lineNumber: 517,
+                                    lineNumber: 626,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "src/components/Pokedex/Pokedex.js",
-                            lineNumber: 503,
+                            lineNumber: 610,
                             columnNumber: 25
                         }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                             className: "description-content",
@@ -21786,12 +22021,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                 children: "Click a Pok\xe9mon to learn more"
                             }, void 0, false, {
                                 fileName: "src/components/Pokedex/Pokedex.js",
-                                lineNumber: 556,
+                                lineNumber: 665,
                                 columnNumber: 29
                             }, this)
                         }, void 0, false, {
                             fileName: "src/components/Pokedex/Pokedex.js",
-                            lineNumber: 555,
+                            lineNumber: 664,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -21800,28 +22035,28 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                             children: "Close Pok\xe9dex"
                         }, void 0, false, {
                             fileName: "src/components/Pokedex/Pokedex.js",
-                            lineNumber: 561,
+                            lineNumber: 670,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "src/components/Pokedex/Pokedex.js",
-                    lineNumber: 501,
+                    lineNumber: 608,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "src/components/Pokedex/Pokedex.js",
-            lineNumber: 276,
+            lineNumber: 383,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "src/components/Pokedex/Pokedex.js",
-        lineNumber: 275,
+        lineNumber: 382,
         columnNumber: 9
     }, this);
 }
-_s(Pokedex, "8F0K6ZWfUfMHfraf2pXgO5mI+uY=");
+_s(Pokedex, "exPJ3/0gx+1QpBK2dN6/m2XxwSM=");
 _c = Pokedex;
 exports.default = Pokedex;
 var _c;
@@ -21866,21 +22101,22 @@ var _trophyStarSvgDefault = parcelHelpers.interopDefault(_trophyStarSvg);
 var _trophySvg = require("../../assets/trophy.svg");
 var _trophySvgDefault = parcelHelpers.interopDefault(_trophySvg);
 var _s = $RefreshSig$();
-function Celebrations({ showMasterCelebration, showProgressCelebration, showLegendCelebration, progressCount, onDismissMaster, onDismissProgress, onDismissLegend, onHoorayClick, onLegendHoorayClick }) {
+function Celebrations({ showMasterCelebration, showProgressCelebration, showLegendCelebration, showFirstPokemonCelebration, progressCount, onDismissMaster, onDismissProgress, onDismissLegend, onDismissFirstPokemon, onHoorayClick, onLegendHoorayClick, meetPikaImage }) {
     _s();
     const [confettiKey, setConfettiKey] = (0, _reactDefault.default).useState(0);
     const [hoorayFireworks, setHoorayFireworks] = (0, _reactDefault.default).useState(false);
     const [isFadingOut, setIsFadingOut] = (0, _reactDefault.default).useState(false);
     // Create confetti animation
     (0, _reactDefault.default).useEffect(()=>{
-        if (showMasterCelebration || showProgressCelebration || showLegendCelebration) {
+        if (showMasterCelebration || showProgressCelebration || showLegendCelebration || showFirstPokemonCelebration) {
             setConfettiKey((prev)=>prev + 1);
             setIsFadingOut(false);
         }
     }, [
         showMasterCelebration,
         showProgressCelebration,
-        showLegendCelebration
+        showLegendCelebration,
+        showFirstPokemonCelebration
     ]);
     const handleHoorayClick = ()=>{
         // Trigger more fireworks immediately
@@ -21914,6 +22150,111 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
             onDismissProgress();
         }, 800);
     };
+    const handleFirstPokemonDismiss = ()=>{
+        // Start fade out animation
+        setIsFadingOut(true);
+        // Dismiss after fade completes
+        setTimeout(()=>{
+            onDismissFirstPokemon();
+        }, 800);
+    };
+    if (showFirstPokemonCelebration) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: `celebration-overlay first-pokemon-celebration ${isFadingOut ? "fade-out" : ""}`,
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "confetti-container",
+                children: [
+                    ...Array(30)
+                ].map((_, i)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "confetti-piece",
+                        style: {
+                            left: `${Math.random() * 100}%`,
+                            animationDelay: `${Math.random() * 2}s`,
+                            backgroundColor: [
+                                "#FFD700",
+                                "#FF6B9D",
+                                "#4ECDC4",
+                                "#45B7D1",
+                                "#FFA07A"
+                            ][Math.floor(Math.random() * 5)]
+                        }
+                    }, i, false, {
+                        fileName: "src/components/Celebrations/Celebrations.js",
+                        lineNumber: 88,
+                        columnNumber: 25
+                    }, this))
+            }, `first-${confettiKey}`, false, {
+                fileName: "src/components/Celebrations/Celebrations.js",
+                lineNumber: 86,
+                columnNumber: 17
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "celebration-content first-pokemon-content",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
+                        className: "celebration-title first-pokemon-title",
+                        children: "Welcome!"
+                    }, void 0, false, {
+                        fileName: "src/components/Celebrations/Celebrations.js",
+                        lineNumber: 97,
+                        columnNumber: 21
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
+                        src: meetPikaImage,
+                        alt: "Meet Pikachu",
+                        className: "celebration-image first-pokemon-image",
+                        style: {
+                            maxWidth: "500px",
+                            width: "100%"
+                        }
+                    }, void 0, false, {
+                        fileName: "src/components/Celebrations/Celebrations.js",
+                        lineNumber: 99,
+                        columnNumber: 21
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                        className: "celebration-message first-pokemon-message",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                children: "Congratulations on your first Pok\xe9mon!"
+                            }, void 0, false, {
+                                fileName: "src/components/Celebrations/Celebrations.js",
+                                lineNumber: 107,
+                                columnNumber: 25
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("br", {}, void 0, false, {
+                                fileName: "src/components/Celebrations/Celebrations.js",
+                                lineNumber: 107,
+                                columnNumber: 80
+                            }, this),
+                            "You caught Pikachu! You're on your way to becoming a Pok\xe9mon master."
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/Celebrations/Celebrations.js",
+                        lineNumber: 106,
+                        columnNumber: 21
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                        className: "celebration-button first-pokemon-button",
+                        onClick: handleFirstPokemonDismiss,
+                        children: "Let's catch 'em all!"
+                    }, void 0, false, {
+                        fileName: "src/components/Celebrations/Celebrations.js",
+                        lineNumber: 111,
+                        columnNumber: 21
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/Celebrations/Celebrations.js",
+                lineNumber: 96,
+                columnNumber: 17
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/Celebrations/Celebrations.js",
+        lineNumber: 85,
+        columnNumber: 13
+    }, this);
     if (showLegendCelebration) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: `celebration-overlay legend-celebration ${isFadingOut ? "fade-out" : ""}`,
         children: [
@@ -21937,7 +22278,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                             }
                         }, i, false, {
                             fileName: "src/components/Celebrations/Celebrations.js",
-                            lineNumber: 75,
+                            lineNumber: 127,
                             columnNumber: 25
                         }, this)),
                     hoorayFireworks && [
@@ -21957,13 +22298,13 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                             }
                         }, `hooray-${i}`, false, {
                             fileName: "src/components/Celebrations/Celebrations.js",
-                            lineNumber: 82,
+                            lineNumber: 134,
                             columnNumber: 25
                         }, this))
                 ]
             }, `legend-${confettiKey}`, true, {
                 fileName: "src/components/Celebrations/Celebrations.js",
-                lineNumber: 73,
+                lineNumber: 125,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21974,7 +22315,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         children: "LEGEND."
                     }, void 0, false, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 91,
+                        lineNumber: 143,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -21989,12 +22330,12 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                                     }
                                 }, void 0, false, {
                                     fileName: "src/components/Celebrations/Celebrations.js",
-                                    lineNumber: 95,
+                                    lineNumber: 147,
                                     columnNumber: 29
                                 }, this)
                             }, void 0, false, {
                                 fileName: "src/components/Celebrations/Celebrations.js",
-                                lineNumber: 94,
+                                lineNumber: 146,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -22004,7 +22345,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                                         children: "151/151 Single Guesses"
                                     }, void 0, false, {
                                         fileName: "src/components/Celebrations/Celebrations.js",
-                                        lineNumber: 101,
+                                        lineNumber: 153,
                                         columnNumber: 29
                                     }, this),
                                     " ",
@@ -22019,19 +22360,19 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                                         }
                                     }, void 0, false, {
                                         fileName: "src/components/Celebrations/Celebrations.js",
-                                        lineNumber: 101,
+                                        lineNumber: 153,
                                         columnNumber: 65
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/Celebrations/Celebrations.js",
-                                lineNumber: 100,
+                                lineNumber: 152,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 93,
+                        lineNumber: 145,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
@@ -22043,7 +22384,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         }
                     }, void 0, false, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 105,
+                        lineNumber: 157,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -22052,7 +22393,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                             "You've caught every pokemon with 1 guess. Incredible! ",
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("br", {}, void 0, false, {
                                 fileName: "src/components/Celebrations/Celebrations.js",
-                                lineNumber: 112,
+                                lineNumber: 164,
                                 columnNumber: 79
                             }, this),
                             "There are few Pokemon masters, even fewer ",
@@ -22060,14 +22401,14 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                                 children: "legends"
                             }, void 0, false, {
                                 fileName: "src/components/Celebrations/Celebrations.js",
-                                lineNumber: 112,
+                                lineNumber: 164,
                                 columnNumber: 127
                             }, this),
                             "."
                         ]
                     }, void 0, true, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 111,
+                        lineNumber: 163,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -22076,19 +22417,19 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         children: "Legendary!"
                     }, void 0, false, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 114,
+                        lineNumber: 166,
                         columnNumber: 21
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/Celebrations/Celebrations.js",
-                lineNumber: 90,
+                lineNumber: 142,
                 columnNumber: 17
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/Celebrations/Celebrations.js",
-        lineNumber: 72,
+        lineNumber: 124,
         columnNumber: 13
     }, this);
     if (showMasterCelebration) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -22114,7 +22455,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                             }
                         }, i, false, {
                             fileName: "src/components/Celebrations/Celebrations.js",
-                            lineNumber: 130,
+                            lineNumber: 182,
                             columnNumber: 25
                         }, this)),
                     hoorayFireworks && [
@@ -22134,13 +22475,13 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                             }
                         }, `hooray-${i}`, false, {
                             fileName: "src/components/Celebrations/Celebrations.js",
-                            lineNumber: 137,
+                            lineNumber: 189,
                             columnNumber: 25
                         }, this))
                 ]
             }, `master-${confettiKey}`, true, {
                 fileName: "src/components/Celebrations/Celebrations.js",
-                lineNumber: 128,
+                lineNumber: 180,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -22151,7 +22492,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         children: "You've caught 'em all!"
                     }, void 0, false, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 146,
+                        lineNumber: 198,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -22166,12 +22507,12 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                                     }
                                 }, void 0, false, {
                                     fileName: "src/components/Celebrations/Celebrations.js",
-                                    lineNumber: 150,
+                                    lineNumber: 202,
                                     columnNumber: 29
                                 }, this)
                             }, void 0, false, {
                                 fileName: "src/components/Celebrations/Celebrations.js",
-                                lineNumber: 149,
+                                lineNumber: 201,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -22181,7 +22522,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                                         children: "151/151 (100%)"
                                     }, void 0, false, {
                                         fileName: "src/components/Celebrations/Celebrations.js",
-                                        lineNumber: 156,
+                                        lineNumber: 208,
                                         columnNumber: 29
                                     }, this),
                                     " ",
@@ -22196,19 +22537,19 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                                         }
                                     }, void 0, false, {
                                         fileName: "src/components/Celebrations/Celebrations.js",
-                                        lineNumber: 156,
+                                        lineNumber: 208,
                                         columnNumber: 57
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/Celebrations/Celebrations.js",
-                                lineNumber: 155,
+                                lineNumber: 207,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 148,
+                        lineNumber: 200,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
@@ -22217,7 +22558,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         className: "celebration-image master-image"
                     }, void 0, false, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 160,
+                        lineNumber: 212,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -22226,7 +22567,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                             "151, baby! Amazing. ",
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("br", {}, void 0, false, {
                                 fileName: "src/components/Celebrations/Celebrations.js",
-                                lineNumber: 166,
+                                lineNumber: 218,
                                 columnNumber: 46
                             }, this),
                             " You have officially earned the rank of ",
@@ -22234,14 +22575,14 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                                 children: "Pok\xe9mon Master"
                             }, void 0, false, {
                                 fileName: "src/components/Celebrations/Celebrations.js",
-                                lineNumber: 166,
+                                lineNumber: 218,
                                 columnNumber: 92
                             }, this),
                             "."
                         ]
                     }, void 0, true, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 165,
+                        lineNumber: 217,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -22250,19 +22591,19 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         children: "Hooray!"
                     }, void 0, false, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 168,
+                        lineNumber: 220,
                         columnNumber: 21
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/Celebrations/Celebrations.js",
-                lineNumber: 145,
+                lineNumber: 197,
                 columnNumber: 17
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/Celebrations/Celebrations.js",
-        lineNumber: 127,
+        lineNumber: 179,
         columnNumber: 13
     }, this);
     if (showProgressCelebration) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -22287,12 +22628,12 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         }
                     }, i, false, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 184,
+                        lineNumber: 236,
                         columnNumber: 25
                     }, this))
             }, `progress-${confettiKey}`, false, {
                 fileName: "src/components/Celebrations/Celebrations.js",
-                lineNumber: 182,
+                lineNumber: 234,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -22307,7 +22648,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         ]
                     }, void 0, true, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 193,
+                        lineNumber: 245,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -22323,12 +22664,12 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                                     }
                                 }, void 0, false, {
                                     fileName: "src/components/Celebrations/Celebrations.js",
-                                    lineNumber: 197,
+                                    lineNumber: 249,
                                     columnNumber: 29
                                 }, this)
                             }, void 0, false, {
                                 fileName: "src/components/Celebrations/Celebrations.js",
-                                lineNumber: 196,
+                                lineNumber: 248,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -22341,13 +22682,13 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/Celebrations/Celebrations.js",
-                                lineNumber: 205,
+                                lineNumber: 257,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 195,
+                        lineNumber: 247,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -22355,7 +22696,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         children: "Congrats on catching so many Pok\xe9mon. Keep it going!"
                     }, void 0, false, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 210,
+                        lineNumber: 262,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
@@ -22364,7 +22705,7 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         className: "celebration-image progress-image"
                     }, void 0, false, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 213,
+                        lineNumber: 265,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -22373,19 +22714,19 @@ function Celebrations({ showMasterCelebration, showProgressCelebration, showLege
                         children: "Let's go!"
                     }, void 0, false, {
                         fileName: "src/components/Celebrations/Celebrations.js",
-                        lineNumber: 219,
+                        lineNumber: 271,
                         columnNumber: 21
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/Celebrations/Celebrations.js",
-                lineNumber: 192,
+                lineNumber: 244,
                 columnNumber: 17
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/Celebrations/Celebrations.js",
-        lineNumber: 181,
+        lineNumber: 233,
         columnNumber: 13
     }, this);
     return null;
@@ -22481,6 +22822,9 @@ module.exports = function(loader, type) {
     };
 };
 
-},{}],"8XPx9":[function() {},{}],"lW6qc":[function() {},{}]},["farZc","1xC6H","8lqZg"], "8lqZg", "parcelRequire2844")
+},{}],"6meB4":[function(require,module,exports) {
+module.exports = require("571b0e1ba227466a").getBundleURL("bLxZJ") + "meet-pika.b3d6d524.png" + "?" + Date.now();
+
+},{"571b0e1ba227466a":"lgJ39"}],"8XPx9":[function() {},{}],"lW6qc":[function() {},{}]},["farZc","1xC6H","8lqZg"], "8lqZg", "parcelRequire2844")
 
 //# sourceMappingURL=index.975ef6c8.js.map
