@@ -85,6 +85,7 @@ class EnemyManager {
         } else if (level === 3) {
             this.createLevel3Snails();
         }
+        // Level 4 has no snails - boss fight only
     }
     
     createLevel1Snails() {

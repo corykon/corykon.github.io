@@ -52,6 +52,8 @@ class BackgroundManager {
             this.createJungleLayers();
         } else if (this.currentLevel === 3) {
             this.createMountainLayers();
+        } else if (this.currentLevel === 4) {
+            this.createCaveLayers();
         }
         
         // Initialize elements for each layer
@@ -164,6 +166,13 @@ class BackgroundManager {
         });
     }
     
+    createCaveLayers() {
+        // Cave level has no clouds - it's underground
+        // We could add cave-specific background elements like floating particles
+        // or distant crystal formations, but for now keep it simple
+        this.layers = [];
+    }
+    
     initializeLayerElements(layer) {
         // Create elements across the world width plus extra for seamless scrolling
         let worldWidth = 9000; // Default castle level width
@@ -171,6 +180,8 @@ class BackgroundManager {
             worldWidth = 18000; // Jungle level width
         } else if (this.currentLevel === 3) {
             worldWidth = 15000; // Mountain level width
+        } else if (this.currentLevel === 4) {
+            worldWidth = 8000; // Cave level width
         }
         const extraWidth = 1000; // Extra for smooth scrolling
         

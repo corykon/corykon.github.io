@@ -22,7 +22,8 @@ class ArmorOfGodGame {
         this.levelData = {
             1: { name: 'Clover Hills', image: 'images/level1.png' },
             2: { name: 'Midnight Jungle', image: 'images/level2.png' },
-            3: { name: 'Granite Mountain Pass', image: 'images/level3.png' }
+            3: { name: 'Granite Mountain Pass', image: 'images/level3.png' },
+            4: { name: 'Stone Golem\'s Lair', image: 'images/boss-fight.png' }
         };
         
         this.cameraX = 0;
@@ -173,6 +174,7 @@ class ArmorOfGodGame {
         this.uiRenderer = new UIRenderer();
         this.characterRenderer = new CharacterRenderer();
         this.petManager = new PetManager(this.pet, this);
+        this.bossManager = new BossManager(this);
         
         // Setup event listeners
         this.inputHandler.setupEventListeners(this.canvas, this);
@@ -556,6 +558,12 @@ class ArmorOfGodGame {
         // Initialize scoring for this level
         this.initializeScoring();
         this.audioManager.playMusic('adventure');
+        
+        // Activate boss manager for level 4
+        if (this.level === 4) {
+            this.bossManager.activate(this.audioManager);
+        }
+        
         // Spawn initial arrows after world is set up
         this.arrowManager.spawnInitialArrows(this.player);
     }
@@ -627,6 +635,13 @@ class ArmorOfGodGame {
         this.backgroundManager.setLevel(this.level);
         this.enemyManager.setLevel(this.level);
         
+        // Initialize boss manager for level 4
+        if (this.level === 4) {
+            this.bossManager.loadSprites().then(() => {
+                console.log('Boss sprites loaded for level 4');
+            });
+        }
+        
         // Spawn initial arrows
         this.arrowManager.spawnInitialArrows(this.player);
         
@@ -643,6 +658,9 @@ class ArmorOfGodGame {
         } else if (this.level === 3) {
             // Mountain level - temple on the peak platform
             this.castle = { x: 13100, y: 0, width: 240, height: 248 };
+        } else if (this.level === 4) {
+            // Boss level - temple exit from cave
+            this.castle = { x: 1900, y: 200, width: 240, height: 248 };
         }
     }
     
@@ -680,8 +698,8 @@ class ArmorOfGodGame {
     }
     
     cycleLevelSelector() {
-        // Cycle between levels 1, 2, and 3 for testing
-        this.level = this.level === 1 ? 2 : (this.level === 2 ? 3 : 1);
+        // Cycle between levels 1, 2, 3, and 4 for testing
+        this.level = this.level === 1 ? 2 : (this.level === 2 ? 3 : (this.level === 3 ? 4 : 1));
         this.updateLevelSelector();
         this.updateLevelIndicator();
         
@@ -791,6 +809,14 @@ class ArmorOfGodGame {
             if (levelScoreLabel) {
                 levelScoreLabel.textContent = `Level ${this.level} Score:`;
             }
+            
+            // Hide Next Level button if this is level 4 (final boss level)  
+            const nextLevelBtn = document.getElementById('nextLevelBtn');
+            if (this.level === 4) {
+                nextLevelBtn.style.display = 'none';
+            } else {
+                nextLevelBtn.style.display = 'inline-block';
+            }
         } else {
             this.stopVictoryRunningAnimation();
         }
@@ -860,6 +886,11 @@ class ArmorOfGodGame {
         );
         
         this.enemyManager.update(this.player, this.worldManager, this.gameState, this.cameraX, this.canvas.width, this.inputHandler, () => this.getCurrentJumpPower());
+        
+        // Update boss manager for level 4
+        if (this.level === 4) {
+            this.bossManager.update(this.player, this.worldManager);
+        }
         
         // Handle temple entrance sequence
         if (this.gameState === 'enteringTemple') {
@@ -975,6 +1006,17 @@ class ArmorOfGodGame {
         
         // Platform collisions for player (this will set isGrounded=true if landing on platform)
         this.worldManager.checkPlatformCollisions(this.player);
+        
+        // Check for stone barrier collisions in level 4
+        if (this.level === 4) {
+            const prevX = this.player.x;
+            if (this.worldManager.checkStoneBarrierCollision(this.player)) {
+                // Push player back from barrier
+                this.player.x = prevX;
+                this.player.blockedLeft = true;
+                this.player.blockedRight = true;
+            }
+        }
         
         // Reset falling sound flag when player becomes grounded
         if (this.player.isGrounded && this.player.fallingSoundPlayed) {
@@ -1640,6 +1682,13 @@ class ArmorOfGodGame {
         // Render game objects
         this.arrowManager.render(this.ctx);
         this.enemyManager.render(this.ctx);
+        
+        // Render boss manager for level 4
+        if (this.level === 4) {
+            const camera = { x: this.cameraX, y: this.cameraY };
+            this.bossManager.render(this.ctx, camera);
+        }
+        
         this.worldManager.renderScriptureBooks(this.ctx, this.bomImage);
         this.worldManager.renderHearts(this.ctx, this.heartImage);
         

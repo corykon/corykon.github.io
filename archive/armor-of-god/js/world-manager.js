@@ -49,6 +49,10 @@ class WorldManager {
                 this.worldWidth = 15000; // Mountain level
                 this.theme = 'mountains';
                 break;
+            case 4:
+                this.worldWidth = 2000; // Boss cave level - very short
+                this.theme = 'cave';
+                break;
             default:
                 this.worldWidth = 9000;
                 this.theme = 'castle';
@@ -62,6 +66,8 @@ class WorldManager {
             this.createLevel2Platforms();
         } else if (this.currentLevel === 3) {
             this.createLevel3Platforms();
+        } else if (this.currentLevel === 4) {
+            this.createLevel4Platforms();
         }
     }
     
@@ -246,6 +252,8 @@ class WorldManager {
             this.createLevel2Clouds();
         } else if (this.currentLevel === 3) {
             this.createLevel3Clouds();
+        } else if (this.currentLevel === 4) {
+            this.createLevel4Clouds();
         }
     }
     
@@ -300,6 +308,8 @@ class WorldManager {
             this.createLevel2ScriptureBooks();
         } else if (this.currentLevel === 3) {
             this.createLevel3ScriptureBooks();
+        } else if (this.currentLevel === 4) {
+            this.createLevel4ScriptureBooks();
         }
     }
     
@@ -310,6 +320,8 @@ class WorldManager {
             this.createLevel2Hearts();
         } else if (this.currentLevel === 3) {
             this.createLevel3Hearts();
+        } else if (this.currentLevel === 4) {
+            this.createLevel4Hearts();
         }
     }
     
@@ -385,6 +397,8 @@ class WorldManager {
         } else if (this.currentLevel === 3) {
             this.createLevel3ForegroundSprites();
             this.addRockSpritePlatforms();
+        } else if (this.currentLevel === 4) {
+            this.createLevel4ForegroundSprites();
         }
     }
     
@@ -636,6 +650,67 @@ class WorldManager {
             }
         });
     }
+
+    // LEVEL 4 METHODS - BOSS CAVE LEVEL
+    createLevel4Platforms() {
+        // BOSS CAVE LEVEL - Very short, quick boss encounter
+        // Player walks to where stone barriers will appear, then boss triggers them
+        // Total length: ~2,000px (very short, focused boss arena)
+        
+        this.platforms = [
+            // Starting cave entrance section - walk to barrier trigger point
+            { x: 0, y: 468, width: 600, height: 135, type: 'cave' },
+            
+            // Boss arena - compact fighting space (barriers will appear at x:480 and x:1720)
+            { x: 700, y: 468, width: 1100, height: 135, type: 'cave' },
+            
+            // Exit section (only accessible after boss defeat)
+            { x: 1900, y: 468, width: 100, height: 135, type: 'cave' }
+        ];
+        
+        // Initialize stone barriers (will be activated during boss fight)
+        this.stoneBarriers = [];
+    }
+    
+    createLevel4Clouds() {
+        // No clouds in cave level - will render dark cave ceiling instead
+        this.clouds = [];
+    }
+    
+    createLevel4ScriptureBooks() {
+        // Boss level will not have traditional scripture books
+        // Player needs to defeat boss instead
+        this.scriptureBooks = [];
+    }
+    
+    createLevel4Hearts() {
+        // Strategic health pickups for boss fight
+        this.hearts = [
+            // Health before boss arena
+            { x: 350, y: 420, width: 30, height: 30, collected: false, healthRestore: 1 },
+            // Health on elevated platforms during boss fight (risky to get)
+            { x: 650, y: 340, width: 30, height: 30, collected: false, healthRestore: 1 },
+            { x: 1550, y: 280, width: 30, height: 30, collected: false, healthRestore: 1 }
+        ];
+    }
+    
+    createLevel4ForegroundSprites() {
+        this.foregroundSprites = [
+            // Cave entrance crystals
+            { x: 100, y: 400, width: 60, height: 80, image: 'cave-crystal-1.png', glowing: true },
+            { x: 300, y: 420, width: 40, height: 60, image: 'cave-crystal-2.png', glowing: true },
+            
+            // Boss arena decorative crystals
+            { x: 550, y: 430, width: 70, height: 90, image: 'cave-crystal-3.png', glowing: true },
+            { x: 800, y: 440, width: 50, height: 60, image: 'cave-crystal-2.png', glowing: true },
+            { x: 1100, y: 425, width: 80, height: 100, image: 'cave-crystal-1.png', glowing: true },
+            { x: 1400, y: 435, width: 60, height: 80, image: 'cave-crystal-3.png', glowing: true },
+            { x: 1650, y: 440, width: 45, height: 65, image: 'cave-crystal-2.png', glowing: true },
+            
+            // Exit cave crystals
+            { x: 1850, y: 420, width: 55, height: 75, image: 'cave-crystal-2.png', glowing: true }
+        ];
+    }
     
     renderBackground(ctx, cameraX, canvasWidth, canvasHeight) {
         if (this.currentLevel === 1) {
@@ -648,6 +723,9 @@ class WorldManager {
         } else if (this.currentLevel === 3) {
             // Mountain sunrise effect - starts at night, progresses to day
             this.renderMountainSunrise(ctx, cameraX, canvasWidth, canvasHeight);
+        } else if (this.currentLevel === 4) {
+            // Cave background - dark with blue/purple crystal lighting
+            this.renderCaveBackground(ctx, cameraX, canvasWidth, canvasHeight);
         }
     }
     
@@ -893,6 +971,77 @@ class WorldManager {
             }
         }
     }
+
+    renderCaveBackground(ctx, cameraX, canvasWidth, canvasHeight) {
+        // Dark cave background with blue/purple crystal lighting
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
+        gradient.addColorStop(0, '#1A1A1A'); // Very dark gray at top
+        gradient.addColorStop(0.3, '#2F2F2F'); // Dark gray middle
+        gradient.addColorStop(0.7, '#1A1A1A'); // Very dark gray
+        gradient.addColorStop(1, '#0D0D0D'); // Almost black at bottom
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(cameraX, 0, canvasWidth, canvasHeight);
+        
+        // Add crystal lighting effects throughout the cave
+        this.renderCrystalLighting(ctx, cameraX, canvasWidth, canvasHeight);
+        
+        // Add cave ceiling stalactites
+        this.renderStalactites(ctx, cameraX, canvasWidth);
+    }
+    
+    renderCrystalLighting(ctx, cameraX, canvasWidth, canvasHeight) {
+        // Create blue/purple lighting zones throughout the cave
+        const lightSources = [
+            { x: 500, color: '#4169E1', intensity: 0.3 },
+            { x: 1200, color: '#8A2BE2', intensity: 0.4 },
+            { x: 2400, color: '#6495ED', intensity: 0.3 },
+            { x: 3600, color: '#9370DB', intensity: 0.35 },
+            { x: 4800, color: '#4682B4', intensity: 0.3 },
+            { x: 6000, color: '#7B68EE', intensity: 0.4 }
+        ];
+        
+        lightSources.forEach(light => {
+            // Only render if light is near camera view
+            if (light.x > cameraX - 400 && light.x < cameraX + canvasWidth + 400) {
+                const lightRadius = 200;
+                const gradient = ctx.createRadialGradient(
+                    light.x - cameraX, canvasHeight * 0.6, 0,
+                    light.x - cameraX, canvasHeight * 0.6, lightRadius
+                );
+                gradient.addColorStop(0, `${light.color}${Math.round(light.intensity * 255).toString(16).padStart(2, '0')}`);
+                gradient.addColorStop(0.5, `${light.color}${Math.round(light.intensity * 0.5 * 255).toString(16).padStart(2, '0')}`);
+                gradient.addColorStop(1, `${light.color}00`);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(cameraX, 0, canvasWidth, canvasHeight);
+            }
+        });
+    }
+    
+    renderStalactites(ctx, cameraX, canvasWidth) {
+        // Add stalactites hanging from cave ceiling
+        ctx.fillStyle = '#1C1C1C';
+        
+        const stalactitePositions = [100, 350, 600, 900, 1400, 1800, 2200, 2800, 3500, 4100, 4700, 5300, 5900];
+        
+        stalactitePositions.forEach(x => {
+            // Only render if stalactite is near camera view
+            if (x > cameraX - 100 && x < cameraX + canvasWidth + 100) {
+                const height = 40 + (Math.sin(x * 0.01) * 20);
+                const width = 20 + (Math.cos(x * 0.007) * 8);
+                ctx.fillRect(x - cameraX, 0, width, height);
+                
+                // Add pointy bottom
+                ctx.beginPath();
+                ctx.moveTo(x - cameraX + width/2, height);
+                ctx.lineTo(x - cameraX + width, height - 15);
+                ctx.lineTo(x - cameraX, height - 15);
+                ctx.closePath();
+                ctx.fill();
+            }
+        });
+    }
     
     renderClouds(ctx) {
         ctx.fillStyle = '#FFFFFF';
@@ -917,6 +1066,39 @@ class WorldManager {
     renderPlatforms(ctx) {
         this.platforms.forEach(platform => {
             this.renderPlatform(ctx, platform);
+        });
+        
+        // Render stone barriers for level 4
+        this.renderStoneBarriers(ctx);
+    }
+    
+    renderStoneBarriers(ctx) {
+        if (this.currentLevel !== 4 || !this.barriersActive) return;
+        
+        this.stoneBarriers.forEach(barrier => {
+            if (barrier.active) {
+                // Draw stone barrier - dark gray stone texture
+                ctx.fillStyle = '#2F2F2F';
+                ctx.fillRect(barrier.x, barrier.y, barrier.width, barrier.height);
+                
+                // Add stone texture lines  
+                ctx.fillStyle = '#1C1C1C';
+                for (let y = 0; y < barrier.height; y += 30) {
+                    ctx.fillRect(barrier.x, barrier.y + y, barrier.width, 3);
+                    ctx.fillRect(barrier.x + 5, barrier.y + y + 15, barrier.width - 10, 2);
+                }
+                
+                // Add vertical texture lines
+                for (let x = 5; x < barrier.width; x += 15) {
+                    ctx.fillRect(barrier.x + x, barrier.y, 2, barrier.height);
+                }
+                
+                // Add cracked stone highlights
+                ctx.fillStyle = '#4A4A4A';
+                for (let y = 10; y < barrier.height; y += 40) {
+                    ctx.fillRect(barrier.x + 2, barrier.y + y, barrier.width - 4, 1);
+                }
+            }
         });
     }
     
@@ -1076,6 +1258,60 @@ class WorldManager {
                 default:
                     // Default rocky style
                     ctx.fillStyle = '#696969';
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                    break;
+            }
+        } else if (this.currentLevel === 4) {
+            // Cave level - dark cave platforms
+            switch(platform.type) {
+                case 'cave':
+                    // Dark cave floor
+                    ctx.fillStyle = '#2F2F2F'; // Very dark gray
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                    
+                    // Add cave rock texture
+                    ctx.fillStyle = '#1C1C1C'; // Darker gray
+                    for (let i = 0; i < platform.width; i += 20) {
+                        for (let j = 8; j < platform.height; j += 15) {
+                            ctx.fillRect(platform.x + i, platform.y + j, 6, 4);
+                        }
+                    }
+                    
+                    // Add small crystal formations
+                    ctx.fillStyle = '#483D8B'; // Dark slate blue for crystals
+                    for (let i = 0; i < platform.width; i += 50) {
+                        if (Math.sin((platform.x + i) * 0.01) > 0.3) {
+                            ctx.fillRect(platform.x + i, platform.y - 4, 8, 10);
+                        }
+                    }
+                    break;
+                    
+                case 'crystal':
+                    // Crystal platforms that glow
+                    ctx.fillStyle = '#6A5ACD'; // Slate blue
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                    
+                    // Add crystal glow effect
+                    const gradient = ctx.createLinearGradient(
+                        platform.x, platform.y,
+                        platform.x, platform.y + platform.height
+                    );
+                    gradient.addColorStop(0, '#9370DB'); // Medium slate blue
+                    gradient.addColorStop(0.5, '#8A2BE2'); // Blue violet
+                    gradient.addColorStop(1, '#4B0082'); // Indigo
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                    
+                    // Add crystal shine
+                    ctx.fillStyle = '#E6E6FA'; // Lavender highlights
+                    for (let i = 0; i < platform.width; i += 15) {
+                        ctx.fillRect(platform.x + i, platform.y, 2, platform.height);
+                    }
+                    break;
+                    
+                default:
+                    // Default cave style
+                    ctx.fillStyle = '#2F2F2F';
                     ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
                     break;
             }
@@ -1383,4 +1619,64 @@ class WorldManager {
         this.createScriptureBooks();
         this.createHearts();
         this.createForegroundSprites();
+        
+        // Initialize stone barriers for level 4
+        if (this.currentLevel === 4) {
+            this.stoneBarriers = [];
+            this.barriersActive = false;
+        }
+    }
+    
+    // Stone barrier methods for level 4 boss fight
+    createStoneBarriers() {
+        if (this.currentLevel !== 4) return;
+        
+        this.stoneBarriers = [
+            // Left barrier - traps player in arena (between entry and boss area)
+            {
+                x: 680,
+                y: 0,
+                width: 40,
+                height: 600, // Full screen height
+                active: true,
+                fallSpeed: 0,
+                targetY: 0
+            },
+            // Right barrier - prevents escape (at end of boss area)
+            {
+                x: 1820,
+                y: 0,
+                width: 40,
+                height: 600, // Full screen height
+                active: true,
+                fallSpeed: 0,
+                targetY: 0
+            }
+        ];
+        
+        this.barriersActive = true;
+        console.log('Stone barriers created to trap player in boss arena!');
+    }
+    
+    removeStoneBarriers() {
+        if (this.currentLevel !== 4) return;
+        
+        this.stoneBarriers = [];
+        this.barriersActive = false;
+        console.log('Stone barriers removed - player can proceed!');
+    }
+    
+    checkStoneBarrierCollision(player) {
+        if (!this.barriersActive || this.currentLevel !== 4) return false;
+        
+        for (const barrier of this.stoneBarriers) {
+            if (barrier.active &&
+                player.x < barrier.x + barrier.width &&
+                player.x + player.width > barrier.x &&
+                player.y < barrier.y + barrier.height &&
+                player.y + player.height > barrier.y) {
+                return true;
+            }
+        }
+        return false;
     }}
