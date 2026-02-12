@@ -1,4 +1,5 @@
 import React from 'react';
+import TypeBadge from '../TypeBadge';
 
 function GuessInput({onGuess, gameIsOver, answerLength, pokemonTypes}) {
     const [pendingGuess, setPendingGuess] = React.useState('');
@@ -38,9 +39,12 @@ function GuessInput({onGuess, gameIsOver, answerLength, pokemonTypes}) {
             {pokemonTypes && pokemonTypes.length > 0 ? (
                 <div className="type-badges inline">
                     {pokemonTypes.map((typeInfo, index) => (
-                        <span key={index} className={`type-badge ${typeInfo.name}`}>
-                            {typeInfo.name}
-                        </span>
+                        <TypeBadge 
+                            key={index} 
+                            type={typeInfo.name} 
+                            variant="full" 
+                            size="medium" 
+                        />
                     ))}
                 </div>
             ) : (

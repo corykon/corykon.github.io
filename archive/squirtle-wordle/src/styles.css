@@ -903,6 +903,22 @@ h1 img {
     margin-top: 4px;
 }
 
+.sort-filter-container {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+    .search-sort-row {
+        gap: 8px;
+    }
+    
+    .sort-filter-container {
+        gap: 6px;
+    }
+}
+
 .search-container {
     position: relative;
     flex: 1;
@@ -927,6 +943,8 @@ h1 img {
     backdrop-filter: blur(10px);
     white-space: nowrap;
     text-transform: capitalize;
+    min-width: 125px;
+    justify-content: center;
 }
 
 .sort-button:hover {
@@ -966,6 +984,106 @@ h1 img {
 .sort-dropdown button.active {
     background: rgba(59, 130, 246, 0.3);
     color: #60a5fa;
+}
+
+/* Type Filter Styles */
+.type-filter-container {
+    position: relative;
+}
+
+.type-filter-button {
+    background: #203f74;
+    border: 1px solid #203f74;
+    border-radius: 8px;
+    color: white;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    white-space: nowrap;
+    text-transform: capitalize;
+}
+
+.type-filter-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.type-filter-button.mobile {
+    padding: 6px 8px;
+    font-size: 12px;
+    min-width: 60px;
+}
+
+.sort-button.mobile {
+    padding: 6px 8px;
+    font-size: 12px;
+    min-width: auto;
+    justify-content: flex-start;
+}
+
+.filter-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.type-filter-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 8px;
+    backdrop-filter: blur(15px);
+    z-index: 10;
+    min-width: 200px;
+    margin-top: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.type-filter-dropdown button {
+    width: 100%;
+    padding: 8px 12px;
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.type-filter-dropdown button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.type-filter-dropdown button.active {
+    background: rgba(59, 130, 246, 0.3);
+    color: #60a5fa;
+}
+
+.type-filter-caret, .sort-caret {
+    transition: transform 0.2s ease;
+}
+
+/* Search Results Counter */
+.search-results-counter {
+    padding: 4px 0 8px 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 8px;
 }
 
 .search-icon {
@@ -1137,8 +1255,11 @@ h1 img {
 }
 
 .type-hint {
-    font-size: 13px;
+    display: inline-flex;
     text-align: center;
+    font-size: 13px;
+    align-items: center;
+    justify-content: center;
 }
 /* 
 .type-badge.normal { background-color: #98999e; }
@@ -1392,6 +1513,17 @@ h1 img {
     font-weight: 700;
 }
 
+/* Search highlighting without extra spacing */
+.search-highlight-no-spacing {
+    background-color: #ffd700;
+    color: #333;
+    font-weight: 700;
+    border-radius: 2px;
+    padding: 0;
+    margin: 0;
+    display: inline;
+}
+
 /* Pokemon name container for share button */
 .pokemon-name-container {
     position: relative;
@@ -1488,6 +1620,10 @@ h1 img {
     font-size: 0.75rem;
     font-weight: 500;
     margin-top: 0px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .catch-count-icon {
@@ -1495,6 +1631,33 @@ h1 img {
     height: 10px;
     filter: brightness(0) invert(1);
     opacity: 0.8;
+}
+
+/* Pokemon card bottom section with types and catch count */
+.pokemon-card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 8px;
+    min-height: 20px;
+}
+
+.pokemon-type-icons {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .pokemon-card-bottom {
+        margin-top: 6px;
+        min-height: 18px;
+    }
+    
+    .pokemon-type-icons {
+        gap: 3px;
+    }
 }
 
 .pokemon-number {

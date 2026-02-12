@@ -879,6 +879,22 @@ h1 img {
   display: flex;
 }
 
+.sort-filter-container {
+  align-items: flex-start;
+  gap: 8px;
+  display: flex;
+}
+
+@media (width <= 768px) {
+  .search-sort-row {
+    gap: 8px;
+  }
+
+  .sort-filter-container {
+    gap: 6px;
+  }
+}
+
 .search-container {
   flex: 1;
   position: relative;
@@ -897,8 +913,10 @@ h1 img {
   background: #203f74;
   border: 1px solid #203f74;
   border-radius: 8px;
+  justify-content: center;
   align-items: center;
   gap: 6px;
+  min-width: 125px;
   padding: 6px 12px;
   font-size: 14px;
   transition: all .2s;
@@ -942,6 +960,104 @@ h1 img {
 .sort-dropdown button.active {
   color: #60a5fa;
   background: #3b82f64d;
+}
+
+.type-filter-container {
+  position: relative;
+}
+
+.type-filter-button {
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+  text-transform: capitalize;
+  background: #203f74;
+  border: 1px solid #203f74;
+  border-radius: 8px;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  transition: all .2s;
+  display: flex;
+}
+
+.type-filter-button:hover {
+  background: #ffffff26;
+  border-color: #ffffff80;
+}
+
+.type-filter-button.mobile {
+  min-width: 60px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.sort-button.mobile {
+  justify-content: flex-start;
+  min-width: auto;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.filter-label {
+  color: #fffc;
+  background: #ffffff1a;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+.type-filter-dropdown {
+  backdrop-filter: blur(15px);
+  z-index: 10;
+  background: #1e293bf2;
+  border: 1px solid #94a3b84d;
+  border-radius: 8px;
+  min-width: 200px;
+  max-height: 300px;
+  margin-top: 4px;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  overflow-y: auto;
+}
+
+.type-filter-dropdown button {
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: none;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  transition: background .2s;
+  display: flex;
+}
+
+.type-filter-dropdown button:hover {
+  background: #ffffff1a;
+}
+
+.type-filter-dropdown button.active {
+  color: #60a5fa;
+  background: #3b82f64d;
+}
+
+.type-filter-caret, .sort-caret {
+  transition: transform .2s;
+}
+
+.search-results-counter {
+  color: #ffffffb3;
+  text-align: center;
+  margin-bottom: 8px;
+  padding: 4px 0 8px;
+  font-size: 13px;
 }
 
 .search-icon {
@@ -1106,7 +1222,10 @@ h1 img {
 
 .type-hint {
   text-align: center;
+  justify-content: center;
+  align-items: center;
   font-size: 13px;
+  display: inline-flex;
 }
 
 .type-badge.normal {
@@ -1393,6 +1512,16 @@ h1 img {
   font-weight: 700;
 }
 
+.search-highlight-no-spacing {
+  color: #333;
+  background-color: gold;
+  border-radius: 2px;
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  display: inline;
+}
+
 .pokemon-name-container {
   justify-content: center;
   align-items: center;
@@ -1482,9 +1611,13 @@ h1 img {
 
 .pokemon-catch-count {
   color: #fffc;
+  background: #ffffff1a;
+  border: 1px solid #fff3;
+  border-radius: 12px;
   align-items: center;
   gap: 4px;
   margin-top: 0;
+  padding: 2px 6px;
   font-size: .75rem;
   font-weight: 500;
   display: flex;
@@ -1495,6 +1628,32 @@ h1 img {
   opacity: .8;
   width: 10px;
   height: 10px;
+}
+
+.pokemon-card-bottom {
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 20px;
+  margin-top: 8px;
+  display: flex;
+}
+
+.pokemon-type-icons {
+  align-items: center;
+  gap: 4px;
+  display: flex;
+}
+
+@media (width <= 768px) {
+  .pokemon-card-bottom {
+    min-height: 18px;
+    margin-top: 6px;
+  }
+
+  .pokemon-type-icons {
+    gap: 3px;
+  }
 }
 
 .pokemon-number {
