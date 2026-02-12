@@ -18887,7 +18887,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../Game":"ipYvB","../Header":"cxSZo","../Pokedex":"iNdgz","../Celebrations":"1Wh8F","../../assets/trophy.svg":"jcN8K","../../assets/trophy-star.svg":"87OKR","8cf3d9626b280245":"3Wlpi","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../assets/meet-pika.png":"6meB4"}],"ipYvB":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../Game":"ipYvB","../Header":"cxSZo","../Pokedex":"iNdgz","../Celebrations":"1Wh8F","../../assets/trophy.svg":"jcN8K","../../assets/trophy-star.svg":"87OKR","../../assets/meet-pika.png":"6meB4","8cf3d9626b280245":"3Wlpi","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"ipYvB":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>(0, _gameDefault.default));
@@ -22754,7 +22754,10 @@ module.exports = require("63429f1923f79699").getBundleURL("bLxZJ") + "trophy-sta
 },{"63429f1923f79699":"lgJ39"}],"jcN8K":[function(require,module,exports) {
 module.exports = require("2acee865ea39c08c").getBundleURL("bLxZJ") + "trophy.8c6e02f3.svg" + "?" + Date.now();
 
-},{"2acee865ea39c08c":"lgJ39"}],"3Wlpi":[function(require,module,exports) {
+},{"2acee865ea39c08c":"lgJ39"}],"6meB4":[function(require,module,exports) {
+module.exports = require("571b0e1ba227466a").getBundleURL("bLxZJ") + "meet-pika.b3d6d524.png" + "?" + Date.now();
+
+},{"571b0e1ba227466a":"lgJ39"}],"3Wlpi":[function(require,module,exports) {
 module.exports = require("a2227b3be646b2f9")(require("6cd57b5e609f64b6").getBundleURL("bLxZJ") + "test-celebrations.5059d72d.js" + "?" + Date.now()).catch((err)=>{
     delete module.bundle.cache[module.id];
     throw err;
@@ -22822,9 +22825,6 @@ module.exports = function(loader, type) {
     };
 };
 
-},{}],"6meB4":[function(require,module,exports) {
-module.exports = require("571b0e1ba227466a").getBundleURL("bLxZJ") + "meet-pika.b3d6d524.png" + "?" + Date.now();
-
-},{"571b0e1ba227466a":"lgJ39"}],"8XPx9":[function() {},{}],"lW6qc":[function() {},{}]},["farZc","1xC6H","8lqZg"], "8lqZg", "parcelRequire2844")
+},{}],"8XPx9":[function() {},{}],"lW6qc":[function() {},{}]},["farZc","1xC6H","8lqZg"], "8lqZg", "parcelRequire2844")
 
 //# sourceMappingURL=index.975ef6c8.js.map
