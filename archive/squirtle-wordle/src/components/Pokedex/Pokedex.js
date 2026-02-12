@@ -1,4 +1,6 @@
 import React from 'react';
+import TypeBadge from '../TypeBadge';
+import { getAllPokemonTypes } from '../Game/Game';
 import pokeballIcon from '../../assets/pokeball.svg';
 import searchIcon from '../../assets/search.svg';
 import shareIcon from '../../assets/share.svg';
@@ -9,14 +11,39 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
     const [pokemonTypes, setPokemonTypes] = React.useState({});
     const [selectedPokemon, setSelectedPokemon] = React.useState(null);
     const [activeFilter, setActiveFilter] = React.useState('all');
+    const [typeFilter, setTypeFilter] = React.useState('all');
     const [hasAutoScrolled, setHasAutoScrolled] = React.useState(false);
     const [sortBy, setSortBy] = React.useState('pokemon id');
     const [showSortDropdown, setShowSortDropdown] = React.useState(false);
+    const [showTypeDropdown, setShowTypeDropdown] = React.useState(false);
     const [catchCounts, setCatchCounts] = React.useState({});
     const [showScrollButton, setShowScrollButton] = React.useState(false);
     const [hoveredShareButton, setHoveredShareButton] = React.useState(null);
     const [pokemonCry, setPokemonCry] = React.useState(null);
     const [isLoadingCry, setIsLoadingCry] = React.useState(false);
+    const [isMobile, setIsMobile] = React.useState(false);
+    const searchInputRef = React.useRef();
+    
+    // Mobile detection
+    React.useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+    
+    // Auto-focus search input on desktop when Pokedex opens
+    React.useEffect(() => {
+        if (isOpen && !isMobile && searchInputRef.current) {
+            setTimeout(() => {
+                searchInputRef.current.focus();
+            }, 300); // Wait for drawer animation
+        }
+    }, [isOpen, isMobile]);
     
     // Function to fetch and cache Pokemon types
     const fetchTypes = React.useCallback(async (pokemon) => {
@@ -309,7 +336,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         for (let i = mergedMatches.length - 1; i >= 0; i--) {
             const match = mergedMatches[i];
             const before = result.substring(0, match.start);
-            const highlighted = `<span class="search-highlight">${match.text}</span>`;
+            const highlighted = `<span class="search-highlight-no-spacing">${match.text}</span>`;
             const after = result.substring(match.end);
             result = before + highlighted + after;
         }
@@ -334,7 +361,11 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
             (activeFilter === 'caught' && isDiscovered) ||
             (activeFilter === 'uncaught' && !isDiscovered);
         
-        return matchesSearch && matchesFilter;
+        // Type filtering
+        const matchesType = typeFilter === 'all' || 
+            (pokemon.types && pokemon.types.some(type => type.name === typeFilter));
+        
+        return matchesSearch && matchesFilter && matchesType;
     }).sort((a, b) => {
         if (sortBy === 'pokemon id') {
             return a.id - b.id;
@@ -345,6 +376,11 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         }
         return 0;
     });
+
+    // Get all unique types for the filter dropdown
+    const allTypes = React.useMemo(() => {
+        return getAllPokemonTypes(pokemonList);
+    }, [pokemonList]);
 
     const CheckIcon = () => (
         <svg 
@@ -405,8 +441,9 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                         <div className="search-container">
                             <img src={searchIcon} alt="Search" className="search-icon" />
                             <input
+                                ref={searchInputRef}
                                 type="text"
-                                placeholder="Search Pokemon by name or number..."
+                                placeholder="Search pokémon.."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="pokedex-search"
@@ -422,57 +459,190 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                 </button>
                             )}
                         </div>
-                        
-                        <div className="sort-container">
-                            <button 
-                                className="sort-button"
-                                onClick={() => setShowSortDropdown(!showSortDropdown)}
-                            >
-                                <svg 
-                                    width="16" 
-                                    height="16" 
-                                    viewBox="0 0 24 24" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    strokeWidth="2"
+                        <div className="sort-filter-container">
+                            {/* Type Filter */}
+                            <div className="type-filter-container">
+                                <button 
+                                    className={`type-filter-button ${isMobile ? 'mobile' : ''}`}
+                                    onClick={() => setShowTypeDropdown(!showTypeDropdown)}
                                 >
-                                    <path d="M3 6h18M7 12h10m-7 6h4"></path>
-                                </svg>
-                                {sortBy}
-                                <svg 
-                                    width="12" 
-                                    height="12" 
-                                    viewBox="0 0 24 24" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    strokeWidth="2"
-                                    className="sort-caret"
+                                    {isMobile ? (
+                                        <>
+                                            {typeFilter === 'all' ? (
+                                                <svg 
+                                                    width="16" 
+                                                    height="16" 
+                                                    viewBox="0 0 24 24" 
+                                                    fill="currentColor" 
+                                                    stroke="none"
+                                                >
+                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                                </svg>
+                                            ) : (
+                                                <TypeBadge type={typeFilter} variant="circular" size="small" />
+                                            )}
+                                            <svg 
+                                                width="12" 
+                                                height="12" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                                className="type-filter-caret"
+                                            >
+                                                <polyline points="6,9 12,15 18,9"></polyline>
+                                            </svg>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {typeFilter === 'all' ? (
+                                                <>
+                                                    <svg 
+                                                        width="16" 
+                                                        height="16" 
+                                                        viewBox="0 0 24 24" 
+                                                        fill="currentColor" 
+                                                        stroke="none"
+                                                        style={{ color: '#fbbf24' }}
+                                                    >
+                                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                                    </svg>
+                                                    <span>All Types</span>
+                                                </>
+                                            ) : (
+                                                <TypeBadge type={typeFilter} variant="mini" size="small" />
+                                            )}
+                                            <svg 
+                                                width="12" 
+                                                height="12" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                                className="type-filter-caret"
+                                            >
+                                                <polyline points="6,9 12,15 18,9"></polyline>
+                                            </svg>
+                                        </>
+                                    )}
+                                </button>
+                                {showTypeDropdown && (
+                                    <div className="type-filter-dropdown">
+                                        <button 
+                                            onClick={() => {
+                                                setTypeFilter('all');
+                                                setShowTypeDropdown(false);
+                                            }}
+                                            className={typeFilter === 'all' ? 'active' : ''}
+                                        >
+                                            <svg 
+                                                width="16" 
+                                                height="16" 
+                                                viewBox="0 0 24 24" 
+                                                fill="currentColor" 
+                                                stroke="none"
+                                                style={{ color: '#fbbf24' }}
+                                            >
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                            </svg>
+                                            <span>All Types</span>
+                                        </button>
+                                        {allTypes.map(type => (
+                                            <button 
+                                                key={type}
+                                                onClick={() => {
+                                                    setTypeFilter(type);
+                                                    setShowTypeDropdown(false);
+                                                }}
+                                                className={typeFilter === type ? 'active' : ''}
+                                            >
+                                                <TypeBadge type={type} variant="full" size="small" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* Sort Dropdown */}
+                            <div className="sort-container">
+                                <button 
+                                    className={`sort-button ${isMobile ? 'mobile' : ''}`}
+                                    onClick={() => setShowSortDropdown(!showSortDropdown)}
                                 >
-                                    <polyline points="6,9 12,15 18,9"></polyline>
-                                </svg>
-                            </button>
-                            {showSortDropdown && (
-                                <div className="sort-dropdown">
-                                    <button 
-                                        onClick={() => {
-                                            setSortBy('pokemon id');
-                                            setShowSortDropdown(false);
-                                        }}
-                                        className={sortBy === 'pokemon id' ? 'active' : ''}
-                                    >
-                                        Pokemon ID
-                                    </button>
-                                    <button 
-                                        onClick={() => {
-                                            setSortBy('times caught');
-                                            setShowSortDropdown(false);
-                                        }}
-                                        className={sortBy === 'times caught' ? 'active' : ''}
-                                    >
-                                        Times Caught
-                                    </button>
-                                </div>
-                            )}
+                                    {isMobile ? (
+                                        <>
+                                            <svg 
+                                                width="16" 
+                                                height="16" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                            >
+                                                <path d="M3 6h18M7 12h10m-7 6h4"></path>
+                                            </svg>
+                                            <svg 
+                                                width="12" 
+                                                height="12" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                                className="sort-caret"
+                                            >
+                                                <polyline points="6,9 12,15 18,9"></polyline>
+                                            </svg>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg 
+                                                width="16" 
+                                                height="16" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                            >
+                                                <path d="M3 6h18M7 12h10m-7 6h4"></path>
+                                            </svg>
+                                            {sortBy === 'pokemon id' ? 'Id' : '# Caught'}
+                                            <svg 
+                                                width="12" 
+                                                height="12" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                                className="sort-caret"
+                                            >
+                                                <polyline points="6,9 12,15 18,9"></polyline>
+                                            </svg>
+                                        </>
+                                    )}
+                                </button>
+                                {showSortDropdown && (
+                                    <div className="sort-dropdown">
+                                        <button 
+                                            onClick={() => {
+                                                setSortBy('pokemon id');
+                                                setShowSortDropdown(false);
+                                            }}
+                                            className={sortBy === 'pokemon id' ? 'active' : ''}
+                                        >
+                                            Pokemon ID
+                                        </button>
+                                        <button 
+                                            onClick={() => {
+                                                setSortBy('times caught');
+                                                setShowSortDropdown(false);
+                                            }}
+                                            className={sortBy === 'times caught' ? 'active' : ''}
+                                        >
+                                            Times Caught
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                     
@@ -500,6 +670,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                 </div>
                 
                 <div className="pokedex-content">
+                    {/* Search Results Counter */}
+                    {(searchTerm || typeFilter !== 'all') && (
+                        <div className="search-results-counter">
+                            <em>{filteredPokemon.length} Pokémon {searchTerm ? 'matching search' : 'found'}</em>
+                        </div>
+                    )}
                     <div className="pokemon-grid">
                         {filteredPokemon.length > 0 ? (
                             filteredPokemon.map(pokemon => {
@@ -562,13 +738,33 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                     )}
                                                 </div>
                                             )}
-                                        </div>                                <div 
-                                            className="pokemon-catch-count"
-                                            style={{ opacity: isDiscovered && catchCounts[pokemon.id] ? 1 : 0 }}
-                                            title={isDiscovered && catchCounts[pokemon.id] ? `You've caught ${catchCounts[pokemon.id]} ${pokemon.name}` : ''}
-                                        >
-                                            <img src={pokeballIcon} alt="Pokeball" className="catch-count-icon" />
-                                            {catchCounts[pokemon.id] || 0}
+                                        </div>
+                                        
+                                        {/* Type Icons and Catch Count Row */}
+                                        <div className="pokemon-card-bottom">
+                                            {/* Type Icons */}
+                                            {pokemon.types && (
+                                                <div className="pokemon-type-icons">
+                                                    {pokemon.types.map((type, index) => (
+                                                        <TypeBadge 
+                                                            key={index} 
+                                                            type={type.name} 
+                                                            variant="circular" 
+                                                            size="small" 
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+                                            
+                                            {/* Catch Count */}
+                                            <div 
+                                                className="pokemon-catch-count"
+                                                style={{ opacity: isDiscovered && catchCounts[pokemon.id] ? 1 : 0 }}
+                                                title={isDiscovered && catchCounts[pokemon.id] ? `You've caught ${catchCounts[pokemon.id]} ${pokemon.name}` : ''}
+                                            >
+                                                <img src={pokeballIcon} alt="Pokeball" className="catch-count-icon" />
+                                                {catchCounts[pokemon.id] || 0}
+                                            </div>
                                         </div>                                </div>
                                 );
                             })
@@ -631,9 +827,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                             <div className="desc-header-detail">
                                                 <div className="type-badges">
                                                     {pokemonTypes[selectedPokemon.id]?.map((typeInfo, index) => (
-                                                        <span key={index} className={`type-badge ${typeInfo.name}`}>
-                                                            {typeInfo.name}
-                                                        </span>
+                                                        <TypeBadge 
+                                                            key={index} 
+                                                            type={typeInfo.name} 
+                                                            variant="full" 
+                                                            size="medium" 
+                                                        />
                                                     ))}
                                                 </div>
                                                 {catchCounts[selectedPokemon.id] && (
