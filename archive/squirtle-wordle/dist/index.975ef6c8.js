@@ -20355,6 +20355,7 @@ class SoundManager {
     playPokedexOpenSound() {
         // Direct sound play for when pokedex opens, used within timeouts
         if (this.classicSoundsEnabled && !this.currentBgMusic) this.play("pokedexOpenAfterCatch");
+        else this.playGridClick(); // Fallback sound if pokedex open sound is not played
     }
     playPokedexOpen() {
         // Legacy method - kept for compatibility but should not set its own timeout
