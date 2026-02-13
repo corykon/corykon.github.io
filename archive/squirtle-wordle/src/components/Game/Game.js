@@ -398,10 +398,9 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
                 if (!wasAlreadyDiscovered && onOpenPokedex) {
                     pokedexTimeoutRef.current = setTimeout(() => {
                         onOpenPokedex(currentPokemon.id);
+                        // Only play sound when pokedex actually opens automatically
+                        soundManager.playPokedexOpenSound();
                     }, 3000); // Wait 3 seconds to let user read the success message
-                    
-                    // Play pokedex open sound if no celebration will play
-                    soundManager.playPokedexOpen();
                 }
             }
         } else if (newGuesses.length >= 6) {

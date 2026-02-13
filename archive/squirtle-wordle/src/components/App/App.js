@@ -70,13 +70,13 @@ function App() {
       return stored ? JSON.parse(stored) : {
         hideHints: false,
         noRepeatPokemon: false,
-        classicSounds: false
+        classicSounds: true
       };
     } catch {
       return {
         hideHints: false,
         noRepeatPokemon: false,
-        classicSounds: false
+        classicSounds: true
       };
     }
   });

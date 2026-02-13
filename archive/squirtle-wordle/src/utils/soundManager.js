@@ -71,7 +71,7 @@ class SoundManager {
         this.sounds.victoryBeat.loop = true;
 
         this.isMuted = this.loadMutedState();
-        this.classicSoundsEnabled = false;
+        this.classicSoundsEnabled = true;
         this.currentBgMusic = null;
     }
 
@@ -246,7 +246,7 @@ class SoundManager {
         if (this.classicSoundsEnabled) {
             // Play after a short delay to let guess-success finish
             setTimeout(() => {
-                this.play('caughtAPokemon');
+                this.playPokemonCaughtSound();
             }, 800);
         }
     }
@@ -258,12 +258,25 @@ class SoundManager {
         }, 2500);
     }
 
-    playPokedexOpen() {
-        // Only play if classic sounds are enabled and no background music is playing
+    playPokemonCaughtSound() {
+        // Direct sound play for when pokemon is caught, used within timeouts
+        if (this.classicSoundsEnabled) {
+            this.play('caughtAPokemon');
+        }
+    }
+
+    playPokedexOpenSound() {
+        // Direct sound play for when pokedex opens, used within timeouts
         if (this.classicSoundsEnabled && !this.currentBgMusic) {
-            setTimeout(() => {
-                this.play('pokedexOpenAfterCatch');
-            }, 3000); // Match the 3-second delay for auto-open
+            this.play('pokedexOpenAfterCatch');
+        }
+    }
+
+    playPokedexOpen() {
+        // Legacy method - kept for compatibility but should not set its own timeout
+        // Use playPokedexOpenSound() directly in timeout callbacks instead
+        if (this.classicSoundsEnabled && !this.currentBgMusic) {
+            this.play('pokedexOpenAfterCatch');
         }
     }
 

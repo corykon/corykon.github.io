@@ -24,13 +24,13 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
       return stored ? JSON.parse(stored) : {
         hideHints: false,
         noRepeatPokemon: false,
-        classicSounds: false
+        classicSounds: true
       };
     } catch {
       return {
         hideHints: false,
         noRepeatPokemon: false,
-        classicSounds: false
+        classicSounds: true
       };
     }
   });

@@ -18659,13 +18659,13 @@ function App() {
             return stored ? JSON.parse(stored) : {
                 hideHints: false,
                 noRepeatPokemon: false,
-                classicSounds: false
+                classicSounds: true
             };
         } catch  {
             return {
                 hideHints: false,
                 noRepeatPokemon: false,
-                classicSounds: false
+                classicSounds: true
             };
         }
     });
@@ -18878,7 +18878,7 @@ function App() {
         columnNumber: 5
     }, this);
 }
-_s(App, "X64g2S9tiOaWui3glvB4BcyBvhQ=");
+_s(App, "Ec22TvMKWYWRxAMtlE9wlKp7lxQ=");
 _c = App;
 exports.default = App;
 var _c;
@@ -19275,13 +19275,11 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 setIsNewDiscovery(!wasAlreadyDiscovered);
                 if (onPokemonDiscovered) onPokemonDiscovered(currentPokemon.id, wasSingleGuess);
                 // Auto-open Pokedex for new discoveries after 3 seconds
-                if (!wasAlreadyDiscovered && onOpenPokedex) {
-                    pokedexTimeoutRef.current = setTimeout(()=>{
-                        onOpenPokedex(currentPokemon.id);
-                    }, 3000); // Wait 3 seconds to let user read the success message
-                    // Play pokedex open sound if no celebration will play
-                    (0, _soundManagerDefault.default).playPokedexOpen();
-                }
+                if (!wasAlreadyDiscovered && onOpenPokedex) pokedexTimeoutRef.current = setTimeout(()=>{
+                    onOpenPokedex(currentPokemon.id);
+                    // Only play sound when pokedex actually opens automatically
+                    (0, _soundManagerDefault.default).playPokedexOpenSound();
+                }, 3000); // Wait 3 seconds to let user read the success message
             }
         } else if (newGuesses.length >= 6) {
             (0, _soundManagerDefault.default).playGameLost();
@@ -19323,12 +19321,12 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
             className: "pokeball-icon"
         }, void 0, false, {
             fileName: "src/components/Game/Game.js",
-            lineNumber: 448,
+            lineNumber: 447,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "src/components/Game/Game.js",
-        lineNumber: 447,
+        lineNumber: 446,
         columnNumber: 16
     }, this);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
@@ -19340,7 +19338,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                         children: "Hint:"
                     }, void 0, false, {
                         fileName: "src/components/Game/Game.js",
-                        lineNumber: 455,
+                        lineNumber: 454,
                         columnNumber: 17
                     }, this),
                     " ",
@@ -19348,7 +19346,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 ]
             }, void 0, true, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 454,
+                lineNumber: 453,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _guessDisplayDefault.default), {
@@ -19356,7 +19354,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 answerLength: answer.length
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 458,
+                lineNumber: 457,
                 columnNumber: 9
             }, this),
             gameIsOver && showBanner && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _gameResultDefault.default), {
@@ -19372,7 +19370,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 catchCount: catchCount
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 460,
+                lineNumber: 459,
                 columnNumber: 13
             }, this),
             gameIsOver ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -19389,19 +19387,19 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                             height: "16"
                         }, void 0, false, {
                             fileName: "src/components/Game/Game.js",
-                            lineNumber: 480,
+                            lineNumber: 479,
                             columnNumber: 25
                         }, this),
                         "Play Again"
                     ]
                 }, void 0, true, {
                     fileName: "src/components/Game/Game.js",
-                    lineNumber: 475,
+                    lineNumber: 474,
                     columnNumber: 21
                 }, this)
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 474,
+                lineNumber: 473,
                 columnNumber: 17
             }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _guessInputDefault.default), {
                 onGuess: handleNewGuess,
@@ -19411,7 +19409,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 isLoadingHint: isLoadingHint
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 485,
+                lineNumber: 484,
                 columnNumber: 17
             }, this)
         ]
@@ -20209,7 +20207,7 @@ class SoundManager {
         // Loop victory beat
         this.sounds.victoryBeat.loop = true;
         this.isMuted = this.loadMutedState();
-        this.classicSoundsEnabled = false;
+        this.classicSoundsEnabled = true;
         this.currentBgMusic = null;
     }
     loadMutedState() {
@@ -20341,7 +20339,7 @@ class SoundManager {
         // Only play if classic sounds are enabled
         if (this.classicSoundsEnabled) // Play after a short delay to let guess-success finish
         setTimeout(()=>{
-            this.play("caughtAPokemon");
+            this.playPokemonCaughtSound();
         }, 800);
     }
     playPokemonRunaway() {
@@ -20350,11 +20348,18 @@ class SoundManager {
             this.play("pokemonRunaway");
         }, 2500);
     }
+    playPokemonCaughtSound() {
+        // Direct sound play for when pokemon is caught, used within timeouts
+        if (this.classicSoundsEnabled) this.play("caughtAPokemon");
+    }
+    playPokedexOpenSound() {
+        // Direct sound play for when pokedex opens, used within timeouts
+        if (this.classicSoundsEnabled && !this.currentBgMusic) this.play("pokedexOpenAfterCatch");
+    }
     playPokedexOpen() {
-        // Only play if classic sounds are enabled and no background music is playing
-        if (this.classicSoundsEnabled && !this.currentBgMusic) setTimeout(()=>{
-            this.play("pokedexOpenAfterCatch");
-        }, 3000); // Match the 3-second delay for auto-open
+        // Legacy method - kept for compatibility but should not set its own timeout
+        // Use playPokedexOpenSound() directly in timeout callbacks instead
+        if (this.classicSoundsEnabled && !this.currentBgMusic) this.play("pokedexOpenAfterCatch");
     }
     playVictoryBeat() {
         this.playBackgroundMusic("victoryBeat");
@@ -20370,7 +20375,7 @@ class SoundManager {
 const soundManager = new SoundManager();
 exports.default = soundManager;
 
-},{"url:../assets/button-hover.mp3":"hFFka","url:../assets/button-click.mp3":"h53ZT","url:../assets/button-click-2.mp3":"62faD","url:../assets/click.mp3":"vAzya","url:../assets/click2.mp3":"6mXqa","url:../assets/input-hover.mp3":"lpijp","url:../assets/input-click.mp3":"9YZZ7","url:../assets/grid-click.mp3":"joqCV","url:../assets/guess-success.mp3":"kq72S","url:../assets/guess-wrong.mp3":"75Uwo","url:../assets/guess-lost.mp3":"eJrwi","url:../assets/caught-a-pokemon.mp3":"8l1Kh","url:../assets/pokemon-runaway.mp3":"9MU10","url:../assets/pokedex-open-after-catch.mp3":"d0NBM","url:../assets/victory-beat.mp3":"8wvap","url:../assets/gameboy-sound.mp3":"i4dXv","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/bubble-hover.mp3":"74kP1","url:../assets/slider-on.mp3":"1wp3N","url:../assets/slider-off.mp3":"4U1sA","url:../assets/button-click-3.mp3":"ddjPL"}],"hFFka":[function(require,module,exports) {
+},{"url:../assets/button-hover.mp3":"hFFka","url:../assets/button-click.mp3":"h53ZT","url:../assets/button-click-2.mp3":"62faD","url:../assets/button-click-3.mp3":"ddjPL","url:../assets/click.mp3":"vAzya","url:../assets/click2.mp3":"6mXqa","url:../assets/input-hover.mp3":"lpijp","url:../assets/input-click.mp3":"9YZZ7","url:../assets/bubble-hover.mp3":"74kP1","url:../assets/grid-click.mp3":"joqCV","url:../assets/slider-on.mp3":"1wp3N","url:../assets/slider-off.mp3":"4U1sA","url:../assets/guess-success.mp3":"kq72S","url:../assets/guess-wrong.mp3":"75Uwo","url:../assets/guess-lost.mp3":"eJrwi","url:../assets/caught-a-pokemon.mp3":"8l1Kh","url:../assets/pokemon-runaway.mp3":"9MU10","url:../assets/pokedex-open-after-catch.mp3":"d0NBM","url:../assets/victory-beat.mp3":"8wvap","url:../assets/gameboy-sound.mp3":"i4dXv","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hFFka":[function(require,module,exports) {
 module.exports = require("5cf3cc7230f07855").getBundleURL("bLxZJ") + "button-hover.f6479729.mp3" + "?" + Date.now();
 
 },{"5cf3cc7230f07855":"lgJ39"}],"h53ZT":[function(require,module,exports) {
@@ -20379,7 +20384,10 @@ module.exports = require("ed4e816c9b1dd6cf").getBundleURL("bLxZJ") + "button-cli
 },{"ed4e816c9b1dd6cf":"lgJ39"}],"62faD":[function(require,module,exports) {
 module.exports = require("3f195399e2346a33").getBundleURL("bLxZJ") + "button-click-2.d526249e.mp3" + "?" + Date.now();
 
-},{"3f195399e2346a33":"lgJ39"}],"vAzya":[function(require,module,exports) {
+},{"3f195399e2346a33":"lgJ39"}],"ddjPL":[function(require,module,exports) {
+module.exports = require("55001e4cf8f93e54").getBundleURL("bLxZJ") + "button-click-3.a99d3ffe.mp3" + "?" + Date.now();
+
+},{"55001e4cf8f93e54":"lgJ39"}],"vAzya":[function(require,module,exports) {
 module.exports = require("d2e8917f2e1a58e0").getBundleURL("bLxZJ") + "click.f44e49ae.mp3" + "?" + Date.now();
 
 },{"d2e8917f2e1a58e0":"lgJ39"}],"6mXqa":[function(require,module,exports) {
@@ -20391,10 +20399,19 @@ module.exports = require("6d06a23f6a3b69c0").getBundleURL("bLxZJ") + "input-hove
 },{"6d06a23f6a3b69c0":"lgJ39"}],"9YZZ7":[function(require,module,exports) {
 module.exports = require("bd41079cca8f1ecb").getBundleURL("bLxZJ") + "input-click.ae3fe455.mp3" + "?" + Date.now();
 
-},{"bd41079cca8f1ecb":"lgJ39"}],"joqCV":[function(require,module,exports) {
+},{"bd41079cca8f1ecb":"lgJ39"}],"74kP1":[function(require,module,exports) {
+module.exports = require("188b86a3efdde20c").getBundleURL("bLxZJ") + "bubble-hover.0a9a6b0c.mp3" + "?" + Date.now();
+
+},{"188b86a3efdde20c":"lgJ39"}],"joqCV":[function(require,module,exports) {
 module.exports = require("8c58198e28c9f469").getBundleURL("bLxZJ") + "grid-click.182009f8.mp3" + "?" + Date.now();
 
-},{"8c58198e28c9f469":"lgJ39"}],"kq72S":[function(require,module,exports) {
+},{"8c58198e28c9f469":"lgJ39"}],"1wp3N":[function(require,module,exports) {
+module.exports = require("6ce0aae04247c296").getBundleURL("bLxZJ") + "slider-on.fddbf125.mp3" + "?" + Date.now();
+
+},{"6ce0aae04247c296":"lgJ39"}],"4U1sA":[function(require,module,exports) {
+module.exports = require("10da738a7880ef30").getBundleURL("bLxZJ") + "slider-off.0e495555.mp3" + "?" + Date.now();
+
+},{"10da738a7880ef30":"lgJ39"}],"kq72S":[function(require,module,exports) {
 module.exports = require("1e627ef7dbc39cc4").getBundleURL("bLxZJ") + "guess-success.7c5e9503.mp3" + "?" + Date.now();
 
 },{"1e627ef7dbc39cc4":"lgJ39"}],"75Uwo":[function(require,module,exports) {
@@ -20418,19 +20435,7 @@ module.exports = require("db4c6dba9263ac6a").getBundleURL("bLxZJ") + "victory-be
 },{"db4c6dba9263ac6a":"lgJ39"}],"i4dXv":[function(require,module,exports) {
 module.exports = require("c94dfdbca2d94f8f").getBundleURL("bLxZJ") + "gameboy-sound.2dd02bcf.mp3" + "?" + Date.now();
 
-},{"c94dfdbca2d94f8f":"lgJ39"}],"74kP1":[function(require,module,exports) {
-module.exports = require("188b86a3efdde20c").getBundleURL("bLxZJ") + "bubble-hover.0a9a6b0c.mp3" + "?" + Date.now();
-
-},{"188b86a3efdde20c":"lgJ39"}],"1wp3N":[function(require,module,exports) {
-module.exports = require("6ce0aae04247c296").getBundleURL("bLxZJ") + "slider-on.fddbf125.mp3" + "?" + Date.now();
-
-},{"6ce0aae04247c296":"lgJ39"}],"4U1sA":[function(require,module,exports) {
-module.exports = require("10da738a7880ef30").getBundleURL("bLxZJ") + "slider-off.0e495555.mp3" + "?" + Date.now();
-
-},{"10da738a7880ef30":"lgJ39"}],"ddjPL":[function(require,module,exports) {
-module.exports = require("55001e4cf8f93e54").getBundleURL("bLxZJ") + "button-click-3.a99d3ffe.mp3" + "?" + Date.now();
-
-},{"55001e4cf8f93e54":"lgJ39"}],"gYAQI":[function(require,module,exports) {
+},{"c94dfdbca2d94f8f":"lgJ39"}],"gYAQI":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$9eb3 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -20503,7 +20508,7 @@ $RefreshReg$(_c, "GuessDisplay");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../constants":"3huJa","../../utils":"en4he","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../utils/soundManager":"6bIQp"}],"3huJa":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../constants":"3huJa","../../utils":"en4he","../../utils/soundManager":"6bIQp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"3huJa":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "NUM_OF_GUESSES_ALLOWED", ()=>NUM_OF_GUESSES_ALLOWED);
@@ -21083,13 +21088,13 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
             return stored ? JSON.parse(stored) : {
                 hideHints: false,
                 noRepeatPokemon: false,
-                classicSounds: false
+                classicSounds: true
             };
         } catch  {
             return {
                 hideHints: false,
                 noRepeatPokemon: false,
-                classicSounds: false
+                classicSounds: true
             };
         }
     });
@@ -22097,7 +22102,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
         columnNumber: 5
     }, this);
 }
-_s(Header, "04oNnj8/+zGEPFUHwuS4IFjSKrY=");
+_s(Header, "oHyMVfpNfa0JaeQVdeI8kbcM26U=");
 _c = Header;
 exports.default = Header;
 var _c;
