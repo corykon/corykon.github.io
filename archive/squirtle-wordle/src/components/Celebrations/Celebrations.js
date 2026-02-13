@@ -125,7 +125,7 @@ function Celebrations({
                     <button 
                         className="celebration-button first-pokemon-button" 
                         onClick={handleFirstPokemonDismiss}
-                        onMouseEnter={() => soundManager.playButtonHover()}
+                        onMouseEnter={() => soundManager.playBubbleHover()}
                     >
                         Let's catch 'em all!
                     </button>
@@ -182,7 +182,7 @@ function Celebrations({
                     <button 
                         className="celebration-button legend-button" 
                         onClick={handleLegendHoorayClick}
-                        onMouseEnter={() => soundManager.playButtonHover()}
+                        onMouseEnter={() => soundManager.playBubbleHover()}
                     >
                         Legendary!
                     </button>
@@ -238,7 +238,7 @@ function Celebrations({
                     <button 
                         className="celebration-button hooray-button" 
                         onClick={handleHoorayClick}
-                        onMouseEnter={() => soundManager.playButtonHover()}
+                        onMouseEnter={() => soundManager.playBubbleHover()}
                     >
                         Hooray!
                     </button>
@@ -291,7 +291,7 @@ function Celebrations({
                     <button 
                         className="celebration-button progress-button" 
                         onClick={handleProgressDismiss}
-                        onMouseEnter={() => soundManager.playButtonHover()}
+                        onMouseEnter={() => soundManager.playBubbleHover()}
                     >
                         Let's go!
                     </button>

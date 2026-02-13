@@ -33,6 +33,8 @@ function GuessInput({onGuess, gameIsOver, answerLength, pokemonTypes, isLoadingH
             autoComplete="off" 
             autoFocus 
             onChange={handleInputChange}
+            onFocus={() => soundManager.playInputClick()}
+            onMouseEnter={() => soundManager.playInputHover()}
             pattern={`[A-Za-z]{1,${answerLength}}`}
             disabled={gameIsOver}
         />

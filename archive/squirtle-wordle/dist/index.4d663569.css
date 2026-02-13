@@ -1080,16 +1080,24 @@ h1 img {
   width: 100%;
   padding: 6px 36px 6px 40px;
   font-size: 15px;
+  transition: all .3s;
 }
 
 .pokedex-search::placeholder {
   color: #ffffffb3;
 }
 
+.pokedex-search:hover {
+  background: #ffffff1f;
+  border-color: #ffffff80;
+  box-shadow: 0 0 12px #ffffff26;
+}
+
 .pokedex-search:focus {
   background: #ffffff26;
   border-color: #fff9;
   outline: none;
+  box-shadow: 0 0 16px #fff3;
 }
 
 .filter-tabs {

@@ -455,7 +455,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         <div className={`pokedex-overlay ${isOpen ? 'open' : ''}`} onClick={handleOverlayClick}>
             <div className="pokedex-drawer">
                 <div className="pokedex-header">
-                    <button className="close-button" onClick={handleClose}>×</button>
+                    <button className="close-button" onClick={handleClose} onMouseEnter={() => soundManager.playBubbleHover()}>×</button>
                     <h2 className="pokedex-title"><img src={pokeballIcon} alt="Open Pokédex" />Pokédex</h2>
                     <div className="progress-container">
                         <div className="progress-text">
@@ -483,6 +483,8 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                 placeholder="Search pokémon..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
+                                onFocus={() => soundManager.playInputClick()}
+                                onMouseEnter={() => soundManager.playInputHover()}
                                 className="pokedex-search"
                                 title="Tip: You can search for multiple distinct letters by separating with spaces. For example: 'B S R' will find 'Bulbasaur'"
                             />
@@ -737,12 +739,14 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                         id={`pokemon-${pokemon.id}`} 
                                         className={`pokemon-card ${isDiscovered ? 'discovered' : 'undiscovered'} ${isHighlighted ? 'highlighted' : ''}`}
                                         onClick={() => {
+                                            soundManager.playGridClick();
                                             setSelectedPokemon(pokemon);
                                             if (isDiscovered) {
                                                 fetchDescription(pokemon);
                                                 fetchTypes(pokemon);
                                             }
                                         }}
+                                        onMouseEnter={() => soundManager.playButtonHover()}
                                         style={{ cursor: 'pointer' }}
                                     >
                                         <img
@@ -773,10 +777,14 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                         className="pokemon-share-button"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
+                                                            soundManager.playButtonClick();
                                                             onSubmitGuess(pokemon.name);
                                                             handleClose(); // Close Pokedex after submitting guess
                                                         }}
-                                                        onMouseEnter={() => setHoveredShareButton(pokemon.id)}
+                                                        onMouseEnter={() => {
+                                                            soundManager.playBubbleHover();
+                                                            setHoveredShareButton(pokemon.id);
+                                                        }}
                                                         onMouseLeave={() => setHoveredShareButton(null)}
                                                     >
                                                         <img src={shareIcon} alt="Submit guess" className="share-icon" />
@@ -916,7 +924,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                             </div>
                         </div>
                     )}
-                    <button className="pokedex-close-button" onClick={handleClose}>
+                    <button className="pokedex-close-button" onClick={handleClose} onMouseEnter={() => soundManager.playBubbleHover()}>
                         Close Pokédex
                     </button>
                 </div>

@@ -82,8 +82,16 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
   };
 
   const handleSettingToggle = (key) => {
-    soundManager.playButtonClick();
-    const newSettings = { ...settings, [key]: !settings[key] };
+    const newValue = !settings[key];
+    
+    // Play appropriate slider sound based on whether turning on or off
+    if (newValue) {
+      soundManager.playSliderOn();
+    } else {
+      soundManager.playSliderOff();
+    }
+    
+    const newSettings = { ...settings, [key]: newValue };
     setSettings(newSettings);
     localStorage.setItem('squirtle-wordle-settings', JSON.stringify(newSettings));
     
@@ -208,7 +216,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                 <button 
                   className="primary-button modal-button" 
                   onClick={() => { soundManager.playModalDismiss(); setShowAboutModal(false); setShowCreditsScreen(false); }}
-                  onMouseEnter={() => soundManager.playButtonHover()}
+                  onMouseEnter={() => soundManager.playBubbleHover()}
                 >
                   Done
                 </button>
@@ -260,7 +268,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                   <button 
                     className="primary-button modal-button" 
                     onClick={() => { soundManager.playModalDismiss(); setShowAboutModal(false); setShowCreditsScreen(false); }}
-                    onMouseEnter={() => soundManager.playButtonHover()}
+                    onMouseEnter={() => soundManager.playBubbleHover()}
                   >
                     Done
                   </button>
@@ -341,7 +349,7 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
             <button 
               className="modal-button primary-button" 
               onClick={() => { soundManager.playModalDismiss(); setShowSettingsModal(false); }}
-              onMouseEnter={() => soundManager.playButtonHover()}
+              onMouseEnter={() => soundManager.playBubbleHover()}
             >
               Done
             </button>

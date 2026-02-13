@@ -2,8 +2,15 @@
 import buttonHover from 'url:../assets/button-hover.mp3';
 import buttonClick from 'url:../assets/button-click.mp3';
 import buttonClick2 from 'url:../assets/button-click-2.mp3';
+import buttonClick3 from 'url:../assets/button-click-3.mp3';
 import click from 'url:../assets/click.mp3';
 import click2 from 'url:../assets/click2.mp3';
+import inputHover from 'url:../assets/input-hover.mp3';
+import inputClick from 'url:../assets/input-click.mp3';
+import bubbleHover from 'url:../assets/bubble-hover.mp3';
+import gridClick from 'url:../assets/grid-click.mp3';
+import sliderOn from 'url:../assets/slider-on.mp3';
+import sliderOff from 'url:../assets/slider-off.mp3';
 import guessSuccess from 'url:../assets/guess-success.mp3';
 import guessWrong from 'url:../assets/guess-wrong.mp3';
 import guessLost from 'url:../assets/guess-lost.mp3';
@@ -19,8 +26,15 @@ class SoundManager {
             buttonHover: new Audio(buttonHover),
             buttonClick: new Audio(buttonClick),
             buttonClick2: new Audio(buttonClick2),
+            buttonClick3: new Audio(buttonClick3),
             click: new Audio(click),
             click2: new Audio(click2),
+            inputHover: new Audio(inputHover),
+            inputClick: new Audio(inputClick),
+            bubbleHover: new Audio(bubbleHover),
+            gridClick: new Audio(gridClick),
+            sliderOn: new Audio(sliderOn),
+            sliderOff: new Audio(sliderOff),
             guessSuccess: new Audio(guessSuccess),
             guessWrong: new Audio(guessWrong),
             guessLost: new Audio(guessLost),
@@ -35,8 +49,15 @@ class SoundManager {
         this.sounds.buttonHover.volume = 1;
         this.sounds.buttonClick.volume = 0.25;
         this.sounds.buttonClick2.volume = 0.4;
-        this.sounds.click.volume = 0.35;
+        this.sounds.buttonClick3.volume = 0.4;
+        this.sounds.click.volume = 0.1;
         this.sounds.click2.volume = 0.4;
+        this.sounds.inputHover.volume = 0.3;
+        this.sounds.inputClick.volume = 0.35;
+        this.sounds.bubbleHover.volume = 0.3;
+        this.sounds.gridClick.volume = 0.3;
+        this.sounds.sliderOn.volume = 0.4;
+        this.sounds.sliderOff.volume = 0.4;
         this.sounds.guessSuccess.volume = 0.7;
         this.sounds.guessWrong.volume = 1;
         this.sounds.guessLost.volume = 0.25;
@@ -178,6 +199,34 @@ class SoundManager {
 
     playFilterClick() {
         this.play('click2');
+    }
+
+    playInputHover() {
+        this.play('inputHover');
+    }
+
+    playInputClick() {
+        this.play('inputClick');
+    }
+
+    playButtonClick3() {
+        this.play('buttonClick3');
+    }
+
+    playSliderOn() {
+        this.play('sliderOn');
+    }
+
+    playSliderOff() {
+        this.play('sliderOff');
+    }
+
+    playBubbleHover() {
+        this.play('bubbleHover');
+    }
+
+    playGridClick() {
+        this.play('gridClick');
     }
 
     playCorrectGuess() {

@@ -1101,16 +1101,24 @@ h1 img {
     color: white;
     font-size: 15px;
     backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
 }
 
 .pokedex-search::placeholder {
     color: rgba(255, 255, 255, 0.7);
 }
 
+.pokedex-search:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+}
+
 .pokedex-search:focus {
     outline: none;
     border-color: rgba(255, 255, 255, 0.6);
     background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
 }
 
 /* Filter Tabs */

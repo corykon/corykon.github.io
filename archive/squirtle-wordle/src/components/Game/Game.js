@@ -475,7 +475,7 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
                     <button 
                         className="primary-button" 
                         onClick={resetGame}
-                        onMouseEnter={() => soundManager.playButtonHover()}
+                        onMouseEnter={() => soundManager.playBubbleHover()}
                     >
                         <img src={refreshIcon} alt="Refresh" width="16" height="16" />
                         Play Again

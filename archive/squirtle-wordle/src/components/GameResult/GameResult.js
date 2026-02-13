@@ -10,7 +10,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
     const [isLoadingCry, setIsLoadingCry] = React.useState(false);
     
     const handlePokeballClick = () => {
-        soundManager.playButtonClick();
+        soundManager.playButtonClick3();
         setAnimationKey(prev => prev + 1);
     };
     
@@ -118,7 +118,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
     
     if (gameIsWon) {
         return <div className="happy banner">
-            <button className="close-banner-button" onClick={() => { soundManager.playModalDismiss(); onClose(); }}>×</button>
+            <button className="close-banner-button" onClick={() => { soundManager.playModalDismiss(); onClose(); }} onMouseEnter={() => soundManager.playBubbleHover()}>×</button>
             {pokemonId && (
                 <img 
                     src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`}
@@ -130,7 +130,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
                 />
             )}
             <div className="caught-message-container">
-                <div className="pokeball-wrapper success" title="Click to play pokeball animation again" onClick={handlePokeballClick}>
+                <div className="pokeball-wrapper success" title="Click to play pokeball animation again" onClick={handlePokeballClick} onMouseEnter={() => soundManager.playBubbleHover()}>
                     <div className="pokeball-animation-container" key={`success-${animationKey}`}>
                         <img 
                             src={pokeballIcon} 
@@ -167,21 +167,21 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
                 {isNewDiscovery ? "It's been added to your" : "View it in your"}{' '}
                 <button 
                     className="pokedex-link" 
-                    onClick={() => { soundManager.playButtonClick(); onOpenPokedex && onOpenPokedex(pokemonId); }}
-                    onMouseEnter={() => soundManager.playButtonHover()}
+                    onClick={() => { soundManager.playGridClick(); onOpenPokedex && onOpenPokedex(pokemonId); }}
+                    onMouseEnter={() => soundManager.playBubbleHover()}
                     type="button"
                 >
                     pokédex
                 </button>.
             </p>
-            <button className="play-again-button" onClick={reset}>
+            <button className="play-again-button" onClick={reset} onMouseEnter={() => soundManager.playBubbleHover()}>
                 <img src={refreshIcon} alt="Refresh" style={{ width: '16px', height: '16px', marginRight: '8px' }} />
                 Play again
             </button>
         </div>;
     } else {
         return <div className="sad banner">
-            <button className="close-banner-button" onClick={() => { soundManager.playModalDismiss(); onClose(); }}>×</button>
+            <button className="close-banner-button" onClick={() => { soundManager.playModalDismiss(); onClose(); }} onMouseEnter={() => soundManager.playBubbleHover()}>×</button>
             {pokemonId && (
                 <img 
                     src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`}
@@ -193,7 +193,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
                 />
             )}
             <div className="failed-message-container">
-                <div className="pokeball-wrapper failure" title="Click to play pokeball animation again" onClick={handlePokeballClick}>
+                <div className="pokeball-wrapper failure" title="Click to play pokeball animation again" onClick={handlePokeballClick} onMouseEnter={() => soundManager.playBubbleHover()}>
                     <div className="pokeball-animation-container" key={`fail-${animationKey}`}>
                         <img 
                             src={pokeballIcon} 
@@ -210,7 +210,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
                 </div>
                 <p>Sorry, the correct answer is <strong>{answer}</strong>.</p>
             </div>
-            <button className="play-again-button" onClick={reset}>
+            <button className="play-again-button" onClick={reset} onMouseEnter={() => soundManager.playBubbleHover()}>
                 <img src={refreshIcon} alt="Refresh" style={{ width: '16px', height: '16px', marginRight: '8px' }} />
                 Play again
             </button>
