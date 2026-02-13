@@ -69,12 +69,14 @@ function App() {
       const stored = localStorage.getItem('squirtle-wordle-settings');
       return stored ? JSON.parse(stored) : {
         hideHints: false,
-        noRepeatPokemon: false
+        noRepeatPokemon: false,
+        classicSounds: false
       };
     } catch {
       return {
         hideHints: false,
-        noRepeatPokemon: false
+        noRepeatPokemon: false,
+        classicSounds: false
       };
     }
   });

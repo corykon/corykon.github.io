@@ -3,6 +3,7 @@ import pokemonMasterImage from '../../assets/pokemon-master.png';
 import pokemonProgressImage from '../../assets/pokemon-progress.png';
 import trophyStarIcon from '../../assets/trophy-star.svg';
 import trophyIcon from '../../assets/trophy.svg';
+import soundManager from '../../utils/soundManager';
 
 function Celebrations({ 
     showMasterCelebration, 
@@ -27,10 +28,16 @@ function Celebrations({
         if (showMasterCelebration || showProgressCelebration || showLegendCelebration || showFirstPokemonCelebration) {
             setConfettiKey(prev => prev + 1);
             setIsFadingOut(false);
+            
+            // Play victory beat for progress, master, and legend celebrations
+            if (showProgressCelebration || showMasterCelebration || showLegendCelebration) {
+                soundManager.playVictoryBeat();
+            }
         }
     }, [showMasterCelebration, showProgressCelebration, showLegendCelebration, showFirstPokemonCelebration]);
 
     const handleHoorayClick = () => {
+        soundManager.playModalDismiss();
         // Trigger more fireworks immediately
         setHoorayFireworks(true);
         setConfettiKey(prev => prev + 1);
@@ -38,14 +45,16 @@ function Celebrations({
         // Start fade out animation
         setIsFadingOut(true);
         
-        // Reset fireworks and dismiss after fade completes
+        // Stop victory music and reset fireworks and dismiss after fade completes
         setTimeout(() => {
+            soundManager.stopVictoryBeat();
             setHoorayFireworks(false);
             onHoorayClick();
         }, 2000);
     };
 
     const handleLegendHoorayClick = () => {
+        soundManager.playModalDismiss();
         // Trigger more fireworks immediately
         setHoorayFireworks(true);
         setConfettiKey(prev => prev + 1);
@@ -53,14 +62,17 @@ function Celebrations({
         // Start fade out animation
         setIsFadingOut(true);
         
-        // Reset fireworks and dismiss after fade completes
+        // Stop victory music and reset fireworks and dismiss after fade completes
         setTimeout(() => {
+            soundManager.stopVictoryBeat();
             setHoorayFireworks(false);
             onLegendHoorayClick();
         }, 2000);
     };
 
     const handleProgressDismiss = () => {
+        soundManager.playModalDismiss();
+        soundManager.stopVictoryBeat();
         // Start fade out animation
         setIsFadingOut(true);
         
@@ -71,6 +83,7 @@ function Celebrations({
     };
 
     const handleFirstPokemonDismiss = () => {
+        soundManager.playModalDismiss();
         // Start fade out animation
         setIsFadingOut(true);
         
@@ -97,6 +110,7 @@ function Celebrations({
                     <h2 className="celebration-title first-pokemon-title">Welcome!</h2>
                     
                     <img 
+                        key="first-pokemon-celebration-image"
                         src={meetPikaImage} 
                         alt="Meet Pikachu" 
                         className="celebration-image first-pokemon-image"
@@ -111,6 +125,7 @@ function Celebrations({
                     <button 
                         className="celebration-button first-pokemon-button" 
                         onClick={handleFirstPokemonDismiss}
+                        onMouseEnter={() => soundManager.playButtonHover()}
                     >
                         Let's catch 'em all!
                     </button>
@@ -155,6 +170,7 @@ function Celebrations({
                     </div>
                     
                     <img 
+                        key="legend-celebration-image"
                         src={pokemonMasterImage} 
                         alt="Pokemon Legend" 
                         className="celebration-image legend-image"
@@ -166,6 +182,7 @@ function Celebrations({
                     <button 
                         className="celebration-button legend-button" 
                         onClick={handleLegendHoorayClick}
+                        onMouseEnter={() => soundManager.playButtonHover()}
                     >
                         Legendary!
                     </button>
@@ -210,6 +227,7 @@ function Celebrations({
                     </div>
                     
                     <img 
+                        key="master-celebration-image"
                         src={pokemonMasterImage} 
                         alt="Pokemon Master" 
                         className="celebration-image master-image"
@@ -220,6 +238,7 @@ function Celebrations({
                     <button 
                         className="celebration-button hooray-button" 
                         onClick={handleHoorayClick}
+                        onMouseEnter={() => soundManager.playButtonHover()}
                     >
                         Hooray!
                     </button>
@@ -263,6 +282,7 @@ function Celebrations({
                         Congrats on catching so many Pokémon. Keep it going!
                     </p>
                     <img 
+                        key="progress-celebration-image"
                         src={pokemonProgressImage} 
                         alt="Pokemon Progress" 
                         className="celebration-image progress-image"
@@ -271,6 +291,7 @@ function Celebrations({
                     <button 
                         className="celebration-button progress-button" 
                         onClick={handleProgressDismiss}
+                        onMouseEnter={() => soundManager.playButtonHover()}
                     >
                         Let's go!
                     </button>

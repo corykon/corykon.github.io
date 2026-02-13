@@ -4,6 +4,7 @@ import { getAllPokemonTypes } from '../Game/Game';
 import pokeballIcon from '../../assets/pokeball.svg';
 import searchIcon from '../../assets/search.svg';
 import shareIcon from '../../assets/share.svg';
+import soundManager from '../../utils/soundManager';
 
 function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessPokemon, highlightPokemonId, isMaster, trophyIcon, onSubmitGuess }) {
     const [searchTerm, setSearchTerm] = React.useState('');
@@ -13,6 +14,13 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
     const [activeFilter, setActiveFilter] = React.useState('all');
     const [typeFilter, setTypeFilter] = React.useState('all');
     const [hasAutoScrolled, setHasAutoScrolled] = React.useState(false);
+    
+    // Handle closing pokedex with sound cleanup
+    const handleClose = () => {
+        soundManager.stop('pokedexOpenAfterCatch');
+        soundManager.playModalDismiss();
+        onClose();
+    };
     const [sortBy, setSortBy] = React.useState('pokemon id');
     const [showSortDropdown, setShowSortDropdown] = React.useState(false);
     const [showTypeDropdown, setShowTypeDropdown] = React.useState(false);
@@ -23,6 +31,8 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
     const [isLoadingCry, setIsLoadingCry] = React.useState(false);
     const [isMobile, setIsMobile] = React.useState(false);
     const searchInputRef = React.useRef();
+    const sortDropdownRef = React.useRef();
+    const typeDropdownRef = React.useRef();
     
     // Mobile detection
     React.useEffect(() => {
@@ -44,6 +54,33 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
             }, 300); // Wait for drawer animation
         }
     }, [isOpen, isMobile]);
+    
+    // Close dropdowns when clicking outside
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target)) {
+                setShowSortDropdown(false);
+            }
+            if (typeDropdownRef.current && !typeDropdownRef.current.contains(event.target)) {
+                setShowTypeDropdown(false);
+            }
+        };
+        
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen]);
+    
+    // Scroll to top when search/filter/sort changes
+    React.useEffect(() => {
+        if (isOpen) {
+            scrollToTop();
+        }
+    }, [searchTerm, activeFilter, typeFilter, sortBy, isOpen]);
     
     // Function to fetch and cache Pokemon types
     const fetchTypes = React.useCallback(async (pokemon) => {
@@ -226,6 +263,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
             const audio = new Audio();
             audio.crossOrigin = 'anonymous';
             audio.preload = 'auto';
+            audio.volume = 0.20;
             
             // Wait for audio to be ready
             await new Promise((resolve, reject) => {
@@ -400,7 +438,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
 
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
-            onClose();
+            handleClose();
         }
     };
     
@@ -408,8 +446,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         const pokedexContent = document.querySelector('.pokedex-content');
         if (pokedexContent) {
             pokedexContent.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+                top: 0
             });
         }
     };
@@ -418,7 +455,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         <div className={`pokedex-overlay ${isOpen ? 'open' : ''}`} onClick={handleOverlayClick}>
             <div className="pokedex-drawer">
                 <div className="pokedex-header">
-                    <button className="close-button" onClick={onClose}>×</button>
+                    <button className="close-button" onClick={handleClose}>×</button>
                     <h2 className="pokedex-title"><img src={pokeballIcon} alt="Open Pokédex" />Pokédex</h2>
                     <div className="progress-container">
                         <div className="progress-text">
@@ -443,7 +480,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                             <input
                                 ref={searchInputRef}
                                 type="text"
-                                placeholder="Search pokémon.."
+                                placeholder="Search pokémon..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="pokedex-search"
@@ -461,10 +498,11 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                         </div>
                         <div className="sort-filter-container">
                             {/* Type Filter */}
-                            <div className="type-filter-container">
+                            <div className="type-filter-container" ref={typeDropdownRef}>
                                 <button 
                                     className={`type-filter-button ${isMobile ? 'mobile' : ''}`}
-                                    onClick={() => setShowTypeDropdown(!showTypeDropdown)}
+                                    onClick={() => { soundManager.playFilterClick(); setShowTypeDropdown(!showTypeDropdown); }}
+                                    onMouseEnter={() => soundManager.playFilterHover()}
                                 >
                                     {isMobile ? (
                                         <>
@@ -530,9 +568,11 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                     <div className="type-filter-dropdown">
                                         <button 
                                             onClick={() => {
+                                                soundManager.playFilterClick();
                                                 setTypeFilter('all');
                                                 setShowTypeDropdown(false);
                                             }}
+                                            onMouseEnter={() => soundManager.playFilterHover()}
                                             className={typeFilter === 'all' ? 'active' : ''}
                                         >
                                             <svg 
@@ -551,9 +591,11 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                             <button 
                                                 key={type}
                                                 onClick={() => {
+                                                    soundManager.playFilterClick();
                                                     setTypeFilter(type);
                                                     setShowTypeDropdown(false);
                                                 }}
+                                                onMouseEnter={() => soundManager.playFilterHover()}
                                                 className={typeFilter === type ? 'active' : ''}
                                             >
                                                 <TypeBadge type={type} variant="full" size="small" />
@@ -564,10 +606,11 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                             </div>
                             
                             {/* Sort Dropdown */}
-                            <div className="sort-container">
+                            <div className="sort-container" ref={sortDropdownRef}>
                                 <button 
                                     className={`sort-button ${isMobile ? 'mobile' : ''}`}
-                                    onClick={() => setShowSortDropdown(!showSortDropdown)}
+                                    onClick={() => { soundManager.playFilterClick(); setShowSortDropdown(!showSortDropdown); }}
+                                    onMouseEnter={() => soundManager.playFilterHover()}
                                 >
                                     {isMobile ? (
                                         <>
@@ -624,18 +667,22 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                     <div className="sort-dropdown">
                                         <button 
                                             onClick={() => {
+                                                soundManager.playFilterClick();
                                                 setSortBy('pokemon id');
                                                 setShowSortDropdown(false);
                                             }}
+                                            onMouseEnter={() => soundManager.playFilterHover()}
                                             className={sortBy === 'pokemon id' ? 'active' : ''}
                                         >
                                             Pokemon ID
                                         </button>
                                         <button 
                                             onClick={() => {
+                                                soundManager.playFilterClick();
                                                 setSortBy('times caught');
                                                 setShowSortDropdown(false);
                                             }}
+                                            onMouseEnter={() => soundManager.playFilterHover()}
                                             className={sortBy === 'times caught' ? 'active' : ''}
                                         >
                                             Times Caught
@@ -650,19 +697,22 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                     <div className="filter-tabs">
                         <button 
                             className={`filter-tab ${activeFilter === 'all' ? 'active' : ''}`}
-                            onClick={() => setActiveFilter('all')}
+                            onClick={() => { soundManager.playFilterClick(); setActiveFilter('all'); }}
+                            onMouseEnter={() => soundManager.playFilterHover()}
                         >
                             All ({pokemonList.length})
                         </button>
                         <button 
                             className={`filter-tab ${activeFilter === 'caught' ? 'active' : ''}`}
-                            onClick={() => setActiveFilter('caught')}
+                            onClick={() => { soundManager.playFilterClick(); setActiveFilter('caught'); }}
+                            onMouseEnter={() => soundManager.playFilterHover()}
                         >
                             Caught ({discoveredPokemon.length})
                         </button>
                         <button 
                             className={`filter-tab ${activeFilter === 'uncaught' ? 'active' : ''}`}
-                            onClick={() => setActiveFilter('uncaught')}
+                            onClick={() => { soundManager.playFilterClick(); setActiveFilter('uncaught'); }}
+                            onMouseEnter={() => soundManager.playFilterHover()}
                         >
                             Uncaught ({pokemonList.length - discoveredPokemon.length})
                         </button>
@@ -724,7 +774,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             onSubmitGuess(pokemon.name);
-                                                            onClose(); // Close Pokedex after submitting guess
+                                                            handleClose(); // Close Pokedex after submitting guess
                                                         }}
                                                         onMouseEnter={() => setHoveredShareButton(pokemon.id)}
                                                         onMouseLeave={() => setHoveredShareButton(null)}
@@ -866,7 +916,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                             </div>
                         </div>
                     )}
-                    <button className="pokedex-close-button" onClick={onClose}>
+                    <button className="pokedex-close-button" onClick={handleClose}>
                         Close Pokédex
                     </button>
                 </div>

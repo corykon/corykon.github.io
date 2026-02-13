@@ -6,6 +6,8 @@ import GuessDisplay from "../GuessDisplay/GuessDisplay";
 import GameResult from "../GameResult/GameResult";
 import { checkGuess } from '../../game-helpers';
 import refreshIcon from '../../assets/refresh.svg';
+import pokeballIcon from '../../assets/pokeball.svg';
+import soundManager from '../../utils/soundManager';
 
 // Cache for Pokemon data
 let cachedPokemon = null;
@@ -237,11 +239,12 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
     const [gameIsOver, setGameIsOver] = React.useState(false);
     const [gameIsWon, setGameIsWon] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(true);
+    const [isLoadingHint, setIsLoadingHint] = React.useState(false);
     const [isNewDiscovery, setIsNewDiscovery] = React.useState(false);
     const [catchCount, setCatchCount] = React.useState(0);
     const [showBanner, setShowBanner] = React.useState(true);
     const [consecutiveRepeats, setConsecutiveRepeats] = React.useState(0);
-    const [hasPlayedAgain, setHasPlayedAgain] = React.useState(false);
+    const pokedexTimeoutRef = React.useRef(null);
 
     // Function to select a new Pokemon and get its description
     async function selectNewPokemon(pokemonList) {
@@ -314,8 +317,10 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         setPokemonDescription(description);
         
         // Fetch types for the selected Pokemon
+        setIsLoadingHint(true);
         const types = await fetchPokemonTypes(selectedPokemon.id, selectedPokemon.originalName);
         setPokemonTypes(types);
+        setIsLoadingHint(false);
     }
 
     // Load Pokemon data on component mount
@@ -333,6 +338,13 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         
         loadPokemon();
     }, []); // Empty dependency array to only run on mount
+
+    // Update sound manager when settings change
+    React.useEffect(() => {
+        if (settings) {
+            soundManager.setClassicSounds(settings.classicSounds);
+        }
+    }, [settings?.classicSounds]);
 
     console.info('answer:', answer);
     
@@ -352,6 +364,7 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         setGuesses(newGuesses);
 
         if (newGuess === answer) {
+            soundManager.playCorrectGuess();
             setGameIsOver(true);
             setGameIsWon(true);
             
@@ -369,6 +382,9 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
                 localStorage.setItem('pokemon-catch-counts', JSON.stringify(catchCounts));
                 setCatchCount(newCount);
                 
+                // Play pokemon caught sound
+                soundManager.playPokemonCaught();
+                
                 // Check if this is a new discovery
                 const discoveredPokemon = JSON.parse(localStorage.getItem('discovered-pokemon') || '[]');
                 const wasAlreadyDiscovered = discoveredPokemon.includes(currentPokemon.id);
@@ -378,21 +394,34 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
                     onPokemonDiscovered(currentPokemon.id, wasSingleGuess);
                 }
                 
-                // Auto-open Pokedex for new discoveries (but not if user clicked play again)
-                if (!wasAlreadyDiscovered && onOpenPokedex && !hasPlayedAgain) {
-                    setTimeout(() => {
+                // Auto-open Pokedex for new discoveries after 3 seconds
+                if (!wasAlreadyDiscovered && onOpenPokedex) {
+                    pokedexTimeoutRef.current = setTimeout(() => {
                         onOpenPokedex(currentPokemon.id);
                     }, 3000); // Wait 3 seconds to let user read the success message
+                    
+                    // Play pokedex open sound if no celebration will play
+                    soundManager.playPokedexOpen();
                 }
             }
         } else if (newGuesses.length >= 6) {
+            soundManager.playGameLost();
+            soundManager.playPokemonRunaway();
             setGameIsOver(true);
+        } else {
+            soundManager.playWrongGuess();
         }
     }
 
     function resetGame() {
+        soundManager.playButtonClick();
+        // Cancel pending Pokedex auto-open
+        if (pokedexTimeoutRef.current) {
+            clearTimeout(pokedexTimeoutRef.current);
+            pokedexTimeoutRef.current = null;
+        }
+        
         if (pokemonList.length > 0) {
-            setHasPlayedAgain(true);  // Track that user clicked play again
             selectNewPokemon(pokemonList);
             setGuesses([]);
             setGameIsOver(false);
@@ -405,16 +434,18 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
     }
     
     function closeBanner() {
+        // Cancel pending Pokedex auto-open when banner is dismissed
+        if (pokedexTimeoutRef.current) {
+            clearTimeout(pokedexTimeoutRef.current);
+            pokedexTimeoutRef.current = null;
+        }
+        
         setShowBanner(false);
     }
 
     if (isLoading) {
         return <div className="pokeball-loader">
-            <div className="ball"></div>
-            <div className="half-ball"></div>
-            <div className="big-button"></div>
-            <div className="small-button"></div>
-            <div className="horizon"></div>
+            <img src={pokeballIcon} alt="Loading..." className="pokeball-icon" />
         </div>
     }
 
@@ -441,7 +472,11 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         )}
         {gameIsOver ? (
                 <div className="play-again-container">
-                    <button className="primary-button" onClick={resetGame}>
+                    <button 
+                        className="primary-button" 
+                        onClick={resetGame}
+                        onMouseEnter={() => soundManager.playButtonHover()}
+                    >
                         <img src={refreshIcon} alt="Refresh" width="16" height="16" />
                         Play Again
                     </button>
@@ -451,8 +486,7 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
                     onGuess={handleNewGuess} 
                     gameIsOver={gameIsOver} 
                     answerLength={answer.length}
-                    pokemonTypes={pokemonTypes}
-                />
+                    pokemonTypes={pokemonTypes}                    isLoadingHint={isLoadingHint}                />
             )}
     </>;
 });

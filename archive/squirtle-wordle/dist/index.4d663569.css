@@ -100,7 +100,7 @@ h1 img {
   font-weight: 600;
 }
 
-.reset-button, .pokedex-button {
+.reset-button, .pokedex-button, .volume-button {
   cursor: pointer;
   backdrop-filter: blur(10px);
   z-index: 1000;
@@ -142,7 +142,7 @@ h1 img {
   right: 12px;
 }
 
-.reset-button:hover .tooltip, .pokedex-button:hover .tooltip {
+.reset-button:hover .tooltip, .pokedex-button:hover .tooltip, .volume-button:hover .tooltip {
   opacity: 1;
   visibility: visible;
 }
@@ -158,17 +158,17 @@ h1 img {
   transform: scale(1.05);
 }
 
-.reset-button:hover {
+.reset-button:hover, .volume-button:hover {
   background: #fff3;
   border-color: #ffffff80;
   transform: scale(1.05);
 }
 
-.reset-button:active, .pokedex-button:active {
+.reset-button:active, .pokedex-button:active, .volume-button:active {
   transform: scale(.95);
 }
 
-.reset-button img, .pokedex-button img {
+.reset-button img, .pokedex-button img, .volume-button img {
   filter: brightness(0) invert();
   width: 20px;
   height: 20px;
@@ -617,97 +617,72 @@ h1 img {
 }
 
 .pokeball-loader {
+  justify-content: center;
+  align-items: center;
   margin: auto;
-  animation: 2s infinite loading;
-  position: absolute;
-  inset: 0;
-  transform: scale(.15);
-}
-
-.ball {
-  z-index: 0;
-  background-color: #dd2120;
-  border: 10px solid #1d1d1b;
-  border-radius: 50%;
-  width: 200px;
-  height: 200px;
-  margin: auto;
-  display: block;
+  display: flex;
   position: absolute;
   inset: 0;
 }
 
-.half-ball {
-  z-index: 0;
-  background-color: #fff;
-  border: 10px solid #333;
-  border-radius: 0 0 90px 90px;
-  width: 200px;
-  height: 100px;
-  margin: auto;
-  position: absolute;
-  inset: 100px 0 0;
-}
-
-.horizon {
-  z-index: 3;
-  background-color: #1d1d1b;
-  border-radius: 0;
-  width: 200px;
-  height: 20px;
-  margin: auto;
-  position: absolute;
-  inset: 0;
-}
-
-.big-button {
-  z-index: 4;
-  background-color: #fff;
-  border: 10px solid #1d1d1b;
-  border-radius: 50%;
+.pokeball-loader .pokeball-icon {
+  filter: brightness(0) invert();
   width: 60px;
   height: 60px;
-  margin: auto;
-  position: absolute;
-  inset: 0;
-}
-
-.small-button {
-  z-index: 5;
-  background-color: #fff;
-  border: 6px solid #1d1d1b;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  margin: auto;
-  position: absolute;
-  inset: 0;
+  animation: 2s infinite loading;
 }
 
 @keyframes loading {
   0% {
-    transform: translate(0)rotate(0)scale(.3);
+    transform: translate(0)rotate(0)scale(1);
   }
 
   25% {
-    transform: translate(-8px)rotate(-18deg)scale(.3);
+    transform: translate(-8px)rotate(-18deg)scale(1);
   }
 
   33% {
-    transform: translate(8px)rotate(18deg)scale(.3);
+    transform: translate(8px)rotate(18deg)scale(1);
   }
 
   50% {
-    transform: translate(-8px)rotate(-12deg)scale(.3);
+    transform: translate(-8px)rotate(-12deg)scale(1);
   }
 
   60% {
-    transform: translate(8px)rotate(18deg)scale(.3);
+    transform: translate(8px)rotate(18deg)scale(1);
   }
 
   100% {
-    transform: translate(0)rotate(0)scale(.3);
+    transform: translate(0)rotate(0)scale(1);
   }
+}
+
+@keyframes imageLoad {
+  from {
+    opacity: 0;
+    transform: scale(.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.mini-pokeball-loader {
+  vertical-align: middle;
+  justify-content: center;
+  align-items: center;
+  margin: 0 8px;
+  display: inline-flex;
+}
+
+.mini-pokeball-icon {
+  filter: brightness(0) invert();
+  width: 26px;
+  height: 26px;
+  animation: 2s infinite loading;
 }
 
 @keyframes fadeAndBounceIn {
@@ -1160,6 +1135,7 @@ h1 img {
 }
 
 .pokedex-content {
+  scrollbar-color: #224480 #758bb7;
   flex: 1;
   padding: 20px 20px 80px;
   position: relative;
@@ -2403,18 +2379,30 @@ h1 img {
 }
 
 .celebration-image {
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  opacity: 0;
   max-width: 100%;
   height: auto;
   margin: 1rem auto;
+  animation: .3s ease-in-out .1s forwards imageLoad;
   display: block;
 }
 
-.master-image {
-  max-height: 400px;
+.master-image, .legend-image {
+  aspect-ratio: 6.5 / 3;
+  object-fit: contain;
+  width: 100%;
+  height: auto;
 }
 
 .progress-image {
-  max-height: 200px;
+  object-fit: contain;
+}
+
+.first-pokemon-image {
+  aspect-ratio: 1;
+  object-fit: contain;
 }
 
 .celebration-message {
@@ -2775,6 +2763,30 @@ h1 img {
   }
 }
 
+.celebration-content {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+  display: flex;
+}
+
+.about-modal {
+  min-height: 450px;
+}
+
+.progress-content {
+  min-height: 400px;
+}
+
+.master-content {
+  min-height: 550px;
+}
+
+.first-pokemon-content {
+  min-height: 600px;
+}
+
 .about-modal {
   text-align: center;
 }
@@ -2786,10 +2798,14 @@ h1 img {
 }
 
 .about-image {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  opacity: 0;
   width: 100%;
   max-width: 100%;
   height: auto;
   margin: 0 0 20px;
+  animation: .3s ease-in-out .1s forwards imageLoad;
 }
 
 .about-text {
@@ -2813,12 +2829,41 @@ h1 img {
 
 .about-footer {
   color: #777;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin: 16px 0 0;
+  font-size: 13px;
+  display: flex;
+}
+
+.built-by-line {
   justify-content: center;
   align-items: center;
   gap: 6px;
-  margin: 16px 0 24px;
-  font-size: 13px;
   display: flex;
+}
+
+.credits-link {
+  color: #007bff;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all .2s;
+}
+
+.credits-line .chevron {
+  margin-left: 5px;
+}
+
+.credits-link:hover {
+  color: #0056b3;
+  background: #f0f8ff;
+  text-decoration: none;
 }
 
 .about-footer-icon {
@@ -2834,6 +2879,37 @@ h1 img {
 
 .about-footer a:hover {
   color: #007bff;
+}
+
+.credits-back-button {
+  color: #007bff;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 16px;
+  transition: all .2s;
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
+
+.credits-back-button:hover {
+  color: #0056b3;
+  background: #f0f8ff;
+}
+
+.credits-list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.credits-list li {
+  color: #555;
+  padding: 6px 0;
+  font-size: 14px;
 }
 
 .settings-modal h2 {

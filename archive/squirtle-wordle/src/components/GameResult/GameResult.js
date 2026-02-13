@@ -2,6 +2,7 @@ import React from 'react';
 import refreshIcon from '../../assets/refresh.svg';
 import pokeballIcon from '../../assets/pokeball.svg';
 import pokeballOpenIcon from '../../assets/pokeball-open.svg';
+import soundManager from '../../utils/soundManager';
 
 function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonName, isNewDiscovery, onOpenPokedex, onClose, catchCount}) {
     const [animationKey, setAnimationKey] = React.useState(0);
@@ -9,6 +10,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
     const [isLoadingCry, setIsLoadingCry] = React.useState(false);
     
     const handlePokeballClick = () => {
+        soundManager.playButtonClick();
         setAnimationKey(prev => prev + 1);
     };
     
@@ -56,6 +58,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
             const audio = new Audio();
             audio.crossOrigin = 'anonymous';
             audio.preload = 'auto';
+            audio.volume = 0.2; // Set Pokemon cry volume to 50%
             
             // Wait for audio to be ready
             await new Promise((resolve, reject) => {
@@ -115,7 +118,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
     
     if (gameIsWon) {
         return <div className="happy banner">
-            <button className="close-banner-button" onClick={onClose}>×</button>
+            <button className="close-banner-button" onClick={() => { soundManager.playModalDismiss(); onClose(); }}>×</button>
             {pokemonId && (
                 <img 
                     src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`}
@@ -164,7 +167,8 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
                 {isNewDiscovery ? "It's been added to your" : "View it in your"}{' '}
                 <button 
                     className="pokedex-link" 
-                    onClick={() => onOpenPokedex && onOpenPokedex(pokemonId)}
+                    onClick={() => { soundManager.playButtonClick(); onOpenPokedex && onOpenPokedex(pokemonId); }}
+                    onMouseEnter={() => soundManager.playButtonHover()}
                     type="button"
                 >
                     pokédex
@@ -177,7 +181,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
         </div>;
     } else {
         return <div className="sad banner">
-            <button className="close-banner-button" onClick={onClose}>×</button>
+            <button className="close-banner-button" onClick={() => { soundManager.playModalDismiss(); onClose(); }}>×</button>
             {pokemonId && (
                 <img 
                     src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`}
