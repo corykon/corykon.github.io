@@ -394,8 +394,8 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
                     onPokemonDiscovered(currentPokemon.id, wasSingleGuess);
                 }
                 
-                // Auto-open Pokedex for new discoveries after 3 seconds
-                if (!wasAlreadyDiscovered && onOpenPokedex) {
+                // Auto-open Pokedex for new discoveries after 3 seconds (if setting is enabled)
+                if (!wasAlreadyDiscovered && onOpenPokedex && settings?.autoOpenPokedex) {
                     pokedexTimeoutRef.current = setTimeout(() => {
                         onOpenPokedex(currentPokemon.id);
                         // Only play sound when pokedex actually opens automatically

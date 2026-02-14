@@ -24,13 +24,15 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
       return stored ? JSON.parse(stored) : {
         hideHints: false,
         noRepeatPokemon: false,
-        classicSounds: true
+        classicSounds: true,
+        autoOpenPokedex: true
       };
     } catch {
       return {
         hideHints: false,
         noRepeatPokemon: false,
-        classicSounds: true
+        classicSounds: true,
+        autoOpenPokedex: true
       };
     }
   });
@@ -326,6 +328,20 @@ function Header({ onReset, onOpenPokedex, discoveredCount, totalCount, isMaster,
                     type="checkbox" 
                     checked={settings.classicSounds}
                     onChange={() => handleSettingToggle('classicSounds')}
+                  />
+                  <span className="slider"></span>
+                </label>
+              </div>
+              <div className="setting-item">
+                <div className="setting-label-container">
+                  <div className="setting-label">Auto Open Pokedex</div>
+                  <div className="setting-description">Automatically opens the pokedex when a new pokemon is caught</div>
+                </div>
+                <label className="toggle-switch">
+                  <input 
+                    type="checkbox" 
+                    checked={settings.autoOpenPokedex}
+                    onChange={() => handleSettingToggle('autoOpenPokedex')}
                   />
                   <span className="slider"></span>
                 </label>

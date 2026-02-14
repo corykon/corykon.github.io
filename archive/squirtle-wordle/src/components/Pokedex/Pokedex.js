@@ -30,6 +30,8 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
     const [pokemonCry, setPokemonCry] = React.useState(null);
     const [isLoadingCry, setIsLoadingCry] = React.useState(false);
     const [isMobile, setIsMobile] = React.useState(false);
+    const [lastTapTime, setLastTapTime] = React.useState(0);
+    const [lastTappedPokemon, setLastTappedPokemon] = React.useState(null);
     const searchInputRef = React.useRef();
     const sortDropdownRef = React.useRef();
     const typeDropdownRef = React.useRef();
@@ -187,9 +189,14 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         };
     }, [isOpen]);
     
-    // Scroll to highlighted Pokemon when Pokedex opens (only once)
+    // Scroll to highlighted Pokemon when Pokedx opens (only once)
     React.useEffect(() => {
         if (isOpen && highlightPokemonId && !hasAutoScrolled) {
+            // Clear filters and search to ensure highlighted pokemon is visible
+            setSearchTerm('');
+            setActiveFilter('all');
+            setTypeFilter('all');
+            
             const highlightedPokemon = pokemonList.find(p => p.id === highlightPokemonId);
             if (highlightedPokemon) {
                 setSelectedPokemon(highlightedPokemon);
@@ -439,6 +446,35 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
             handleClose();
+        }
+    };
+
+    // Handle pokemon card clicks with double-tap detection for mobile
+    const handlePokemonClick = (pokemon) => {
+        const currentTime = Date.now();
+        const isDoubleTap = 
+            isMobile && 
+            onSubmitGuess &&
+            lastTappedPokemon === pokemon.id && 
+            currentTime - lastTapTime < 300; // 300ms double-tap threshold
+        
+        if (isDoubleTap) {
+            // Double tap on mobile - submit as guess
+            soundManager.playButtonClick();
+            onSubmitGuess(pokemon.name);
+            handleClose(); // Close Pokedex after submitting guess
+        } else {
+            // Single tap - normal behavior (show pokemon details)
+            soundManager.playGridClick();
+            setSelectedPokemon(pokemon);
+            if (discoveredPokemon.includes(pokemon.id)) {
+                fetchDescription(pokemon);
+                fetchTypes(pokemon);
+            }
+            
+            // Update last tap tracking
+            setLastTapTime(currentTime);
+            setLastTappedPokemon(pokemon.id);
         }
     };
     
@@ -738,14 +774,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                         key={pokemon.id}
                                         id={`pokemon-${pokemon.id}`} 
                                         className={`pokemon-card ${isDiscovered ? 'discovered' : 'undiscovered'} ${isHighlighted ? 'highlighted' : ''}`}
-                                        onClick={() => {
-                                            soundManager.playGridClick();
-                                            setSelectedPokemon(pokemon);
-                                            if (isDiscovered) {
-                                                fetchDescription(pokemon);
-                                                fetchTypes(pokemon);
-                                            }
-                                        }}
+                                        onClick={() => handlePokemonClick(pokemon)}
                                         onMouseEnter={() => soundManager.playButtonHover()}
                                         style={{ cursor: 'pointer' }}
                                     >
