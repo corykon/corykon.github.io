@@ -5,6 +5,7 @@ import Pokedex from '../Pokedex';
 import Celebrations from '../Celebrations';
 import trophyIcon from '../../assets/trophy.svg';
 import trophyStarIcon from '../../assets/trophy-star.svg';
+import meetPikaImage from '../../assets/meet-pika.png';
 
 // Load test functions in development
 if (process.env.NODE_ENV === 'development') {
@@ -59,6 +60,7 @@ function App() {
   const [showMasterCelebration, setShowMasterCelebration] = React.useState(false);
   const [showProgressCelebration, setShowProgressCelebration] = React.useState(false);
   const [showLegendCelebration, setShowLegendCelebration] = React.useState(false);
+  const [showFirstPokemonCelebration, setShowFirstPokemonCelebration] = React.useState(false);
   const [progressCount, setProgressCount] = React.useState(0);
   const [isMaster, setIsMaster] = React.useState(false);
   const [isLegend, setIsLegend] = React.useState(false);
@@ -67,12 +69,16 @@ function App() {
       const stored = localStorage.getItem('squirtle-wordle-settings');
       return stored ? JSON.parse(stored) : {
         hideHints: false,
-        noRepeatPokemon: false
+        noRepeatPokemon: false,
+        classicSounds: true,
+        autoOpenPokedex: true
       };
     } catch {
       return {
         hideHints: false,
-        noRepeatPokemon: false
+        noRepeatPokemon: false,
+        classicSounds: true,
+        autoOpenPokedex: true
       };
     }
   });
@@ -112,24 +118,30 @@ function App() {
           setTimeout(() => {
             setIsLegend(true);
             setShowLegendCelebration(true);
-          }, 3000);
+          }, 1500);
           return; // Exit early to show legend celebration instead of master
         }
       }
       
+      // Special case: First Pokemon celebration
+      if (newCount === 1) {
+        setTimeout(() => {
+          setShowFirstPokemonCelebration(true);
+        }, 1500);
+      }
       // Check for master celebration (151 Pokemon) - delay to let pokeball animation finish
-      if (newCount === 151) {
+      else if (newCount === 151) {
         setTimeout(() => {
           setIsMaster(true);
           setShowMasterCelebration(true);
-        }, 3000);
+        }, 1500);
       }
-      // Check for progress celebrations (every 10, but not at 151) - delay to let pokeball animation finish
+      // Check for progress celebrations (every 10, but not at 1 or 151) - delay to let pokeball animation finish
       else if (newCount % 10 === 0 && newCount >= 10) {
         setTimeout(() => {
           setProgressCount(newCount);
           setShowProgressCelebration(true);
-        }, 3000);
+        }, 1500);
       }
     }
   }
@@ -148,6 +160,10 @@ function App() {
 
   function handleDismissLegend() {
     setShowLegendCelebration(false);
+  }
+
+  function handleDismissFirstPokemon() {
+    setShowFirstPokemonCelebration(false);
   }
 
   function handleLegendHoorayClick() {
@@ -268,12 +284,15 @@ function App() {
         showMasterCelebration={showMasterCelebration}
         showProgressCelebration={showProgressCelebration}
         showLegendCelebration={showLegendCelebration}
+        showFirstPokemonCelebration={showFirstPokemonCelebration}
         progressCount={progressCount}
         onDismissMaster={handleDismissMaster}
         onDismissProgress={handleDismissProgress}
         onDismissLegend={handleDismissLegend}
+        onDismissFirstPokemon={handleDismissFirstPokemon}
         onHoorayClick={handleHoorayClick}
         onLegendHoorayClick={handleLegendHoorayClick}
+        meetPikaImage={meetPikaImage}
       />
     </div>
   );

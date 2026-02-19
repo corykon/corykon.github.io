@@ -6,6 +6,8 @@ import GuessDisplay from "../GuessDisplay/GuessDisplay";
 import GameResult from "../GameResult/GameResult";
 import { checkGuess } from '../../game-helpers';
 import refreshIcon from '../../assets/refresh.svg';
+import pokeballIcon from '../../assets/pokeball.svg';
+import soundManager from '../../utils/soundManager';
 
 // Cache for Pokemon data
 let cachedPokemon = null;
@@ -27,12 +29,24 @@ async function fetchPokemonList() {
             
             // Check if cache is still valid (less than 24 hours old)
             if (now - timestamp < CACHE_DURATION) {
-                cachedPokemon = data;
-                return data;
+                // Check if the cached data has the expected structure with types
+                if (data && data.length > 0 && data[0].types) {
+                    cachedPokemon = data;
+                    return data;
+                } else {
+                    // Old cache format detected, clear it
+                    console.log('Old cache format detected, clearing cache for compatibility...');
+                    localStorage.removeItem(CACHE_KEY);
+                    // Also clear the old types cache to start fresh
+                    localStorage.removeItem('pokemon-types-cache');
+                }
             }
         }
     } catch (error) {
         console.warn('Failed to read from localStorage cache:', error);
+        // Clear potentially corrupted cache
+        localStorage.removeItem(CACHE_KEY);
+        localStorage.removeItem('pokemon-types-cache');
     }
     
     // Cache is empty or expired, fetch from API
@@ -40,20 +54,72 @@ async function fetchPokemonList() {
         const response = await fetch('https://pokeapi.co/api/v2/pokemon-species?limit=151');
         const data = await response.json();
         
-        // Extract Pokemon data with names and original names for API calls
-        const pokemonData = data.results.map((pokemon, index) => ({
+        // Extract basic Pokemon data
+        const pokemonBasicData = data.results.map((pokemon, index) => ({
             name: pokemon.name.toUpperCase().replace('-', ''),
             originalName: pokemon.name,
             id: index + 1 // Pokemon IDs are 1-indexed
         }));
+
+        // Try to get existing types from the old cache
+        const oldTypesCache = localStorage.getItem('pokemon-types-cache');
+        let existingTypes = {};
+        if (oldTypesCache) {
+            try {
+                const { data: typesData } = JSON.parse(oldTypesCache);
+                existingTypes = typesData || {};
+            } catch (error) {
+                console.warn('Failed to parse existing types cache:', error);
+            }
+        }
+
+        // Fetch types for Pokemon that don't have cached types
+        const pokemonData = await Promise.all(
+            pokemonBasicData.map(async (pokemon) => {
+                let types = existingTypes[pokemon.id];
+                
+                if (!types) {
+                    // Fetch types for this Pokemon
+                    try {
+                        const typeResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.id}`);
+                        const typeData = await typeResponse.json();
+                        types = typeData.types.map(typeInfo => ({
+                            name: typeInfo.type.name,
+                            slot: typeInfo.slot
+                        }));
+                        
+                        // Add a small delay to avoid overwhelming the API
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                    } catch (error) {
+                        console.warn(`Failed to fetch types for ${pokemon.name}:`, error);
+                        types = [{ name: 'normal', slot: 1 }]; // fallback
+                    }
+                }
+                
+                return {
+                    ...pokemon,
+                    types: types
+                };
+            })
+        );
         
-        // Cache the data with timestamp
+        // Cache the complete data with timestamp
         try {
             const cacheData = {
                 data: pokemonData,
                 timestamp: Date.now()
             };
             localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+
+            // Also update the types cache with the new data
+            const typesCache = {
+                data: pokemonData.reduce((acc, pokemon) => {
+                    acc[pokemon.id] = pokemon.types;
+                    return acc;
+                }, {}),
+                timestamp: Date.now()
+            };
+            localStorage.setItem('pokemon-types-cache', JSON.stringify(typesCache));
         } catch (error) {
             console.warn('Failed to save to localStorage cache:', error);
         }
@@ -64,10 +130,10 @@ async function fetchPokemonList() {
         console.error('Failed to fetch Pokemon:', error);
         // Fallback to some hardcoded Pokemon names
         cachedPokemon = [
-            { name: 'PIKACHU', originalName: 'pikachu', id: 25 },
-            { name: 'CHARIZARD', originalName: 'charizard', id: 6 },
-            { name: 'BLASTOISE', originalName: 'blastoise', id: 9 },
-            { name: 'VENUSAUR', originalName: 'venusaur', id: 3 }
+            { name: 'PIKACHU', originalName: 'pikachu', id: 25, types: [{ name: 'electric', slot: 1 }] },
+            { name: 'CHARIZARD', originalName: 'charizard', id: 6, types: [{ name: 'fire', slot: 1 }, { name: 'flying', slot: 2 }] },
+            { name: 'BLASTOISE', originalName: 'blastoise', id: 9, types: [{ name: 'water', slot: 1 }] },
+            { name: 'VENUSAUR', originalName: 'venusaur', id: 3, types: [{ name: 'grass', slot: 1 }, { name: 'poison', slot: 2 }] }
         ];
         return cachedPokemon;
     }
@@ -148,6 +214,21 @@ async function fetchPokemonDescription(originalName) {
     }
 }
 
+// Helper function to get all unique types from the Pokemon list
+function getAllPokemonTypes(pokemonList) {
+    const typesSet = new Set();
+    
+    pokemonList.forEach(pokemon => {
+        if (pokemon.types) {
+            pokemon.types.forEach(typeInfo => {
+                typesSet.add(typeInfo.name);
+            });
+        }
+    });
+    
+    return Array.from(typesSet).sort();
+}
+
 const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex, settings }, ref) {
     const [pokemonList, setPokemonList] = React.useState([]);
     const [answer, setAnswer] = React.useState('');
@@ -158,11 +239,12 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
     const [gameIsOver, setGameIsOver] = React.useState(false);
     const [gameIsWon, setGameIsWon] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(true);
+    const [isLoadingHint, setIsLoadingHint] = React.useState(false);
     const [isNewDiscovery, setIsNewDiscovery] = React.useState(false);
     const [catchCount, setCatchCount] = React.useState(0);
     const [showBanner, setShowBanner] = React.useState(true);
     const [consecutiveRepeats, setConsecutiveRepeats] = React.useState(0);
-    const [hasPlayedAgain, setHasPlayedAgain] = React.useState(false);
+    const pokedexTimeoutRef = React.useRef(null);
 
     // Function to select a new Pokemon and get its description
     async function selectNewPokemon(pokemonList) {
@@ -170,8 +252,16 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         
         let selectedPokemon;
         
+        // SPECIAL CASE: Force Pikachu (#25) as the first Pokemon for new players
+        if (discoveredPokemon.length === 0) {
+            selectedPokemon = pokemonList.find(pokemon => pokemon.id === 25); // Pikachu
+            if (!selectedPokemon) {
+                // Fallback if Pikachu not found in list
+                selectedPokemon = sample(pokemonList);
+            }
+        }
         // Check if "No Repeat Pokemon" setting is enabled
-        if (settings?.noRepeatPokemon) {
+        else if (settings?.noRepeatPokemon) {
             const uncaughtPokemon = pokemonList.filter(pokemon => !discoveredPokemon.includes(pokemon.id));
             
             if (uncaughtPokemon.length > 0) {
@@ -227,8 +317,10 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         setPokemonDescription(description);
         
         // Fetch types for the selected Pokemon
+        setIsLoadingHint(true);
         const types = await fetchPokemonTypes(selectedPokemon.id, selectedPokemon.originalName);
         setPokemonTypes(types);
+        setIsLoadingHint(false);
     }
 
     // Load Pokemon data on component mount
@@ -246,6 +338,13 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         
         loadPokemon();
     }, []); // Empty dependency array to only run on mount
+
+    // Update sound manager when settings change
+    React.useEffect(() => {
+        if (settings) {
+            soundManager.setClassicSounds(settings.classicSounds);
+        }
+    }, [settings?.classicSounds]);
 
     console.info('answer:', answer);
     
@@ -265,6 +364,7 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         setGuesses(newGuesses);
 
         if (newGuess === answer) {
+            soundManager.playCorrectGuess();
             setGameIsOver(true);
             setGameIsWon(true);
             
@@ -282,6 +382,9 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
                 localStorage.setItem('pokemon-catch-counts', JSON.stringify(catchCounts));
                 setCatchCount(newCount);
                 
+                // Play pokemon caught sound
+                soundManager.playPokemonCaught();
+                
                 // Check if this is a new discovery
                 const discoveredPokemon = JSON.parse(localStorage.getItem('discovered-pokemon') || '[]');
                 const wasAlreadyDiscovered = discoveredPokemon.includes(currentPokemon.id);
@@ -291,21 +394,33 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
                     onPokemonDiscovered(currentPokemon.id, wasSingleGuess);
                 }
                 
-                // Auto-open Pokedex for new discoveries (but not if user clicked play again)
-                if (!wasAlreadyDiscovered && onOpenPokedex && !hasPlayedAgain) {
-                    setTimeout(() => {
+                // Auto-open Pokedex for new discoveries after 3 seconds (if setting is enabled)
+                if (!wasAlreadyDiscovered && onOpenPokedex && settings?.autoOpenPokedex) {
+                    pokedexTimeoutRef.current = setTimeout(() => {
                         onOpenPokedex(currentPokemon.id);
+                        // Only play sound when pokedex actually opens automatically
+                        soundManager.playPokedexOpenSound();
                     }, 3000); // Wait 3 seconds to let user read the success message
                 }
             }
         } else if (newGuesses.length >= 6) {
+            soundManager.playGameLost();
+            soundManager.playPokemonRunaway();
             setGameIsOver(true);
+        } else {
+            soundManager.playWrongGuess();
         }
     }
 
     function resetGame() {
+        soundManager.playButtonClick();
+        // Cancel pending Pokedex auto-open
+        if (pokedexTimeoutRef.current) {
+            clearTimeout(pokedexTimeoutRef.current);
+            pokedexTimeoutRef.current = null;
+        }
+        
         if (pokemonList.length > 0) {
-            setHasPlayedAgain(true);  // Track that user clicked play again
             selectNewPokemon(pokemonList);
             setGuesses([]);
             setGameIsOver(false);
@@ -318,16 +433,18 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
     }
     
     function closeBanner() {
+        // Cancel pending Pokedex auto-open when banner is dismissed
+        if (pokedexTimeoutRef.current) {
+            clearTimeout(pokedexTimeoutRef.current);
+            pokedexTimeoutRef.current = null;
+        }
+        
         setShowBanner(false);
     }
 
     if (isLoading) {
         return <div className="pokeball-loader">
-            <div className="ball"></div>
-            <div className="half-ball"></div>
-            <div className="big-button"></div>
-            <div className="small-button"></div>
-            <div className="horizon"></div>
+            <img src={pokeballIcon} alt="Loading..." className="pokeball-icon" />
         </div>
     }
 
@@ -354,7 +471,11 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         )}
         {gameIsOver ? (
                 <div className="play-again-container">
-                    <button className="primary-button" onClick={resetGame}>
+                    <button 
+                        className="primary-button" 
+                        onClick={resetGame}
+                        onMouseEnter={() => soundManager.playBubbleHover()}
+                    >
                         <img src={refreshIcon} alt="Refresh" width="16" height="16" />
                         Play Again
                     </button>
@@ -364,10 +485,10 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
                     onGuess={handleNewGuess} 
                     gameIsOver={gameIsOver} 
                     answerLength={answer.length}
-                    pokemonTypes={pokemonTypes}
-                />
+                    pokemonTypes={pokemonTypes}                    isLoadingHint={isLoadingHint}                />
             )}
     </>;
 });
 
 export default Game;
+export { getAllPokemonTypes };

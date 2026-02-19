@@ -1,6 +1,9 @@
 import React from 'react';
+import TypeBadge from '../TypeBadge';
+import pokeballIcon from '../../assets/pokeball.svg';
+import soundManager from '../../utils/soundManager';
 
-function GuessInput({onGuess, gameIsOver, answerLength, pokemonTypes}) {
+function GuessInput({onGuess, gameIsOver, answerLength, pokemonTypes, isLoadingHint}) {
     const [pendingGuess, setPendingGuess] = React.useState('');
     
     function handleSubmit(event) {
@@ -30,17 +33,26 @@ function GuessInput({onGuess, gameIsOver, answerLength, pokemonTypes}) {
             autoComplete="off" 
             autoFocus 
             onChange={handleInputChange}
+            onFocus={() => soundManager.playInputClick()}
+            onMouseEnter={() => soundManager.playInputHover()}
             pattern={`[A-Za-z]{1,${answerLength}}`}
             disabled={gameIsOver}
         />
         <div className="type-hint">
             Guess the {answerLength}-letter 
-            {pokemonTypes && pokemonTypes.length > 0 ? (
+            {isLoadingHint ? (
+                <div className="mini-pokeball-loader">
+                    <img src={pokeballIcon} alt="Loading..." className="mini-pokeball-icon" />
+                </div>
+            ) : pokemonTypes && pokemonTypes.length > 0 ? (
                 <div className="type-badges inline">
                     {pokemonTypes.map((typeInfo, index) => (
-                        <span key={index} className={`type-badge ${typeInfo.name}`}>
-                            {typeInfo.name}
-                        </span>
+                        <TypeBadge 
+                            key={index} 
+                            type={typeInfo.name} 
+                            variant="full" 
+                            size="medium" 
+                        />
                     ))}
                 </div>
             ) : (

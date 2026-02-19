@@ -2,26 +2,135 @@ import React from 'react';
 import refreshIcon from '../../assets/refresh.svg';
 import pokeballIcon from '../../assets/pokeball.svg';
 import pokeballOpenIcon from '../../assets/pokeball-open.svg';
+import soundManager from '../../utils/soundManager';
 
 function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonName, isNewDiscovery, onOpenPokedex, onClose, catchCount}) {
     const [animationKey, setAnimationKey] = React.useState(0);
+    const [pokemonCry, setPokemonCry] = React.useState(null);
+    const [isLoadingCry, setIsLoadingCry] = React.useState(false);
     
     const handlePokeballClick = () => {
+        soundManager.playButtonClick3();
         setAnimationKey(prev => prev + 1);
+    };
+    
+    // Function to fetch and cache Pokemon cry
+    React.useEffect(() => {
+        if (pokemonId) {
+            fetchPokemonCry(pokemonId);
+        } else {
+            // Clean up audio when no Pokemon ID
+            if (pokemonCry) {
+                pokemonCry.pause();
+                pokemonCry.src = '';
+                pokemonCry.load();
+            }
+            setPokemonCry(null);
+            setIsLoadingCry(false);
+        }
+        
+        // Cleanup function
+        return () => {
+            if (pokemonCry) {
+                pokemonCry.pause();
+                pokemonCry.src = '';
+                pokemonCry.load();
+            }
+        };
+    }, [pokemonId]);
+    
+    const fetchPokemonCry = async (id) => {
+        if (isLoadingCry) return; // Don't fetch if already loading
+        
+        // Clean up previous audio
+        if (pokemonCry) {
+            pokemonCry.pause();
+            pokemonCry.src = '';
+            pokemonCry.load();
+        }
+        
+        setIsLoadingCry(true);
+        setPokemonCry(null);
+        
+        try {
+            const cryUrl = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+            
+            const audio = new Audio();
+            audio.crossOrigin = 'anonymous';
+            audio.preload = 'auto';
+            audio.volume = 0.2; // Set Pokemon cry volume to 50%
+            
+            // Wait for audio to be ready
+            await new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => {
+                    reject(new Error('Audio load timeout'));
+                }, 5000);
+                
+                const cleanup = () => {
+                    clearTimeout(timeout);
+                    audio.removeEventListener('canplaythrough', onLoad);
+                    audio.removeEventListener('loadeddata', onLoad);
+                    audio.removeEventListener('error', onError);
+                };
+                
+                const onLoad = () => {
+                    cleanup();
+                    resolve();
+                };
+                
+                const onError = (e) => {
+                    cleanup();
+                    reject(new Error(`Audio load failed: ${e.type}`));
+                };
+                
+                audio.addEventListener('canplaythrough', onLoad, { once: true });
+                audio.addEventListener('loadeddata', onLoad, { once: true });
+                audio.addEventListener('error', onError, { once: true });
+                
+                // Set source after event listeners are attached
+                audio.src = cryUrl;
+            });
+            
+            setPokemonCry(audio);
+        } catch (error) {
+            console.warn(`Failed to load Pokemon cry for ID ${id}:`, error);
+            setPokemonCry(null);
+        } finally {
+            setIsLoadingCry(false);
+        }
+    };
+    
+    const handlePokemonImageClick = () => {
+        if (pokemonCry && !isLoadingCry) {
+            // Reset audio to beginning and play
+            pokemonCry.currentTime = 0;
+            pokemonCry.play().catch(error => {
+                console.warn('Failed to play Pokemon cry:', error);
+            });
+        }
+    };
+    
+    const getPokemonImageTitle = () => {
+        if (isLoadingCry) return "Loading Pokémon cry...";
+        if (pokemonCry) return "Click to hear this Pokémon's cry!";
+        return "Pokémon cry unavailable";
     };
     
     if (gameIsWon) {
         return <div className="happy banner">
-            <button className="close-banner-button" onClick={onClose}>×</button>
+            <button className="close-banner-button" onClick={() => { soundManager.playModalDismiss(); onClose(); }} onMouseEnter={() => soundManager.playBubbleHover()}>×</button>
             {pokemonId && (
                 <img 
                     src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`}
                     alt={answer}
-                    className="pokemon-result-image"
+                    className={`pokemon-result-image ${(pokemonCry && !isLoadingCry) ? 'clickable-pokemon' : ''}`}
+                    onClick={handlePokemonImageClick}
+                    title={getPokemonImageTitle()}
+                    style={{cursor: (pokemonCry && !isLoadingCry) ? 'pointer' : 'default'}}
                 />
             )}
             <div className="caught-message-container">
-                <div className="pokeball-wrapper success" title="Click to play pokeball animation again" onClick={handlePokeballClick}>
+                <div className="pokeball-wrapper success" title="Click to play pokeball animation again" onClick={handlePokeballClick} onMouseEnter={() => soundManager.playBubbleHover()}>
                     <div className="pokeball-animation-container" key={`success-${animationKey}`}>
                         <img 
                             src={pokeballIcon} 
@@ -58,29 +167,33 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
                 {isNewDiscovery ? "It's been added to your" : "View it in your"}{' '}
                 <button 
                     className="pokedex-link" 
-                    onClick={() => onOpenPokedex && onOpenPokedex(pokemonId)}
+                    onClick={() => { soundManager.playGridClick(); onOpenPokedex && onOpenPokedex(pokemonId); }}
+                    onMouseEnter={() => soundManager.playBubbleHover()}
                     type="button"
                 >
                     pokédex
                 </button>.
             </p>
-            <button className="play-again-button" onClick={reset}>
+            <button className="play-again-button" onClick={reset} onMouseEnter={() => soundManager.playBubbleHover()}>
                 <img src={refreshIcon} alt="Refresh" style={{ width: '16px', height: '16px', marginRight: '8px' }} />
                 Play again
             </button>
         </div>;
     } else {
         return <div className="sad banner">
-            <button className="close-banner-button" onClick={onClose}>×</button>
+            <button className="close-banner-button" onClick={() => { soundManager.playModalDismiss(); onClose(); }} onMouseEnter={() => soundManager.playBubbleHover()}>×</button>
             {pokemonId && (
                 <img 
                     src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`}
                     alt={answer}
-                    className="pokemon-result-image sad-pokemon-image"
+                    className={`pokemon-result-image sad-pokemon-image ${(pokemonCry && !isLoadingCry) ? 'clickable-pokemon' : ''}`}
+                    onClick={handlePokemonImageClick}
+                    title={getPokemonImageTitle()}
+                    style={{cursor: (pokemonCry && !isLoadingCry) ? 'pointer' : 'default'}}
                 />
             )}
             <div className="failed-message-container">
-                <div className="pokeball-wrapper failure" title="Click to play pokeball animation again" onClick={handlePokeballClick}>
+                <div className="pokeball-wrapper failure" title="Click to play pokeball animation again" onClick={handlePokeballClick} onMouseEnter={() => soundManager.playBubbleHover()}>
                     <div className="pokeball-animation-container" key={`fail-${animationKey}`}>
                         <img 
                             src={pokeballIcon} 
@@ -97,7 +210,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
                 </div>
                 <p>Sorry, the correct answer is <strong>{answer}</strong>.</p>
             </div>
-            <button className="play-again-button" onClick={reset}>
+            <button className="play-again-button" onClick={reset} onMouseEnter={() => soundManager.playBubbleHover()}>
                 <img src={refreshIcon} alt="Refresh" style={{ width: '16px', height: '16px', marginRight: '8px' }} />
                 Play again
             </button>

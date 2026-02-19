@@ -1,7 +1,10 @@
 import React from 'react';
+import TypeBadge from '../TypeBadge';
+import { getAllPokemonTypes } from '../Game/Game';
 import pokeballIcon from '../../assets/pokeball.svg';
 import searchIcon from '../../assets/search.svg';
 import shareIcon from '../../assets/share.svg';
+import soundManager from '../../utils/soundManager';
 
 function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessPokemon, highlightPokemonId, isMaster, trophyIcon, onSubmitGuess }) {
     const [searchTerm, setSearchTerm] = React.useState('');
@@ -9,12 +12,77 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
     const [pokemonTypes, setPokemonTypes] = React.useState({});
     const [selectedPokemon, setSelectedPokemon] = React.useState(null);
     const [activeFilter, setActiveFilter] = React.useState('all');
+    const [typeFilter, setTypeFilter] = React.useState('all');
     const [hasAutoScrolled, setHasAutoScrolled] = React.useState(false);
+    
+    // Handle closing pokedex with sound cleanup
+    const handleClose = () => {
+        soundManager.stop('pokedexOpenAfterCatch');
+        soundManager.playModalDismiss();
+        onClose();
+    };
     const [sortBy, setSortBy] = React.useState('pokemon id');
     const [showSortDropdown, setShowSortDropdown] = React.useState(false);
+    const [showTypeDropdown, setShowTypeDropdown] = React.useState(false);
     const [catchCounts, setCatchCounts] = React.useState({});
     const [showScrollButton, setShowScrollButton] = React.useState(false);
     const [hoveredShareButton, setHoveredShareButton] = React.useState(null);
+    const [pokemonCry, setPokemonCry] = React.useState(null);
+    const [isLoadingCry, setIsLoadingCry] = React.useState(false);
+    const [isMobile, setIsMobile] = React.useState(false);
+    const [lastTapTime, setLastTapTime] = React.useState(0);
+    const [lastTappedPokemon, setLastTappedPokemon] = React.useState(null);
+    const searchInputRef = React.useRef();
+    const sortDropdownRef = React.useRef();
+    const typeDropdownRef = React.useRef();
+    
+    // Mobile detection
+    React.useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+    
+    // Auto-focus search input on desktop when Pokedex opens
+    React.useEffect(() => {
+        if (isOpen && !isMobile && searchInputRef.current) {
+            setTimeout(() => {
+                searchInputRef.current.focus();
+            }, 300); // Wait for drawer animation
+        }
+    }, [isOpen, isMobile]);
+    
+    // Close dropdowns when clicking outside
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target)) {
+                setShowSortDropdown(false);
+            }
+            if (typeDropdownRef.current && !typeDropdownRef.current.contains(event.target)) {
+                setShowTypeDropdown(false);
+            }
+        };
+        
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen]);
+    
+    // Scroll to top when search/filter/sort changes
+    React.useEffect(() => {
+        if (isOpen) {
+            scrollToTop();
+        }
+    }, [searchTerm, activeFilter, typeFilter, sortBy, isOpen]);
     
     // Function to fetch and cache Pokemon types
     const fetchTypes = React.useCallback(async (pokemon) => {
@@ -121,9 +189,14 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         };
     }, [isOpen]);
     
-    // Scroll to highlighted Pokemon when Pokedex opens (only once)
+    // Scroll to highlighted Pokemon when Pokedx opens (only once)
     React.useEffect(() => {
         if (isOpen && highlightPokemonId && !hasAutoScrolled) {
+            // Clear filters and search to ensure highlighted pokemon is visible
+            setSearchTerm('');
+            setActiveFilter('all');
+            setTypeFilter('all');
+            
             const highlightedPokemon = pokemonList.find(p => p.id === highlightPokemonId);
             if (highlightedPokemon) {
                 setSelectedPokemon(highlightedPokemon);
@@ -152,6 +225,112 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
             setHasAutoScrolled(false);
         }
     }, [isOpen]);
+    
+    // Load Pokemon cry when selectedPokemon changes
+    React.useEffect(() => {
+        if (selectedPokemon && discoveredPokemon.includes(selectedPokemon.id)) {
+            fetchPokemonCry(selectedPokemon.id);
+        } else {
+            // Clean up audio when no Pokemon is selected or Pokemon is undiscovered
+            if (pokemonCry) {
+                pokemonCry.pause();
+                pokemonCry.src = '';
+                pokemonCry.load();
+            }
+            setPokemonCry(null);
+            setIsLoadingCry(false);
+        }
+        
+        // Cleanup function
+        return () => {
+            if (pokemonCry) {
+                pokemonCry.pause();
+                pokemonCry.src = '';
+                pokemonCry.load();
+            }
+        };
+    }, [selectedPokemon, discoveredPokemon]);
+    
+    const fetchPokemonCry = async (pokemonId) => {
+        if (isLoadingCry) return; // Don't fetch if already loading
+        
+        // Clean up previous audio
+        if (pokemonCry) {
+            pokemonCry.pause();
+            pokemonCry.src = '';
+            pokemonCry.load();
+        }
+        
+        setIsLoadingCry(true);
+        setPokemonCry(null);
+        
+        try {
+            const cryUrl = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${pokemonId}.ogg`;
+            
+            const audio = new Audio();
+            audio.crossOrigin = 'anonymous';
+            audio.preload = 'auto';
+            audio.volume = 0.20;
+            
+            // Wait for audio to be ready
+            await new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => {
+                    reject(new Error('Audio load timeout'));
+                }, 5000);
+                
+                const cleanup = () => {
+                    clearTimeout(timeout);
+                    audio.removeEventListener('canplaythrough', onLoad);
+                    audio.removeEventListener('loadeddata', onLoad);
+                    audio.removeEventListener('error', onError);
+                };
+                
+                const onLoad = () => {
+                    cleanup();
+                    resolve();
+                };
+                
+                const onError = (e) => {
+                    cleanup();
+                    reject(new Error(`Audio load failed: ${e.type}`));
+                };
+                
+                audio.addEventListener('canplaythrough', onLoad, { once: true });
+                audio.addEventListener('loadeddata', onLoad, { once: true });
+                audio.addEventListener('error', onError, { once: true });
+                
+                // Set source after event listeners are attached
+                audio.src = cryUrl;
+            });
+            
+            setPokemonCry(audio);
+        } catch (error) {
+            console.warn(`Failed to load Pokemon cry for ID ${pokemonId}:`, error);
+            setPokemonCry(null);
+        } finally {
+            setIsLoadingCry(false);
+        }
+    };
+    
+    const handlePokemonImageClick = () => {
+        if (pokemonCry && !isLoadingCry) {
+            // Reset audio to beginning and play
+            pokemonCry.currentTime = 0;
+            pokemonCry.play().catch(error => {
+                console.warn('Failed to play Pokemon cry:', error);
+            });
+        }
+        // Click is always responsive, even if audio isn't ready
+    };
+    
+    const getPokemonImageTitle = () => {
+        if (!selectedPokemon || !discoveredPokemon.includes(selectedPokemon.id)) {
+            return selectedPokemon ? selectedPokemon.name : '';
+        }
+        if (isLoadingCry) return `Click to hear ${selectedPokemon.name}'s cry (loading...)`;
+        if (pokemonCry) return `Click to hear ${selectedPokemon.name}'s cry!`;
+        return `Click to hear ${selectedPokemon.name}'s cry (unavailable)`;
+    };
     
     // Function to highlight matching tokens in pokemon names
     const highlightSearchTerms = (name, searchTerms) => {
@@ -202,7 +381,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         for (let i = mergedMatches.length - 1; i >= 0; i--) {
             const match = mergedMatches[i];
             const before = result.substring(0, match.start);
-            const highlighted = `<span class="search-highlight">${match.text}</span>`;
+            const highlighted = `<span class="search-highlight-no-spacing">${match.text}</span>`;
             const after = result.substring(match.end);
             result = before + highlighted + after;
         }
@@ -227,7 +406,11 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
             (activeFilter === 'caught' && isDiscovered) ||
             (activeFilter === 'uncaught' && !isDiscovered);
         
-        return matchesSearch && matchesFilter;
+        // Type filtering
+        const matchesType = typeFilter === 'all' || 
+            (pokemon.types && pokemon.types.some(type => type.name === typeFilter));
+        
+        return matchesSearch && matchesFilter && matchesType;
     }).sort((a, b) => {
         if (sortBy === 'pokemon id') {
             return a.id - b.id;
@@ -238,6 +421,11 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         }
         return 0;
     });
+
+    // Get all unique types for the filter dropdown
+    const allTypes = React.useMemo(() => {
+        return getAllPokemonTypes(pokemonList);
+    }, [pokemonList]);
 
     const CheckIcon = () => (
         <svg 
@@ -257,7 +445,36 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
 
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
-            onClose();
+            handleClose();
+        }
+    };
+
+    // Handle pokemon card clicks with double-tap detection for mobile
+    const handlePokemonClick = (pokemon) => {
+        const currentTime = Date.now();
+        const isDoubleTap = 
+            isMobile && 
+            onSubmitGuess &&
+            lastTappedPokemon === pokemon.id && 
+            currentTime - lastTapTime < 300; // 300ms double-tap threshold
+        
+        if (isDoubleTap) {
+            // Double tap on mobile - submit as guess
+            soundManager.playButtonClick();
+            onSubmitGuess(pokemon.name);
+            handleClose(); // Close Pokedex after submitting guess
+        } else {
+            // Single tap - normal behavior (show pokemon details)
+            soundManager.playGridClick();
+            setSelectedPokemon(pokemon);
+            if (discoveredPokemon.includes(pokemon.id)) {
+                fetchDescription(pokemon);
+                fetchTypes(pokemon);
+            }
+            
+            // Update last tap tracking
+            setLastTapTime(currentTime);
+            setLastTappedPokemon(pokemon.id);
         }
     };
     
@@ -265,8 +482,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         const pokedexContent = document.querySelector('.pokedex-content');
         if (pokedexContent) {
             pokedexContent.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+                top: 0
             });
         }
     };
@@ -275,7 +491,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
         <div className={`pokedex-overlay ${isOpen ? 'open' : ''}`} onClick={handleOverlayClick}>
             <div className="pokedex-drawer">
                 <div className="pokedex-header">
-                    <button className="close-button" onClick={onClose}>×</button>
+                    <button className="close-button" onClick={handleClose} onMouseEnter={() => soundManager.playBubbleHover()}>×</button>
                     <h2 className="pokedex-title"><img src={pokeballIcon} alt="Open Pokédex" />Pokédex</h2>
                     <div className="progress-container">
                         <div className="progress-text">
@@ -298,10 +514,13 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                         <div className="search-container">
                             <img src={searchIcon} alt="Search" className="search-icon" />
                             <input
+                                ref={searchInputRef}
                                 type="text"
-                                placeholder="Search Pokemon by name or number..."
+                                placeholder="Search pokémon..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
+                                onFocus={() => soundManager.playInputClick()}
+                                onMouseEnter={() => soundManager.playInputHover()}
                                 className="pokedex-search"
                                 title="Tip: You can search for multiple distinct letters by separating with spaces. For example: 'B S R' will find 'Bulbasaur'"
                             />
@@ -315,57 +534,200 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                 </button>
                             )}
                         </div>
-                        
-                        <div className="sort-container">
-                            <button 
-                                className="sort-button"
-                                onClick={() => setShowSortDropdown(!showSortDropdown)}
-                            >
-                                <svg 
-                                    width="16" 
-                                    height="16" 
-                                    viewBox="0 0 24 24" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    strokeWidth="2"
+                        <div className="sort-filter-container">
+                            {/* Type Filter */}
+                            <div className="type-filter-container" ref={typeDropdownRef}>
+                                <button 
+                                    className={`type-filter-button ${isMobile ? 'mobile' : ''}`}
+                                    onClick={() => { soundManager.playFilterClick(); setShowTypeDropdown(!showTypeDropdown); }}
+                                    onMouseEnter={() => soundManager.playFilterHover()}
                                 >
-                                    <path d="M3 6h18M7 12h10m-7 6h4"></path>
-                                </svg>
-                                {sortBy}
-                                <svg 
-                                    width="12" 
-                                    height="12" 
-                                    viewBox="0 0 24 24" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    strokeWidth="2"
-                                    className="sort-caret"
+                                    {isMobile ? (
+                                        <>
+                                            {typeFilter === 'all' ? (
+                                                <svg 
+                                                    width="16" 
+                                                    height="16" 
+                                                    viewBox="0 0 24 24" 
+                                                    fill="currentColor" 
+                                                    stroke="none"
+                                                >
+                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                                </svg>
+                                            ) : (
+                                                <TypeBadge type={typeFilter} variant="circular" size="small" />
+                                            )}
+                                            <svg 
+                                                width="12" 
+                                                height="12" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                                className="type-filter-caret"
+                                            >
+                                                <polyline points="6,9 12,15 18,9"></polyline>
+                                            </svg>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {typeFilter === 'all' ? (
+                                                <>
+                                                    <svg 
+                                                        width="16" 
+                                                        height="16" 
+                                                        viewBox="0 0 24 24" 
+                                                        fill="currentColor" 
+                                                        stroke="none"
+                                                        style={{ color: '#fbbf24' }}
+                                                    >
+                                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                                    </svg>
+                                                    <span>All Types</span>
+                                                </>
+                                            ) : (
+                                                <TypeBadge type={typeFilter} variant="mini" size="small" />
+                                            )}
+                                            <svg 
+                                                width="12" 
+                                                height="12" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                                className="type-filter-caret"
+                                            >
+                                                <polyline points="6,9 12,15 18,9"></polyline>
+                                            </svg>
+                                        </>
+                                    )}
+                                </button>
+                                {showTypeDropdown && (
+                                    <div className="type-filter-dropdown">
+                                        <button 
+                                            onClick={() => {
+                                                soundManager.playFilterClick();
+                                                setTypeFilter('all');
+                                                setShowTypeDropdown(false);
+                                            }}
+                                            onMouseEnter={() => soundManager.playFilterHover()}
+                                            className={typeFilter === 'all' ? 'active' : ''}
+                                        >
+                                            <svg 
+                                                width="16" 
+                                                height="16" 
+                                                viewBox="0 0 24 24" 
+                                                fill="currentColor" 
+                                                stroke="none"
+                                                style={{ color: '#fbbf24' }}
+                                            >
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                            </svg>
+                                            <span>All Types</span>
+                                        </button>
+                                        {allTypes.map(type => (
+                                            <button 
+                                                key={type}
+                                                onClick={() => {
+                                                    soundManager.playFilterClick();
+                                                    setTypeFilter(type);
+                                                    setShowTypeDropdown(false);
+                                                }}
+                                                onMouseEnter={() => soundManager.playFilterHover()}
+                                                className={typeFilter === type ? 'active' : ''}
+                                            >
+                                                <TypeBadge type={type} variant="full" size="small" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* Sort Dropdown */}
+                            <div className="sort-container" ref={sortDropdownRef}>
+                                <button 
+                                    className={`sort-button ${isMobile ? 'mobile' : ''}`}
+                                    onClick={() => { soundManager.playFilterClick(); setShowSortDropdown(!showSortDropdown); }}
+                                    onMouseEnter={() => soundManager.playFilterHover()}
                                 >
-                                    <polyline points="6,9 12,15 18,9"></polyline>
-                                </svg>
-                            </button>
-                            {showSortDropdown && (
-                                <div className="sort-dropdown">
-                                    <button 
-                                        onClick={() => {
-                                            setSortBy('pokemon id');
-                                            setShowSortDropdown(false);
-                                        }}
-                                        className={sortBy === 'pokemon id' ? 'active' : ''}
-                                    >
-                                        Pokemon ID
-                                    </button>
-                                    <button 
-                                        onClick={() => {
-                                            setSortBy('times caught');
-                                            setShowSortDropdown(false);
-                                        }}
-                                        className={sortBy === 'times caught' ? 'active' : ''}
-                                    >
-                                        Times Caught
-                                    </button>
-                                </div>
-                            )}
+                                    {isMobile ? (
+                                        <>
+                                            <svg 
+                                                width="16" 
+                                                height="16" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                            >
+                                                <path d="M3 6h18M7 12h10m-7 6h4"></path>
+                                            </svg>
+                                            <svg 
+                                                width="12" 
+                                                height="12" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                                className="sort-caret"
+                                            >
+                                                <polyline points="6,9 12,15 18,9"></polyline>
+                                            </svg>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg 
+                                                width="16" 
+                                                height="16" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                            >
+                                                <path d="M3 6h18M7 12h10m-7 6h4"></path>
+                                            </svg>
+                                            {sortBy === 'pokemon id' ? 'Id' : '# Caught'}
+                                            <svg 
+                                                width="12" 
+                                                height="12" 
+                                                viewBox="0 0 24 24" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                strokeWidth="2"
+                                                className="sort-caret"
+                                            >
+                                                <polyline points="6,9 12,15 18,9"></polyline>
+                                            </svg>
+                                        </>
+                                    )}
+                                </button>
+                                {showSortDropdown && (
+                                    <div className="sort-dropdown">
+                                        <button 
+                                            onClick={() => {
+                                                soundManager.playFilterClick();
+                                                setSortBy('pokemon id');
+                                                setShowSortDropdown(false);
+                                            }}
+                                            onMouseEnter={() => soundManager.playFilterHover()}
+                                            className={sortBy === 'pokemon id' ? 'active' : ''}
+                                        >
+                                            Pokemon ID
+                                        </button>
+                                        <button 
+                                            onClick={() => {
+                                                soundManager.playFilterClick();
+                                                setSortBy('times caught');
+                                                setShowSortDropdown(false);
+                                            }}
+                                            onMouseEnter={() => soundManager.playFilterHover()}
+                                            className={sortBy === 'times caught' ? 'active' : ''}
+                                        >
+                                            Times Caught
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                     
@@ -373,19 +735,22 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                     <div className="filter-tabs">
                         <button 
                             className={`filter-tab ${activeFilter === 'all' ? 'active' : ''}`}
-                            onClick={() => setActiveFilter('all')}
+                            onClick={() => { soundManager.playFilterClick(); setActiveFilter('all'); }}
+                            onMouseEnter={() => soundManager.playFilterHover()}
                         >
                             All ({pokemonList.length})
                         </button>
                         <button 
                             className={`filter-tab ${activeFilter === 'caught' ? 'active' : ''}`}
-                            onClick={() => setActiveFilter('caught')}
+                            onClick={() => { soundManager.playFilterClick(); setActiveFilter('caught'); }}
+                            onMouseEnter={() => soundManager.playFilterHover()}
                         >
                             Caught ({discoveredPokemon.length})
                         </button>
                         <button 
                             className={`filter-tab ${activeFilter === 'uncaught' ? 'active' : ''}`}
-                            onClick={() => setActiveFilter('uncaught')}
+                            onClick={() => { soundManager.playFilterClick(); setActiveFilter('uncaught'); }}
+                            onMouseEnter={() => soundManager.playFilterHover()}
                         >
                             Uncaught ({pokemonList.length - discoveredPokemon.length})
                         </button>
@@ -393,6 +758,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                 </div>
                 
                 <div className="pokedex-content">
+                    {/* Search Results Counter */}
+                    {(searchTerm || typeFilter !== 'all') && (
+                        <div className="search-results-counter">
+                            <em>{filteredPokemon.length} Pokémon {searchTerm ? 'matching search' : 'found'}</em>
+                        </div>
+                    )}
                     <div className="pokemon-grid">
                         {filteredPokemon.length > 0 ? (
                             filteredPokemon.map(pokemon => {
@@ -403,13 +774,8 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                         key={pokemon.id}
                                         id={`pokemon-${pokemon.id}`} 
                                         className={`pokemon-card ${isDiscovered ? 'discovered' : 'undiscovered'} ${isHighlighted ? 'highlighted' : ''}`}
-                                        onClick={() => {
-                                            setSelectedPokemon(pokemon);
-                                            if (isDiscovered) {
-                                                fetchDescription(pokemon);
-                                                fetchTypes(pokemon);
-                                            }
-                                        }}
+                                        onClick={() => handlePokemonClick(pokemon)}
+                                        onMouseEnter={() => soundManager.playButtonHover()}
                                         style={{ cursor: 'pointer' }}
                                     >
                                         <img
@@ -440,10 +806,14 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                         className="pokemon-share-button"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
+                                                            soundManager.playButtonClick();
                                                             onSubmitGuess(pokemon.name);
-                                                            onClose(); // Close Pokedex after submitting guess
+                                                            handleClose(); // Close Pokedex after submitting guess
                                                         }}
-                                                        onMouseEnter={() => setHoveredShareButton(pokemon.id)}
+                                                        onMouseEnter={() => {
+                                                            soundManager.playBubbleHover();
+                                                            setHoveredShareButton(pokemon.id);
+                                                        }}
                                                         onMouseLeave={() => setHoveredShareButton(null)}
                                                     >
                                                         <img src={shareIcon} alt="Submit guess" className="share-icon" />
@@ -455,13 +825,33 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                                     )}
                                                 </div>
                                             )}
-                                        </div>                                <div 
-                                            className="pokemon-catch-count"
-                                            style={{ opacity: isDiscovered && catchCounts[pokemon.id] ? 1 : 0 }}
-                                            title={isDiscovered && catchCounts[pokemon.id] ? `You've caught ${catchCounts[pokemon.id]} ${pokemon.name}` : ''}
-                                        >
-                                            <img src={pokeballIcon} alt="Pokeball" className="catch-count-icon" />
-                                            {catchCounts[pokemon.id] || 0}
+                                        </div>
+                                        
+                                        {/* Type Icons and Catch Count Row */}
+                                        <div className="pokemon-card-bottom">
+                                            {/* Type Icons */}
+                                            {pokemon.types && (
+                                                <div className="pokemon-type-icons">
+                                                    {pokemon.types.map((type, index) => (
+                                                        <TypeBadge 
+                                                            key={index} 
+                                                            type={type.name} 
+                                                            variant="circular" 
+                                                            size="small" 
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+                                            
+                                            {/* Catch Count */}
+                                            <div 
+                                                className="pokemon-catch-count"
+                                                style={{ opacity: isDiscovered && catchCounts[pokemon.id] ? 1 : 0 }}
+                                                title={isDiscovered && catchCounts[pokemon.id] ? `You've caught ${catchCounts[pokemon.id]} ${pokemon.name}` : ''}
+                                            >
+                                                <img src={pokeballIcon} alt="Pokeball" className="catch-count-icon" />
+                                                {catchCounts[pokemon.id] || 0}
+                                            </div>
                                         </div>                                </div>
                                 );
                             })
@@ -505,7 +895,9 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                 <img
                                     src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${selectedPokemon.id}.png`}
                                     alt={selectedPokemon.name}
-                                    className={`description-pokemon-image ${discoveredPokemon.includes(selectedPokemon.id) ? 'discovered' : 'undiscovered'}`}
+                                    className={`description-pokemon-image ${discoveredPokemon.includes(selectedPokemon.id) ? 'discovered clickable-pokemon' : 'undiscovered'}`}
+                                    onClick={discoveredPokemon.includes(selectedPokemon.id) ? handlePokemonImageClick : undefined}
+                                    title={getPokemonImageTitle()}
                                     onError={(e) => {
                                         e.target.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedPokemon.id}.png`;
                                     }}
@@ -522,9 +914,12 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                                             <div className="desc-header-detail">
                                                 <div className="type-badges">
                                                     {pokemonTypes[selectedPokemon.id]?.map((typeInfo, index) => (
-                                                        <span key={index} className={`type-badge ${typeInfo.name}`}>
-                                                            {typeInfo.name}
-                                                        </span>
+                                                        <TypeBadge 
+                                                            key={index} 
+                                                            type={typeInfo.name} 
+                                                            variant="full" 
+                                                            size="medium" 
+                                                        />
                                                     ))}
                                                 </div>
                                                 {catchCounts[selectedPokemon.id] && (
@@ -558,7 +953,7 @@ function Pokedex({ isOpen, onClose, pokemonList, discoveredPokemon, singleGuessP
                             </div>
                         </div>
                     )}
-                    <button className="pokedex-close-button" onClick={onClose}>
+                    <button className="pokedex-close-button" onClick={handleClose} onMouseEnter={() => soundManager.playBubbleHover()}>
                         Close Pokédex
                     </button>
                 </div>
