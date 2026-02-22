@@ -4,10 +4,40 @@ import pokeballIcon from '../../assets/pokeball.svg';
 import pokeballOpenIcon from '../../assets/pokeball-open.svg';
 import soundManager from '../../utils/soundManager';
 
-function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonName, isNewDiscovery, onOpenPokedex, onClose, catchCount}) {
+function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonName, isNewDiscovery, onOpenPokedex, onClose, catchCount}, ref) {
     const [animationKey, setAnimationKey] = React.useState(0);
     const [pokemonCry, setPokemonCry] = React.useState(null);
     const [isLoadingCry, setIsLoadingCry] = React.useState(false);
+    const playAgainButtonRef = React.useRef(null);
+    
+    // Expose focus method via ref so parent can restore focus when Pokedex closes
+    React.useImperativeHandle(ref, () => ({
+        focus: () => {
+            playAgainButtonRef.current?.focus();
+        }
+    }));
+    
+    // Auto-focus play again button when result is shown
+    React.useEffect(() => {
+        playAgainButtonRef.current?.focus();
+    }, []);
+    
+    // Handle Enter key press to play again
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && playAgainButtonRef.current === document.activeElement) {
+            e.preventDefault();
+            soundManager.playButtonClick3();
+            reset();
+        }
+    };
+    
+    React.useEffect(() => {
+        window.addEventListener('keydown', handleKeyPress);
+        
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [reset]);
     
     const handlePokeballClick = () => {
         soundManager.playButtonClick3();
@@ -174,7 +204,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
                     pokédex
                 </button>.
             </p>
-            <button className="play-again-button" onClick={reset} onMouseEnter={() => soundManager.playBubbleHover()}>
+            <button className="play-again-button" ref={playAgainButtonRef} onClick={reset} onMouseEnter={() => soundManager.playBubbleHover()}>
                 <img src={refreshIcon} alt="Refresh" style={{ width: '16px', height: '16px', marginRight: '8px' }} />
                 Play again
             </button>
@@ -210,7 +240,7 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
                 </div>
                 <p>Sorry, the correct answer is <strong>{answer}</strong>.</p>
             </div>
-            <button className="play-again-button" onClick={reset} onMouseEnter={() => soundManager.playBubbleHover()}>
+            <button className="play-again-button" ref={playAgainButtonRef} onClick={reset} onMouseEnter={() => soundManager.playBubbleHover()}>
                 <img src={refreshIcon} alt="Refresh" style={{ width: '16px', height: '16px', marginRight: '8px' }} />
                 Play again
             </button>
@@ -219,4 +249,4 @@ function GameResult({answer, gameIsWon, guessCount, reset, pokemonId, pokemonNam
   
 }
 
-export default GameResult;
+export default React.forwardRef(GameResult);

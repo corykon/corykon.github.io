@@ -229,7 +229,7 @@ function getAllPokemonTypes(pokemonList) {
     return Array.from(typesSet).sort();
 }
 
-const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex, settings }, ref) {
+const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex, gameResultRef, settings }, ref) {
     const [pokemonList, setPokemonList] = React.useState([]);
     const [answer, setAnswer] = React.useState('');
     const [currentPokemon, setCurrentPokemon] = React.useState(null);
@@ -457,6 +457,7 @@ const Game = React.forwardRef(function Game({ onPokemonDiscovered, onPokemonList
         <GuessDisplay guesses={guesses} answerLength={answer.length} />
         {gameIsOver && showBanner && (
             <GameResult 
+                ref={gameResultRef}
                 answer={answer} 
                 gameIsWon={gameIsWon} 
                 guessCount={guesses.length} 
