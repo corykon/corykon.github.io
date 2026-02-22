@@ -9,6 +9,7 @@ class AudioManager {
         this.audio = {
             menu: new Audio('sounds/menu-song.mp3'),
             adventure: new Audio('sounds/adventure.mp3'),
+            'boss-fight': new Audio('sounds/boss-fight.mp3'),
             winner: new Audio('sounds/winner1.mp3'),
             gameOver: new Audio('sounds/gameover.mp3'),
             jump: new Audio('sounds/jump.wav'),
@@ -45,6 +46,7 @@ class AudioManager {
         const audioSettings = {
             menu: { loop: true, volume: 0.4 },
             adventure: { loop: true, volume: 0.4 },
+            'boss-fight': { loop: true, volume: 0.5 },
             winner: { loop: false, volume: 0.4 },
             gameOver: { loop: false, volume: 0.4 },
             jump: { loop: false, volume: 0.6 },

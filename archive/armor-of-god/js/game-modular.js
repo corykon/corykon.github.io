@@ -557,7 +557,11 @@ class ArmorOfGodGame {
         
         // Initialize scoring for this level
         this.initializeScoring();
-        this.audioManager.playMusic('adventure');
+        if (this.level === 4) {
+            this.audioManager.playMusic('boss-fight');
+        } else {
+            this.audioManager.playMusic('adventure');
+        }
         
         // Activate boss manager for level 4
         if (this.level === 4) {
@@ -660,7 +664,7 @@ class ArmorOfGodGame {
             this.castle = { x: 13100, y: 0, width: 240, height: 248 };
         } else if (this.level === 4) {
             // Boss level - temple exit from cave
-            this.castle = { x: 1900, y: 200, width: 240, height: 248 };
+            this.castle = { x: 2200, y: 200, width: 240, height: 248 };
         }
     }
     
@@ -687,7 +691,10 @@ class ArmorOfGodGame {
             'jungle-tree-3.png',
             'jungle-tree-4.png',
             'jungle-tree-5.png',
-            'jungle-tree-6.png'
+            'jungle-tree-6.png',
+            'crystal-1.png',
+            'crystal-2.png',
+            'crystal-3.png'
         ];
         
         foregroundSprites.forEach(filename => {
@@ -732,6 +739,8 @@ class ArmorOfGodGame {
                 // Check if player has armor for special armor march music
                 if (this.hasArmor) {
                     this.audioManager.playMusic('armormarch');
+                } else if (this.level === 4) {
+                    this.audioManager.playMusic('boss-fight');
                 } else {
                     this.audioManager.playMusic('adventure');
                 }
@@ -890,6 +899,7 @@ class ArmorOfGodGame {
         // Update boss manager for level 4
         if (this.level === 4) {
             this.bossManager.update(this.player, this.worldManager);
+            this.worldManager.updateStoneBarriers(); // Update falling barrier animation
         }
         
         // Handle temple entrance sequence
@@ -1026,10 +1036,12 @@ class ArmorOfGodGame {
         // Update last safe platform position when player is grounded
         this.updateLastSafePlatform();
         
-        // Check for hazardous foreground sprite collisions
-        const hazardCollision = this.worldManager.checkHazardCollisions(this.player);
-        if (hazardCollision.collision && !this.hasArmor) {
-            this.handlePlayerDamage(hazardCollision.damage, hazardCollision.hazardType);
+        // Check for hazardous foreground sprite collisions (disabled on level 4 - boss level)
+        if (this.level !== 4) {
+            const hazardCollision = this.worldManager.checkHazardCollisions(this.player);
+            if (hazardCollision.collision && !this.hasArmor) {
+                this.handlePlayerDamage(hazardCollision.damage, hazardCollision.hazardType);
+            }
         }
         
         // Check if player is falling off platform edges and restrict movement
@@ -1166,9 +1178,10 @@ class ArmorOfGodGame {
             this.takeDamage(knockbackDirection);
         }
         
-        // Enemy collisions
-        const hitEnemies = this.enemyManager.checkCollisions(this.player, this.hasArmor, this.inputHandler, () => this.getCurrentJumpPower());
-        if (hitEnemies.length > 0) {
+        // Enemy collisions (disabled on level 4 - boss level)
+        if (this.level !== 4) {
+            const hitEnemies = this.enemyManager.checkCollisions(this.player, this.hasArmor, this.inputHandler, () => this.getCurrentJumpPower());
+            if (hitEnemies.length > 0) {
             // Add score for defeating enemies when armored
             if (this.hasArmor) {
                 hitEnemies.forEach(enemy => {
@@ -1202,11 +1215,12 @@ class ArmorOfGodGame {
                     this.enemiesKilled.add(enemy.isMegaSnail ? 'megaSnail' : 'snail');
                 });
             }
-            // Calculate knockback direction from first enemy hit
-            const enemy = hitEnemies[0];
-            const playerCenterX = this.player.x + this.player.width / 2;
-            const knockbackDirection = playerCenterX > enemy.x ? 1 : -1; // 1 for right, -1 for left
-            this.takeDamage(knockbackDirection);
+                // Calculate knockback direction from first enemy hit
+                const enemy = hitEnemies[0];
+                const playerCenterX = this.player.x + this.player.width / 2;
+                const knockbackDirection = playerCenterX > enemy.x ? 1 : -1; // 1 for right, -1 for left
+                this.takeDamage(knockbackDirection);
+            }
         }
         
         // Scripture book collisions
@@ -1474,8 +1488,12 @@ class ArmorOfGodGame {
         this.booksCollected = 0;
         this.worldManager.reset(); // Respawn all scripture books
         
-        // Switch back to adventure music
-        this.audioManager.playMusic('adventure');
+        // Switch back to appropriate music based on level
+        if (this.level === 4) {
+            this.audioManager.playMusic('boss-fight');
+        } else {
+            this.audioManager.playMusic('adventure');
+        }
         
         // Show message to player
         this.uiRenderer.showMessage('Collect scriptures for new armor.', 240, '#FFA500', 15, 700);
@@ -1505,7 +1523,11 @@ class ArmorOfGodGame {
         this.resetGame();
         this.gameState = 'playing';
         this.showScreen('game');
-        this.audioManager.playMusic('adventure');
+        if (this.level === 4) {
+            this.audioManager.playMusic('boss-fight');
+        } else {
+            this.audioManager.playMusic('adventure');
+        }
         this.arrowManager.spawnInitialArrows(this.player);
     }
     
@@ -1528,7 +1550,11 @@ class ArmorOfGodGame {
         this.gameState = 'playing';
         this.showScreen('game');
         this.updateLevelIndicator();
-        this.audioManager.playMusic('adventure');
+        if (this.level === 4) {
+            this.audioManager.playMusic('boss-fight');
+        } else {
+            this.audioManager.playMusic('adventure');
+        }
         this.arrowManager.spawnInitialArrows(this.player);
         
         // Initialize scoring for retry
@@ -1686,7 +1712,7 @@ class ArmorOfGodGame {
         // Render boss manager for level 4
         if (this.level === 4) {
             const camera = { x: this.cameraX, y: this.cameraY };
-            this.bossManager.render(this.ctx, camera);
+            this.bossManager.render(this.ctx, camera, this.isPaused);
         }
         
         this.worldManager.renderScriptureBooks(this.ctx, this.bomImage);

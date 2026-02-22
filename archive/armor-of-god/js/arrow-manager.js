@@ -124,9 +124,16 @@ class ArrowManager {
             this.arrows = this.arrows.filter(arrow => arrow.active);
         }
         
-        // Spawn new arrows continuously
+        // Spawn new arrows continuously (but not on level 4)
         this.arrowSpawnTimer++;
         if (this.arrowSpawnTimer >= this.arrowSpawnDelay) {
+            // Check if we're on level 4 - if so, don't spawn any arrows
+            const currentLevel = this.game && this.game.level ? this.game.level : 1;
+            if (currentLevel === 4) {
+                this.arrowSpawnTimer = 0;
+                return; // No arrows on level 4
+            }
+            
             // Determine how many arrows to spawn this time
             let arrowsToSpawn = 1;
             

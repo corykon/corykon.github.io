@@ -33,6 +33,7 @@ class WorldManager {
         this.createClouds();
         this.createScriptureBooks();
         this.createHearts();
+        this.createForegroundSprites();
     }
     
     setLevelProperties() {
@@ -665,7 +666,7 @@ class WorldManager {
             { x: 700, y: 468, width: 1100, height: 135, type: 'cave' },
             
             // Exit section (only accessible after boss defeat)
-            { x: 1900, y: 468, width: 100, height: 135, type: 'cave' }
+            { x: 1900, y: 440, width: 1200, height: 135, type: 'cave' }
         ];
         
         // Initialize stone barriers (will be activated during boss fight)
@@ -696,19 +697,28 @@ class WorldManager {
     
     createLevel4ForegroundSprites() {
         this.foregroundSprites = [
-            // Cave entrance crystals
-            { x: 100, y: 400, width: 60, height: 80, image: 'cave-crystal-1.png', glowing: true },
-            { x: 300, y: 420, width: 40, height: 60, image: 'cave-crystal-2.png', glowing: true },
+            // Cave entrance crystals - positioned on ground (moved down 15 more pixels)
+            { x: 100, y: 408, width: 60, height: 80, image: 'images/sprites/foreground/crystal-1.png', glowing: true },
+            { x: 300, y: 428, width: 40, height: 60, image: 'images/sprites/foreground/crystal-2.png', glowing: true },
             
             // Boss arena decorative crystals
-            { x: 550, y: 430, width: 70, height: 90, image: 'cave-crystal-3.png', glowing: true },
-            { x: 800, y: 440, width: 50, height: 60, image: 'cave-crystal-2.png', glowing: true },
-            { x: 1100, y: 425, width: 80, height: 100, image: 'cave-crystal-1.png', glowing: true },
-            { x: 1400, y: 435, width: 60, height: 80, image: 'cave-crystal-3.png', glowing: true },
-            { x: 1650, y: 440, width: 45, height: 65, image: 'cave-crystal-2.png', glowing: true },
+            { x: 550, y: 398, width: 70, height: 90, image: 'images/sprites/foreground/crystal-3.png', glowing: true },
+            { x: 800, y: 428, width: 50, height: 60, image: 'images/sprites/foreground/crystal-2.png', glowing: true },
+            { x: 1100, y: 388, width: 80, height: 100, image: 'images/sprites/foreground/crystal-1.png', glowing: true },
+            { x: 1400, y: 408, width: 60, height: 80, image: 'images/sprites/foreground/crystal-3.png', glowing: true },
+            { x: 1650, y: 423, width: 45, height: 65, image: 'images/sprites/foreground/crystal-2.png', glowing: true },
             
             // Exit cave crystals
-            { x: 1850, y: 420, width: 55, height: 75, image: 'cave-crystal-2.png', glowing: true }
+            { x: 1950, y: 380, width: 55, height: 75, image: 'images/sprites/foreground/crystal-2.png', glowing: true },
+            
+            // Ceiling crystals - hanging from top
+            { x: 200, y: 0, width: 35, height: 50, image: 'images/sprites/foreground/crystal-2.png', glowing: true, upsideDown: true },
+            { x: 450, y: 0, width: 40, height: 60, image: 'images/sprites/foreground/crystal-3.png', glowing: true, upsideDown: true },
+            { x: 700, y: 0, width: 30, height: 45, image: 'images/sprites/foreground/crystal-1.png', glowing: true, upsideDown: true },
+            { x: 950, y: 0, width: 35, height: 55, image: 'images/sprites/foreground/crystal-2.png', glowing: true, upsideDown: true },
+            { x: 1250, y: 0, width: 45, height: 65, image: 'images/sprites/foreground/crystal-3.png', glowing: true, upsideDown: true },
+            { x: 1550, y: 0, width: 30, height: 40, image: 'images/sprites/foreground/crystal-1.png', glowing: true, upsideDown: true },
+            { x: 1750, y: 0, width: 40, height: 55, image: 'images/sprites/foreground/crystal-3.png', glowing: true, upsideDown: true }
         ];
     }
     
@@ -973,12 +983,14 @@ class WorldManager {
     }
 
     renderCaveBackground(ctx, cameraX, canvasWidth, canvasHeight) {
-        // Dark cave background with blue/purple crystal lighting
+        // Enhanced cave background with visible blue/purple gradient
         const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
-        gradient.addColorStop(0, '#1A1A1A'); // Very dark gray at top
-        gradient.addColorStop(0.3, '#2F2F2F'); // Dark gray middle
-        gradient.addColorStop(0.7, '#1A1A1A'); // Very dark gray
-        gradient.addColorStop(1, '#0D0D0D'); // Almost black at bottom
+        gradient.addColorStop(0, '#2D1B4E'); // Medium dark purple-blue at top
+        gradient.addColorStop(0.2, '#3B2A5C'); // Lighter purple
+        gradient.addColorStop(0.4, '#4A3B6B'); // Medium purple
+        gradient.addColorStop(0.6, '#3B2A5C'); // Lighter purple again
+        gradient.addColorStop(0.8, '#2D1B4E'); // Back to medium dark
+        gradient.addColorStop(1, '#1A0F2E'); // Dark purple-black at bottom
         
         ctx.fillStyle = gradient;
         ctx.fillRect(cameraX, 0, canvasWidth, canvasHeight);
@@ -991,26 +1003,28 @@ class WorldManager {
     }
     
     renderCrystalLighting(ctx, cameraX, canvasWidth, canvasHeight) {
-        // Create blue/purple lighting zones throughout the cave
+        // Create bright blue/purple lighting zones throughout the cave
         const lightSources = [
-            { x: 500, color: '#4169E1', intensity: 0.3 },
-            { x: 1200, color: '#8A2BE2', intensity: 0.4 },
-            { x: 2400, color: '#6495ED', intensity: 0.3 },
-            { x: 3600, color: '#9370DB', intensity: 0.35 },
-            { x: 4800, color: '#4682B4', intensity: 0.3 },
-            { x: 6000, color: '#7B68EE', intensity: 0.4 }
+            { x: 100, color: '#4169E1', intensity: 0.6 },   // Near first crystal
+            { x: 300, color: '#8A2BE2', intensity: 0.7 },   // Near second crystal
+            { x: 550, color: '#6495ED', intensity: 0.8 },   // Near third crystal
+            { x: 800, color: '#9370DB', intensity: 0.6 },   // Near fourth crystal
+            { x: 1100, color: '#4682B4', intensity: 0.7 },  // Near fifth crystal
+            { x: 1400, color: '#7B68EE', intensity: 0.6 },  // Near sixth crystal
+            { x: 1650, color: '#8A2BE2', intensity: 0.5 }   // Near exit crystal
         ];
         
         lightSources.forEach(light => {
             // Only render if light is near camera view
-            if (light.x > cameraX - 400 && light.x < cameraX + canvasWidth + 400) {
-                const lightRadius = 200;
+            if (light.x > cameraX - 300 && light.x < cameraX + canvasWidth + 300) {
+                const lightRadius = 180;
                 const gradient = ctx.createRadialGradient(
-                    light.x - cameraX, canvasHeight * 0.6, 0,
-                    light.x - cameraX, canvasHeight * 0.6, lightRadius
+                    light.x, canvasHeight * 0.7, 0,
+                    light.x, canvasHeight * 0.7, lightRadius
                 );
                 gradient.addColorStop(0, `${light.color}${Math.round(light.intensity * 255).toString(16).padStart(2, '0')}`);
-                gradient.addColorStop(0.5, `${light.color}${Math.round(light.intensity * 0.5 * 255).toString(16).padStart(2, '0')}`);
+                gradient.addColorStop(0.3, `${light.color}${Math.round(light.intensity * 0.7 * 255).toString(16).padStart(2, '0')}`);
+                gradient.addColorStop(0.6, `${light.color}${Math.round(light.intensity * 0.4 * 255).toString(16).padStart(2, '0')}`);
                 gradient.addColorStop(1, `${light.color}00`);
                 
                 ctx.fillStyle = gradient;
@@ -1415,13 +1429,71 @@ class WorldManager {
     
     renderForegroundSprites(ctx, foregroundImages) {
         this.foregroundSprites.forEach(sprite => {
-            const image = foregroundImages[sprite.image];
+            // Add glow effect for glowing crystals
+            if (sprite.glowing) {
+                const glowRadius = Math.max(sprite.width, sprite.height) * 0.8;
+                const glowGradient = ctx.createRadialGradient(
+                    sprite.x + sprite.width / 2, sprite.y + sprite.height / 2, 0,
+                    sprite.x + sprite.width / 2, sprite.y + sprite.height / 2, glowRadius
+                );
+                
+                // Crystal glow colors - bright and pulsing
+                const time = Date.now() * 0.003;
+                const pulseIntensity = 0.4 + 0.3 * Math.sin(time + sprite.x * 0.01);
+                
+                if (sprite.image.includes('crystal-1')) {
+                    glowGradient.addColorStop(0, `rgba(65, 105, 225, ${pulseIntensity})`);
+                    glowGradient.addColorStop(0.4, `rgba(65, 105, 225, ${pulseIntensity * 0.6})`);
+                    glowGradient.addColorStop(0.8, `rgba(65, 105, 225, ${pulseIntensity * 0.3})`);
+                } else if (sprite.image.includes('crystal-2')) {
+                    glowGradient.addColorStop(0, `rgba(138, 43, 226, ${pulseIntensity})`);
+                    glowGradient.addColorStop(0.4, `rgba(138, 43, 226, ${pulseIntensity * 0.6})`);
+                    glowGradient.addColorStop(0.8, `rgba(138, 43, 226, ${pulseIntensity * 0.3})`);
+                } else {
+                    glowGradient.addColorStop(0, `rgba(147, 112, 219, ${pulseIntensity})`);
+                    glowGradient.addColorStop(0.4, `rgba(147, 112, 219, ${pulseIntensity * 0.6})`);
+                    glowGradient.addColorStop(0.8, `rgba(147, 112, 219, ${pulseIntensity * 0.3})`);
+                }
+                glowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                
+                ctx.fillStyle = glowGradient;
+                ctx.fillRect(sprite.x - glowRadius/2, sprite.y - glowRadius/2, 
+                           sprite.width + glowRadius, sprite.height + glowRadius);
+            }
+            
+            // Draw the sprite itself
+            const imageFilename = sprite.image.split('/').pop(); // Extract filename from path
+            const image = foregroundImages[imageFilename];
             if (image && image.complete) {
-                ctx.drawImage(image, sprite.x, sprite.y, sprite.width, sprite.height);
+                ctx.save();
+                
+                // Handle upside down ceiling crystals
+                if (sprite.upsideDown) {
+                    // Move to center of sprite, flip vertically, then move back
+                    ctx.translate(sprite.x + sprite.width / 2, sprite.y + sprite.height / 2);
+                    ctx.scale(1, -1);
+                    ctx.translate(-sprite.width / 2, -sprite.height / 2);
+                }
+                
+                // Add slight brightness for glowing crystals
+                if (sprite.glowing) {
+                    ctx.filter = 'brightness(1.3) saturate(1.2)';
+                }
+                
+                if (sprite.upsideDown) {
+                    ctx.drawImage(image, 0, 0, sprite.width, sprite.height);
+                } else {
+                    ctx.drawImage(image, sprite.x, sprite.y, sprite.width, sprite.height);
+                }
+                
+                ctx.restore();
             } else {
-                // Fallback: simple colored rectangle based on sprite type
-                ctx.fillStyle = this.getFallbackColor(sprite.image);
-                ctx.fillRect(sprite.x, sprite.y, sprite.width, sprite.height);
+                // Fallback: simple colored rectangle based on sprite type (but not for glowing crystals)
+                if (!sprite.glowing) {
+                    ctx.fillStyle = this.getFallbackColor(sprite.image);
+                    ctx.fillRect(sprite.x, sprite.y, sprite.width, sprite.height);
+                }
+                // For glowing crystals, only show the glow effect if image fails to load
             }
         });
     }
@@ -1635,27 +1707,33 @@ class WorldManager {
             // Left barrier - traps player in arena (between entry and boss area)
             {
                 x: 680,
-                y: 0,
+                y: -400, // Start above screen
                 width: 40,
-                height: 600, // Full screen height
+                height: 600,
                 active: true,
-                fallSpeed: 0,
-                targetY: 0
+                fallSpeed: 8, // Fast falling speed
+                targetY: 0,
+                shakingTimer: 0,
+                shakeOffsetX: 0,
+                isDropping: true
             },
             // Right barrier - prevents escape (at end of boss area)
             {
-                x: 1820,
-                y: 0,
+                x: 1760,
+                y: -400, // Start above screen
                 width: 40,
-                height: 600, // Full screen height
+                height: 600,
                 active: true,
-                fallSpeed: 0,
-                targetY: 0
+                fallSpeed: 8, // Fast falling speed
+                targetY: 0,
+                shakingTimer: 0,
+                shakeOffsetX: 0,
+                isDropping: true
             }
         ];
         
         this.barriersActive = true;
-        console.log('Stone barriers created to trap player in boss arena!');
+        console.log('Stone barriers falling from above with earthquake effect!');
     }
     
     removeStoneBarriers() {
@@ -1666,15 +1744,53 @@ class WorldManager {
         console.log('Stone barriers removed - player can proceed!');
     }
     
+    updateStoneBarriers() {
+        if (!this.barriersActive || this.currentLevel !== 4) return;
+        
+        for (const barrier of this.stoneBarriers) {
+            if (barrier.isDropping) {
+                // Animate falling
+                barrier.y += barrier.fallSpeed;
+                
+                // Check if reached target position
+                if (barrier.y >= barrier.targetY) {
+                    barrier.y = barrier.targetY;
+                    barrier.isDropping = false;
+                    barrier.shakingTimer = 60; // Shake for 1 second after landing
+                }
+            }
+            
+            // Earthquake shaking effect after landing
+            if (barrier.shakingTimer > 0) {
+                barrier.shakingTimer--;
+                barrier.shakeOffsetX = (Math.random() - 0.5) * 4; // Random shake
+            } else {
+                barrier.shakeOffsetX = 0;
+            }
+        }
+    }
+    
     checkStoneBarrierCollision(player) {
         if (!this.barriersActive || this.currentLevel !== 4) return false;
         
         for (const barrier of this.stoneBarriers) {
-            if (barrier.active &&
-                player.x < barrier.x + barrier.width &&
-                player.x + player.width > barrier.x &&
+            if (barrier.active && !barrier.isDropping &&
+                player.x < barrier.x + barrier.width - 5 && // Slightly smaller collision for smoother movement
+                player.x + player.width > barrier.x + 5 &&
                 player.y < barrier.y + barrier.height &&
                 player.y + player.height > barrier.y) {
+                    
+                // Push player away smoothly instead of hard stop
+                const overlapLeft = (player.x + player.width) - barrier.x;
+                const overlapRight = (barrier.x + barrier.width) - player.x;
+                
+                if (overlapLeft < overlapRight && overlapLeft < 20) {
+                    // Push left
+                    player.x = barrier.x - player.width - 1;
+                } else if (overlapRight < 20) {
+                    // Push right  
+                    player.x = barrier.x + barrier.width + 1;
+                }
                 return true;
             }
         }

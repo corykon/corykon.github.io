@@ -21,8 +21,8 @@ class BossManager {
             maxHealth: 5,
             isGrounded: true,
             facing: 'left',
-            minX: 720,
-            maxX: 1780,
+            minX: 700,  // Left boundary of boss platform
+            maxX: 1800, // Right boundary of boss platform
             
             // AI state
             state: 'patrol', // patrol, charging, jumping, slamming, stunned
@@ -163,8 +163,8 @@ class BossManager {
         this.fightStarted = false; // Track if boss fight has been triggered
         this.barriersCreated = false; // Track if stone barriers have been created
         
-        // Initialize boss position and state
-        this.boss.x = 1200; // Further right, past where stone barriers will appear
+        // Initialize boss position and state  
+        this.boss.x = 1500; // Start further back in level, well within boss arena
         this.boss.y = 468 - this.boss.height; // Ground level
         this.boss.initialX = this.boss.x;
         this.boss.initialY = this.boss.y;
@@ -207,8 +207,8 @@ class BossManager {
             }
         }
         
-        // Stone barriers trigger when player passes the first barrier position
-        if (!this.barriersCreated && player.x > 680) {
+        // Stone barriers trigger when player passes 300+ pixels past first barrier position
+        if (!this.barriersCreated && player.x > 750) {
             this.createStoneBarriers(worldManager);
             console.log('Player crosses barrier line - Stone barriers rise!');
         }
@@ -304,14 +304,11 @@ class BossManager {
     }
     
     updateChargingState(player) {
-        // Boss charges toward player
-        const direction = player.x > this.boss.x ? 1 : -1;
-        this.boss.facing = direction > 0 ? 'right' : 'left';
-        this.boss.velocityX = direction * this.boss.speed * 2; // Faster when charging
+        // Boss continues moving in current direction during charge (no player tracking)
+        this.boss.velocityX = this.boss.facing === 'left' ? -this.boss.speed * 2 : this.boss.speed * 2;
         
-        // Stop charging and slam if close to player or after time limit
-        const distanceToPlayer = Math.abs(this.boss.x - player.x);
-        if (distanceToPlayer < 150 || this.boss.stateTimer > 120) {
+        // Stop charging and slam after time limit (no distance dependency)
+        if (this.boss.stateTimer > 90) { // ~1.5 seconds of charging
             this.startSlamAttack();
         }
     }
@@ -386,14 +383,14 @@ class BossManager {
         // Update position
         const nextX = this.boss.x + this.boss.velocityX;
         
-        // Check for stone barrier collisions if barriers are active
+        // Enforce proper boundaries using minX/maxX values
         let canMove = true;
-        if (this.barriersCreated && worldManager.barriersActive) {
-            // Check collision with barriers at x:680 and x:1820
-            if ((nextX < 720 && this.boss.velocityX < 0) || // Hitting left barrier
-                (nextX + this.boss.width > 1820 && this.boss.velocityX > 0)) { // Hitting right barrier
-                canMove = false;
-                this.boss.velocityX = 0; // Stop movement when hitting barrier
+        if (nextX < this.boss.minX || nextX + this.boss.width > this.boss.maxX) {
+            canMove = false;
+            this.boss.velocityX = 0; // Stop movement when hitting boundary
+            // Reverse direction if patrolling
+            if (this.boss.state === 'patrol') {
+                this.boss.facing = this.boss.facing === 'left' ? 'right' : 'left';
             }
         }
         
@@ -403,8 +400,8 @@ class BossManager {
         
         this.boss.y += this.boss.velocityY;
         
-        // Keep boss within arena bounds (fallback if barriers aren't active)
-        this.boss.x = Math.max(this.boss.minX, Math.min(this.boss.maxX, this.boss.x));
+        // Keep boss strictly within boundaries (ensure no overflow)
+        this.boss.x = Math.max(this.boss.minX, Math.min(this.boss.maxX - this.boss.width, this.boss.x));
         
         // Ground collision
         const groundY = 468 - this.boss.height;
@@ -592,18 +589,20 @@ class BossManager {
         }
     }
     
-    render(context, camera) {
+    render(context, camera, isPaused = false) {
         if (!this.isActive) return;
         
-        // Screen shake effect during boss fight
+        // Screen shake effect during slam
         if (this.boss.state === 'slamming' && this.boss.stateTimer < 60) {
             const shakeIntensity = (60 - this.boss.stateTimer) / 10;
             camera.x += (Math.random() - 0.5) * shakeIntensity;
             camera.y += (Math.random() - 0.5) * shakeIntensity;
         }
         
-        // Update boss animation
-        this.updateBossAnimation();
+        // Update boss animation only if not paused
+        if (!isPaused) {
+            this.updateBossAnimation();
+        }
         
         // Render boss
         this.renderBoss(context, camera);
