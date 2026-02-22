@@ -84,6 +84,7 @@ function App() {
   });
   
   const gameRef = React.useRef();
+  const gameResultRef = React.useRef();
 
   function handleReset() {
     setGameKey(prevKey => prevKey + 1);
@@ -97,6 +98,8 @@ function App() {
   function handleClosePokedex() {
     setIsPokedexOpen(false);
     setHighlightPokemonId(null);
+    // Restore focus to play again button when Pokedex closes
+    gameResultRef.current?.focus();
   }
 
   function handlePokemonDiscovered(pokemonId, wasSingleGuess = false) {
@@ -264,6 +267,7 @@ function App() {
         <Game 
           key={gameKey}
           ref={gameRef}
+          gameResultRef={gameResultRef}
           onPokemonDiscovered={handlePokemonDiscovered}
           onPokemonListLoaded={handlePokemonListLoaded}
           onOpenPokedex={handleOpenPokedex}
