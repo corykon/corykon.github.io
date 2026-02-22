@@ -1,6 +1,7 @@
 import React from 'react';
 import TypeBadge from '../TypeBadge';
 import pokeballIcon from '../../assets/pokeball.svg';
+import arrowUpIcon from '../../assets/arrow-up.svg';
 import soundManager from '../../utils/soundManager';
 
 function GuessInput({onGuess, gameIsOver, answerLength, pokemonTypes, isLoadingHint}) {
@@ -26,18 +27,30 @@ function GuessInput({onGuess, gameIsOver, answerLength, pokemonTypes, isLoadingH
     
     return <form className="guess-input-wrapper" onSubmit={handleSubmit}>
         <label htmlFor="guess-input">Guess the Pokémon:</label>
-        <input 
-            id="guess-input" 
-            type="text" 
-            value={pendingGuess} 
-            autoComplete="off" 
-            autoFocus 
-            onChange={handleInputChange}
-            onFocus={() => soundManager.playInputClick()}
-            onMouseEnter={() => soundManager.playInputHover()}
-            pattern={`[A-Za-z]{1,${answerLength}}`}
-            disabled={gameIsOver}
-        />
+        <div className="guess-input-container">
+            <input 
+                id="guess-input" 
+                type="text" 
+                value={pendingGuess} 
+                autoComplete="off" 
+                autoFocus 
+                onChange={handleInputChange}
+                onFocus={() => soundManager.playInputClick()}
+                onMouseEnter={() => soundManager.playInputHover()}
+                pattern={`[A-Za-z]{1,${answerLength}}`}
+                disabled={gameIsOver}
+            />
+            <button
+                type="submit"
+                className="guess-submit-button"
+                disabled={pendingGuess.length === 0 || gameIsOver}
+                onClick={() => soundManager.playButtonClick3()}
+                onMouseEnter={() => soundManager.playBubbleHover()}
+                title="Submit guess (or press Enter)"
+            >
+                <img src={arrowUpIcon} alt="Submit" style={{ width: '20px', height: '20px', filter: 'brightness(0) invert(1)' }} />
+            </button>
+        </div>
         <div className="type-hint">
             Guess the {answerLength}-letter 
             {isLoadingHint ? (

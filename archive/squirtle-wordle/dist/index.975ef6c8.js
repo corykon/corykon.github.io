@@ -18672,6 +18672,7 @@ function App() {
         }
     });
     const gameRef = (0, _reactDefault.default).useRef();
+    const gameResultRef = (0, _reactDefault.default).useRef();
     function handleReset() {
         setGameKey((prevKey)=>prevKey + 1);
     }
@@ -18682,6 +18683,8 @@ function App() {
     function handleClosePokedex() {
         setIsPokedexOpen(false);
         setHighlightPokemonId(null);
+        // Restore focus to play again button when Pokedex closes
+        gameResultRef.current?.focus();
     }
     function handlePokemonDiscovered(pokemonId, wasSingleGuess = false) {
         if (!discoveredPokemon.includes(pokemonId)) {
@@ -18819,25 +18822,26 @@ function App() {
                 trophyIcon: isLegend ? (0, _trophyStarSvgDefault.default) : (0, _trophySvgDefault.default)
             }, void 0, false, {
                 fileName: "src/components/App/App.js",
-                lineNumber: 253,
+                lineNumber: 256,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "game-wrapper",
                 children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _gameDefault.default), {
                     ref: gameRef,
+                    gameResultRef: gameResultRef,
                     onPokemonDiscovered: handlePokemonDiscovered,
                     onPokemonListLoaded: handlePokemonListLoaded,
                     onOpenPokedex: handleOpenPokedex,
                     settings: settings
                 }, gameKey, false, {
                     fileName: "src/components/App/App.js",
-                    lineNumber: 264,
+                    lineNumber: 267,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "src/components/App/App.js",
-                lineNumber: 263,
+                lineNumber: 266,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pokedexDefault.default), {
@@ -18852,7 +18856,7 @@ function App() {
                 onSubmitGuess: handleSubmitGuess
             }, void 0, false, {
                 fileName: "src/components/App/App.js",
-                lineNumber: 274,
+                lineNumber: 278,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _celebrationsDefault.default), {
@@ -18870,17 +18874,17 @@ function App() {
                 meetPikaImage: (0, _meetPikaPngDefault.default)
             }, void 0, false, {
                 fileName: "src/components/App/App.js",
-                lineNumber: 283,
+                lineNumber: 287,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/App/App.js",
-        lineNumber: 252,
+        lineNumber: 255,
         columnNumber: 5
     }, this);
 }
-_s(App, "8YhqomboQ7tBq2YB5Qjbj8j1bRc=");
+_s(App, "QMsCANio6aNTTLXezXN/M4srzHA=");
 _c = App;
 exports.default = App;
 var _c;
@@ -19156,7 +19160,7 @@ function getAllPokemonTypes(pokemonList) {
     });
     return Array.from(typesSet).sort();
 }
-const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex, settings }, ref) {
+const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(function Game({ onPokemonDiscovered, onPokemonListLoaded, onOpenPokedex, gameResultRef, settings }, ref) {
     _s();
     const [pokemonList, setPokemonList] = (0, _reactDefault.default).useState([]);
     const [answer, setAnswer] = (0, _reactDefault.default).useState("");
@@ -19360,6 +19364,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 columnNumber: 9
             }, this),
             gameIsOver && showBanner && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _gameResultDefault.default), {
+                ref: gameResultRef,
                 answer: answer,
                 gameIsWon: gameIsWon,
                 guessCount: guesses.length,
@@ -19389,19 +19394,19 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                             height: "16"
                         }, void 0, false, {
                             fileName: "src/components/Game/Game.js",
-                            lineNumber: 479,
+                            lineNumber: 480,
                             columnNumber: 25
                         }, this),
                         "Play Again"
                     ]
                 }, void 0, true, {
                     fileName: "src/components/Game/Game.js",
-                    lineNumber: 474,
+                    lineNumber: 475,
                     columnNumber: 21
                 }, this)
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 473,
+                lineNumber: 474,
                 columnNumber: 17
             }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _guessInputDefault.default), {
                 onGuess: handleNewGuess,
@@ -19411,7 +19416,7 @@ const Game = /*#__PURE__*/ _s((0, _reactDefault.default).forwardRef(_c = _s(func
                 isLoadingHint: isLoadingHint
             }, void 0, false, {
                 fileName: "src/components/Game/Game.js",
-                lineNumber: 484,
+                lineNumber: 485,
                 columnNumber: 17
             }, this)
         ]
@@ -19492,6 +19497,8 @@ var _typeBadge = require("../TypeBadge");
 var _typeBadgeDefault = parcelHelpers.interopDefault(_typeBadge);
 var _pokeballSvg = require("../../assets/pokeball.svg");
 var _pokeballSvgDefault = parcelHelpers.interopDefault(_pokeballSvg);
+var _arrowUpSvg = require("../../assets/arrow-up.svg");
+var _arrowUpSvgDefault = parcelHelpers.interopDefault(_arrowUpSvg);
 var _soundManager = require("../../utils/soundManager");
 var _soundManagerDefault = parcelHelpers.interopDefault(_soundManager);
 var _s = $RefreshSig$();
@@ -19519,23 +19526,57 @@ function GuessInput({ onGuess, gameIsOver, answerLength, pokemonTypes, isLoading
                 children: "Guess the Pok\xe9mon:"
             }, void 0, false, {
                 fileName: "src/components/GuessInput/GuessInput.js",
-                lineNumber: 28,
+                lineNumber: 29,
                 columnNumber: 9
             }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                id: "guess-input",
-                type: "text",
-                value: pendingGuess,
-                autoComplete: "off",
-                autoFocus: true,
-                onChange: handleInputChange,
-                onFocus: ()=>(0, _soundManagerDefault.default).playInputClick(),
-                onMouseEnter: ()=>(0, _soundManagerDefault.default).playInputHover(),
-                pattern: `[A-Za-z]{1,${answerLength}}`,
-                disabled: gameIsOver
-            }, void 0, false, {
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "guess-input-container",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        id: "guess-input",
+                        type: "text",
+                        value: pendingGuess,
+                        autoComplete: "off",
+                        autoFocus: true,
+                        onChange: handleInputChange,
+                        onFocus: ()=>(0, _soundManagerDefault.default).playInputClick(),
+                        onMouseEnter: ()=>(0, _soundManagerDefault.default).playInputHover(),
+                        pattern: `[A-Za-z]{1,${answerLength}}`,
+                        disabled: gameIsOver
+                    }, void 0, false, {
+                        fileName: "src/components/GuessInput/GuessInput.js",
+                        lineNumber: 31,
+                        columnNumber: 13
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                        type: "submit",
+                        className: "guess-submit-button",
+                        disabled: pendingGuess.length === 0 || gameIsOver,
+                        onClick: ()=>(0, _soundManagerDefault.default).playButtonClick3(),
+                        onMouseEnter: ()=>(0, _soundManagerDefault.default).playBubbleHover(),
+                        title: "Submit guess (or press Enter)",
+                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
+                            src: (0, _arrowUpSvgDefault.default),
+                            alt: "Submit",
+                            style: {
+                                width: "20px",
+                                height: "20px",
+                                filter: "brightness(0) invert(1)"
+                            }
+                        }, void 0, false, {
+                            fileName: "src/components/GuessInput/GuessInput.js",
+                            lineNumber: 51,
+                            columnNumber: 17
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "src/components/GuessInput/GuessInput.js",
+                        lineNumber: 43,
+                        columnNumber: 13
+                    }, this)
+                ]
+            }, void 0, true, {
                 fileName: "src/components/GuessInput/GuessInput.js",
-                lineNumber: 29,
+                lineNumber: 30,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -19552,12 +19593,12 @@ function GuessInput({ onGuess, gameIsOver, answerLength, pokemonTypes, isLoading
                             className: "mini-pokeball-icon"
                         }, void 0, false, {
                             fileName: "src/components/GuessInput/GuessInput.js",
-                            lineNumber: 45,
+                            lineNumber: 58,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "src/components/GuessInput/GuessInput.js",
-                        lineNumber: 44,
+                        lineNumber: 57,
                         columnNumber: 17
                     }, this) : pokemonTypes && pokemonTypes.length > 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         className: "type-badges inline",
@@ -19567,32 +19608,32 @@ function GuessInput({ onGuess, gameIsOver, answerLength, pokemonTypes, isLoading
                                 size: "medium"
                             }, index, false, {
                                 fileName: "src/components/GuessInput/GuessInput.js",
-                                lineNumber: 50,
+                                lineNumber: 63,
                                 columnNumber: 25
                             }, this))
                     }, void 0, false, {
                         fileName: "src/components/GuessInput/GuessInput.js",
-                        lineNumber: 48,
+                        lineNumber: 61,
                         columnNumber: 17
                     }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
                         className: "type-badge unknown",
                         children: "unknown type"
                     }, void 0, false, {
                         fileName: "src/components/GuessInput/GuessInput.js",
-                        lineNumber: 59,
+                        lineNumber: 72,
                         columnNumber: 17
                     }, this),
                     "Pok\xe9mon"
                 ]
             }, void 0, true, {
                 fileName: "src/components/GuessInput/GuessInput.js",
-                lineNumber: 41,
+                lineNumber: 54,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/GuessInput/GuessInput.js",
-        lineNumber: 27,
+        lineNumber: 28,
         columnNumber: 12
     }, this);
 }
@@ -19607,7 +19648,7 @@ $RefreshReg$(_c, "GuessInput");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../TypeBadge":"3mrXh","../../assets/pokeball.svg":"g0Tu5","../../utils/soundManager":"6bIQp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"3mrXh":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../TypeBadge":"3mrXh","../../assets/pokeball.svg":"g0Tu5","../../utils/soundManager":"6bIQp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../assets/arrow-up.svg":"km1i2"}],"3mrXh":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>(0, _typeBadgeDefault.default));
@@ -20438,7 +20479,10 @@ module.exports = require("db4c6dba9263ac6a").getBundleURL("bLxZJ") + "victory-be
 },{"db4c6dba9263ac6a":"lgJ39"}],"i4dXv":[function(require,module,exports) {
 module.exports = require("c94dfdbca2d94f8f").getBundleURL("bLxZJ") + "gameboy-sound.2dd02bcf.mp3" + "?" + Date.now();
 
-},{"c94dfdbca2d94f8f":"lgJ39"}],"gYAQI":[function(require,module,exports) {
+},{"c94dfdbca2d94f8f":"lgJ39"}],"km1i2":[function(require,module,exports) {
+module.exports = require("1c3038cee4215f20").getBundleURL("bLxZJ") + "arrow-up.bb7ef4a8.svg" + "?" + Date.now();
+
+},{"1c3038cee4215f20":"lgJ39"}],"gYAQI":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$9eb3 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -20538,11 +20582,38 @@ var _pokeballOpenSvgDefault = parcelHelpers.interopDefault(_pokeballOpenSvg);
 var _soundManager = require("../../utils/soundManager");
 var _soundManagerDefault = parcelHelpers.interopDefault(_soundManager);
 var _s = $RefreshSig$();
-function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonName, isNewDiscovery, onOpenPokedex, onClose, catchCount }) {
+function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonName, isNewDiscovery, onOpenPokedex, onClose, catchCount }, ref) {
     _s();
     const [animationKey, setAnimationKey] = (0, _reactDefault.default).useState(0);
     const [pokemonCry, setPokemonCry] = (0, _reactDefault.default).useState(null);
     const [isLoadingCry, setIsLoadingCry] = (0, _reactDefault.default).useState(false);
+    const playAgainButtonRef = (0, _reactDefault.default).useRef(null);
+    // Expose focus method via ref so parent can restore focus when Pokedex closes
+    (0, _reactDefault.default).useImperativeHandle(ref, ()=>({
+            focus: ()=>{
+                playAgainButtonRef.current?.focus();
+            }
+        }));
+    // Auto-focus play again button when result is shown
+    (0, _reactDefault.default).useEffect(()=>{
+        playAgainButtonRef.current?.focus();
+    }, []);
+    // Handle Enter key press to play again
+    const handleKeyPress = (e)=>{
+        if (e.key === "Enter" && playAgainButtonRef.current === document.activeElement) {
+            e.preventDefault();
+            (0, _soundManagerDefault.default).playButtonClick3();
+            reset();
+        }
+    };
+    (0, _reactDefault.default).useEffect(()=>{
+        window.addEventListener("keydown", handleKeyPress);
+        return ()=>{
+            window.removeEventListener("keydown", handleKeyPress);
+        };
+    }, [
+        reset
+    ]);
     const handlePokeballClick = ()=>{
         (0, _soundManagerDefault.default).playButtonClick3();
         setAnimationKey((prev)=>prev + 1);
@@ -20653,7 +20724,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                 children: "\xd7"
             }, void 0, false, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 121,
+                lineNumber: 151,
                 columnNumber: 13
             }, this),
             pokemonId && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
@@ -20667,7 +20738,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                 }
             }, void 0, false, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 123,
+                lineNumber: 153,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -20687,14 +20758,14 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                     className: "pokeball-catch-animation"
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 135,
+                                    lineNumber: 165,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                                     className: "pokeball-catch-circle"
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 140,
+                                    lineNumber: 170,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("svg", {
@@ -20711,23 +20782,23 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                         points: "20,6 9,17 4,12"
                                     }, void 0, false, {
                                         fileName: "src/components/GameResult/GameResult.js",
-                                        lineNumber: 152,
+                                        lineNumber: 182,
                                         columnNumber: 29
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 141,
+                                    lineNumber: 171,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, `success-${animationKey}`, true, {
                             fileName: "src/components/GameResult/GameResult.js",
-                            lineNumber: 134,
+                            lineNumber: 164,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 133,
+                        lineNumber: 163,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -20740,7 +20811,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                     children: pokemonName || answer
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 157,
+                                    lineNumber: 187,
                                     columnNumber: 42
                                 }, this),
                                 " in ",
@@ -20751,18 +20822,18 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                             ]
                         }, void 0, true, {
                             fileName: "src/components/GameResult/GameResult.js",
-                            lineNumber: 157,
+                            lineNumber: 187,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 156,
+                        lineNumber: 186,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 132,
+                lineNumber: 162,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -20776,7 +20847,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                 children: pokemonName || answer
                             }, void 0, false, {
                                 fileName: "src/components/GameResult/GameResult.js",
-                                lineNumber: 164,
+                                lineNumber: 194,
                                 columnNumber: 39
                             }, this),
                             " ",
@@ -20785,7 +20856,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                         ]
                     }, void 0, true, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 163,
+                        lineNumber: 193,
                         columnNumber: 21
                     }, this),
                     " ",
@@ -20802,18 +20873,19 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                         children: "pok\xe9dex"
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 168,
+                        lineNumber: 198,
                         columnNumber: 17
                     }, this),
                     "."
                 ]
             }, void 0, true, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 161,
+                lineNumber: 191,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                 className: "play-again-button",
+                ref: playAgainButtonRef,
                 onClick: reset,
                 onMouseEnter: ()=>(0, _soundManagerDefault.default).playBubbleHover(),
                 children: [
@@ -20827,20 +20899,20 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                         }
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 178,
+                        lineNumber: 208,
                         columnNumber: 17
                     }, this),
                     "Play again"
                 ]
             }, void 0, true, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 177,
+                lineNumber: 207,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/GameResult/GameResult.js",
-        lineNumber: 120,
+        lineNumber: 150,
         columnNumber: 16
     }, this);
     else return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -20856,7 +20928,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                 children: "\xd7"
             }, void 0, false, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 184,
+                lineNumber: 214,
                 columnNumber: 13
             }, this),
             pokemonId && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
@@ -20870,7 +20942,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                 }
             }, void 0, false, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 186,
+                lineNumber: 216,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -20890,7 +20962,7 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                     className: "pokeball-fail-animation"
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 198,
+                                    lineNumber: 228,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
@@ -20899,25 +20971,25 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                     className: "pokeball-open-animation"
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 203,
+                                    lineNumber: 233,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                                     className: "pokeball-explosion-ring"
                                 }, void 0, false, {
                                     fileName: "src/components/GameResult/GameResult.js",
-                                    lineNumber: 208,
+                                    lineNumber: 238,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, `fail-${animationKey}`, true, {
                             fileName: "src/components/GameResult/GameResult.js",
-                            lineNumber: 197,
+                            lineNumber: 227,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 196,
+                        lineNumber: 226,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -20927,24 +20999,25 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                                 children: answer
                             }, void 0, false, {
                                 fileName: "src/components/GameResult/GameResult.js",
-                                lineNumber: 211,
+                                lineNumber: 241,
                                 columnNumber: 49
                             }, this),
                             "."
                         ]
                     }, void 0, true, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 211,
+                        lineNumber: 241,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 195,
+                lineNumber: 225,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                 className: "play-again-button",
+                ref: playAgainButtonRef,
                 onClick: reset,
                 onMouseEnter: ()=>(0, _soundManagerDefault.default).playBubbleHover(),
                 children: [
@@ -20958,28 +21031,29 @@ function GameResult({ answer, gameIsWon, guessCount, reset, pokemonId, pokemonNa
                         }
                     }, void 0, false, {
                         fileName: "src/components/GameResult/GameResult.js",
-                        lineNumber: 214,
+                        lineNumber: 244,
                         columnNumber: 17
                     }, this),
                     "Play again"
                 ]
             }, void 0, true, {
                 fileName: "src/components/GameResult/GameResult.js",
-                lineNumber: 213,
+                lineNumber: 243,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/GameResult/GameResult.js",
-        lineNumber: 183,
+        lineNumber: 213,
         columnNumber: 16
     }, this);
 }
-_s(GameResult, "7qWzzwLWWK3E442LAUlpapQhtDs=");
+_s(GameResult, "GHwcNZuewDwW1XsMkDQb8ODZyGc=");
 _c = GameResult;
-exports.default = GameResult;
-var _c;
+exports.default = /*#__PURE__*/ _c1 = (0, _reactDefault.default).forwardRef(GameResult);
+var _c, _c1;
 $RefreshReg$(_c, "GameResult");
+$RefreshReg$(_c1, "%default%");
 
   $parcel$ReactRefreshHelpers$6778.postlude(module);
 } finally {

@@ -364,7 +364,6 @@ h1 img {
 .guess-input-wrapper {
   flex-direction: column;
   gap: 8px;
-  height: 6.75rem;
   margin-bottom: 16px;
   animation: .3s ease-in-out fadeIn;
   display: flex;
@@ -405,6 +404,56 @@ h1 img {
   outline: none;
   transform: translateY(0)scale(1);
   box-shadow: 0 8px 32px #1f268733, inset 0 0 0 1px #ffffff1a;
+}
+
+.guess-input-container {
+  align-items: center;
+  gap: 8px;
+  display: flex;
+  position: relative;
+}
+
+.guess-input-container input {
+  flex: 1;
+}
+
+.guess-submit-button {
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  color: #fff;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  border: 1px solid #ef444480;
+  border-radius: 50%;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  font-size: 24px;
+  font-weight: bold;
+  transition: all .35s ease-in-out;
+  display: flex;
+  position: absolute;
+  right: 16px;
+  box-shadow: 0 8px 32px #1f268733, inset 0 0 0 1px #ffffff1a;
+}
+
+.guess-submit-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px #dc262666;
+}
+
+.guess-submit-button:active:not(:disabled) {
+  box-shadow: 0 4px 16px #1f268733, inset 0 0 0 1px #ffffff1a;
+}
+
+.guess-submit-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
 }
 
 .guess-input-desc {
@@ -3120,10 +3169,6 @@ input:checked + .slider:before {
     font-size: 15px;
   }
 
-  .guess-input-wrapper {
-    height: 5.5rem;
-  }
-
   .guess-input-wrapper input {
     padding: 6px 12px;
     font-size: 1.8rem;
@@ -3162,10 +3207,6 @@ input:checked + .slider:before {
     text-transform: capitalize;
   }
 
-  .guess-input-wrapper {
-    height: 4.8rem;
-  }
-
   .guess-input-wrapper input {
     padding: 3px 8px;
     font-size: 1.5rem;
@@ -3202,10 +3243,6 @@ input:checked + .slider:before {
     max-width: 8.5vh;
     max-height: 8.5vh;
     font-size: 1.4rem;
-  }
-
-  .guess-input-wrapper {
-    height: 4.5rem;
   }
 
   .guess-input-wrapper input {

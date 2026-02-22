@@ -383,7 +383,6 @@ h1 img {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  height: 6.75rem;
   animation: fadeIn 300ms ease-in-out;
   margin-bottom: 16px;
 }
@@ -425,6 +424,59 @@ h1 img {
     transform: translateY(0) scale(1);
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
     outline: none;
+}
+
+.guess-input-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    position: relative;
+}
+
+.guess-input-container input {
+    flex: 1;
+}
+
+.guess-submit-button {
+    position: absolute;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.35s ease-in-out;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    flex-shrink: 0;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.guess-submit-button:hover:not(:disabled) {
+    /* transition: all 250ms ease-in-out;
+    border-color: rgba(239, 68, 68, 0.7);
+    box-shadow: 0 8px 44px rgba(31, 38, 135, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.3), 0 4px 24px rgba(255, 68, 68, 0.5); */
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.guess-submit-button:active:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.guess-submit-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .guess-input-desc {
@@ -3019,10 +3071,6 @@ input:checked + .slider:before {
     font-size: 15px;
   }
   
-  .guess-input-wrapper {
-    height: 5.5rem;
-  }
-  
   .guess-input-wrapper input {
     font-size: 1.8rem;
     padding: 6px 12px;
@@ -3061,10 +3109,6 @@ input:checked + .slider:before {
     text-transform: capitalize;
   }
   
-  .guess-input-wrapper {
-    height: 4.8rem;
-  }
-  
   .guess-input-wrapper input {
     font-size: 1.5rem;
     padding: 3px 8px;
@@ -3101,10 +3145,6 @@ input:checked + .slider:before {
     max-height: 8.5vh;
     max-width: 8.5vh;
     font-size: 1.4rem;
-  }
-  
-  .guess-input-wrapper {
-    height: 4.5rem;
   }
   
   .guess-input-wrapper input {
