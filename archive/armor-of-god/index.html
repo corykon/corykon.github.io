@@ -28,11 +28,6 @@
         <img src="images/rabbit-running-regular-full.svg" alt="Game Speed" class="icon">
     </button>
     
-    <!-- Level Selector Button (for testing) -->
-    <button id="levelSelectorBtn" class="level-selector-btn" title="Select Level">
-        <span class="level-text">L1</span>
-    </button>
-    
     <!-- Speed Control Dropdown -->
     <div id="speedDropdown" class="speed-dropdown hidden">
         <div class="speed-dropdown-content">
@@ -47,10 +42,10 @@
         <div id="menuScreen" class="screen">
             <img src="images/armorOfGodTitleImage.png" alt="Armor of God Title" class="title-image">
             <h1>Armor of God</h1>
-            <p class="scripture">"Put on the whole armor of God, that ye may be able to stand against the wiles of the devil."<br>- Ephesians 6:11</p>
+            <p class="scripture">"Put on the whole armor of God..."<span class="scripture-reference">Ephesians 6:11</span></p>
             <div class="game-setup">
                 <div class="pet-selection">
-                    <span class="pet-label">Choose Companion:</span>
+                    <span class="pet-label">Companion:</span>
                     <div class="pet-options">
                         <button id="selectDog" class="pet-btn selected" data-pet="dog">
                             <img src="images/dog-ico.svg" alt="Dog" class="pet-icon"> Dog
@@ -60,11 +55,23 @@
                         </button>
                     </div>
                 </div>
+                <div id="levelSelection" class="level-selection hidden">
+                    <span class="pet-label">Level:</span>
+                    <div class="level-control">
+                        <button id="previousLevelBtn" class="level-nav-btn" type="button" aria-label="Previous level"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+                        <button id="levelSelectorBtn" class="level-chip" type="button" title="Choose level"><span id="levelSelectorText">L1: Clover Hills</span></button>
+                        <button id="nextLevelBtnMenu" class="level-nav-btn" type="button" aria-label="Next level"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+                    </div>
+                </div>
                 <button id="startBtn" class="menu-btn start-btn">Start Game</button>
             </div>
             <!-- Instructions moved to modal -->
             <div class="bottom-footer">
                 <a href="#" id="instructionsLink" class="instructions-link">How to Play</a>
+                <span class="footer-divider" aria-hidden="true">•</span>
+                <a href="#" id="creditsLink" class="instructions-link">Credits</a>
+                <span class="footer-divider" aria-hidden="true">•</span>
+                <a href="#" id="leaderboardLink" class="instructions-link leaderboard-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8v4a4 4 0 0 1-8 0V3Zm0 2H4v1a5 5 0 0 0 4 4.9M16 5h4v1a5 5 0 0 1-4 4.9M12 11v6m-4 4h8m-6-4h4"/></svg>Hall of Heroes</a>
             </div>
         </div>
 
@@ -140,12 +147,26 @@
                 <button id="mainMenuBtn2" class="menu-btn half-width">Main Menu</button>
             </div>
         </div>
+        <div id="leaderboardScreen" class="screen hidden">
+            <div class="leaderboard-frame">
+                <p class="leaderboard-kicker">ARMOR OF GOD</p>
+                <h1>HALL OF HEROES</h1>
+                <p id="leaderboardStatus" class="leaderboard-status" aria-live="polite">Loading the hall of heroes…</p>
+                <div id="leaderboardEntry" class="leaderboard-entry hidden">
+                    <label for="leaderboardName">ENTER YOUR NAME</label>
+                    <input id="leaderboardName" maxlength="10" autocomplete="off" spellcheck="false" aria-label="Your name, up to ten characters">
+                    <button id="leaderboardSubmitBtn" class="menu-btn leaderboard-submit">Save Score</button>
+                </div>
+                <div id="leaderboardHeading" class="leaderboard-heading"><span>RANK</span><span>NAME</span><span>DATE</span><span>SCORE</span></div>
+                <div id="leaderboardEntries" class="leaderboard-entries" aria-live="polite"></div>
+                <button id="leaderboardContinueBtn" class="menu-btn leaderboard-continue">Back to Main Menu</button>
+            </div>
+        </div>
         <div id="creditsScreen" class="screen hidden">
             <div class="credits-roll" aria-label="Armor of God credits">
                 <section class="credits-title">
                     <h1>ARMOR OF GOD</h1>
                     <img src="images/armorOfGodTitleImage.png" alt="Armor of God" class="credits-title-image">
-                    <p class="credits-complete-message">Game Completed.</p>
                 </section>
 
                 <section class="credits-card">
@@ -207,7 +228,7 @@
                 <button id="creditsMenuBtn" class="menu-btn">Main Menu</button>
             </div>
             <div class="credits-progress" aria-hidden="true"><div class="credits-progress-fill"></div></div>
-            <p class="credits-skip">SPACE: NEXT SECTION &nbsp;•&nbsp; ESC: SKIP CREDITS</p>
+            <p class="credits-skip"><span id="creditsBackControl" class="credits-control credits-control--disabled"><span class="credits-control-arrow">↑</span>BACK</span> &nbsp;•&nbsp; <span class="credits-control"><span class="credits-control-arrow">↓</span>NEXT</span> &nbsp;•&nbsp; ESC EXIT</p>
         </div>
     </div>
 
@@ -242,30 +263,7 @@
         </div>
     </div>
 
-    <!-- Load Firebase -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-            apiKey: "AIzaSyCDZtdslIA7IhzXFkOGRzzfFClNQ0VXDj4",
-            authDomain: "armor-of-god-a3820.firebaseapp.com",
-            projectId: "armor-of-god-a3820",
-            storageBucket: "armor-of-god-a3820.firebasestorage.app",
-            messagingSenderId: "164091299081",
-            appId: "1:164091299081:web:db27909f80afa2a9743fd8",
-            measurementId: "G-FETHTHEY2P"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-    </script>
+    <script type="module" src="js/firebase.js"></script>
 
     <!-- Load modular game files -->
     <script src="js/audio-manager.js"></script>
@@ -279,6 +277,7 @@
     <script src="js/character-renderer.js"></script>
     <script src="js/pet-manager.js"></script>
     <script src="js/boss-manager.js"></script>
+    <script src="js/high-score.js"></script>
     <script src="js/game-modular.js"></script>
 </body>
 </html>

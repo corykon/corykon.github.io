@@ -28,7 +28,7 @@ class UIRenderer {
     
     renderUI(ctx, player, booksCollected, audioManager, isPaused, gameState, hoveredButton = null, hasArmor = false, armorTimer = 0, armorDuration = 1800, comboMode = false, comboMultiplier = 1, airborneKills = 0, boss = null, heartImage = null) {
         // Health UI Panel
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.fillRect(20, 20, 155, 50);
         // Four copies of the pickup sprite make each 25% of health immediately legible.
         for (let i = 0; i < 4; i++) {
@@ -70,7 +70,7 @@ class UIRenderer {
         ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
         
         // Scriptures bar background
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         const barWidth = panelWidth - 20; // 10px padding on each side
         ctx.fillRect(panelX + 10, 30, barWidth, 15);
         
@@ -95,7 +95,7 @@ class UIRenderer {
             if (booksCollected >= 3) {
                 fillColor = '#FFD700'; // Gold when all 3 collected
             } else {
-                fillColor = '#4c688f'; // Navy blue matching the scripture books
+                fillColor = '#0A81FF'; // Scripture-progress blue
             }
         }
         ctx.fillStyle = fillColor;

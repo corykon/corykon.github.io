@@ -52,6 +52,7 @@ class AudioManager {
             stonesFalling: new Audio('sounds/stones-falling.mp3'),
             earthquakeRumble: new Audio('sounds/earthquake-rumble.mp3'),
             bossFight: new Audio('sounds/boss-fight.mp3'),
+            hallOfHeroes: new Audio('sounds/hall-of-heroes.mp3'),
             credits: new Audio('sounds/closing-credits.mp3')
         };
         
@@ -105,6 +106,7 @@ class AudioManager {
             golemPowerup: { loop: false, volume: 0.65},
             earthquakeRumble: { loop: false, volume: 1.0, fadeOutAfterMs: 1500, fadeOutDurationMs: 500},
             bossFight: { loop: true, volume: 0.45},
+            hallOfHeroes: { loop: true, volume: 0.4},
             credits: { loop: false, volume: 0.4}
         };
         

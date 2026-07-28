@@ -22,6 +22,7 @@ class ArmorOfGodGame {
         this.armorTimer = 0;
         this.armorDuration = 15 * 60; // 15 seconds at 60fps
         this.level = 1;
+        this.unlockedStageCount = this.loadUnlockedStageCount();
         
         // Level data
         this.levelData = {
@@ -35,6 +36,7 @@ class ArmorOfGodGame {
         this.booksCollected = 0;
         this.selectedPetType = 'dog'; // Default to dog
         this.creditsEndTimer = null;
+        this.creditsSectionCleanupTimer = null;
         
         // Scoring system
         this.score = 0; // Current level score
@@ -54,6 +56,7 @@ class ArmorOfGodGame {
         
         // Initialize scoring system
         this.initializeScoring();
+        this.highScoreBoard = new HighScoreBoard(this);
         
         // Load images
         this.templeImage = new Image();
@@ -190,6 +193,8 @@ class ArmorOfGodGame {
         // Setup event listeners
         this.inputHandler.setupEventListeners(this.canvas, this);
         this.setupMenuEvents();
+        this.setupCreditsKeyboardControls();
+        this.setLevelSelectorVisible(true);
         
         // Initialize game state for current level
         this.enemyManager.setLevel(this.level);
@@ -305,6 +310,15 @@ class ArmorOfGodGame {
             this.audioManager.playSoundEffect('modalOpen');
             this.showInstructionsModal();
         });
+
+        document.getElementById('creditsLink').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
+        });
+        document.getElementById('creditsLink').addEventListener('click', event => {
+            event.preventDefault();
+            this.audioManager.playSoundEffect('buttonClick');
+            this.startCredits();
+        });
         
         document.getElementById('closeModal').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
@@ -355,7 +369,7 @@ class ArmorOfGodGame {
             if (this.level === 1 || this.level === 2) {
                 this.startNextLevel();
             } else {
-                this.startCredits();
+                this.openFinalLeaderboard();
             }
         });
         
@@ -396,17 +410,23 @@ class ArmorOfGodGame {
             this.toggleSpeedDropdown();
         });
         
-        // Level selector button (for testing)
-        document.getElementById('levelSelectorBtn').addEventListener('click', () => {
-            // The selector is a pre-game setup control.  Never let a stale click change the
-            // current level while its world and background managers are already running.
-            if (this.gameState !== 'menu') return;
+        const selectLevel = direction => {
             this.audioManager.playSoundEffect('buttonClick');
-            this.cycleLevelSelector();
+            this.cycleLevelSelector(direction);
+        };
+        document.getElementById('previousLevelBtn').addEventListener('click', () => selectLevel(-1));
+        document.getElementById('nextLevelBtnMenu').addEventListener('click', () => selectLevel(1));
+        document.getElementById('levelSelectorBtn').addEventListener('click', () => selectLevel(1));
+        ['previousLevelBtn', 'nextLevelBtnMenu', 'levelSelectorBtn'].forEach(id => {
+            document.getElementById(id).addEventListener('mouseenter', () => this.audioManager.playSoundEffect('buttonHover'));
         });
-        
-        document.getElementById('levelSelectorBtn').addEventListener('mouseenter', () => {
+        document.getElementById('leaderboardLink').addEventListener('mouseenter', () => {
             this.audioManager.playSoundEffect('buttonHover');
+        });
+        document.getElementById('leaderboardLink').addEventListener('click', event => {
+            event.preventDefault();
+            this.audioManager.playSoundEffect('buttonClick');
+            this.highScoreBoard.open();
         });
         
         document.getElementById('speedToggleBtn').addEventListener('mouseenter', () => {
@@ -431,6 +451,25 @@ class ArmorOfGodGame {
         
         // Initialize pet control text
         this.updatePetControlText();
+    }
+
+    setupCreditsKeyboardControls() {
+        // Capture these keys before focused controls or browser scrolling can consume them.
+        document.addEventListener('keydown', event => {
+            if (this.gameState !== 'credits') return;
+            const key = event.key;
+            if (key === 'ArrowRight' || key === 'ArrowDown' || key === ' ') {
+                this.nextCreditsSection();
+            } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+                this.previousCreditsSection();
+            } else if (key === 'Escape') {
+                this.skipCredits();
+            } else {
+                return;
+            }
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }, true);
     }
     
     selectPet(petType) {
@@ -526,10 +565,17 @@ class ArmorOfGodGame {
         let bonusTotal = 0;
 
         
-        // Check for no damage bonus
+        // Reward players for reaching the temple healthy.
+        const healthBonus = Math.max(0, this.player.health) * 250;
+        if (healthBonus > 0) {
+            this.addScore(healthBonus, '#FF6B6B', `Health Bonus (${this.player.health} Hearts)`);
+            bonusTotal += healthBonus;
+        }
+
+        // A flawless level earns the larger no-damage bonus.
         if (this.damageTaken === 0) {
-            this.addScore(1000, '#00FF00', 'No Damage Bonus');
-            bonusTotal += 1000;
+            this.addScore(3000, '#00FF00', 'No Damage Bonus');
+            bonusTotal += 3000;
         }
         
         // Check for all enemies killed bonus - check if every individual snail has been killed
@@ -555,10 +601,6 @@ class ArmorOfGodGame {
     }
     
     startGame() {
-        if (this.level === 'credits') {
-            this.startCredits();
-            return;
-        }
         this.showLevelIntro();
     }
     
@@ -734,24 +776,43 @@ class ArmorOfGodGame {
         });
     }
     
-    cycleLevelSelector() {
+    cycleLevelSelector(direction = 1) {
         if (this.gameState !== 'menu') return;
-        // Cycle between levels 1-3, a direct boss-fight entry, and credits.
-        this.level = this.level === 1 ? 2 : (this.level === 2 ? 3 : (this.level === 3 ? 'boss' : (this.level === 'boss' ? 'credits' : 1)));
+        const selectableLevels = this.getUnlockedStages();
+        const currentIndex = selectableLevels.indexOf(this.level);
+        const safeIndex = currentIndex === -1 ? 0 : currentIndex;
+        this.level = selectableLevels[(safeIndex + direction + selectableLevels.length) % selectableLevels.length];
         this.updateLevelSelector();
         this.updateLevelIndicator();
     }
     
     updateLevelSelector() {
-        const levelBtn = document.getElementById('levelSelectorBtn');
-        const levelText = levelBtn.querySelector('.level-text');
-        levelText.textContent = this.level === 'boss' ? 'BF' : (this.level === 'credits' ? 'CR' : `L${this.level}`);
+        const levelText = document.getElementById('levelSelectorText');
+        levelText.textContent = this.level === 'boss' ? 'Boss Fight' : `L${this.level}: ${this.levelData[this.level].name}`;
     }
 
     setLevelSelectorVisible(visible) {
-        const levelBtn = document.getElementById('levelSelectorBtn');
-        levelBtn.classList.toggle('hidden', !visible);
-        levelBtn.disabled = !visible;
+        const levelSelection = document.getElementById('levelSelection');
+        const canChooseLevel = visible && (this.isDevelopmentMode() || this.unlockedStageCount > 1);
+        levelSelection.classList.toggle('hidden', !canChooseLevel);
+        levelSelection.querySelectorAll('button').forEach(button => { button.disabled = !canChooseLevel; });
+    }
+
+    getUnlockedStages() {
+        const stages = [1, 2, 3, 'boss'];
+        return this.isDevelopmentMode() ? stages : stages.slice(0, this.unlockedStageCount);
+    }
+
+    isDevelopmentMode() {
+        return ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+    }
+
+    unlockStage(stageCount) {
+        const nextCount = Math.max(this.unlockedStageCount, Math.min(stageCount, 4));
+        if (nextCount === this.unlockedStageCount) return;
+        this.unlockedStageCount = nextCount;
+        localStorage.setItem('armorOfGod_unlockedStageCount', String(nextCount));
+        this.setLevelSelectorVisible(this.gameState === 'menu');
     }
     
     updateLevelIndicator() {
@@ -759,8 +820,6 @@ class ArmorOfGodGame {
         const levelInfo = document.getElementById('levelInfo');
         if (this.level === 'boss') {
             levelInfo.textContent = 'Boss Fight: Stone Golem';
-        } else if (this.level === 'credits') {
-            levelInfo.textContent = 'Closing Credits';
         } else {
             levelInfo.textContent = `Level ${this.level}: ${levelData.name}`;
         }
@@ -783,6 +842,8 @@ class ArmorOfGodGame {
                 this.audioManager.playMusic('winner');
             } else if (this.gameState === 'gameOver') {
                 this.audioManager.playMusic('gameOver');
+            } else if (this.gameState === 'leaderboard') {
+                this.audioManager.playMusic('hallOfHeroes');
             } else if (this.gameState === 'credits') {
                 this.audioManager.playMusic('credits');
             }
@@ -829,6 +890,7 @@ class ArmorOfGodGame {
             'game': 'gameScreen',
             'gameOver': 'gameOverScreen',
             'levelComplete': 'levelCompleteScreen',
+            'leaderboard': 'leaderboardScreen',
             'credits': 'creditsScreen'
         };
         
@@ -883,7 +945,7 @@ class ArmorOfGodGame {
         if (nextLevelButton) {
             nextLevelButton.innerHTML = this.pendingLevelThreeBoss
                 ? 'Continue to Boss Fight <span class="chevron-icon">❯</span>'
-                : (this.level === 3 || this.level === 'boss' ? 'Go to Credits <span class="chevron-icon">❯</span>' : 'Next Level <span class="chevron-icon">❯</span>');
+                : (this.level === 3 || this.level === 'boss' ? 'Go to Leaderboard <span class="chevron-icon">❯</span>' : 'Next Level <span class="chevron-icon">❯</span>');
         }
     }
 
@@ -901,28 +963,34 @@ class ArmorOfGodGame {
         this.startCreditsSequence();
     }
 
+    openFinalLeaderboard() {
+        this.highScoreBoard.open(this.finalTotalScore || this.totalScore || 0);
+    }
+
     startCreditsSequence() {
         clearTimeout(this.creditsEndTimer);
         clearTimeout(this.creditsSectionTimer);
+        clearTimeout(this.creditsSectionCleanupTimer);
         this.creditsSectionIndex = 0;
         this.isAdvancingCreditsSection = false;
         this.creditsSections = Array.from(document.querySelectorAll('#creditsScreen .credits-roll > section'))
             .filter(section => section.textContent.trim() || section.querySelector('img'));
-        this.creditsSections.forEach(section => section.classList.remove('credits-section--active', 'credits-section--leaving'));
+        this.creditsSections.forEach(section => section.classList.remove('credits-section--active', 'credits-section--leaving', 'credits-section--reverse'));
         document.querySelector('.credits-finale').classList.remove('credits-finale--visible');
         document.querySelector('.credits-progress').classList.remove('hidden');
         this.showCreditsSection();
     }
 
-    showCreditsSection() {
+    showCreditsSection(reverse = false) {
         const section = this.creditsSections[this.creditsSectionIndex];
         if (!section) {
             this.showCreditsFinale();
             return;
         }
         const isTitle = section.classList.contains('credits-title');
-        const duration = 7000;
-        const progressDuration = 6000;
+        // Keep every credits card on screen 50% longer before automatically advancing.
+        const duration = 10500;
+        const progressDuration = 9000;
         this.currentCreditsSectionDuration = duration;
         this.currentCreditsProgressDuration = progressDuration;
         const progress = document.querySelector('.credits-progress');
@@ -932,8 +1000,10 @@ class ArmorOfGodGame {
         progress.classList.add('credits-progress--running');
         section.classList.remove('credits-section--leaving');
         section.classList.toggle('credits-section--title', isTitle);
+        section.classList.toggle('credits-section--reverse', reverse);
         section.style.setProperty('--credits-section-duration', `${duration}ms`);
         section.classList.add('credits-section--active');
+        this.updateCreditsControls();
         clearTimeout(this.creditsSectionTimer);
         this.creditsSectionTimer = setTimeout(() => this.nextCreditsSection(true), progressDuration);
     }
@@ -953,18 +1023,51 @@ class ArmorOfGodGame {
         const cleanupDelay = isAutomatic
             ? this.currentCreditsSectionDuration - this.currentCreditsProgressDuration + 50
             : 700;
-        setTimeout(() => section?.classList.remove('credits-section--active', 'credits-section--leaving'), cleanupDelay);
+        clearTimeout(this.creditsSectionCleanupTimer);
+        this.creditsSectionCleanupTimer = setTimeout(() => section?.classList.remove('credits-section--active', 'credits-section--leaving'), cleanupDelay);
+    }
+
+    previousCreditsSection() {
+        if (this.gameState !== 'credits' || !this.creditsSections || this.isAdvancingCreditsSection || this.creditsSectionIndex === 0) return;
+        clearTimeout(this.creditsSectionTimer);
+        clearTimeout(this.creditsSectionCleanupTimer);
+        this.isAdvancingCreditsSection = false;
+        const currentSection = this.creditsSections[this.creditsSectionIndex];
+
+        // If the finale is showing, return to the final credits card first.
+        if (this.creditsSectionIndex >= this.creditsSections.length) {
+            document.querySelector('.credits-finale').classList.remove('credits-finale--visible');
+            document.querySelector('.credits-progress').classList.remove('hidden');
+        }
+
+        this.creditsSections.forEach(section => {
+            if (section !== currentSection) section.classList.remove('credits-section--active', 'credits-section--leaving', 'credits-section--reverse', 'credits-section--leaving-back');
+        });
+        if (currentSection) {
+            currentSection.classList.remove('credits-section--active', 'credits-section--reverse');
+            currentSection.classList.add('credits-section--leaving-back');
+            this.creditsSectionCleanupTimer = setTimeout(() => currentSection.classList.remove('credits-section--leaving-back'), 700);
+        }
+        this.creditsSectionIndex--;
+        this.showCreditsSection(true);
+    }
+
+    updateCreditsControls() {
+        const backControl = document.getElementById('creditsBackControl');
+        if (backControl) backControl.classList.toggle('credits-control--disabled', this.creditsSectionIndex === 0);
     }
 
     showCreditsFinale() {
         document.querySelector('.credits-progress').classList.add('hidden');
         document.querySelector('.credits-finale').classList.add('credits-finale--visible');
+        this.updateCreditsControls();
     }
 
     skipCredits() {
         if (this.gameState !== 'credits') return;
         clearTimeout(this.creditsEndTimer);
         clearTimeout(this.creditsSectionTimer);
+        clearTimeout(this.creditsSectionCleanupTimer);
         this.isAdvancingCreditsSection = false;
         this.goToMainMenu();
     }
@@ -1554,6 +1657,7 @@ class ArmorOfGodGame {
         this.arrowManager.reset();
         this.levelEndTime = performance.now();
         this.pendingLevelThreeBoss = true;
+        this.unlockStage(4);
 
         // Settle pending points and calculate the same completion bonuses used by other levels.
         this.floatingScores.forEach(indicator => {
@@ -1580,6 +1684,8 @@ class ArmorOfGodGame {
     }
 
     enterBossArena() {
+        // Reaching the boss means Level 3 has been cleared, so keep it selectable later.
+        this.unlockStage(4);
         this.bossManager.active = true;
         this.bossFightCheckpoint = true;
         this.worldManager.createBossArena();
@@ -2053,6 +2159,9 @@ class ArmorOfGodGame {
         
         // Add bonuses immediately when celebration starts so they're visible
         this.calculateAndDisplayBonuses();
+        if (this.level === 1) this.unlockStage(2);
+        if (this.level === 2) this.unlockStage(3);
+        if (this.level === 3) this.unlockStage(4);
     }
     
     render() {
@@ -2190,6 +2299,11 @@ class ArmorOfGodGame {
     loadGameSpeedSetting() {
         const saved = localStorage.getItem('armorOfGod_gameSpeed');
         return saved !== null ? parseFloat(saved) : 1.0; // Default to 1.0x
+    }
+
+    loadUnlockedStageCount() {
+        const saved = Number.parseInt(localStorage.getItem('armorOfGod_unlockedStageCount'), 10);
+        return Number.isInteger(saved) && saved >= 1 && saved <= 4 ? saved : 1;
     }
     
     saveGameSpeedSetting() {

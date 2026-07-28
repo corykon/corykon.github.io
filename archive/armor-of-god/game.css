@@ -152,6 +152,27 @@
     text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
 }
 
+.leaderboard-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 200px;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .8);
+    border: 2px solid #fff;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .4);
+}
+
+.leaderboard-toggle-btn:hover { transform: translateY(-2px); background: rgba(0, 0, 0, .95); }
+.leaderboard-toggle-btn svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
 /* Speed Dropdown */
 .speed-dropdown {
     position: fixed;
@@ -283,14 +304,30 @@ body {
 
 .credits-section--active {
     animation: creditsSection var(--credits-section-duration, 7s) cubic-bezier(.22, .8, .25, 1) forwards;
+    pointer-events: auto;
+}
+
+.credits-section--active.credits-section--reverse {
+    animation-name: creditsSectionBack;
 }
 
 .credits-section--active.credits-section--title {
     animation-name: creditsTitleSection;
 }
 
+/* The title has a custom forward animation, so explicitly restore the
+   top-down reverse animation when stepping back to it. */
+.credits-section--active.credits-section--title.credits-section--reverse {
+    animation-name: creditsSectionBack;
+}
+
 .credits-section--leaving {
     animation: creditsSectionExit .7s ease-in-out forwards;
+}
+
+.credits-section--leaving-back {
+    animation: creditsSectionExitBack .7s ease-in-out forwards;
+    pointer-events: none;
 }
 
 .credits-title h1,
@@ -359,7 +396,7 @@ body {
 .credits-progress {
     position: absolute;
     left: 50%;
-    bottom: 41px;
+    bottom: 62px;
     width: min(430px, 62vw);
     height: 5px;
     overflow: hidden;
@@ -393,6 +430,25 @@ body {
     white-space: nowrap;
 }
 
+.credits-control-arrow {
+    display: inline-flex;
+    width: 16px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    color: #fff;
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+    vertical-align: middle;
+    transform: translateY(-1px);
+}
+
+.credits-control--disabled {
+    opacity: .38;
+}
+
 .credits-finale--visible ~ .credits-skip {
     display: none;
 }
@@ -408,6 +464,17 @@ body {
 @keyframes creditsSectionExit {
     from { opacity: 1; transform: translate(-50%, -50%); }
     to { opacity: 0; transform: translate(-50%, -165vh); }
+}
+
+@keyframes creditsSectionBack {
+    0% { opacity: 0; transform: translate(-50%, -165vh) scale(.8); }
+    4% { opacity: 1; }
+    24%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes creditsSectionExitBack {
+    from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    to { opacity: 0; transform: translate(-50%, 120vh) scale(.8); }
 }
 
 @keyframes creditsTitleSection {
@@ -432,6 +499,34 @@ body {
 #menuScreen {
     background: linear-gradient(135deg, #222, #444);
 }
+
+/* Arcade leaderboard */
+#leaderboardScreen { background: radial-gradient(circle at 50% 0%, #373b64 0, #17192d 44%, #090a13 100%); padding: 16px; }
+.leaderboard-frame { width: min(920px, 100%); max-height: calc(100vh - 32px); padding: clamp(18px, 3vw, 38px); border: 4px solid #ffd700; background: rgba(4, 7, 20, .9); box-shadow: 0 0 0 5px #7b4e11, 0 0 42px rgba(255, 215, 0, .35); }
+.leaderboard-kicker { color: #8ee7ff; font-size: 11px; letter-spacing: 2px; }
+.leaderboard-frame h1 { margin: 15px 0; color: #ffd700; font-size: clamp(24px, 4vw, 46px); text-shadow: 4px 4px #7b4e11; }
+.leaderboard-status { min-height: 22px; color: #fff; font-size: clamp(10px, 1.4vw, 14px); line-height: 1.6; }
+.leaderboard-entry { margin: 20px auto; }
+.leaderboard-entry label { display: block; margin-bottom: 12px; color: #8ee7ff; font-size: 12px; }
+#leaderboardName { width: min(540px, 90%); padding: 16px; border: 3px solid #fff; outline: none; background: #11172b; color: #ffd700; font: 26px 'Press Start 2P', monospace; text-align: center; text-transform: uppercase; }
+#leaderboardName:focus { border-color: #ffd700; box-shadow: 0 0 18px rgba(255, 215, 0, .5); }
+.leaderboard-submit { display: block; margin: 16px auto 0; }
+.leaderboard-heading, .leaderboard-row { display: grid; grid-template-columns: 65px 1.45fr 1.2fr 1.1fr; gap: 10px; align-items: center; text-align: left; }
+.leaderboard-heading { padding: 12px 14px; color: #8ee7ff; border-bottom: 2px solid #8ee7ff; font-size: 10px; }
+.leaderboard-entries { min-height: 100px; max-height: min(37vh, 355px); overflow-y: auto; color: #fff; font-size: clamp(9px, 1.3vw, 12px); }
+.leaderboard-entries--notice { margin: 16px 0; }
+.leaderboard-row { min-height: 48px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.14); line-height: 1.5; }
+.leaderboard-row:nth-child(-n+3) { color: #ffd700; }
+.leaderboard-row--highlighted { background: rgba(40, 167, 69, .35); color: #fff !important; outline: 2px solid #34ce57; }
+.leaderboard-row span:last-child { text-align: right; }
+.leaderboard-continue { margin-top: 18px; background: #28a745; border-color: #1e7e34; }
+.leaderboard-continue:hover { background: #34ce57; }
+.leaderboard-notice { min-height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; border: 2px dashed rgba(142, 231, 255, .65); background: linear-gradient(135deg, rgba(142, 231, 255, .1), rgba(255, 215, 0, .06)); text-align: center; }
+.leaderboard-notice-icon { width: 48px; height: 48px; display: grid; place-items: center; border: 2px solid #ffd700; border-radius: 50%; color: #ffd700; font-size: 26px; }
+.leaderboard-notice h2 { color: #ffd700; font-size: clamp(14px, 2vw, 20px); line-height: 1.5; }
+.leaderboard-notice p { max-width: 560px; color: #dbeeff; font-size: clamp(9px, 1.3vw, 12px); line-height: 1.9; }
+.leaderboard-notice--offline { border-color: rgba(255, 116, 116, .75); background: rgba(115, 24, 35, .22); }
+.leaderboard-notice--offline .leaderboard-notice-icon, .leaderboard-notice--offline h2 { color: #ff8b8b; border-color: #ff8b8b; }
 
 .title-image {
     max-width: 400px;
@@ -466,6 +561,13 @@ body {
     margin-bottom: 30px;
     max-width: 800px;
     color: #e6e6e6;
+}
+
+.scripture-reference {
+    display: block;
+    margin-top: 5px;
+    font-size: .8em;
+    opacity: .6;
 }
 
 .menu-options {
@@ -540,8 +642,57 @@ body {
     padding: 20px;
     border-radius: 15px;
     border: 1px solid gold;
-    max-width: 500px;
+    /* 582px outer width leaves 540px of usable content after 20px side padding and borders. */
+    width: min(582px, calc(100vw - 40px));
+    max-width: 582px;
 }
+
+.level-selection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.pet-selection, .level-selection {
+    min-height: 70px;
+    width: 100%;
+}
+
+.level-control {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.level-nav-btn, .level-chip {
+    font-family: 'Press Start 2P', monospace;
+    border: 2px solid #ffd700;
+    background: rgba(0, 0, 0, .35);
+    color: #fff;
+    cursor: pointer;
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.level-nav-btn {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+}
+
+.level-nav-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+#previousLevelBtn { border-radius: 8px 0 0 8px; }
+#nextLevelBtnMenu { border-radius: 0 8px 8px 0; }
+
+.level-chip { width: 280px; min-width: 280px; padding: 12px 10px; font-size: 10px; white-space: nowrap; }
+.level-nav-btn:hover, .level-chip:hover { background: rgba(255, 215, 0, .2); transform: translateY(-2px); box-shadow: 0 0 10px rgba(255, 215, 0, .4); }
 
 /* Pet Selection Styles */
 .pet-selection {
@@ -552,6 +703,10 @@ body {
     padding: 10px 20px;
     border-radius: 25px;
     background: rgba(0, 0, 0, 0.2);
+}
+
+.pet-selection, .level-selection {
+    justify-content: space-between;
 }
 
 .pet-label {
@@ -683,6 +838,14 @@ body {
     color: #fff;
     text-decoration: none;
 }
+
+.footer-divider {
+    margin: 0 12px;
+    color: rgba(255, 255, 255, .55);
+}
+
+.leaderboard-link { display: inline-flex; align-items: center; gap: 6px; }
+.leaderboard-link svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Game Screen Styles */
 #gameScreen {

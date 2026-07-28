@@ -168,6 +168,16 @@ class InputHandler {
             e.preventDefault();
             return;
         }
+        if (this.game.gameState === 'credits' && ['ArrowRight', 'ArrowDown'].includes(e.code)) {
+            this.game.nextCreditsSection();
+            e.preventDefault();
+            return;
+        }
+        if (this.game.gameState === 'credits' && ['ArrowLeft', 'ArrowUp'].includes(e.code)) {
+            this.game.previousCreditsSection();
+            e.preventDefault();
+            return;
+        }
 
         // Handle level intro screen
         if (this.game.gameState === 'levelIntro') {
