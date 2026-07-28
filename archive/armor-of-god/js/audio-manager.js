@@ -211,6 +211,24 @@ class AudioManager {
         }, duration / steps);
     }
 
+    fadeOutSound(soundKey, duration = 1000) {
+        const sound = this.audio[soundKey];
+        if (!sound || sound.paused || !this.audioEnabled) return;
+        const startingVolume = sound.volume;
+        const steps = 20;
+        let step = 0;
+        const fadeTimer = setInterval(() => {
+            step++;
+            sound.volume = startingVolume * Math.max(0, 1 - step / steps);
+            if (step >= steps) {
+                clearInterval(fadeTimer);
+                sound.pause();
+                sound.currentTime = 0;
+                sound.volume = startingVolume;
+            }
+        }, duration / steps);
+    }
+
     crossfadeToMusic(musicKey, duration = 2000) {
         const incoming = this.audio[musicKey];
         const outgoing = this.currentMusic;
@@ -220,20 +238,25 @@ class AudioManager {
             return;
         }
         const outgoingVolume = outgoing?.volume ?? 0;
+        const incomingVolume = incoming.volume;
         incoming.currentTime = 0;
+        incoming.volume = 0;
         incoming.play().catch(() => {});
         this.currentMusic = incoming;
-        if (!outgoing) return;
         const steps = 20;
         let step = 0;
         const fadeTimer = setInterval(() => {
             step++;
-            outgoing.volume = outgoingVolume * Math.max(0, 1 - step / steps);
+            if (outgoing) outgoing.volume = outgoingVolume * Math.max(0, 1 - step / steps);
+            incoming.volume = incomingVolume * Math.min(1, step / steps);
             if (step >= steps) {
                 clearInterval(fadeTimer);
-                outgoing.pause();
-                outgoing.currentTime = 0;
-                outgoing.volume = outgoingVolume;
+                if (outgoing) {
+                    outgoing.pause();
+                    outgoing.currentTime = 0;
+                    outgoing.volume = outgoingVolume;
+                }
+                incoming.volume = incomingVolume;
             }
         }, duration / steps);
     }

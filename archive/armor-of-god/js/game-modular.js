@@ -655,11 +655,18 @@ class ArmorOfGodGame {
         if (index === 2) {
             this.cutsceneBadNewsStarted = false;
             this.cutsceneThunderStarted = false;
+            this.cutsceneDarkBarkPlayed = false;
             this.cutsceneVideoThreeSlowed = false;
         }
         if (index === 1) this.cutscenePeacefulFadeStarted = false;
-        if (index === 3) this.cutsceneBossMusicStarted = false;
-        if (index === 4) this.audioManager.fadeOutCurrentMusic(3000);
+        if (index === 3) {
+            this.cutsceneBossMusicStarted = false;
+            this.cutsceneVideoFourSlowed = false;
+        }
+        if (index === 4) {
+            this.cutsceneThunderFadeStarted = false;
+            this.audioManager.fadeOutCurrentMusic(3000);
+        }
         if (incoming.videoWidth && incoming.videoHeight) document.getElementById('cutsceneFrame').style.aspectRatio = `${incoming.videoWidth} / ${incoming.videoHeight}`;
         incoming.currentTime = 0;
         incoming.playbackRate = index === 1 ? 0.8 : 1;
@@ -672,14 +679,18 @@ class ArmorOfGodGame {
                 this.cutscenePeacefulFadeStarted = true;
                 this.audioManager.fadeOutCurrentMusic(2000);
             }
-            if (index === 2 && !this.cutsceneBadNewsStarted && incoming.currentTime >= 1.5) {
+            if (index === 2 && !this.cutsceneBadNewsStarted && incoming.currentTime >= 0.5) {
                 this.cutsceneBadNewsStarted = true;
-                this.audioManager.playMusic('openingBadNews');
+                this.audioManager.crossfadeToMusic('openingBadNews', 2000);
             }
             if (index === 2 && !this.cutsceneThunderStarted && incoming.currentTime >= 2) {
                 this.cutsceneThunderStarted = true;
                 const thunder = this.audioManager.audio.thunderAmbience;
                 if (this.audioManager.audioEnabled) thunder.play().catch(() => {});
+            }
+            if (index === 2 && !this.cutsceneDarkBarkPlayed && incoming.currentTime >= 4) {
+                this.cutsceneDarkBarkPlayed = true;
+                this.audioManager.playSound('bark1');
             }
             if (index === 2 && !this.cutsceneVideoThreeSlowed && incoming.currentTime >= 3.3) {
                 this.cutsceneVideoThreeSlowed = true;
@@ -687,7 +698,15 @@ class ArmorOfGodGame {
             }
             if (index === 3 && !this.cutsceneBossMusicStarted && incoming.currentTime >= 2) {
                 this.cutsceneBossMusicStarted = true;
-                this.audioManager.crossfadeToMusic('openingBadNewsFinal', 2000);
+                this.audioManager.crossfadeToMusic('openingBadNewsFinal', 3000);
+            }
+            if (index === 3 && !this.cutsceneVideoFourSlowed && incoming.currentTime >= 2) {
+                this.cutsceneVideoFourSlowed = true;
+                incoming.playbackRate = 0.8;
+            }
+            if (index === 4 && !this.cutsceneThunderFadeStarted && incoming.duration && incoming.currentTime >= incoming.duration - 3) {
+                this.cutsceneThunderFadeStarted = true;
+                this.audioManager.fadeOutSound('thunderAmbience', 2000);
             }
             const fadeDuration = index === 1 ? 2 : 0.8;
             if (incoming.duration && !this.cutsceneTransitioning && index < 4 && incoming.currentTime >= incoming.duration - fadeDuration) this.advanceCutscene(index);

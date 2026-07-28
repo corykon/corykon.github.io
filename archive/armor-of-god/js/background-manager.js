@@ -19,6 +19,56 @@ class BackgroundManager {
         // Initialize parallax layers (from back to front)
         this.initializeLayers();
     }
+
+    // Canvas gradients are built from OKLCH values, then converted to sRGB. That
+    // lets each dawn/dusk hue change at a much more even perceived brightness.
+    oklchToRgb([lightness, chroma, hue]) {
+        const radians = hue * Math.PI / 180;
+        const a = chroma * Math.cos(radians);
+        const b = chroma * Math.sin(radians);
+        const l = Math.pow(lightness + 0.3963377774 * a + 0.2158037573 * b, 3);
+        const m = Math.pow(lightness - 0.1055613458 * a - 0.0638541728 * b, 3);
+        const s = Math.pow(lightness - 0.0894841775 * a - 1.291485548 * b, 3);
+        const linear = [
+            4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+            -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+            -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s
+        ];
+        const toSrgb = value => {
+            const encoded = value <= 0.0031308
+                ? 12.92 * value
+                : 1.055 * Math.pow(value, 1 / 2.4) - 0.055;
+            return Math.round(Math.min(1, Math.max(0, encoded)) * 255);
+        };
+        return `rgb(${linear.map(toSrgb).join(', ')})`;
+    }
+
+    smoothstep(value) {
+        const t = Math.min(1, Math.max(0, value));
+        return t * t * (3 - 2 * t);
+    }
+
+    interpolateOklch(from, to, amount) {
+        const t = this.smoothstep(amount);
+        const hueDelta = ((to[2] - from[2] + 540) % 360) - 180;
+        return [
+            from[0] + (to[0] - from[0]) * t,
+            from[1] + (to[1] - from[1]) * t,
+            (from[2] + hueDelta * t + 360) % 360
+        ];
+    }
+
+    drawOklchGradient(ctx, width, height, fromPalette, toPalette = fromPalette, amount = 0) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        fromPalette.forEach((stop, index) => {
+            gradient.addColorStop(
+                stop[0],
+                this.oklchToRgb(this.interpolateOklch(stop[1], toPalette[index][1], amount))
+            );
+        });
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+    }
     
     loadImages() {
         const imageUrls = {
@@ -262,52 +312,27 @@ class BackgroundManager {
         }
         const progress = Math.min(elapsedTime / sunsetDuration, 1);
         
-        // Create base canvas for blending
+        // Blend each sky stop in OKLCH instead of alpha-stacking separate RGB
+        // gradients. The result avoids the dull, muddy midpoint that RGB fades
+        // often create around twilight.
+        const earlySunset = [
+            [0, [0.70, 0.19, 45]], [0.3, [0.76, 0.17, 62]],
+            [0.7, [0.66, 0.21, 35]], [1, [0.48, 0.12, 52]]
+        ];
+        const twilight = [
+            [0, [0.43, 0.20, 335]], [0.3, [0.34, 0.18, 300]],
+            [0.7, [0.27, 0.12, 285]], [1, [0.22, 0.09, 275]]
+        ];
+        const night = [
+            [0, [0.22, 0.05, 275]], [0.3, [0.19, 0.05, 265]],
+            [0.7, [0.14, 0.04, 275]], [1, [0.10, 0.02, 270]]
+        ];
+
         ctx.save();
-        
-        // Phase 1: Early sunset (0-20%) - sun setting
-        const crossfade = 0.03; // 3% crossfade duration
-        const phase1Alpha = progress <= 0.2 ? 1 : 
-            progress <= 0.2 + crossfade ? 1 - ((progress - 0.2) / crossfade) : 0;
-        if (phase1Alpha > 0) {
-            ctx.globalAlpha = phase1Alpha;
-            const gradient1 = ctx.createLinearGradient(0, 0, 0, canvasHeight);
-            gradient1.addColorStop(0, '#FF6B35');      // Orange sky
-            gradient1.addColorStop(0.3, '#F7931E');    // Deep orange
-            gradient1.addColorStop(0.7, '#FF4500');    // Red orange
-            gradient1.addColorStop(1, '#8B4513');      // Saddle brown
-            ctx.fillStyle = gradient1;
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        }
-        
-        // Phase 2: Deep sunset (20-25%) - twilight
-        const phase2Alpha = progress < 0.2 - crossfade ? 0 :
-            progress < 0.2 ? (progress - (0.2 - crossfade)) / crossfade :
-            progress <= 0.25 ? 1 :
-            progress <= 0.25 + crossfade ? 1 - ((progress - 0.25) / crossfade) : 0;
-        if (phase2Alpha > 0) {
-            ctx.globalAlpha = phase2Alpha;
-            const gradient2 = ctx.createLinearGradient(0, 0, 0, canvasHeight);
-            gradient2.addColorStop(0, '#8B008B');      // Dark magenta
-            gradient2.addColorStop(0.3, '#4B0082');    // Indigo
-            gradient2.addColorStop(0.7, '#2F1B69');    // Dark slate blue
-            gradient2.addColorStop(1, '#191970');      // Midnight blue
-            ctx.fillStyle = gradient2;
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        }
-        
-        // Phase 3: Night (25-100%) - moon rising
-        const phase3Alpha = progress < 0.25 - crossfade ? 0 :
-            progress < 0.25 ? (progress - (0.25 - crossfade)) / crossfade : 1;
-        if (phase3Alpha > 0) {
-            ctx.globalAlpha = phase3Alpha;
-            const gradient3 = ctx.createLinearGradient(0, 0, 0, canvasHeight);
-            gradient3.addColorStop(0, '#1a1a2e');      // Very dark blue
-            gradient3.addColorStop(0.3, '#16213e');    // Dark navy
-            gradient3.addColorStop(0.7, '#0f0f23');    // Almost black
-            gradient3.addColorStop(1, '#0a0a0a');      // Near black
-            ctx.fillStyle = gradient3;
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        if (progress < 0.2) {
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, earlySunset, twilight, progress / 0.2);
+        } else {
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, twilight, night, (progress - 0.2) / 0.12);
         }
         
         ctx.restore();
@@ -473,19 +498,29 @@ class BackgroundManager {
         if (!this.sunriseStartTime) {
             this.sunriseStartTime = currentTime;
         }
+
+        const night = [
+            [0, [0.22, 0.05, 275]], [0.3, [0.19, 0.05, 265]],
+            [0.7, [0.14, 0.04, 275]], [1, [0.10, 0.02, 270]]
+        ];
+        const preDawn = [
+            [0, [0.28, 0.09, 285]], [0.3, [0.25, 0.13, 290]],
+            [0.7, [0.31, 0.17, 305]], [1, [0.18, 0.06, 275]]
+        ];
+        const sunrise = [
+            [0, [0.72, 0.17, 48]], [0.3, [0.70, 0.17, 355]],
+            [0.7, [0.83, 0.17, 92]], [1, [0.55, 0.13, 50]]
+        ];
+        const daylight = [
+            [0, [0.82, 0.08, 225]], [0.3, [0.86, 0.06, 220]],
+            [0.7, [0.92, 0.04, 215]], [1, [0.97, 0.02, 215]]
+        ];
         
         const timeSinceStart = currentTime - this.sunriseStartTime;
         
         // Don't start sunrise until delay period is over
         if (timeSinceStart < sunriseDelay) {
-            // Night background before sunrise starts
-            const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
-            gradient.addColorStop(0, '#1a1a2e');
-            gradient.addColorStop(0.3, '#16213e');
-            gradient.addColorStop(0.7, '#0f0f23');
-            gradient.addColorStop(1, '#0a0a0a');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, night);
             return;
         }
         
@@ -509,49 +544,12 @@ class BackgroundManager {
         
         ctx.save();
         
-        // Phase 1: Night to pre-dawn (0-25%) - dark to deep purple
-        const crossfade = 0.05; // 5% crossfade duration
-        const phase1Alpha = progress <= 0.25 ? 1 : 
-            progress <= 0.25 + crossfade ? 1 - ((progress - 0.25) / crossfade) : 0;
-        if (phase1Alpha > 0) {
-            ctx.globalAlpha = phase1Alpha;
-            const gradient1 = ctx.createLinearGradient(0, 0, 0, canvasHeight);
-            gradient1.addColorStop(0, '#1a1a2e');
-            gradient1.addColorStop(0.3, '#2F1B69');
-            gradient1.addColorStop(0.7, '#4B0082');
-            gradient1.addColorStop(1, '#0f0f23');
-            ctx.fillStyle = gradient1;
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        }
-        
-        // Phase 2: Pre-dawn to sunrise (25-60%) - purple to orange/pink
-        const phase2Alpha = progress < 0.25 - crossfade ? 0 :
-            progress < 0.25 ? (progress - (0.25 - crossfade)) / crossfade :
-            progress <= 0.6 ? 1 :
-            progress <= 0.6 + crossfade ? 1 - ((progress - 0.6) / crossfade) : 0;
-        if (phase2Alpha > 0) {
-            ctx.globalAlpha = phase2Alpha;
-            const gradient2 = ctx.createLinearGradient(0, 0, 0, canvasHeight);
-            gradient2.addColorStop(0, '#FF6B35');    // Orange sky
-            gradient2.addColorStop(0.2, '#FF69B4');  // Hot pink
-            gradient2.addColorStop(0.5, '#FFD700');  // Gold
-            gradient2.addColorStop(0.8, '#FF4500');  // Orange red
-            gradient2.addColorStop(1, '#8B4513');    // Saddle brown
-            ctx.fillStyle = gradient2;
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        }
-        
-        // Phase 3: Full day (60-100%) - normal blue sky
-        const phase3Alpha = progress < 0.6 - crossfade ? 0 :
-            progress < 0.6 ? (progress - (0.6 - crossfade)) / crossfade : 1;
-        if (phase3Alpha > 0) {
-            ctx.globalAlpha = phase3Alpha;
-            const gradient3 = ctx.createLinearGradient(0, 0, 0, canvasHeight);
-            gradient3.addColorStop(0, '#87CEEB');    // Sky blue
-            gradient3.addColorStop(0.7, '#B0E0E6');  // Powder blue
-            gradient3.addColorStop(1, '#F0F8FF');    // Alice blue
-            ctx.fillStyle = gradient3;
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        if (progress < 0.25) {
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, night, preDawn, progress / 0.25);
+        } else if (progress < 0.6) {
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, preDawn, sunrise, (progress - 0.25) / 0.35);
+        } else {
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, sunrise, daylight, (progress - 0.6) / 0.4);
         }
         
         ctx.restore();
@@ -661,7 +659,7 @@ class BackgroundManager {
         this.cumulativeCloudOffset = 0;
     }
     
-    renderMountainSunrise(ctx, cameraX, canvasWidth, canvasHeight, gameState = 'playing') {
+    renderMountainSunriseLegacy(ctx, cameraX, canvasWidth, canvasHeight, gameState = 'playing') {
         // Ensure we have valid canvas dimensions
         if (!canvasWidth || !canvasHeight) return;
         
