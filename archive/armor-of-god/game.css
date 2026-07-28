@@ -1,10 +1,12 @@
 /* Armor of God Game Styles */
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+html {
+    background: linear-gradient(135deg, #111, #222, #333, #222, #111);
 }
 
 /* Audio Toggle Button */
@@ -243,7 +245,7 @@
 
 body {
     font-family: 'Press Start 2P', monospace;
-    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    background: linear-gradient(135deg, #111, #222, #333, #222, #111);
     color: #fff;
     overflow: hidden;
 }
@@ -497,7 +499,27 @@ body {
 
 /* Menu Screen Styles */
 #menuScreen {
-    background: linear-gradient(135deg, #222, #444);
+    background: linear-gradient(135deg, #111, #222, #333, #222, #111);
+    opacity: 0;
+    transform: translateY(8px);
+    position: relative;
+    overflow: hidden;
+}
+
+#menuScreen > :not(.bottom-footer) {
+    position: relative;
+    z-index: 1;
+}
+
+#menuScreen .bottom-footer { z-index: 1; }
+
+body.menu-ready #menuScreen {
+    animation: menuReveal .65s ease-out forwards;
+}
+
+@keyframes menuReveal {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Arcade leaderboard */
@@ -1372,6 +1394,38 @@ body {
     animation: stars 20s linear infinite;
 }
 
+#levelIntroScreen.level-intro--exiting {
+    animation: levelIntroExit .5s ease-in forwards;
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+}
+
+@keyframes levelIntroExit {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+#gameScreen.game-screen--entering { position: absolute; inset: 0; animation: gameScreenEnter .5s ease-out forwards; }
+#gameScreen.game-screen--entering #gameCanvas { animation: gameCanvasEnter .5s ease-out forwards; }
+#gameScreen.game-screen--entering #levelInfo,
+#gameScreen.game-screen--entering #gameUI,
+#gameScreen.game-screen--entering #controlsReminder { animation: gameElementEnter .4s ease-out .08s both; }
+@keyframes gameScreenEnter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes gameCanvasEnter { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: scale(1); } }
+@keyframes gameElementEnter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+#cutsceneScreen { position: relative; overflow: hidden; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+#cutsceneScreen::before { content: ''; position: absolute; inset: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.15)"/></svg>') repeat; animation: stars 20s linear infinite; }
+.cutscene-frame { position: relative; z-index: 1; width: min(500px, 90vw); aspect-ratio: 16 / 9; overflow: hidden; border: 3px solid #ffd700; background: #05070f; box-shadow: 0 0 28px rgba(255, 215, 0, .28); }
+.cutscene-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity .8s ease-in-out; }
+.cutscene-video--visible { opacity: 1; }
+.cutscene-loading { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; color: #ffd700; font-size: 12px; background: #05070f; }
+.cutscene-loading.hidden { display: none; }
+.cutscene-spinner { width: 28px; height: 28px; border: 4px solid rgba(255, 215, 0, .25); border-top-color: #ffd700; border-radius: 50%; animation: cutsceneSpin .8s linear infinite; }
+.cutscene-skip { position: relative; z-index: 1; margin-top: 12px; padding: 6px 10px; border-radius: 5px; background: rgba(0, 0, 0, .5); color: rgba(255,255,255,.55); font-size: 9px; }
+@keyframes cutsceneSpin { to { transform: rotate(360deg); } }
+
 @keyframes stars {
     0% { transform: translateY(0px); }
     100% { transform: translateY(-100px); }
@@ -1462,6 +1516,15 @@ body {
     opacity: 0;
     animation: fadeInScale 1.2s ease-out 3s forwards;
     margin: 20px 0;
+}
+
+.level-intro--fast-forward .level-intro-rush-target {
+    animation: levelIntroRush .35s ease-out forwards !important;
+}
+
+@keyframes levelIntroRush {
+    from { opacity: 0; transform: translateY(16px) scale(.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 #startLevelBtn {

@@ -13,6 +13,7 @@ class ArmorOfGodGame {
         this.surfaceCaveExit = null;
         this.postBossTempleCelebrated = false;
         this.pendingLevelThreeBoss = false;
+        this.completedGameRun = false;
         
         // Temple entrance sequence properties
         this.templeEntranceTimer = 0;
@@ -37,6 +38,9 @@ class ArmorOfGodGame {
         this.selectedPetType = 'dog'; // Default to dog
         this.creditsEndTimer = null;
         this.creditsSectionCleanupTimer = null;
+        this.cutsceneSources = [1, 2, 3, 4, 5].map(number => `cutscenes/opening-${number}.mp4`);
+        this.cutscenePreloadPromise = null;
+        this.cutsceneRunId = 0;
         
         // Scoring system
         this.score = 0; // Current level score
@@ -207,6 +211,9 @@ class ArmorOfGodGame {
         
         // Start menu music with browser autoplay handling
         this.initializeAudio();
+
+        // Let the first layout paint at its final dimensions before revealing the menu.
+        requestAnimationFrame(() => document.body.classList.add('menu-ready'));
     }
     
     initializeAudio() {
@@ -378,7 +385,7 @@ class ArmorOfGodGame {
         });
         
         document.getElementById('startLevelBtn').addEventListener('click', () => {
-            this.startGameAfterIntro();
+            this.exitLevelIntro();
         });
         
         document.getElementById('startLevelBtn').addEventListener('mouseenter', () => {
@@ -601,10 +608,125 @@ class ArmorOfGodGame {
     }
     
     startGame() {
+        if (this.level === 1) {
+            this.startOpeningCutscene();
+            return;
+        }
+        this.showLevelIntro();
+    }
+
+    preloadOpeningCutscenes() {
+        if (this.cutscenePreloadPromise) return this.cutscenePreloadPromise;
+        this.cutscenePreloadPromise = Promise.all(this.cutsceneSources.map(source => new Promise(resolve => {
+            const video = document.createElement('video');
+            video.preload = 'auto'; video.muted = true; video.src = source;
+            const done = () => resolve();
+            video.addEventListener('canplaythrough', done, { once: true });
+            video.addEventListener('error', done, { once: true });
+            video.load();
+        })));
+        return this.cutscenePreloadPromise;
+    }
+
+    async startOpeningCutscene() {
+        const runId = ++this.cutsceneRunId;
+        this.gameState = 'cutscene';
+        this.showScreen('cutscene');
+        document.getElementById('cutsceneLoading').classList.remove('hidden');
+        this.audioManager.playMusic('openingCutscene');
+        await this.preloadOpeningCutscenes();
+        if (runId !== this.cutsceneRunId || this.gameState !== 'cutscene') return;
+        this.cutsceneIndex = 0;
+        this.cutsceneCurrentVideo = document.getElementById('cutsceneVideoA');
+        this.cutsceneOtherVideo = document.getElementById('cutsceneVideoB');
+        document.getElementById('cutsceneLoading').classList.add('hidden');
+        this.playCutsceneVideo(0, true);
+    }
+
+    async playCutsceneVideo(index, first = false) {
+        const incoming = first ? this.cutsceneCurrentVideo : this.cutsceneOtherVideo;
+        const outgoing = first ? null : this.cutsceneCurrentVideo;
+        await new Promise(resolve => {
+            incoming.src = this.cutsceneSources[index]; incoming.load();
+            incoming.addEventListener('canplay', resolve, { once: true });
+            incoming.addEventListener('error', resolve, { once: true });
+        });
+        if (this.gameState !== 'cutscene') return;
+        if (index === 2) {
+            this.cutsceneBadNewsStarted = false;
+            this.cutsceneThunderStarted = false;
+            this.cutsceneVideoThreeSlowed = false;
+        }
+        if (index === 1) this.cutscenePeacefulFadeStarted = false;
+        if (index === 3) this.cutsceneBossMusicStarted = false;
+        if (index === 4) this.audioManager.fadeOutCurrentMusic(3000);
+        if (incoming.videoWidth && incoming.videoHeight) document.getElementById('cutsceneFrame').style.aspectRatio = `${incoming.videoWidth} / ${incoming.videoHeight}`;
+        incoming.currentTime = 0;
+        incoming.playbackRate = index === 1 ? 0.8 : 1;
+        const crossfadeDuration = index === 2 ? 2 : 0.8;
+        incoming.style.transitionDuration = `${crossfadeDuration}s`;
+        if (outgoing) outgoing.style.transitionDuration = `${crossfadeDuration}s`;
+        incoming.onended = () => this.advanceCutscene(index);
+        incoming.ontimeupdate = () => {
+            if (index === 1 && !this.cutscenePeacefulFadeStarted && incoming.duration && incoming.currentTime >= incoming.duration - 3) {
+                this.cutscenePeacefulFadeStarted = true;
+                this.audioManager.fadeOutCurrentMusic(2000);
+            }
+            if (index === 2 && !this.cutsceneBadNewsStarted && incoming.currentTime >= 1.5) {
+                this.cutsceneBadNewsStarted = true;
+                this.audioManager.playMusic('openingBadNews');
+            }
+            if (index === 2 && !this.cutsceneThunderStarted && incoming.currentTime >= 2) {
+                this.cutsceneThunderStarted = true;
+                const thunder = this.audioManager.audio.thunderAmbience;
+                if (this.audioManager.audioEnabled) thunder.play().catch(() => {});
+            }
+            if (index === 2 && !this.cutsceneVideoThreeSlowed && incoming.currentTime >= 3.3) {
+                this.cutsceneVideoThreeSlowed = true;
+                incoming.playbackRate = 0.6;
+            }
+            if (index === 3 && !this.cutsceneBossMusicStarted && incoming.currentTime >= 2) {
+                this.cutsceneBossMusicStarted = true;
+                this.audioManager.crossfadeToMusic('openingBadNewsFinal', 2000);
+            }
+            const fadeDuration = index === 1 ? 2 : 0.8;
+            if (incoming.duration && !this.cutsceneTransitioning && index < 4 && incoming.currentTime >= incoming.duration - fadeDuration) this.advanceCutscene(index);
+        };
+        await incoming.play().catch(() => {});
+        incoming.classList.add('cutscene-video--visible');
+        if (outgoing) outgoing.classList.remove('cutscene-video--visible');
+        this.cutsceneCurrentVideo = incoming;
+        this.cutsceneOtherVideo = incoming === document.getElementById('cutsceneVideoA') ? document.getElementById('cutsceneVideoB') : document.getElementById('cutsceneVideoA');
+    }
+
+    advanceCutscene(index) {
+        if (this.gameState !== 'cutscene' || this.cutsceneTransitioning || index !== this.cutsceneIndex) return;
+        if (index === 4) { this.finishOpeningCutscene(); return; }
+        this.cutsceneTransitioning = true;
+        this.cutsceneIndex++;
+        this.playCutsceneVideo(this.cutsceneIndex).finally(() => { this.cutsceneTransitioning = false; });
+    }
+
+    skipOpeningCutscene() {
+        if (this.gameState !== 'cutscene') return;
+        this.cutsceneRunId++;
+        this.finishOpeningCutscene();
+    }
+
+    finishOpeningCutscene() {
+        [this.cutsceneCurrentVideo, this.cutsceneOtherVideo].forEach(video => { video?.pause(); video?.classList.remove('cutscene-video--visible'); });
+        const thunder = this.audioManager.audio.thunderAmbience;
+        thunder.pause(); thunder.currentTime = 0;
         this.showLevelIntro();
     }
     
     showLevelIntro() {
+        clearTimeout(this.levelIntroFastForwardTimer);
+        clearTimeout(this.levelIntroExitTimer);
+        document.getElementById('levelIntroScreen').classList.remove('level-intro--fast-forward', 'level-intro--exiting');
+        document.querySelectorAll('#levelIntroScreen .level-intro-rush-target').forEach(element => element.classList.remove('level-intro-rush-target'));
+        this.levelIntroFastForwarding = false;
+        this.levelIntroExiting = false;
         if (this.level === 'boss') {
             this.bossManager.reset();
             this.enterBossArena();
@@ -624,33 +746,81 @@ class ArmorOfGodGame {
         document.getElementById('introLevelImage').src = levelData.image;
         document.getElementById('introLevelImage').alt = levelData.name;
     }
+
+    fastForwardLevelIntro() {
+        if (this.gameState !== 'levelIntro' || this.levelIntroFastForwarding) return;
+        this.levelIntroFastForwarding = true;
+        const introScreen = document.getElementById('levelIntroScreen');
+        const introElements = introScreen.querySelectorAll('.level-number-container, .level-name-container, .level-image-container, .continue-prompt, .start-level-btn');
+        introElements.forEach(element => {
+            const animation = element.getAnimations()[0];
+            if (animation && animation.currentTime > 0) {
+                // Already-visible elements finish their current reveal without restarting.
+                animation.playbackRate = 8;
+            } else if (parseFloat(getComputedStyle(element).opacity) < .99) {
+                element.classList.add('level-intro-rush-target');
+            }
+        });
+        introScreen.classList.add('level-intro--fast-forward');
+        this.levelIntroFastForwardTimer = setTimeout(() => {
+            this.levelIntroFastForwarding = false;
+            this.exitLevelIntro();
+        }, 550);
+    }
+
+    exitLevelIntro() {
+        if (this.gameState !== 'levelIntro' || this.levelIntroExiting) return;
+        this.levelIntroExiting = true;
+        const introScreen = document.getElementById('levelIntroScreen');
+        introScreen.classList.add('level-intro--exiting');
+        this.levelIntroExiting = false;
+        this.startGameAfterIntro(true);
+    }
     
-    startGameAfterIntro() {
+    startGameAfterIntro(fromIntroTransition = false) {
         if (this.pendingBossIntro) {
             this.pendingBossIntro = false;
-            this.gameState = 'playing';
-            this.showScreen('game');
+            this.gameState = fromIntroTransition ? 'levelTransition' : 'playing';
+            if (fromIntroTransition) this.showGameplayCrossfade(); else this.showScreen('game');
             this.player.x = 110; this.pet.x = 60;
             this.player.y = -100; this.player.velocityY = 8; this.player.isGrounded = false;
             this.pet.y = -80; this.pet.velocityY = 8; this.pet.isGrounded = false;
             this.bossManager.enterArena();
-            this.startBossFightTimer();
-            if (this.audioManager.currentMusic !== this.audioManager.audio.bossFight) {
-                this.audioManager.playMusic('bossFight');
-            }
+            const beginBoss = () => {
+                this.startBossFightTimer();
+                if (this.audioManager.currentMusic !== this.audioManager.audio.bossFight) this.audioManager.playMusic('bossFight');
+            };
+            if (fromIntroTransition) this.finishGameplayCrossfade(beginBoss); else beginBoss();
             return;
         }
         // Reset game to initialize world with selected level
         this.resetGame();
-        this.gameState = 'playing';
-        this.showScreen('game');
+        this.gameState = fromIntroTransition ? 'levelTransition' : 'playing';
+        if (fromIntroTransition) this.showGameplayCrossfade(); else this.showScreen('game');
         this.updateLevelIndicator();
         
-        // Initialize scoring for this level
-        this.initializeScoring();
-        this.audioManager.playMusic('adventure');
-        // Spawn initial arrows after world is set up
-        this.arrowManager.spawnInitialArrows(this.player);
+        const beginLevel = () => {
+            this.initializeScoring();
+            this.audioManager.playMusic('adventure');
+            this.arrowManager.spawnInitialArrows(this.player);
+        };
+        if (fromIntroTransition) this.finishGameplayCrossfade(beginLevel); else beginLevel();
+    }
+
+    showGameplayCrossfade() {
+        const gameScreen = document.getElementById('gameScreen');
+        gameScreen.classList.remove('hidden');
+        gameScreen.classList.add('game-screen--entering');
+    }
+
+    finishGameplayCrossfade(beginGameplay) {
+        this.levelIntroExitTimer = setTimeout(() => {
+            document.getElementById('levelIntroScreen').classList.add('hidden');
+            document.getElementById('levelIntroScreen').classList.remove('level-intro--exiting');
+            document.getElementById('gameScreen').classList.remove('game-screen--entering');
+            this.gameState = 'playing';
+            beginGameplay();
+        }, 500);
     }
     
     resetGame() {
@@ -887,6 +1057,7 @@ class ArmorOfGodGame {
         const screens = {
             'menu': 'menuScreen',
             'levelIntro': 'levelIntroScreen',
+            'cutscene': 'cutsceneScreen',
             'game': 'gameScreen',
             'gameOver': 'gameOverScreen',
             'levelComplete': 'levelCompleteScreen',
@@ -923,6 +1094,7 @@ class ArmorOfGodGame {
                 if (subtitle) subtitle.textContent = "You've made it safely to the House of the Lord!";
                 if (scripture) scripture.textContent = '"Well done, thou good and faithful servant!"';
             }
+            if (!this.pendingLevelThreeBoss && this.bossFightEndTime > 0) this.completedGameRun = true;
             // Update score displays
             const levelScoreElement = document.getElementById('levelScore');
             const totalScoreElement = document.getElementById('totalScore');
@@ -1107,7 +1279,7 @@ class ArmorOfGodGame {
         if (this.isPaused) return;
         
         // Only run game updates for playing states
-        if (this.gameState === 'menu' || this.gameState === 'levelIntro' || this.gameState === 'gameOver' || this.gameState === 'levelComplete') {
+        if (this.gameState === 'menu' || this.gameState === 'levelIntro' || this.gameState === 'levelTransition' || this.gameState === 'cutscene' || this.gameState === 'gameOver' || this.gameState === 'levelComplete') {
             return; // No game logic needed for menu/intro screens
         }
         
@@ -2027,7 +2199,9 @@ class ArmorOfGodGame {
     }
 
     goToMainMenu() {
-        this.level = 1; // Reset to level 1 when going to main menu
+        // Keep the stage the player just exited, except after a completed full run.
+        if (this.completedGameRun) this.level = 1;
+        this.completedGameRun = false;
         this.bossFightCheckpoint = false;
         this.totalScore = 0; // Reset total score when going to main menu
         this.score = 0; // Reset level score
@@ -2167,7 +2341,7 @@ class ArmorOfGodGame {
     render() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        if (this.gameState !== 'playing' && this.gameState !== 'dying' && this.gameState !== 'celebrating' && this.gameState !== 'enteringTemple' && this.gameState !== 'bossCutscene') {
+        if (this.gameState !== 'playing' && this.gameState !== 'levelTransition' && this.gameState !== 'dying' && this.gameState !== 'celebrating' && this.gameState !== 'enteringTemple' && this.gameState !== 'bossCutscene') {
             return;
         }
         

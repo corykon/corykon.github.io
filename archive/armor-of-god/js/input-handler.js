@@ -157,6 +157,11 @@ class InputHandler {
     }
     
     handleKeyDown(e) {
+        if (this.game.gameState === 'cutscene' && (e.code === 'Enter' || e.code === 'Escape')) {
+            this.game.skipOpeningCutscene();
+            e.preventDefault();
+            return;
+        }
         // Credits are intentionally dismissible from anywhere in the roll.
         if (this.game.gameState === 'credits' && e.code === 'Escape') {
             this.game.skipCredits();
@@ -182,7 +187,7 @@ class InputHandler {
         // Handle level intro screen
         if (this.game.gameState === 'levelIntro') {
             if (e.code === 'Space' || e.code === 'Enter') {
-                this.game.startGameAfterIntro();
+                this.game.fastForwardLevelIntro();
                 e.preventDefault();
                 return;
             }

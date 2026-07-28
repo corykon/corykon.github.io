@@ -52,6 +52,10 @@ class AudioManager {
             stonesFalling: new Audio('sounds/stones-falling.mp3'),
             earthquakeRumble: new Audio('sounds/earthquake-rumble.mp3'),
             bossFight: new Audio('sounds/boss-fight.mp3'),
+            openingCutscene: new Audio('sounds/opening-cutscene-peaceful.mp3'),
+            openingBadNews: new Audio('sounds/bad-news2.mp3'),
+            openingBadNewsFinal: new Audio('sounds/bad-news.mp3'),
+            thunderAmbience: new Audio('sounds/thunder-ambience.mp3'),
             hallOfHeroes: new Audio('sounds/hall-of-heroes.mp3'),
             credits: new Audio('sounds/closing-credits.mp3')
         };
@@ -106,6 +110,10 @@ class AudioManager {
             golemPowerup: { loop: false, volume: 0.65},
             earthquakeRumble: { loop: false, volume: 1.0, fadeOutAfterMs: 1500, fadeOutDurationMs: 500},
             bossFight: { loop: true, volume: 0.45},
+            openingCutscene: { loop: true, volume: 0.4},
+            openingBadNews: { loop: true, volume: 0.45},
+            openingBadNewsFinal: { loop: true, volume: 0.45},
+            thunderAmbience: { loop: true, volume: 0.55},
             hallOfHeroes: { loop: true, volume: 0.4},
             credits: { loop: false, volume: 0.4}
         };
@@ -182,6 +190,52 @@ class AudioManager {
                 // Silently handle autoplay restrictions - will work after user interaction
             });
         }
+    }
+
+    fadeOutCurrentMusic(duration = 3000) {
+        const music = this.currentMusic;
+        if (!music || !this.audioEnabled) return;
+        const startingVolume = music.volume;
+        const steps = 30;
+        let step = 0;
+        const fadeTimer = setInterval(() => {
+            step++;
+            music.volume = startingVolume * Math.max(0, 1 - step / steps);
+            if (step >= steps) {
+                clearInterval(fadeTimer);
+                music.pause();
+                music.currentTime = 0;
+                music.volume = startingVolume;
+                if (this.currentMusic === music) this.currentMusic = null;
+            }
+        }, duration / steps);
+    }
+
+    crossfadeToMusic(musicKey, duration = 2000) {
+        const incoming = this.audio[musicKey];
+        const outgoing = this.currentMusic;
+        if (!incoming || outgoing === incoming) return;
+        if (!this.audioEnabled) {
+            this.currentMusic = incoming;
+            return;
+        }
+        const outgoingVolume = outgoing?.volume ?? 0;
+        incoming.currentTime = 0;
+        incoming.play().catch(() => {});
+        this.currentMusic = incoming;
+        if (!outgoing) return;
+        const steps = 20;
+        let step = 0;
+        const fadeTimer = setInterval(() => {
+            step++;
+            outgoing.volume = outgoingVolume * Math.max(0, 1 - step / steps);
+            if (step >= steps) {
+                clearInterval(fadeTimer);
+                outgoing.pause();
+                outgoing.currentTime = 0;
+                outgoing.volume = outgoingVolume;
+            }
+        }, duration / steps);
     }
     
     playSoundEffect(soundKey) {
