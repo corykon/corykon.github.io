@@ -64,7 +64,6 @@
             </div>
             <!-- Instructions moved to modal -->
             <div class="bottom-footer">
-                <p class="credits-text">Created by Maddox P. and Cory F.</p>
                 <a href="#" id="instructionsLink" class="instructions-link">How to Play</a>
             </div>
         </div>
@@ -113,18 +112,18 @@
         <!-- Level Complete Screen -->
         <div id="levelCompleteScreen" class="screen hidden">
             <img src="./images/sprites/temple.png" alt="Holy Temple" id="victoryTempleImage" class="victory-temple">
-            <!-- Running Characters Animation -->
+            <!-- Completion characters -->
             <div id="victoryRunners" class="victory-runners hidden">
                 <div class="victory-pet">
-                    <img id="victoryPetImg" src="images/sprites/main-char/dog-run1.png" alt="Pet Running" style="width: 100%; height: 100%; image-rendering: pixelated;">
+                    <img id="victoryPetImg" src="images/sprites/main-char/dog-jump1.png" alt="Pet celebrating" style="width: 100%; height: 100%; image-rendering: pixelated;">
                 </div>
                 <div class="victory-player">
-                    <img id="victoryPlayerImg" src="images/sprites/main-char/run1.png" alt="Player Running" style="width: 100%; height: 100%; image-rendering: pixelated;">
+                    <img id="victoryPlayerImg" src="images/sprites/main-char/drop.png" alt="Player landing" style="width: 100%; height: 100%; image-rendering: pixelated;">
                 </div>
             </div>
-            <h1>Victory!</h1>
-            <p>You've made it safely to House of the Lord!</p>
-            <p class="victory-message">"Well done, good and faithful servant!"</p>
+            <h1 id="levelCompleteTitle">Level Cleared</h1>
+            <p id="levelCompleteSubtitle">You've made it safely to the House of the Lord!</p>
+            <p id="levelCompleteScripture" class="victory-message">"Well done, thou good and faithful servant!"</p>
             <div class="score-display-small">
                 <div class="score-row-small">
                     <span class="score-label-small">Level:</span>
@@ -140,6 +139,75 @@
                 <button id="retryLevelBtn" class="menu-btn half-width"><span class="chevron-icon chev-left">❮</span>Retry Level</button>
                 <button id="mainMenuBtn2" class="menu-btn half-width">Main Menu</button>
             </div>
+        </div>
+        <div id="creditsScreen" class="screen hidden">
+            <div class="credits-roll" aria-label="Armor of God credits">
+                <section class="credits-title">
+                    <h1>ARMOR OF GOD</h1>
+                    <img src="images/armorOfGodTitleImage.png" alt="Armor of God" class="credits-title-image">
+                    <p class="credits-complete-message">Game Completed.</p>
+                </section>
+
+                <section class="credits-card">
+                    <img src="images/level1.png" alt="Clover Hills">
+                    <h2>LEAD GAME DESIGNERS</h2>
+                    <p>CORY F.</p>
+                    <p>MADDOX P.</p>
+                    <h2>GAMEPLAY DESIGNER</h2>
+                    <p>KADEN P.</p>
+                    <h2>TESTER &amp; MOM</h2>
+                    <p>CHELSEY</p>
+                    <h2>KEY MASHER</h2>
+                    <p>BENSON</p>
+                </section>
+
+                <section class="credits-card">
+                    <img src="images/level2.png" alt="Midnight Jungle">
+                    <h2>FAMOUS SCRIPTURE WRITER</h2>
+                    <p>PAUL</p>
+                    <h2>INSPIRATION</h2>
+                    <p>LDS KIDS VIDEO</p>
+                    <p class="credits-small"><a href="https://www.youtube.com/watch?v=AEb6jyDpMHY" target="_blank" rel="noopener noreferrer">See it here</a></p>
+                </section>
+
+                <section class="credits-card">
+                    <img src="images/level3.png" alt="Granite Mountain Pass">
+                    <h2>AI PROGRAMMING AGENTS</h2>
+                    <p>GITHUB COPILOT</p>
+                    <p>CLAUDE</p>
+                    <p>CODEX</p>
+                    
+                    <h2>SPRITE DESIGN ASSISTANT</h2>
+                    <p>GOOGLE GEMINI</p>
+                    <h2>SPRITE EDITOR TOOL</h2>
+                    <p>PHOTOSHOP</p>
+                </section>
+
+                <section class="credits-card">
+                    <img src="images/boss-fight.png" alt="Stone Golem boss fight">
+                    <h2>SOUND &amp; MUSIC</h2>
+                    <p>PIXABAY.COM</p>
+                    <p>SFXR.ME</p>
+                    <p class="credits-small">SOUND EFFECTS FROM</p>
+                    <p class="credits-small">FLORAPHONIC · WHITE_RECORDS · U_DL9G07BN8I</p>
+                    <p class="credits-small">FREESOUND_COMMUNITY · U_5WGFA0EKJT · NIKNET_ART</p>
+                    <p class="credits-small">NOCOPYRIGHTSOUND633 · LESIAKOWER</p>
+                    <p class="credits-small">DRAGON-STUDIO · NICKPANEK · KAAZOOM</p>
+                </section>
+
+                <section class="credits-card">
+                    <img src="images/sprites/temple.png" alt="Temple sprite">
+                    <h2>SPECIAL THANKS</h2>
+                    <p>TO EVERYONE WHO PLAYED</p>
+                </section>
+            </div>
+            <div class="credits-finale" aria-live="polite">
+                <img id="creditsHero" src="images/hero-credits-dog.png" alt="Hero and companion">
+                <h1>THE END</h1>
+                <button id="creditsMenuBtn" class="menu-btn">Main Menu</button>
+            </div>
+            <div class="credits-progress" aria-hidden="true"><div class="credits-progress-fill"></div></div>
+            <p class="credits-skip">SPACE: NEXT SECTION &nbsp;•&nbsp; ESC: SKIP CREDITS</p>
         </div>
     </div>
 
@@ -174,6 +242,31 @@
         </div>
     </div>
 
+    <!-- Load Firebase -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDZtdslIA7IhzXFkOGRzzfFClNQ0VXDj4",
+            authDomain: "armor-of-god-a3820.firebaseapp.com",
+            projectId: "armor-of-god-a3820",
+            storageBucket: "armor-of-god-a3820.firebasestorage.app",
+            messagingSenderId: "164091299081",
+            appId: "1:164091299081:web:db27909f80afa2a9743fd8",
+            measurementId: "G-FETHTHEY2P"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script>
+
     <!-- Load modular game files -->
     <script src="js/audio-manager.js"></script>
     <script src="js/effects-manager.js"></script>
@@ -185,6 +278,7 @@
     <script src="js/ui-renderer.js"></script>
     <script src="js/character-renderer.js"></script>
     <script src="js/pet-manager.js"></script>
+    <script src="js/boss-manager.js"></script>
     <script src="js/game-modular.js"></script>
 </body>
 </html>

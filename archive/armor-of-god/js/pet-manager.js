@@ -319,6 +319,8 @@ class PetManager {
     
     tryPetting() {
         if (this.pet.isBeingPetted) return; // Already being petted
+        // Petting is a grounded interaction; never start the pose while the player is airborne.
+        if (!this.game.player.isGrounded || this.game.player.velocityY !== 0) return;
         
         // Check if player is close enough to the pet
         const distance = Math.abs(this.game.player.x - this.pet.x);

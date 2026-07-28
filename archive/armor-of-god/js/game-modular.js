@@ -8,6 +8,11 @@ class ArmorOfGodGame {
         // Game state
         this.gameState = 'menu'; // menu, playing, gameOver, levelComplete, waitingToEnterTemple, enteringTemple, celebrating
         this.isPaused = false;
+        this.postBossSurface = false;
+        this.keepVictoryMusicForCompletion = false;
+        this.surfaceCaveExit = null;
+        this.postBossTempleCelebrated = false;
+        this.pendingLevelThreeBoss = false;
         
         // Temple entrance sequence properties
         this.templeEntranceTimer = 0;
@@ -15,7 +20,7 @@ class ArmorOfGodGame {
         this.templeCenterX = 0; // Will be calculated based on castle position
         this.hasArmor = false;
         this.armorTimer = 0;
-        this.armorDuration = 30 * 60; // 30 seconds at 60fps
+        this.armorDuration = 15 * 60; // 15 seconds at 60fps
         this.level = 1;
         
         // Level data
@@ -29,6 +34,7 @@ class ArmorOfGodGame {
         this.cameraY = 0;
         this.booksCollected = 0;
         this.selectedPetType = 'dog'; // Default to dog
+        this.creditsEndTimer = null;
         
         // Scoring system
         this.score = 0; // Current level score
@@ -45,11 +51,6 @@ class ArmorOfGodGame {
         this.comboMode = false; // Tracks if we're in combo mode
         this.comboMultiplier = 1; // Current multiplier (starts at 1)
         this.airborneKills = 0; // Number of kills while airborne
-        
-        // Debug variables
-        this.lastPlayerPos = null;
-        this.debugElement = null;
-        this.createDebugDisplay();
         
         // Initialize scoring system
         this.initializeScoring();
@@ -100,8 +101,8 @@ class ArmorOfGodGame {
             animTimer: 0,
             animSpeed: 12,
             isMoving: false,
-            health: 3,
-            maxHealth: 3,
+            health: 4,
+            maxHealth: 4,
             invulnerable: false,
             invulnerabilityTimer: 0,
             invulnerabilityDuration: 120,
@@ -173,6 +174,18 @@ class ArmorOfGodGame {
         this.uiRenderer = new UIRenderer();
         this.characterRenderer = new CharacterRenderer();
         this.petManager = new PetManager(this.pet, this);
+        this.bossManager = new BossManager();
+        this.caveCrystalImages = ['crystal-1.png', 'crystal-2.png', 'crystal-3.png'].map(file => {
+            const image = new Image();
+            image.src = `images/sprites/foreground/${file}`;
+            return image;
+        });
+        this.pendingBossIntro = false;
+        this.bossFightCheckpoint = false;
+        this.postBossSurface = false;
+        this.bossFightStartTime = 0;
+        this.bossFightEndTime = 0;
+        this.heartSpawnTimer = 0;
         
         // Setup event listeners
         this.inputHandler.setupEventListeners(this.canvas, this);
@@ -308,8 +321,7 @@ class ArmorOfGodGame {
         
         document.getElementById('restartBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
-            this.resetGame();
-            this.startGameAfterIntro();
+            this.retryCurrentLevel();
         });
 
         document.getElementById('restartBtn').addEventListener('mouseenter', () => {
@@ -329,13 +341,21 @@ class ArmorOfGodGame {
         document.getElementById('mainMenuBtn2').addEventListener('mouseenter', () => {
             this.audioManager.playSoundEffect('buttonHover');
         });
+        document.getElementById('creditsMenuBtn').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
+            this.skipCredits();
+        });
         
         document.getElementById('nextLevelBtn').addEventListener('click', () => {
+            if (this.pendingLevelThreeBoss) {
+                this.continueToBossFight();
+                return;
+            }
             this.audioManager.playSoundEffect('buttonClick');
             if (this.level === 1 || this.level === 2) {
                 this.startNextLevel();
             } else {
-                alert('More levels coming soon! Thanks for playing!');
+                this.startCredits();
             }
         });
         
@@ -378,6 +398,9 @@ class ArmorOfGodGame {
         
         // Level selector button (for testing)
         document.getElementById('levelSelectorBtn').addEventListener('click', () => {
+            // The selector is a pre-game setup control.  Never let a stale click change the
+            // current level while its world and background managers are already running.
+            if (this.gameState !== 'menu') return;
             this.audioManager.playSoundEffect('buttonClick');
             this.cycleLevelSelector();
         });
@@ -480,6 +503,10 @@ class ArmorOfGodGame {
     }
     
     calculateSpeedBonus() {
+        if (this.bossFightEndTime > 0) {
+            const twoMinutes = 120 * 60;
+            return Math.max(0, Math.floor((1 - Math.min(this.getBossFightTime(), twoMinutes) / twoMinutes) * 3000));
+        }
         const levelTime = this.getLevelTime();
         const targetTime = {
             1: 2400, // 40 seconds
@@ -528,11 +555,21 @@ class ArmorOfGodGame {
     }
     
     startGame() {
+        if (this.level === 'credits') {
+            this.startCredits();
+            return;
+        }
         this.showLevelIntro();
     }
     
     showLevelIntro() {
+        if (this.level === 'boss') {
+            this.bossManager.reset();
+            this.enterBossArena();
+            return;
+        }
         this.gameState = 'levelIntro';
+        document.getElementById('startLevelBtn').innerHTML = 'Start Level <span class="chevron-icon">❯</span>';
         this.showScreen('levelIntro');
         
         // Play level intro music
@@ -547,6 +584,20 @@ class ArmorOfGodGame {
     }
     
     startGameAfterIntro() {
+        if (this.pendingBossIntro) {
+            this.pendingBossIntro = false;
+            this.gameState = 'playing';
+            this.showScreen('game');
+            this.player.x = 110; this.pet.x = 60;
+            this.player.y = -100; this.player.velocityY = 8; this.player.isGrounded = false;
+            this.pet.y = -80; this.pet.velocityY = 8; this.pet.isGrounded = false;
+            this.bossManager.enterArena();
+            this.startBossFightTimer();
+            if (this.audioManager.currentMusic !== this.audioManager.audio.bossFight) {
+                this.audioManager.playMusic('bossFight');
+            }
+            return;
+        }
         // Reset game to initialize world with selected level
         this.resetGame();
         this.gameState = 'playing';
@@ -563,6 +614,7 @@ class ArmorOfGodGame {
     resetGame() {
         // Cancel any pending game over sequence
         this.audioManager.cancelGameOverSequence();
+        this.pendingLevelThreeBoss = false;
         
         // Reset player
         this.player.x = 150;
@@ -615,6 +667,10 @@ class ArmorOfGodGame {
         this.lastSafePlatformTimer = 0;
         
         this.isPaused = false;
+        this.postBossSurface = false;
+        this.keepVictoryMusicForCompletion = false;
+        this.surfaceCaveExit = null;
+        this.postBossTempleCelebrated = false;
         
         // Reset castle position for current level
         this.setCastlePosition();
@@ -626,9 +682,7 @@ class ArmorOfGodGame {
         this.worldManager.setLevel(this.level);
         this.backgroundManager.setLevel(this.level);
         this.enemyManager.setLevel(this.level);
-        
-        // Spawn initial arrows
-        this.arrowManager.spawnInitialArrows(this.player);
+        this.bossManager.reset();
         
         this.gameState = 'menu';
     }
@@ -669,7 +723,8 @@ class ArmorOfGodGame {
             'jungle-tree-3.png',
             'jungle-tree-4.png',
             'jungle-tree-5.png',
-            'jungle-tree-6.png'
+            'jungle-tree-6.png',
+            'cave-exit.png'
         ];
         
         foregroundSprites.forEach(filename => {
@@ -680,28 +735,35 @@ class ArmorOfGodGame {
     }
     
     cycleLevelSelector() {
-        // Cycle between levels 1, 2, and 3 for testing
-        this.level = this.level === 1 ? 2 : (this.level === 2 ? 3 : 1);
+        if (this.gameState !== 'menu') return;
+        // Cycle between levels 1-3, a direct boss-fight entry, and credits.
+        this.level = this.level === 1 ? 2 : (this.level === 2 ? 3 : (this.level === 3 ? 'boss' : (this.level === 'boss' ? 'credits' : 1)));
         this.updateLevelSelector();
         this.updateLevelIndicator();
-        
-        // If we're in menu, just update the selector
-        // If we're in game, restart with new level
-        if (this.gameState === 'playing') {
-            this.showLevelIntro(); // Show intro for new level
-        }
     }
     
     updateLevelSelector() {
         const levelBtn = document.getElementById('levelSelectorBtn');
         const levelText = levelBtn.querySelector('.level-text');
-        levelText.textContent = `L${this.level}`;
+        levelText.textContent = this.level === 'boss' ? 'BF' : (this.level === 'credits' ? 'CR' : `L${this.level}`);
+    }
+
+    setLevelSelectorVisible(visible) {
+        const levelBtn = document.getElementById('levelSelectorBtn');
+        levelBtn.classList.toggle('hidden', !visible);
+        levelBtn.disabled = !visible;
     }
     
     updateLevelIndicator() {
         const levelData = this.levelData[this.level];
         const levelInfo = document.getElementById('levelInfo');
-        levelInfo.textContent = `Level ${this.level}: ${levelData.name}`;
+        if (this.level === 'boss') {
+            levelInfo.textContent = 'Boss Fight: Stone Golem';
+        } else if (this.level === 'credits') {
+            levelInfo.textContent = 'Closing Credits';
+        } else {
+            levelInfo.textContent = `Level ${this.level}: ${levelData.name}`;
+        }
     }
     
     toggleAudio() {
@@ -721,6 +783,8 @@ class ArmorOfGodGame {
                 this.audioManager.playMusic('winner');
             } else if (this.gameState === 'gameOver') {
                 this.audioManager.playMusic('gameOver');
+            } else if (this.gameState === 'credits') {
+                this.audioManager.playMusic('credits');
             }
         }
         this.updateAudioButtonAppearance();
@@ -764,18 +828,39 @@ class ArmorOfGodGame {
             'levelIntro': 'levelIntroScreen',
             'game': 'gameScreen',
             'gameOver': 'gameOverScreen',
-            'levelComplete': 'levelCompleteScreen'
+            'levelComplete': 'levelCompleteScreen',
+            'credits': 'creditsScreen'
         };
         
         document.getElementById(screens[screenName]).classList.remove('hidden');
+        // Level choice is available only on the initial/main-menu screen.  Keeping the
+        // control out of every other screen prevents a live level swap from mismatching
+        // the active world layout with its background.
+        this.setLevelSelectorVisible(screenName === 'menu');
+        document.body.classList.toggle('credits-active', screenName === 'credits');
         
-        // Start running animation on victory screen
+        // Show the landing pose on the level-complete screen.
         if (screenName === 'levelComplete') {
             // Reset character alpha after screen transition
             this.player.alpha = 1;
             this.pet.alpha = 1;
             
             this.startVictoryRunningAnimation();
+            const title = document.getElementById('levelCompleteTitle');
+            const victoryImage = document.getElementById('victoryTempleImage');
+            const subtitle = document.getElementById('levelCompleteSubtitle');
+            const scripture = document.getElementById('levelCompleteScripture');
+            if (this.pendingLevelThreeBoss) {
+                if (title) title.textContent = 'Level Complete';
+                if (victoryImage) { victoryImage.src = 'images/sprites/enemy/golem-stand.png'; victoryImage.alt = 'Stone Golem'; }
+                if (subtitle) subtitle.textContent = '...but a wild stone golem is blocking the temple!';
+                if (scripture) scripture.textContent = 'For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind';
+            } else {
+                if (title) title.textContent = 'Level Cleared';
+                if (victoryImage) { victoryImage.src = './images/sprites/temple.png'; victoryImage.alt = 'Holy Temple'; }
+                if (subtitle) subtitle.textContent = "You've made it safely to the House of the Lord!";
+                if (scripture) scripture.textContent = '"Well done, thou good and faithful servant!"';
+            }
             // Update score displays
             const levelScoreElement = document.getElementById('levelScore');
             const totalScoreElement = document.getElementById('totalScore');
@@ -789,11 +874,99 @@ class ArmorOfGodGame {
             // Update the level score label to show which level
             const levelScoreLabel = document.querySelector('.score-display-small .score-row-small:first-child .score-label-small');
             if (levelScoreLabel) {
-                levelScoreLabel.textContent = `Level ${this.level} Score:`;
+                levelScoreLabel.textContent = this.bossFightEndTime > 0 ? 'Boss Fight Score:' : `Level ${this.level} Score:`;
             }
         } else {
             this.stopVictoryRunningAnimation();
         }
+        const nextLevelButton = document.getElementById('nextLevelBtn');
+        if (nextLevelButton) {
+            nextLevelButton.innerHTML = this.pendingLevelThreeBoss
+                ? 'Continue to Boss Fight <span class="chevron-icon">❯</span>'
+                : (this.level === 3 || this.level === 'boss' ? 'Go to Credits <span class="chevron-icon">❯</span>' : 'Next Level <span class="chevron-icon">❯</span>');
+        }
+    }
+
+    startCredits() {
+        this.gameState = 'credits';
+        this.isPaused = false;
+        const hero = document.getElementById('creditsHero');
+        if (hero) {
+            const petType = this.selectedPetType === 'cat' ? 'cat' : 'dog';
+            hero.src = `images/hero-credits-${petType}.png`;
+            hero.alt = `Hero and ${petType} companion`;
+        }
+        this.showScreen('credits');
+        this.audioManager.playMusic('credits');
+        this.startCreditsSequence();
+    }
+
+    startCreditsSequence() {
+        clearTimeout(this.creditsEndTimer);
+        clearTimeout(this.creditsSectionTimer);
+        this.creditsSectionIndex = 0;
+        this.isAdvancingCreditsSection = false;
+        this.creditsSections = Array.from(document.querySelectorAll('#creditsScreen .credits-roll > section'))
+            .filter(section => section.textContent.trim() || section.querySelector('img'));
+        this.creditsSections.forEach(section => section.classList.remove('credits-section--active', 'credits-section--leaving'));
+        document.querySelector('.credits-finale').classList.remove('credits-finale--visible');
+        document.querySelector('.credits-progress').classList.remove('hidden');
+        this.showCreditsSection();
+    }
+
+    showCreditsSection() {
+        const section = this.creditsSections[this.creditsSectionIndex];
+        if (!section) {
+            this.showCreditsFinale();
+            return;
+        }
+        const isTitle = section.classList.contains('credits-title');
+        const duration = 7000;
+        const progressDuration = 6000;
+        this.currentCreditsSectionDuration = duration;
+        this.currentCreditsProgressDuration = progressDuration;
+        const progress = document.querySelector('.credits-progress');
+        progress.style.setProperty('--credits-section-duration', `${progressDuration}ms`);
+        progress.classList.remove('credits-progress--running');
+        void progress.offsetWidth;
+        progress.classList.add('credits-progress--running');
+        section.classList.remove('credits-section--leaving');
+        section.classList.toggle('credits-section--title', isTitle);
+        section.style.setProperty('--credits-section-duration', `${duration}ms`);
+        section.classList.add('credits-section--active');
+        clearTimeout(this.creditsSectionTimer);
+        this.creditsSectionTimer = setTimeout(() => this.nextCreditsSection(true), progressDuration);
+    }
+
+    nextCreditsSection(isAutomatic = false) {
+        if (this.gameState !== 'credits' || !this.creditsSections || this.isAdvancingCreditsSection) return;
+        this.isAdvancingCreditsSection = true;
+        clearTimeout(this.creditsSectionTimer);
+        const section = this.creditsSections[this.creditsSectionIndex];
+        if (section && !isAutomatic) {
+            section.classList.remove('credits-section--active');
+            section.classList.add('credits-section--leaving');
+        }
+        this.creditsSectionIndex++;
+        this.isAdvancingCreditsSection = false;
+        this.showCreditsSection();
+        const cleanupDelay = isAutomatic
+            ? this.currentCreditsSectionDuration - this.currentCreditsProgressDuration + 50
+            : 700;
+        setTimeout(() => section?.classList.remove('credits-section--active', 'credits-section--leaving'), cleanupDelay);
+    }
+
+    showCreditsFinale() {
+        document.querySelector('.credits-progress').classList.add('hidden');
+        document.querySelector('.credits-finale').classList.add('credits-finale--visible');
+    }
+
+    skipCredits() {
+        if (this.gameState !== 'credits') return;
+        clearTimeout(this.creditsEndTimer);
+        clearTimeout(this.creditsSectionTimer);
+        this.isAdvancingCreditsSection = false;
+        this.goToMainMenu();
     }
     
     // Armor enhancement methods
@@ -831,35 +1004,53 @@ class ArmorOfGodGame {
         if (this.isPaused) return;
         
         // Only run game updates for playing states
-        if (this.gameState === 'menu' || this.gameState === 'levelIntro') {
+        if (this.gameState === 'menu' || this.gameState === 'levelIntro' || this.gameState === 'gameOver' || this.gameState === 'levelComplete') {
             return; // No game logic needed for menu/intro screens
         }
         
+        if (this.gameState === 'bossCutscene') {
+            this.bossManager.update(this);
+            return;
+        }
+
         // Handle input
-        this.inputHandler.handleInput(
-            this.player, 
-            this.cameraX, 
-            this.worldManager.worldWidth, 
-            this.jumpPower, 
-            this.audioManager
-        );
+        if (this.bossManager.state !== 'arenaFall') {
+            this.inputHandler.handleInput(
+                this.player,
+                this.cameraX,
+                this.worldManager.worldWidth,
+                this.jumpPower,
+                this.audioManager
+            );
+        }
         
         // Update physics
         this.updatePhysics();
+
+        // Death is a hard pause for the encounter: stop AI/projectiles and preserve only the death freeze.
+        if (this.gameState === 'dying') return;
         
         // Update managers
-        this.arrowManager.update(
-            this.player, 
-            this.castle, 
-            this.hasArmor, 
-            this.cameraX, 
-            this.canvas.width, 
-            this.gameState,
-            this.inputHandler,
-            this.getCurrentJumpPower()
-        );
+        if (!this.postBossSurface) {
+            this.arrowManager.update(
+                this.player,
+                this.castle,
+                this.hasArmor,
+                this.cameraX,
+                this.canvas.width,
+                this.gameState,
+                this.inputHandler,
+                this.getCurrentJumpPower()
+            );
+        }
         
-        this.enemyManager.update(this.player, this.worldManager, this.gameState, this.cameraX, this.canvas.width, this.inputHandler, () => this.getCurrentJumpPower());
+        if (!this.bossManager.active) {
+            this.enemyManager.update(this.player, this.worldManager, this.gameState, this.cameraX, this.canvas.width, this.inputHandler, () => this.getCurrentJumpPower());
+        } else {
+            // A boss arena is intentionally self-contained: no projectile hazards carry over.
+            this.arrowManager.reset();
+            this.bossManager.update(this);
+        }
         
         // Handle temple entrance sequence
         if (this.gameState === 'enteringTemple') {
@@ -888,12 +1079,41 @@ class ArmorOfGodGame {
         
         this.uiRenderer.update();
         this.characterRenderer.update();
+
+        // Boss-only recovery: queue a heart about every 30 seconds, then let the next
+        // ground pound/earthquake knock it loose from the ceiling.
+        if (this.bossManager.active && this.gameState === 'playing') {
+            this.heartSpawnTimer++;
+            if (this.heartSpawnTimer >= 1800) {
+                this.heartSpawnTimer = 0;
+                this.pendingBossHeartDrop = true;
+            }
+            this.worldManager.hearts = this.worldManager.hearts.filter(heart => {
+                if (!heart.timed || heart.collected) return true;
+                if (heart.phase === 'falling') {
+                    heart.velocityY += .28;
+                    heart.y += heart.velocityY;
+                    if (heart.y >= 420) {
+                        heart.y = 420;
+                        heart.phase = 'landed';
+                        heart.age = 0;
+                    }
+                    return true;
+                }
+                heart.age = (heart.age || 0) + 1;
+                return heart.age < 300; // Five seconds after landing at 60fps.
+            });
+        } else {
+            this.heartSpawnTimer = 0;
+            this.pendingBossHeartDrop = false;
+        }
         
         // Update floating scores
         this.updateFloatingScores();
         
         // Update player properties for UI
         this.player.levelTime = this.getLevelTime();
+        this.player.bossFightTime = this.getBossFightTime();
         this.player.score = this.score;
         this.player.floatingScores = this.floatingScores;
         
@@ -907,6 +1127,16 @@ class ArmorOfGodGame {
         
         // Check collisions
         this.checkCollisions();
+
+        if (this.gameState === 'playing' && this.level === 3 && !this.bossManager.active && this.bossManager.checkForTrigger(this.player.x, this.player.y, this.castle.x, this.level)) {
+            this.player.isMoving = false;
+            this.player.velocityY = 0;
+            this.player.isJumping = false;
+            this.player.isGrounded = true;
+            this.gameState = 'bossCutscene';
+            this.arrowManager.reset();
+            this.audioManager.playMusic('bossFight');
+        }
     }
     
     updatePhysics() {
@@ -998,7 +1228,17 @@ class ArmorOfGodGame {
         }
         
         // Update camera
-        this.cameraX = Math.max(0, this.player.x - 300);
+        this.cameraX = this.bossManager.active ? 0 : Math.max(0, this.player.x - 300);
+        // Let the companion celebrate the instant the distant temple comes into view.
+        if (this.postBossSurface && !this.postBossTempleCelebrated &&
+            this.castle.x < this.cameraX + this.canvas.width && this.castle.x + this.castle.width > this.cameraX) {
+            this.postBossTempleCelebrated = true;
+            if (this.pet.type === 'dog') {
+                this.pet.velocityY = -9;
+                this.pet.isGrounded = false;
+                this.audioManager.playSound('bark1');
+            }
+        }
         
         
         // Update player animation
@@ -1031,6 +1271,21 @@ class ArmorOfGodGame {
                 }
             }
         }
+    }
+
+    preventPostBossFalls() {
+        const feet = this.player.y + this.player.height;
+        const platform = this.worldManager.platforms
+            .filter(item => Math.abs(feet - item.y) < 40)
+            .sort((a, b) => {
+                const distance = item => Math.max(item.x - (this.player.x + this.player.width), this.player.x - (item.x + item.width), 0);
+                return distance(a) - distance(b);
+            })[0];
+        if (!platform) return;
+        const left = platform.x;
+        const right = platform.x + platform.width - this.player.width;
+        if (this.player.x < left) { this.player.x = left; this.player.blockedLeft = true; }
+        if (this.player.x > right) { this.player.x = right; this.player.blockedRight = true; }
     }
     
     updatePlayerAnimation() {
@@ -1084,6 +1339,13 @@ class ArmorOfGodGame {
     checkCollisions() {
         if (this.gameState !== 'playing' && this.gameState !== 'dying') return;
         
+        if (this.bossManager.active) {
+            this.bossManager.checkCollisions(this);
+            this.collectHearts();
+            if (this.bossManager.checkExit(this.player)) this.completeBossEncounter();
+            return;
+        }
+
         // Arrow collisions
         const hitArrows = this.arrowManager.checkCollisions(this.player, this.hasArmor, this.inputHandler, this.getCurrentJumpPower());
         if (hitArrows.length > 0) {
@@ -1192,6 +1454,20 @@ class ArmorOfGodGame {
             }
         });
         
+        this.collectHearts();
+
+        if (this.postBossSurface && this.surfaceCaveExit && this.checkCollision(this.player, this.surfaceCaveExit)) {
+            this.returnToBossCave();
+            return;
+        }
+
+        // Castle collision
+        if (this.checkCollision(this.player, this.castle)) {
+            this.levelComplete();
+        }
+    }
+
+    collectHearts() {
         // Heart collisions (health restoration)
         this.worldManager.hearts.forEach(heart => {
             if (!heart.collected && this.checkCollision(this.player, heart)) {
@@ -1215,11 +1491,16 @@ class ArmorOfGodGame {
                 }
             }
         });
-        
-        // Castle collision
-        if (this.checkCollision(this.player, this.castle)) {
-            this.levelComplete();
-        }
+    }
+
+    dropBossHeartFromCeiling() {
+        if (!this.pendingBossHeartDrop || !this.bossManager.active) return;
+        const uncollectedHeartExists = this.worldManager.hearts.some(heart => !heart.collected && heart.timed);
+        if (uncollectedHeartExists) return;
+        const x = 120 + Math.random() * 930;
+        this.worldManager.hearts.push({ x, y: -30, width: 30, height: 30, collected: false, healthRestore: 1, timed: true, phase: 'falling', velocityY: 1.5, age: 0 });
+        this.pendingBossHeartDrop = false;
+        this.audioManager.playSound('fallingRock');
     }
     
     checkCollision(rect1, rect2) {
@@ -1244,7 +1525,7 @@ class ArmorOfGodGame {
             this.player.x += knockbackDirection * 10;
             this.player.y -= 5; // Move up 5px immediately
             // Make sure player doesn't go off screen or through walls
-            this.player.x = Math.max(0, Math.min(this.player.x, 12000 - this.player.width));
+            this.player.x = Math.max(0, Math.min(this.player.x, this.worldManager.worldWidth - this.player.width));
             // Add small vertical velocity for continued upward movement
             this.player.velocityY = -3;
             this.player.isJumping = true;
@@ -1263,6 +1544,117 @@ class ArmorOfGodGame {
         if (this.player.health <= 0) {
             this.startDeath('You have been struck down! Seek the armor of God for protection.');
         }
+    }
+
+    showLevelThreeCompletion() {
+        this.player.isMoving = false;
+        this.player.velocityY = 0;
+        this.player.isJumping = false;
+        this.player.isGrounded = true;
+        this.arrowManager.reset();
+        this.levelEndTime = performance.now();
+        this.pendingLevelThreeBoss = true;
+
+        // Settle pending points and calculate the same completion bonuses used by other levels.
+        this.floatingScores.forEach(indicator => {
+            if (indicator.pendingPoints) this.score += indicator.pendingPoints;
+        });
+        this.floatingScores = [];
+        this.finalLevelScore = this.score;
+        this.finalTotalScore = this.totalScore + this.score;
+        this.calculateAndDisplayBonuses();
+
+        // The fall has finished. Keep this score reveal silent except for one heavy thud.
+        this.audioManager.stopAllAudio();
+        this.audioManager.playSound('thud3');
+        this.gameState = 'levelComplete';
+        this.showScreen('levelComplete');
+    }
+
+    continueToBossFight() {
+        if (!this.pendingLevelThreeBoss) return;
+        this.pendingLevelThreeBoss = false;
+        this.totalScore = this.finalTotalScore || (this.totalScore + this.score);
+        this.score = 0;
+        this.enterBossArena();
+    }
+
+    enterBossArena() {
+        this.bossManager.active = true;
+        this.bossFightCheckpoint = true;
+        this.worldManager.createBossArena();
+        this.enemyManager.reset();
+        this.arrowManager.reset();
+        this.player.x = 180; this.player.y = 420; this.player.velocityY = 0; this.player.isGrounded = true;
+        this.pet.x = 130; this.pet.y = 440; this.pet.velocityY = 0; this.pet.isGrounded = true;
+        this.cameraX = 0;
+        this.pendingBossIntro = true;
+        this.gameState = 'levelIntro';
+        this.showScreen('levelIntro');
+        this.audioManager.playMusic('bossFight');
+        document.getElementById('introLevelNumber').textContent = 'BOSS FIGHT';
+        document.getElementById('introLevelName').textContent = 'STONE GOLEM';
+        document.getElementById('introLevelImage').src = 'images/boss-fight.png';
+        document.getElementById('introLevelImage').alt = 'Stone Golem boss fight';
+        document.getElementById('startLevelBtn').innerHTML = 'Start Battle <span class="chevron-icon">❯</span>';
+    }
+
+    completeBossEncounter() {
+        this.bossManager.active = false;
+        // The cave exit opens into a peaceful temple clearing before the normal victory sequence.
+        this.worldManager.createTempleClearing();
+        this.backgroundManager.setLevel(3);
+        // Start partway into the mountain sunrise so the surface opens on warm dawn light.
+        this.backgroundManager.sunriseStartTime = Date.now() - 52000;
+        // A long stepped ascent gives the sunrise and victory music room to breathe.
+        this.castle = { x: 3900, y: 55, width: 240, height: 248, visualGroundOffset: 20 };
+        this.player.x = 185; this.player.y = 420; this.player.velocityY = 0; this.player.isGrounded = true;
+        this.pet.x = 135; this.pet.y = 440; this.pet.velocityY = 0; this.pet.isGrounded = true;
+        this.cameraX = 0;
+        this.postBossSurface = true;
+        this.postBossTempleCelebrated = false;
+        this.surfaceCaveExit = { x: 95, y: 328, width: 80, height: 140 };
+        this.gameState = 'playing';
+        this.audioManager.playMusic('victory');
+        this.uiRenderer.showMessage('The path to the temple is clear.', 180, '#FFD700');
+    }
+
+    returnToBossCave() {
+        this.worldManager.createBossArena();
+        this.bossManager.active = true;
+        this.bossManager.state = 'dead';
+        this.postBossSurface = false;
+        this.surfaceCaveExit = null;
+        this.postBossTempleCelebrated = false;
+        this.player.x = 1060; this.player.y = 420; this.player.velocityY = 0; this.player.isGrounded = true;
+        this.pet.x = 1015; this.pet.y = 440; this.pet.velocityY = 0; this.pet.isGrounded = true;
+        this.cameraX = 0;
+        this.uiRenderer.showMessage('Back in the cave.', 120, '#FFD700');
+    }
+
+    bankScoreForBossFight() {
+        // Score indicators normally resolve over several seconds. The arena intro pauses
+        // that animation, so settle them before the transition and keep them in total score.
+        this.floatingScores.forEach(indicator => {
+            if (indicator.pendingPoints) this.score += indicator.pendingPoints;
+        });
+        this.floatingScores = [];
+        this.totalScore += this.score;
+        this.score = 0;
+    }
+
+    startBossFightTimer() {
+        this.bossFightStartTime = performance.now();
+        this.bossFightEndTime = 0;
+    }
+
+    finishBossFightTimer() {
+        if (this.bossFightStartTime > 0 && this.bossFightEndTime === 0) this.bossFightEndTime = performance.now();
+    }
+
+    getBossFightTime() {
+        if (this.bossFightStartTime === 0) return 0;
+        return Math.floor(((this.bossFightEndTime || performance.now()) - this.bossFightStartTime) / 1000 * 60);
     }
     
     handlePlayerDamage(damage, hazardType) {
@@ -1306,6 +1698,7 @@ class ArmorOfGodGame {
             this.deathTimer = 0;
             this.deathMessage = message;
             this.gameState = 'dying';
+            this.audioManager.pauseCurrentMusic();
         }
     }
     
@@ -1414,7 +1807,7 @@ class ArmorOfGodGame {
     
     activateArmor() {
         this.hasArmor = true;
-        this.armorTimer = this.armorDuration; // Start 30-second countdown
+        this.armorTimer = this.armorDuration; // Start 15-second countdown
         this.player.color = this.player.armorColor;
         this.effectsManager.activateArmor(this.player, this.uiRenderer);
         
@@ -1433,7 +1826,7 @@ class ArmorOfGodGame {
         this.worldManager.reset(); // Respawn all scripture books
         
         // Switch back to adventure music
-        this.audioManager.playMusic('adventure');
+        this.audioManager.playMusic(this.bossManager.active ? 'bossFight' : 'adventure');
         
         // Show message to player
         this.uiRenderer.showMessage('Collect scriptures for new armor.', 240, '#FFA500', 15, 700);
@@ -1459,12 +1852,17 @@ class ArmorOfGodGame {
     }
     
     restartLevel() {
+        if (this.bossFightCheckpoint) {
+            this.retryCurrentLevel();
+            return;
+        }
         // Similar to resetGame but stay in playing mode
         this.resetGame();
         this.gameState = 'playing';
         this.showScreen('game');
         this.audioManager.playMusic('adventure');
         this.arrowManager.spawnInitialArrows(this.player);
+        this.initializeScoring();
     }
     
     startNextLevel() {
@@ -1481,6 +1879,10 @@ class ArmorOfGodGame {
     }
 
     retryCurrentLevel() {
+        if (this.bossFightCheckpoint) {
+            this.restartBossFight();
+            return;
+        }
         // Restart the current level without advancing
         this.resetGame();
         this.gameState = 'playing';
@@ -1493,8 +1895,34 @@ class ArmorOfGodGame {
         this.initializeScoring();
     }
 
+    restartBossFight() {
+        this.bossManager.reset();
+        this.bossManager.active = true;
+        this.worldManager.createBossArena();
+        this.enemyManager.reset();
+        this.arrowManager.reset();
+        this.player.x = 180; this.player.y = 420; this.player.velocityY = 0; this.player.isGrounded = true;
+        this.player.isJumping = false;
+        this.player.health = this.player.maxHealth;
+        this.player.invulnerable = false;
+        this.player.invulnerabilityTimer = 0;
+        this.player.fallingSoundPlayed = false;
+        this.pet.x = 130; this.pet.y = 440; this.pet.velocityY = 0; this.pet.isGrounded = true;
+        this.cameraX = 0;
+        this.isDying = false;
+        this.deathTimer = 0;
+        this.deathMessage = '';
+        this.bossManager.enterArena();
+        this.startBossFightTimer();
+        this.initializeScoring();
+        this.gameState = 'playing';
+        this.showScreen('game');
+        this.audioManager.playMusic('bossFight');
+    }
+
     goToMainMenu() {
         this.level = 1; // Reset to level 1 when going to main menu
+        this.bossFightCheckpoint = false;
         this.totalScore = 0; // Reset total score when going to main menu
         this.score = 0; // Reset level score
         this.resetGame();
@@ -1505,6 +1933,8 @@ class ArmorOfGodGame {
     
     gameOver(message) {
         this.gameState = 'gameOver';
+        // Prevent a defeated player's background encounter from continuing behind this screen.
+        this.bossManager.rocks = [];
         document.getElementById('gameOverMessage').textContent = message;
         this.showScreen('gameOver');
         
@@ -1513,6 +1943,12 @@ class ArmorOfGodGame {
     }
     
     levelComplete() {
+        // A temple entered from a jump should wait for a natural landing, then use the
+        // standard companion catch-up/trot sequence instead of snapping the player down.
+        if (!this.player.isGrounded || this.player.velocityY !== 0) return;
+        const wasPostBossSurface = this.postBossSurface;
+        this.keepVictoryMusicForCompletion = wasPostBossSurface;
+        this.postBossSurface = false;
         // Stop the level timer immediately when level is completed
         this.levelEndTime = performance.now();
         
@@ -1610,7 +2046,7 @@ class ArmorOfGodGame {
     startCelebration() {
         this.gameState = 'celebrating';
         this.effectsManager.initializeFireworks(this.castle);
-        this.audioManager.playMusic('winner');
+        if (!this.keepVictoryMusicForCompletion) this.audioManager.playMusic('winner');
         
         // Don't reset alpha values here - let the fade effect continue
         // through the celebration until the level complete screen shows
@@ -1622,30 +2058,45 @@ class ArmorOfGodGame {
     render() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        if (this.gameState !== 'playing' && this.gameState !== 'dying' && this.gameState !== 'celebrating' && this.gameState !== 'enteringTemple') {
+        if (this.gameState !== 'playing' && this.gameState !== 'dying' && this.gameState !== 'celebrating' && this.gameState !== 'enteringTemple' && this.gameState !== 'bossCutscene') {
             return;
         }
         
         // Render parallax background (not translated by camera)
-        this.backgroundManager.render(this.ctx, this.cameraX, this.gameState);
+        if (this.bossManager.active && this.bossManager.state !== 'cutscene') {
+            this.worldManager.renderBossCave(this.ctx, this.cameraX, this.canvas.width, this.canvas.height, this.caveCrystalImages);
+        } else {
+            this.backgroundManager.render(this.ctx, this.cameraX, this.gameState);
+        }
         
+        const heavyBossShake = ['jumpPrep', 'finalPrep', 'finalLeap'].includes(this.bossManager.state);
+        const shakeCap = heavyBossShake ? 28 : 12;
+        const shakeOffset = this.bossManager.active && this.bossManager.shake > 0 ? (Math.random() - .5) * Math.min(shakeCap, this.bossManager.shake) : 0;
         this.ctx.save();
-        this.ctx.translate(-this.cameraX, -this.cameraY);
+        this.ctx.translate(-this.cameraX + shakeOffset, -this.cameraY + shakeOffset);
         
         // Render world platforms and objects
         this.worldManager.renderPlatforms(this.ctx);
         this.worldManager.renderForegroundSprites(this.ctx, this.foregroundImages);
-        this.worldManager.renderTemple(this.ctx, this.templeImage, this.castle);
+        // During the level-three collapse, mask only the broken ground and nearby scenery
+        // before drawing the temple and falling characters over the opening.
+        this.bossManager.renderFade(this.ctx, 0, this.bossManager.state === 'cutscene');
+        if (!this.bossManager.active || this.bossManager.state === 'cutscene') {
+            this.worldManager.renderTemple(this.ctx, this.templeImage, this.castle);
+        }
         
         // Render game objects
-        this.arrowManager.render(this.ctx);
+        if (!this.bossManager.active) this.arrowManager.render(this.ctx);
         this.enemyManager.render(this.ctx);
+        // The world has already been translated by cameraX, so the boss uses world coordinates here.
+        this.bossManager.render(this.ctx, 0);
         this.worldManager.renderScriptureBooks(this.ctx, this.bomImage);
         this.worldManager.renderHearts(this.ctx, this.heartImage);
         
         // Render characters
         this.characterRenderer.renderPlayer(this.ctx, this.player, this.hasArmor, this.gameState, this.isPaused);
         this.characterRenderer.renderPet(this.ctx, this.pet, this.isPaused);
+        if (this.gameState === 'bossCutscene') this.bossManager.renderCutsceneAlert(this.ctx, this.player);
         
         // Render effects
         this.effectsManager.renderArmorExplosion(this.ctx);
@@ -1655,7 +2106,7 @@ class ArmorOfGodGame {
         }
         
         this.ctx.restore();
-        
+
         // Show petting prompt if close enough to pet
         if (this.gameState === 'playing' && !this.isPaused) {
             const horizontalDistance = Math.abs(this.player.x - this.pet.x);
@@ -1694,7 +2145,9 @@ class ArmorOfGodGame {
             this.armorDuration,
             this.comboMode,
             this.comboMultiplier,
-            this.airborneKills
+            this.airborneKills,
+            this.bossManager,
+            this.heartImage
         );
         
         // Render sparkles on top of everything (with camera translation)
@@ -1779,36 +2232,30 @@ class ArmorOfGodGame {
         
         if (!runnersEl || !playerImgEl || !petImgEl) return;
         
-        // Set up pet image based on selected pet type
+        runnersEl.classList.remove('running', 'level-three-pose');
         const petType = this.selectedPet === 'cat' ? 'cat' : 'dog';
-        petImgEl.src = `images/sprites/main-char/${petType}-run1.png`;
-        
-        // Show the runners and start the animation
+        if (this.pendingLevelThreeBoss) {
+            petImgEl.src = `images/sprites/main-char/${petType}-jump1.png`;
+            playerImgEl.src = this.hasArmor ? 'images/sprites/main-char/armor-drop.png' : 'images/sprites/main-char/drop.png';
+            runnersEl.classList.add('level-three-pose');
+        } else {
+            petImgEl.src = `images/sprites/main-char/${petType}-run1.png`;
+            playerImgEl.src = 'images/sprites/main-char/run1.png';
+            runnersEl.classList.add('running');
+            let playerFrame = 0, petFrame = 0;
+            this.victoryAnimationInterval = setInterval(() => {
+                playerImgEl.src = `images/sprites/main-char/run${(playerFrame++ % 14) + 1}.png`;
+                const frames = petType === 'cat' ? 4 : 5;
+                petImgEl.src = `images/sprites/main-char/${petType}-run${(petFrame++ % frames) + 1}.png`;
+            }, 80);
+            setTimeout(() => {
+                if (this.victoryAnimationInterval) {
+                    clearInterval(this.victoryAnimationInterval);
+                    this.victoryAnimationInterval = null;
+                }
+            }, 2560);
+        }
         runnersEl.classList.remove('hidden');
-        
-        // Animate running sprites using same frames as game
-        let playerAnimFrame = 0;
-        let petAnimFrame = 0;
-        this.victoryAnimationInterval = setInterval(() => {
-            // Player has 14 running frames (like in game)
-            playerAnimFrame = (playerAnimFrame + 1) % 14;
-            const playerFrameNum = playerAnimFrame + 1;
-            playerImgEl.src = `images/sprites/main-char/run${playerFrameNum}.png`;
-            
-            // Pet frames depend on type (like in game)
-            const maxPetFrames = petType === 'cat' ? 4 : 5;
-            petAnimFrame = (petAnimFrame + 1) % maxPetFrames;
-            const petFrameNum = petAnimFrame + 1;
-            petImgEl.src = `images/sprites/main-char/${petType}-run${petFrameNum}.png`;
-        }, 80); // Same timing as game animations
-        
-        // Stop animation when CSS animation completes (2.56s)
-        setTimeout(() => {
-            if (this.victoryAnimationInterval) {
-                clearInterval(this.victoryAnimationInterval);
-                this.victoryAnimationInterval = null;
-            }
-        }, 2560);
     }
     
     stopVictoryRunningAnimation() {
@@ -1816,6 +2263,7 @@ class ArmorOfGodGame {
         
         if (runnersEl) {
             runnersEl.classList.add('hidden');
+            runnersEl.classList.remove('running', 'level-three-pose');
         }
         
         if (this.victoryAnimationInterval) {

@@ -251,6 +251,183 @@ body {
     display: none !important;
 }
 
+/* Closing credits */
+#creditsScreen {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #000000, #0f0a15, #1a0e2a);
+}
+
+.credits-active .audio-toggle-btn,
+.credits-active .speed-toggle-btn,
+.credits-active .level-selector-btn {
+    display: none;
+}
+
+.credits-roll {
+    position: absolute;
+    inset: 0;
+}
+
+.credits-title,
+.credits-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(92vw, 720px);
+    line-height: 1.7;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 100vh) scale(.8);
+}
+
+.credits-section--active {
+    animation: creditsSection var(--credits-section-duration, 7s) cubic-bezier(.22, .8, .25, 1) forwards;
+}
+
+.credits-section--active.credits-section--title {
+    animation-name: creditsTitleSection;
+}
+
+.credits-section--leaving {
+    animation: creditsSectionExit .7s ease-in-out forwards;
+}
+
+.credits-title h1,
+.credits-card h2,
+.credits-finale h1 {
+    color: #ffd700;
+    text-shadow: 3px 3px 0 #332600, 0 0 12px rgba(255, 215, 0, 0.35);
+}
+
+.credits-title h1 { font-size: clamp(28px, 4vw, 42px); }
+.credits-title p { color: #fff; font-size: 14px; margin-top: 20px; }
+.credits-title .credits-complete-message { color: #ffd700; font-size: 15px; }
+.credits-card h2 { font-size: clamp(13px, 1.8vw, 18px); margin: 25px 0 12px; }
+.credits-card p { color: #fff; font-size: clamp(11px, 1.45vw, 14px); margin: 8px 0; }
+.credits-card .credits-small { font-size: clamp(8px, 1.1vw, 10px); line-height: 1.7; }
+.credits-card a { color: #ffd700; }
+.credits-card a:hover { color: #fff; }
+
+.credits-card img {
+    max-width: min(270px, 52vw);
+    max-height: 185px;
+    margin: 0 12px 22px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.22));
+}
+
+.credits-title-image {
+    width: auto;
+    height: min(300px, 34vh);
+    max-width: min(520px, 75vw);
+    object-fit: contain;
+    margin-top: 28px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+.credits-finale {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.credits-finale--visible {
+    animation: creditsFinale 7s ease-in-out forwards;
+    pointer-events: auto;
+}
+
+.credits-finale img {
+    max-width: min(480px, 75vw);
+    max-height: 55vh;
+    object-fit: contain;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.32));
+}
+
+.credits-finale h1 { font-size: clamp(28px, 4vw, 48px); margin-top: 20px; }
+.credits-finale .menu-btn { margin-top: 24px; background: #28a745; border-color: #1e7e34; }
+.credits-finale .menu-btn:hover { background: #34ce57; border-color: #28a745; }
+.credits-progress {
+    position: absolute;
+    left: 50%;
+    bottom: 41px;
+    width: min(430px, 62vw);
+    height: 5px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .18);
+    transform: translateX(-50%);
+}
+
+.credits-progress-fill {
+    width: 100%;
+    height: 100%;
+    background: #ffd700;
+    box-shadow: 0 0 8px rgba(255, 215, 0, .8);
+    transform-origin: left;
+}
+
+.credits-progress--running .credits-progress-fill {
+    animation: creditsProgress var(--credits-section-duration, 7s) linear forwards;
+}
+
+.credits-skip {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    color: rgba(255,255,255,.78);
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, .7);
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+.credits-finale--visible ~ .credits-skip {
+    display: none;
+}
+
+@keyframes creditsSection {
+    0% { opacity: 0; transform: translate(-50%, 120vh); }
+    4% { opacity: 1; }
+    24%, 85% { opacity: 1; transform: translate(-50%, -50%); }
+    98% { opacity: 1; transform: translate(-50%, -150vh); }
+    100% { opacity: 0; transform: translate(-50%, -165vh); }
+}
+
+@keyframes creditsSectionExit {
+    from { opacity: 1; transform: translate(-50%, -50%); }
+    to { opacity: 0; transform: translate(-50%, -165vh); }
+}
+
+@keyframes creditsTitleSection {
+    0% { opacity: 0; transform: translate(-50%, 120vh); }
+    14% { opacity: 1; }
+    34%, 85% { opacity: 1; transform: translate(-50%, -50%); }
+    98% { opacity: 1; transform: translate(-50%, -150vh); }
+    100% { opacity: 0; transform: translate(-50%, -165vh); }
+}
+
+@keyframes creditsProgress {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+}
+
+@keyframes creditsFinale {
+    0% { opacity: 0; transform: scale(.96); }
+    18%, 100% { opacity: 1; transform: scale(1); }
+}
+
 /* Menu Screen Styles */
 #menuScreen {
     background: linear-gradient(135deg, #222, #444);
@@ -479,9 +656,9 @@ body {
     left: 0;
     right: 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 0 40px;
+    padding: 0 20px;
 }
 
 .credits-text {
@@ -852,15 +1029,22 @@ body {
     display: none;
 }
 
-/* Running Characters Animation - positioned below temple */
+/* Completion characters - centered in the former runner area */
 .victory-runners {
     position: absolute;
-    margin-top: -200px;
-    animation: runAcross 2.56s linear forwards;
+    left: 50%;
+    /* Keep the running characters above the victory copy; runAcross replaces the
+       centering transform, so this is the runner's actual top edge in motion. */
+    top: 32%;
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: row;
     align-items: end;
+    gap: 8px;
 }
+
+.victory-runners.running { animation: runAcross 2.56s linear forwards; }
+.victory-runners.level-three-pose { top: 36%; opacity: 0; animation: fadeInCompletionCharacters 0.4s ease-out 0.2s forwards; }
 
 .victory-player {
     width: 64px;
@@ -873,22 +1057,14 @@ body {
     height: 40px;
 }
 
+@keyframes fadeInCompletionCharacters {
+    to { opacity: 1; }
+}
+
 @keyframes runAcross {
-    0% {
-        left: -120px;
-        transform: scaleX(1);
-        opacity: 1;
-    }
-    90% {
-        left: 90vw;
-        transform: scaleX(1);
-        opacity: 1;
-    }
-    100% {
-        left: 100vw;
-        transform: scaleX(1);
-        opacity: 0;
-    }
+    0% { left: -120px; transform: scaleX(1); opacity: 1; }
+    90% { left: 90vw; transform: scaleX(1); opacity: 1; }
+    100% { left: 100vw; transform: scaleX(1); opacity: 0; }
 }
 
 @keyframes templeGlow {

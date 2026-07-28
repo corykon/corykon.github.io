@@ -157,6 +157,18 @@ class InputHandler {
     }
     
     handleKeyDown(e) {
+        // Credits are intentionally dismissible from anywhere in the roll.
+        if (this.game.gameState === 'credits' && e.code === 'Escape') {
+            this.game.skipCredits();
+            e.preventDefault();
+            return;
+        }
+        if (this.game.gameState === 'credits' && e.code === 'Space') {
+            this.game.nextCreditsSection();
+            e.preventDefault();
+            return;
+        }
+
         // Handle level intro screen
         if (this.game.gameState === 'levelIntro') {
             if (e.code === 'Space' || e.code === 'Enter') {
@@ -169,7 +181,8 @@ class InputHandler {
         // Handle level complete screen
         if (this.game.gameState === 'levelComplete') {
             if (e.code === 'Space' || e.code === 'Enter') {
-                this.game.startNextLevel();
+                if (this.game.pendingLevelThreeBoss) this.game.continueToBossFight();
+                else this.game.startNextLevel();
                 e.preventDefault();
                 return;
             }
