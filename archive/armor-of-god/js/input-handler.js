@@ -30,6 +30,12 @@ class InputHandler {
             
             // Check pause menu buttons (only when game is paused)
             if (game.isPaused && game.gameState === 'playing') {
+                const howTo = game.uiRenderer.pauseHowToButton;
+                if (howTo && x >= howTo.x && x <= howTo.x + howTo.width && y >= howTo.y && y <= howTo.y + howTo.height) {
+                    game.audioManager.playSoundEffect('buttonClick');
+                    game.showInstructionsModal();
+                    return;
+                }
                 // Use EXACT same positioning as UI renderer
                 const canvasWidth = canvas.width;
                 const canvasHeight = canvas.height;
@@ -122,6 +128,15 @@ class InputHandler {
                     this.hoveredButton = 'resume';
                     hovered = true;
                 }
+
+                const howTo = game.uiRenderer.pauseHowToButton;
+                if (howTo && x >= howTo.x && x <= howTo.x + howTo.width && y >= howTo.y && y <= howTo.y + howTo.height) {
+                    if (this.hoveredButton !== 'howTo') {
+                        game.audioManager.playSoundEffect('buttonHover');
+                    }
+                    this.hoveredButton = 'howTo';
+                    hovered = true;
+                }
                 
                 // Check restart button hover
                 if (x >= restartButtonX && x <= restartButtonX + narrowButtonWidth && 
@@ -204,7 +219,7 @@ class InputHandler {
         }
         
         // Handle pause toggle (only when playing)
-        if (e.code === 'KeyP' && this.game.gameState === 'playing') {
+        if ((e.code === 'KeyP' || e.code === 'Escape') && this.game.gameState === 'playing') {
             this.game.togglePause();
             e.preventDefault();
             return;

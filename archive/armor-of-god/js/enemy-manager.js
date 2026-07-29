@@ -97,7 +97,7 @@ class EnemyManager {
         // Add snails to level 1 - place them on ground platforms
         this.snails.push(
             new Snail({
-                x: 1400,
+                x: 1650,
                 y: 418, // Ground level (468) minus snail height (50) = 418
                 platformX: 1325,
                 platformWidth: 525
@@ -172,6 +172,19 @@ class EnemyManager {
                 y: 404,
                 platformX: 8600,
                 platformWidth: 470
+            }),
+            new Snail({
+                x: 10114,
+                y: 318,
+                width: 225,
+                height: 150,
+                groundOffset: 0,
+                platformX: 10000,
+                platformWidth: 700,
+                speed: 0.8,
+                isMega: true,
+                health: 3,
+                visualGroundOffset: 20
             }),
             new Snail({
                 x: 12000,

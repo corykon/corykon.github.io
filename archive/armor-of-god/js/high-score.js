@@ -8,10 +8,12 @@ class HighScoreBoard {
         this.heading = document.getElementById('leaderboardHeading');
         this.status = document.getElementById('leaderboardStatus');
         this.continueButton = document.getElementById('leaderboardContinueBtn');
+        this.skipButton = document.getElementById('leaderboardSkipBtn');
         this.pendingScore = null;
         this.isFinalLeaderboard = false;
         this.highlightedId = null;
         document.getElementById('leaderboardSubmitBtn').addEventListener('click', () => this.submit());
+        this.skipButton.addEventListener('click', () => this.skip());
         this.nameInput.addEventListener('keydown', event => { if (event.key === 'Enter') this.submit(); });
         this.continueButton.addEventListener('click', () => this.exit());
     }
@@ -29,6 +31,7 @@ class HighScoreBoard {
         this.game.showScreen('leaderboard');
         this.game.audioManager.playMusic('hallOfHeroes');
         this.nameEntry.classList.toggle('hidden', this.pendingScore === null);
+        this.continueButton.classList.toggle('hidden', this.pendingScore !== null);
         this.continueButton.textContent = this.pendingScore === null ? 'Back to Main Menu' : 'Continue to Credits';
         this.status.classList.remove('hidden');
         this.status.textContent = this.pendingScore === null ? 'Loading the hall of heroes…' : `YOUR FINAL SCORE: ${this.pendingScore.toLocaleString()}`;
@@ -36,6 +39,7 @@ class HighScoreBoard {
         if (this.pendingScore !== null) setTimeout(() => this.nameInput.focus(), 50);
         if (!this.isAvailable()) {
             this.nameEntry.classList.add('hidden');
+            this.continueButton.classList.remove('hidden');
             this.status.textContent = 'LEADERBOARD UNAVAILABLE — OPEN THE GAME THROUGH A WEB SERVER.';
             this.hideResults();
             return;
@@ -63,6 +67,7 @@ class HighScoreBoard {
             this.highlightedId = await window.FirebaseLeaderboard.submit(name, this.pendingScore);
             this.pendingScore = null;
             this.nameEntry.classList.add('hidden');
+            this.continueButton.classList.remove('hidden');
             this.continueButton.textContent = 'Continue to Credits';
             this.status.textContent = 'SCORE SAVED!';
             await this.load();
@@ -70,6 +75,16 @@ class HighScoreBoard {
             console.error('Leaderboard submission failed:', error);
             this.status.textContent = 'COULD NOT SAVE — PLEASE TRY AGAIN';
         } finally { button.disabled = false; }
+    }
+
+    async skip() {
+        if (this.pendingScore === null) return;
+        this.pendingScore = null;
+        this.nameEntry.classList.add('hidden');
+        this.continueButton.classList.remove('hidden');
+        this.continueButton.textContent = 'Continue to Credits';
+        this.status.textContent = 'SCORE NOT SAVED';
+        await this.load();
     }
 
     async load() {
