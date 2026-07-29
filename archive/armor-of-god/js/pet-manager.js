@@ -9,7 +9,18 @@ class PetManager {
     }
     
     update() {
-        if (this.game.gameState !== 'playing' && this.game.gameState !== 'waitingToEnterTemple') return;
+        const isEnteringTemple = this.game.gameState === 'enteringTemple';
+        if (this.game.gameState !== 'playing' && this.game.gameState !== 'waitingToEnterTemple' && !isEnteringTemple) return;
+
+        // The temple sequence moves the pet horizontally itself, but an airborne pet still
+        // needs gravity and platform collision checks so the sequence cannot wait forever.
+        if (isEnteringTemple) {
+            this.pet.velocityY += this.game.gravity;
+            this.pet.y += this.pet.velocityY;
+            this.game.worldManager.checkPlatformCollisions(this.pet);
+            this.updateAnimation();
+            return;
+        }
         
         const distanceToPlayer = Math.abs(this.game.player.x - this.pet.x);
         const playerMovingTowardsPet = this.game.player.isMoving && 
@@ -134,7 +145,6 @@ class PetManager {
             this.pet.isGrounded = false; // Let it fall naturally to ground
             this.pet.isMoving = false;
             this.respawnCooldown = 120; // 2 second cooldown
-            console.log(`Pet respawned at player feet: (${this.pet.x}, ${this.pet.y})`);
         }
         
         // Decrement respawn cooldown

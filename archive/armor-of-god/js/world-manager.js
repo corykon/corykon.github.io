@@ -149,8 +149,6 @@ class WorldManager {
             
             // Final approach and more floating blocks
             { x: 8600, y: 468, width: 500, height: 135, type: 'ground' },
-            // Safety branch for the long jump immediately before the final ascending run.
-            { x: 9165, y: 430, width: 70, height: 24, type: 'branch' },
             { x: 9300, y: 400, width: 120, height: 30, type: 'tree_platform' },
             { x: 9500, y: 360, width: 120, height: 30, type: 'tree_platform' },
             { x: 9700, y: 320, width: 120, height: 30, type: 'tree_platform' },
@@ -338,7 +336,8 @@ class WorldManager {
             
             // Late jungle books
             { x: 11300, y: 150, width: 50, height: 50, collected: false, verse: "Hope" },
-            { x: 17900, y: 415, width: 50, height: 50, collected: false, verse: "Joy" }  // 50px inside the temple-floor edge
+            // At the left edge of the clearing before the temple, where it is reachable.
+            { x: 15935, y: 415, width: 50, height: 50, collected: false, verse: "Joy" }
         ];
     }
     
@@ -1209,7 +1208,13 @@ class WorldManager {
             ctx.save();
             ctx.globalAlpha = alpha;
             if (image && image.complete) {
-                if (sprite.flipX) {
+                if (sprite.collapseRotation !== undefined) {
+                    // Trees pivot from their roots, shaking loose then toppling sideways.
+                    ctx.translate(sprite.x + sprite.width / 2, sprite.y + sprite.height + fallOffset);
+                    ctx.rotate(sprite.collapseRotation);
+                    if (sprite.flipX) ctx.scale(-1, 1);
+                    ctx.drawImage(image, -sprite.width / 2, -sprite.height, sprite.width, sprite.height);
+                } else if (sprite.flipX) {
                     ctx.translate(sprite.x + sprite.width, sprite.y + fallOffset);
                     ctx.scale(-1, 1);
                     ctx.drawImage(image, 0, 0, sprite.width, sprite.height);
@@ -1233,12 +1238,34 @@ class WorldManager {
             sprite.collapseOffsetY = 0;
             sprite.collapseVelocityY = 1.8 + Math.random() * 1.2;
             sprite.collapseAlpha = 1;
+            if (sprite.image.includes('tree')) {
+                sprite.collapseRotation = 0;
+                sprite.collapseAngularVelocity = 0;
+                sprite.collapseTimer = 0;
+                sprite.collapseDirection = spriteCenter < centerX ? -1 : 1;
+                sprite.collapseVelocityY = 0;
+            }
         });
     }
 
     updateCutsceneSceneryFall() {
         this.foregroundSprites.forEach(sprite => {
             if (sprite.collapseAlpha === undefined || sprite.collapseAlpha <= 0) return;
+            if (sprite.collapseRotation !== undefined) {
+                sprite.collapseTimer++;
+                if (sprite.collapseTimer <= 8) {
+                    sprite.collapseRotation = Math.sin(sprite.collapseTimer * 2.2) * .055 * sprite.collapseDirection;
+                } else {
+                    sprite.collapseAngularVelocity = Math.min(.12, sprite.collapseAngularVelocity + .008);
+                    sprite.collapseRotation += sprite.collapseAngularVelocity * sprite.collapseDirection;
+                    if (Math.abs(sprite.collapseRotation) > Math.PI / 2) {
+                        sprite.collapseOffsetY += sprite.collapseVelocityY;
+                        sprite.collapseVelocityY += .42;
+                    }
+                }
+                sprite.collapseAlpha = Math.max(0, sprite.collapseAlpha - .018);
+                return;
+            }
             sprite.collapseOffsetY += sprite.collapseVelocityY;
             sprite.collapseVelocityY += .32;
             sprite.collapseAlpha = Math.max(0, sprite.collapseAlpha - .025);
@@ -1550,23 +1577,20 @@ class WorldManager {
         // manager independently supplies the mountain sunrise.
         this.currentLevel = 1;
         this.theme = 'mountain';
-        this.worldWidth = 4700;
+        this.worldWidth = 2800;
         this.groundY = 468;
         // Fifteen-pixel risers are low enough for the existing landing tolerance to step up
         // automatically while walking, so the post-boss climb never requires a jump.
         this.platforms = [
             { x: 0, y: 468, width: 600, height: 140, type: 'ground' },
-            { x: 600, y: 453, width: 300, height: 155, type: 'ground' },
-            { x: 900, y: 438, width: 300, height: 170, type: 'ground' },
-            { x: 1200, y: 423, width: 300, height: 185, type: 'ground' },
-            { x: 1500, y: 408, width: 300, height: 200, type: 'ground' },
-            { x: 1800, y: 393, width: 300, height: 215, type: 'ground' },
-            { x: 2100, y: 378, width: 300, height: 230, type: 'ground' },
-            { x: 2400, y: 363, width: 300, height: 245, type: 'ground' },
-            { x: 2700, y: 348, width: 300, height: 260, type: 'ground' },
-            { x: 3000, y: 333, width: 300, height: 275, type: 'ground' },
-            { x: 3300, y: 318, width: 300, height: 290, type: 'ground' },
-            { x: 3600, y: 303, width: 1100, height: 315, type: 'ground' }
+            { x: 600, y: 453, width: 150, height: 155, type: 'ground' },
+            { x: 750, y: 438, width: 150, height: 170, type: 'ground' },
+            { x: 900, y: 423, width: 150, height: 185, type: 'ground' },
+            { x: 1050, y: 408, width: 150, height: 200, type: 'ground' },
+            { x: 1200, y: 393, width: 150, height: 215, type: 'ground' },
+            { x: 1350, y: 378, width: 150, height: 230, type: 'ground' },
+            { x: 1500, y: 363, width: 150, height: 245, type: 'ground' },
+            { x: 1650, y: 348, width: 1150, height: 260, type: 'ground' }
         ];
         this.clouds = []; this.scriptureBooks = []; this.hearts = [];
         this.foregroundSprites = [
@@ -1579,20 +1603,11 @@ class WorldManager {
             { x: 900, y: 303, width: 105, height: 140, image: 'pine-tree-1.png' },
             { x: 1110, y: 250, width: 132, height: 168, image: 'pine-tree-2.png' },
             { x: 1260, y: 238, width: 150, height: 180, image: 'pine-tree-2.png' },
-            { x: 1450, y: 298, width: 100, height: 120, image: 'pine-tree-1.png' },
+            // Symmetrical grove around the temple, with a clear path to its entrance.
             { x: 1630, y: 233, width: 135, height: 160, image: 'pine-tree-2.png' },
             { x: 1810, y: 283, width: 88, height: 110, image: 'pine-tree-1.png' },
-            // Frame the temple with a denser, welcoming grove while keeping its doorway clear.
-            { x: 1990, y: 243, width: 120, height: 150, image: 'pine-tree-1.png' },
-            { x: 2160, y: 168, width: 158, height: 200, image: 'pine-tree-2.png' },
-            { x: 2245, y: 248, width: 92, height: 120, image: 'pine-tree-1.png' },
-            { x: 2610, y: 153, width: 150, height: 190, image: 'pine-tree-2.png' },
-            { x: 2745, y: 213, width: 108, height: 130, image: 'pine-tree-1.png' },
-            { x: 2940, y: 163, width: 142, height: 180, image: 'pine-tree-2.png' },
-            { x: 3150, y: 198, width: 100, height: 120, image: 'pine-tree-1.png' },
-            { x: 3590, y: 138, width: 135, height: 180, image: 'pine-tree-2.png' },
-            { x: 3810, y: 183, width: 100, height: 120, image: 'pine-tree-1.png' },
-            { x: 4250, y: 113, width: 150, height: 190, image: 'pine-tree-2.png' }
+            { x: 2242, y: 283, width: 88, height: 110, image: 'pine-tree-1.png' },
+            { x: 2375, y: 233, width: 135, height: 160, image: 'pine-tree-2.png' }
         ];
         // Keep every tree rooted when the walkable approach risers change height.
         this.foregroundSprites.forEach(sprite => {

@@ -240,7 +240,7 @@ class UIRenderer {
         ctx.shadowBlur = 0;
         ctx.fillStyle = '#FFFFFF';
         ctx.font = '14px "Press Start 2P", monospace';
-        ctx.fillText("Press 'P' to resume the game.", centerX, centerY - 30);
+        ctx.fillText("Press 'ESC' to resume the game.", centerX, centerY - 30);
         
         // Reset shadow for other text
         ctx.shadowBlur = 0;
@@ -376,6 +376,21 @@ class UIRenderer {
         ctx.shadowBlur = isMainMenuHovered ? 4 : 2;
         ctx.fillText('MAIN MENU', mainMenuButtonX + narrowButtonWidth/2, bottomButtonY + buttonHeight/2);
         ctx.shadowBlur = 0;
+
+        this.pauseHowToButton = { x: centerX - 100, y: canvasHeight - 52, width: 200, height: 40 };
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillRect(this.pauseHowToButton.x, this.pauseHowToButton.y, this.pauseHowToButton.width, this.pauseHowToButton.height);
+        // Match the main-menu instruction link: gold by default, white on hover.
+        ctx.fillStyle = hoveredButton === 'howTo' ? '#fff' : '#FFD700';
+        ctx.font = '12px "Press Start 2P", monospace';
+        const howToLabel = 'HOW TO PLAY';
+        // Offset the text slightly upward so its underline is centered with the label.
+        const howToY = this.pauseHowToButton.y + this.pauseHowToButton.height / 2 - 2;
+        ctx.fillText(howToLabel, centerX, howToY);
+        if (hoveredButton !== 'howTo') {
+            const howToWidth = ctx.measureText(howToLabel).width;
+            ctx.fillRect(centerX - howToWidth / 2, howToY + 9, howToWidth, 1);
+        }
         
         // Reset text properties
         ctx.textAlign = 'left';

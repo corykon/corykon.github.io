@@ -90,7 +90,7 @@
                 <div id="armorStatus"></div>
             </div>
             <div id="controlsReminder" class="controls-reminder">
-                <p>↑ Jump  •  ↓ Duck  •  <span id="petControlText">D Pet Dog</span>  •  P Pause</p>
+                <p>Press 'ESC' to pause</p>
             </div>
         </div>
 
@@ -109,7 +109,7 @@
                     </div>
                     <button id="startLevelBtn" class="menu-btn next-level-wide start-level-btn">Start Level <span class="chevron-icon">❯</span></button>
                     <div class="continue-prompt">
-                        <p>(Press enter to begin)</p>
+                        <p>(Press enter)</p>
                     </div>                </div>
             </div>
         </div>
@@ -152,6 +152,10 @@
                     <span class="score-label-small">Level:</span>
                     <span id="levelScore">0</span>
                 </div>
+                <div id="deathPenaltyRow" class="score-row-small hidden">
+                    <span class="score-label-small" id="deathPenaltyLabel">Deaths:</span>
+                    <span id="deathPenaltyScore">0</span>
+                </div>
                 <div class="score-row-small">
                     <span class="score-label-small">Total Score:</span>
                     <span id="totalScore">0</span>
@@ -171,11 +175,12 @@
                 <div id="leaderboardEntry" class="leaderboard-entry hidden">
                     <label for="leaderboardName">ENTER YOUR NAME</label>
                     <input id="leaderboardName" maxlength="10" autocomplete="off" spellcheck="false" aria-label="Your name, up to ten characters">
-                    <button id="leaderboardSubmitBtn" class="menu-btn leaderboard-submit">Save Score</button>
+                    <div class="leaderboard-submit-wrap"><button id="leaderboardSubmitBtn" class="menu-btn leaderboard-submit">Save my score</button></div>
+                    <button id="leaderboardSkipBtn" class="leaderboard-skip" type="button">Skip</button>
                 </div>
                 <div id="leaderboardHeading" class="leaderboard-heading"><span>RANK</span><span>NAME</span><span>DATE</span><span>SCORE</span></div>
                 <div id="leaderboardEntries" class="leaderboard-entries" aria-live="polite"></div>
-                <button id="leaderboardContinueBtn" class="menu-btn leaderboard-continue">Back to Main Menu</button>
+                <div class="leaderboard-continue-wrap"><button id="leaderboardContinueBtn" class="menu-btn leaderboard-continue">Back to Main Menu</button></div>
             </div>
         </div>
         <div id="creditsScreen" class="screen hidden">
@@ -218,6 +223,7 @@
                     <p>GOOGLE GEMINI</p>
                     <h2>AI VIDEO TOOL</h2>
                     <p>ADOBE FIREFLY</p>
+                    <p>GOOGLE FLOW</p>
                     <h2>SPRITE EDITOR TOOL</h2>
                     <p>PHOTOSHOP</p>
                 </section>
@@ -272,6 +278,7 @@
                             <div class="control-demo"><span class="how-to-key" aria-label="Down arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v9h5l-7 8-7-8h5z"/></svg></span><img src="images/sprites/main-char/duck1.png" alt="Hero ducking"></div>
                         </div>
                     </div>
+                    <p class="how-to-space-hint">You can also press Spacebar to jump.</p>
                 </section>
                 <section class="how-to-play-section how-to-do" aria-labelledby="whatToDoTitle">
                     <h3 id="whatToDoTitle">What to Do</h3>

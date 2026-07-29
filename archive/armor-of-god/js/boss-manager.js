@@ -32,6 +32,9 @@ class BossManager {
         this.finalStoneTimer = 0;
         this.airChaseOffset = 0;
         this.airChaseTimer = 0;
+        this.stompedMidair = false;
+        this.hasEnteredFinalPhase = false;
+        this.finalPhasePending = false;
         this.afterHitAction = 'lava';
         this.exitImage = new Image();
         this.exitImage.src = 'images/sprites/foreground/cave-exit.png';
@@ -62,7 +65,7 @@ class BossManager {
         });
     }
 
-    reset() { this.state = 'dormant'; this.active = false; this.exit = null; this.exitFade = 0; this.rocks = []; this.deathParticles = []; this.defeatTimer = 0; this.timer = 0; this.health = this.maxHealth; this.poundRounds = 0; this.jumpPasses = 0; this.jumpCount = 0; this.jumpGroundTimer = 0; this.landingPoseTimer = 0; this.landingSoundPlayed = false; this.returnToLavaAfterLanding = false; this.defeatAfterFinalJump = false; this.jumpVulnerable = false; this.redWarning = false; this.tooHotCooldown = 0; this.contactInvulnerability = 0; this.finalVolleyCount = 0; this.finalStoneTimer = 0; this.airChaseOffset = 0; this.airChaseTimer = 0; this.golem.stompBounceOffset = 0; this.golem.stompBounceVelocity = 0; this.afterHitAction = 'lava'; }
+    reset() { this.state = 'dormant'; this.active = false; this.exit = null; this.exitFade = 0; this.rocks = []; this.deathParticles = []; this.defeatTimer = 0; this.timer = 0; this.health = this.maxHealth; this.poundRounds = 0; this.jumpPasses = 0; this.jumpCount = 0; this.jumpGroundTimer = 0; this.landingPoseTimer = 0; this.landingSoundPlayed = false; this.returnToLavaAfterLanding = false; this.defeatAfterFinalJump = false; this.jumpVulnerable = false; this.redWarning = false; this.tooHotCooldown = 0; this.contactInvulnerability = 0; this.finalVolleyCount = 0; this.finalStoneTimer = 0; this.airChaseOffset = 0; this.airChaseTimer = 0; this.stompedMidair = false; this.hasEnteredFinalPhase = false; this.finalPhasePending = false; this.golem.stompBounceOffset = 0; this.golem.stompBounceVelocity = 0; this.afterHitAction = 'lava'; }
 
     checkForTrigger(playerX, playerY, templeX, level) {
         if (level !== 3 || this.state !== 'dormant' || playerX < templeX - 500) return false;
@@ -318,7 +321,8 @@ class BossManager {
         selected.forEach((column, i) => {
             const size = 32 + Math.random() * 28;
             const x = column.x + (Math.random() - .5) * 24;
-            this.rocks.push({ x, baseX: x, y: 48 + i * 18, width: size, height: size, phase: 'ceilingWarning', age: 0, alpha: 0, sprite: Math.floor(Math.random() * this.rockSprites.length), entrySoundPlayed: false });
+            // Stagger horizontally only; every rock starts completely above the ceiling.
+            this.rocks.push({ x, baseX: x, y: -size - 8, width: size, height: size, phase: 'ceilingWarning', age: 0, alpha: 0, sprite: Math.floor(Math.random() * this.rockSprites.length), entrySoundPlayed: false });
         });
     }
 
@@ -363,13 +367,27 @@ class BossManager {
         const headZone = playerCenter >= b.x - 28 && playerCenter <= b.x + b.width + 28;
         const landedOnHead = headZone && p.velocityY > 0 && p.y + p.height - p.velocityY <= b.y + 62;
         if ((this.state === 'vulnerable' || this.state === 'finalVulnerable' || (this.state === 'jump' && this.jumpVulnerable)) && landedOnHead) {
+            const stompedMidair = this.state === 'jump';
             this.health -= 25; this.golem.flash = 60; this.contactInvulnerability = 30; this.golem.hitPose = this.state === 'jump' ? 0 : 18; this.golem.animation = 'hit'; this.hitSmoke = this.health <= 0 ? 60 : 28; this.golem.stompBounceVelocity = -3; p.velocityY = -9; p.isGrounded = false;
+            if (stompedMidair) {
+                this.golem.velocityY = 4;
+                this.golem.velocityX = 0;
+                this.stompedMidair = true;
+            }
+            game.addScore(100, '#FFD700', 'Head Stomp');
             game.audioManager.playSound(Math.random() < 0.5 ? 'grunt1Low' : 'grunt2Low');
             if (this.health <= 0 && this.state === 'jump') {
                 this.defeatAfterFinalJump = true;
                 this.afterHitAction = 'land'; this.state = 'hitRecover'; this.timer = 0;
             } else if (this.health <= 0) this.die(game);
             else {
+                if (this.health <= 50 && !this.hasEnteredFinalPhase) {
+                    // The threshold stomp immediately cancels the old pattern. Keep a brief
+                    // hit reaction (and let an airborne golem land) before its final tell.
+                    this.finalPhasePending = true;
+                    this.afterHitAction = 'final'; this.state = 'hitRecover'; this.timer = 0;
+                    return;
+                }
                 const isFinalRecovery = this.state === 'finalVulnerable' || (this.state === 'vulnerabilityExit' && this.afterVulnerabilityExit === 'stoneVolley');
                 this.afterHitAction = this.state === 'jump' ? 'land' : (isFinalRecovery ? 'stoneVolley' : (this.health <= 50 ? 'final' : 'lava'));
                 this.state = 'hitRecover'; this.timer = 0;
@@ -380,7 +398,7 @@ class BossManager {
                 this.tooHotCooldown = 75;
             }
             if (!game.hasArmor) game.takeDamage(p.x < b.x ? -1 : 1);
-        } else if ((this.state === 'lava' || this.state === 'jump') && !game.hasArmor) {
+        } else if (this.state !== 'vulnerable' && this.state !== 'finalVulnerable' && !(this.state === 'jump' && this.jumpVulnerable) && !game.hasArmor) {
             game.takeDamage(p.x < b.x ? -1 : 1);
         }
         // Blue/vulnerable contact is deliberately harmless; only a descending head-stomp damages it.
@@ -409,6 +427,8 @@ class BossManager {
         game.audioManager.playSound('golemReignite');
     }
     beginFinalPhase(game) {
+        this.hasEnteredFinalPhase = true;
+        this.finalPhasePending = false;
         this.state = 'finalPrep'; this.timer = 0; this.golem.animation = 'hit';
         this.finalVolleyCount = 0; this.rocks = [];
         game.audioManager.playSound('golemPowerup');
@@ -453,7 +473,9 @@ class BossManager {
                 phase: 'rise', direction, volley: this.finalVolleyCount, age: 0, alpha: 0
             }));
         }
-        if (this.timer === 22) {
+        // Hold the raised rocks for a clear half-second warning, then land the pound and
+        // launch together. The 76-frame cycle leaves 30% more room between volleys.
+        if (this.timer === 52) {
             this.rocks.forEach(rock => {
                 if (rock.volley !== this.finalVolleyCount || rock.phase !== 'hover') return;
                 rock.phase = 'fly'; rock.velocityX = rock.direction * 9.5; rock.velocityY = -1.2;
@@ -463,7 +485,7 @@ class BossManager {
             // The third throw is also a pound.  Its impact opens the blue recovery window.
             if (this.finalVolleyCount >= 3) { this.state = 'finalVulnerable'; this.timer = 0; this.golem.animation = 'vulnerable'; return; }
         }
-        if (this.timer >= 58) {
+        if (this.timer >= 76) {
             this.timer = 0;
             this.golem.frame = 0;
             this.golem.animationTimer = 0;
@@ -510,7 +532,21 @@ class BossManager {
     updateHitRecover(game) {
         this.updateRocks(game);
         this.golem.animation = 'hit';
-        if (this.timer >= 60) { this.state = 'reigniteFlash'; this.timer = 0; }
+        if (this.stompedMidair) {
+            this.golem.y += this.golem.velocityY;
+            this.golem.velocityY += .5;
+            if (this.golem.y >= this.golem.groundY - this.golem.height) {
+                this.golem.y = this.golem.groundY - this.golem.height;
+                this.golem.velocityY = 0;
+                this.stompedMidair = false;
+                game.audioManager.playSound('golemLanding');
+            }
+        }
+        if (this.finalPhasePending && !this.stompedMidair && this.timer >= 24) {
+            this.beginFinalPhase(game);
+            return;
+        }
+        if (this.timer >= 60 && !this.stompedMidair) { this.state = 'reigniteFlash'; this.timer = 0; }
     }
     updateReigniteFlash(game) {
         this.updateRocks(game);
@@ -589,9 +625,13 @@ class BossManager {
         this.deathParticles.forEach(particle => { ctx.globalAlpha = particle.life / particle.maxLife; ctx.fillStyle = particle.color; ctx.fillRect(particle.x - cameraX - particle.size / 2, particle.y - particle.size / 2, particle.size, particle.size); });
         ctx.globalAlpha = 1;
         if (this.hitSmoke > 0 && this.hitSmokeImage.complete) {
-            const size = 80 + (28 - this.hitSmoke) * 2;
-            ctx.globalAlpha = this.hitSmoke / 28;
-            ctx.drawImage(this.hitSmokeImage, this.golem.x - cameraX + 20 - size / 2, this.golem.y + this.golem.stompBounceOffset + 35 - size / 2, size, size);
+            const isDefeatSmoke = this.hitSmoke > 28;
+            const smokeLifetime = isDefeatSmoke ? 60 : 28;
+            const size = (isDefeatSmoke ? 160 : 80) + (smokeLifetime - this.hitSmoke) * 2;
+            ctx.globalAlpha = this.hitSmoke / smokeLifetime;
+            const centerX = this.golem.x - cameraX + this.golem.width / 2;
+            const centerY = this.golem.y + this.golem.stompBounceOffset + this.golem.height * .7;
+            ctx.drawImage(this.hitSmokeImage, centerX - size / 2, centerY - size / 2, size, size);
             ctx.globalAlpha = 1;
         }
         if (this.exit) { ctx.save(); ctx.globalAlpha = this.exitFade; if (this.exitImage.complete) ctx.drawImage(this.exitImage, this.exit.x - cameraX, this.exit.y, this.exit.width, this.exit.height); else { ctx.fillStyle = '#55d7ff'; ctx.fillRect(this.exit.x - cameraX, this.exit.y, this.exit.width, this.exit.height); } ctx.restore(); }
@@ -657,7 +697,9 @@ class BossManager {
     renderFade(ctx, cameraX = 0, worldSpace = false) {
         if (this.state !== 'cutscene' || (this.cutsceneStage !== 'quake' && this.cutsceneStage !== 'falling')) return;
         const crackProgress = this.cutsceneStage === 'quake' ? Math.min(1, this.timer / 70) : 1;
-        const collapseProgress = this.cutsceneStage === 'falling' ? Math.min(1, this.timer / 90) : 0;
+        // The ground should disappear quickly once the collapse starts, ahead of the
+        // characters' longer fall into the boss arena.
+        const collapseProgress = this.cutsceneStage === 'falling' ? Math.min(1, this.timer / 48) : 0;
         const originX = worldSpace ? this.golem.x + 55 : Math.max(90, Math.min(ctx.canvas.width - 90, this.golem.x - cameraX + 55));
         const groundTop = this.golem.groundY || 468;
         const groundDepth = Math.max(80, ctx.canvas.height - groundTop - 16);
@@ -685,8 +727,14 @@ class BossManager {
             ctx.lineTo(right, groundTop);
             ctx.closePath();
             ctx.clip();
-            ctx.fillStyle = `rgba(8, 7, 21, ${0.35 + collapseProgress * 0.65})`;
-            ctx.fillRect(left, groundTop, leftHalfWidth + rightHalfWidth, ctx.canvas.height - groundTop);
+            // A hard, descending fade front erases the ground from its surface down.
+            const fadeFront = groundTop + groundDepth * collapseProgress;
+            const fadeGradient = ctx.createLinearGradient(0, groundTop, 0, fadeFront + 34);
+            fadeGradient.addColorStop(0, 'rgba(8, 7, 21, .96)');
+            fadeGradient.addColorStop(.86, 'rgba(8, 7, 21, .96)');
+            fadeGradient.addColorStop(1, 'rgba(8, 7, 21, 0)');
+            ctx.fillStyle = fadeGradient;
+            ctx.fillRect(left, groundTop, leftHalfWidth + rightHalfWidth, Math.min(groundDepth, fadeFront - groundTop + 34));
             ctx.restore();
             ctx.save();
         }
@@ -703,6 +751,19 @@ class BossManager {
             const direction = index % 2 === 0 ? -1 : 1;
             ctx.moveTo(originX + branchPoint[0], groundTop + branchPoint[1]);
             ctx.lineTo(originX + branchPoint[0] + direction * 38 * crackProgress, groundTop + branchPoint[1] + 22 * crackProgress);
+        });
+        // Split each main fracture into small, irregular tendrils for a dense spiderweb.
+        if (crackProgress > .28) branches.forEach((points, index) => {
+            const direction = index % 2 === 0 ? -1 : 1;
+            [1, 2].forEach(segmentIndex => {
+                const point = points[segmentIndex];
+                const length = (17 + index * 3 + segmentIndex * 4) * crackProgress;
+                const rise = (8 + segmentIndex * 6) * crackProgress;
+                ctx.moveTo(originX + point[0], groundTop + point[1]);
+                ctx.lineTo(originX + point[0] + direction * length, groundTop + point[1] + rise);
+                // A tiny offshoot from the tendril keeps the cracks naturally uneven.
+                ctx.lineTo(originX + point[0] + direction * (length + 8 * crackProgress), groundTop + point[1] + rise + (index % 3 - 1) * 9 * crackProgress);
+            });
         });
         // A long split crosses the ground beneath the vertical spiderweb fractures.
         if (crackProgress > .2) {
