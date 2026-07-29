@@ -338,7 +338,7 @@ class WorldManager {
             
             // Late jungle books
             { x: 11300, y: 150, width: 50, height: 50, collected: false, verse: "Hope" },
-            { x: 16800, y: 415, width: 50, height: 50, collected: false, verse: "Joy" }  // Temple approach
+            { x: 17900, y: 415, width: 50, height: 50, collected: false, verse: "Joy" }  // 50px inside the temple-floor edge
         ];
     }
     

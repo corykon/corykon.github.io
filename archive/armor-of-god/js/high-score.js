@@ -30,12 +30,18 @@ class HighScoreBoard {
         this.game.audioManager.playMusic('hallOfHeroes');
         this.nameEntry.classList.toggle('hidden', this.pendingScore === null);
         this.continueButton.textContent = this.pendingScore === null ? 'Back to Main Menu' : 'Continue to Credits';
-        this.status.textContent = this.pendingScore === null ? 'Loading the hall of heroes…' : `FINAL SCORE: ${this.pendingScore.toLocaleString()}`;
+        this.status.classList.remove('hidden');
+        this.status.textContent = this.pendingScore === null ? 'Loading the hall of heroes…' : `YOUR FINAL SCORE: ${this.pendingScore.toLocaleString()}`;
         this.nameInput.value = '';
         if (this.pendingScore !== null) setTimeout(() => this.nameInput.focus(), 50);
         if (!this.isAvailable()) {
             this.nameEntry.classList.add('hidden');
-            this.setNotice('offline', 'LEADERBOARD UNAVAILABLE', 'OPEN THE GAME THROUGH A WEB SERVER TO CONNECT TO FIREBASE.');
+            this.status.textContent = 'LEADERBOARD UNAVAILABLE — OPEN THE GAME THROUGH A WEB SERVER.';
+            this.hideResults();
+            return;
+        }
+        if (this.pendingScore !== null) {
+            this.hideResults();
             return;
         }
         await this.load();
@@ -68,7 +74,10 @@ class HighScoreBoard {
 
     async load() {
         this.entries.replaceChildren();
-        this.entries.classList.remove('leaderboard-entries--notice');
+        this.entries.classList.remove('leaderboard-entries--notice', 'leaderboard-entries--revealed');
+        this.entries.classList.add('hidden');
+        this.heading.classList.add('hidden');
+        this.heading.classList.remove('leaderboard-heading--revealed');
         if (!this.isAvailable()) {
             this.setNotice('offline', 'LEADERBOARD UNAVAILABLE', 'OPEN THE GAME THROUGH A WEB SERVER TO CONNECT TO FIREBASE.');
             return;
@@ -78,6 +87,7 @@ class HighScoreBoard {
             if (!scores.length) { this.setNotice('empty', 'NO HEROES YET', 'BEAT THE GAME TO BE THE FIRST TO WRITE YOUR NAME IN THE HALL OF HEROES.'); return; }
             this.heading.classList.remove('hidden');
             scores.forEach((entry, index) => this.entries.append(this.renderEntry(entry, index + 1)));
+            this.revealResults();
             const highlighted = this.entries.querySelector('.leaderboard-row--highlighted');
             if (highlighted) highlighted.scrollIntoView({ block: 'center' });
         } catch (error) {
@@ -88,6 +98,7 @@ class HighScoreBoard {
 
     setNotice(type, title, message) {
         this.entries.replaceChildren();
+        this.entries.classList.remove('hidden');
         this.entries.classList.add('leaderboard-entries--notice');
         this.heading.classList.add('hidden');
         const notice = document.createElement('div');
@@ -97,11 +108,34 @@ class HighScoreBoard {
         const copy = document.createElement('p'); copy.textContent = message;
         notice.append(icon, heading, copy);
         this.entries.append(notice);
+        this.revealResults();
+    }
+
+    revealResults() {
+        if (this.status.textContent.startsWith('Loading')) {
+            this.status.textContent = '';
+            this.status.classList.add('hidden');
+        }
+        this.entries.classList.remove('hidden');
+        if (!this.heading.classList.contains('hidden')) this.heading.classList.add('leaderboard-heading--revealed');
+        this.entries.classList.add('leaderboard-entries--revealed');
+    }
+
+    hideResults() {
+        this.entries.replaceChildren();
+        this.entries.classList.add('hidden');
+        this.entries.classList.remove('leaderboard-entries--notice', 'leaderboard-entries--revealed');
+        this.heading.classList.add('hidden');
+        this.heading.classList.remove('leaderboard-heading--revealed');
     }
 
     renderEntry(entry, rank) {
         const row = document.createElement('div');
         row.className = `leaderboard-row${entry.id === this.highlightedId ? ' leaderboard-row--highlighted' : ''}`;
+        if (entry.id === this.highlightedId) {
+            row.title = 'Your score';
+            row.setAttribute('aria-label', 'Your score');
+        }
         const date = entry.createdAt?.toDate ? entry.createdAt.toDate() : new Date();
         [['#', rank], ['NAME', this.cleanName(String(entry.name || 'UNKNOWN')) || 'UNKNOWN'], ['DATE', date.toLocaleDateString()], ['SCORE', Number(entry.score || 0).toLocaleString()]].forEach(([label, value]) => {
             const cell = document.createElement('span'); cell.dataset.label = label; cell.textContent = value; row.append(cell);

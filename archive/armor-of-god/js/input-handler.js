@@ -187,7 +187,7 @@ class InputHandler {
         // Handle level intro screen
         if (this.game.gameState === 'levelIntro') {
             if (e.code === 'Space' || e.code === 'Enter') {
-                this.game.fastForwardLevelIntro();
+                this.game.advanceLevelIntro();
                 e.preventDefault();
                 return;
             }

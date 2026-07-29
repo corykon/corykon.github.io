@@ -259,6 +259,7 @@ class ArrowManager {
                             const randomSound = ricochetSounds[Math.floor(Math.random() * ricochetSounds.length)];
                             this.audioManager.playSound(randomSound);
                             arrow.hasPlayedRicochetSound = true;
+                            this.game?.addScore(10, '#8EE7FF', 'Armor Ricochet');
                         }
                     } else {
                         // Player takes damage

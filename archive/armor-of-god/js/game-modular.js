@@ -327,7 +327,19 @@ class ArmorOfGodGame {
             this.startCredits();
         });
         
+        document.getElementById('closeModal').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
+        });
         document.getElementById('closeModal').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
+            this.audioManager.playSoundEffect('modalClose');
+            this.hideInstructionsModal();
+        });
+
+        document.getElementById('instructionsDoneBtn').addEventListener('mouseenter', () => {
+            this.audioManager.playSoundEffect('buttonHover');
+        });
+        document.getElementById('instructionsDoneBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
             this.audioManager.playSoundEffect('modalClose');
             this.hideInstructionsModal();
@@ -659,13 +671,9 @@ class ArmorOfGodGame {
             this.cutsceneVideoThreeSlowed = false;
         }
         if (index === 1) this.cutscenePeacefulFadeStarted = false;
-        if (index === 3) {
-            this.cutsceneBossMusicStarted = false;
-            this.cutsceneVideoFourSlowed = false;
-        }
+        if (index === 3) this.cutsceneVideoFourSlowed = false;
         if (index === 4) {
             this.cutsceneThunderFadeStarted = false;
-            this.audioManager.fadeOutCurrentMusic(3000);
         }
         if (incoming.videoWidth && incoming.videoHeight) document.getElementById('cutsceneFrame').style.aspectRatio = `${incoming.videoWidth} / ${incoming.videoHeight}`;
         incoming.currentTime = 0;
@@ -695,10 +703,6 @@ class ArmorOfGodGame {
             if (index === 2 && !this.cutsceneVideoThreeSlowed && incoming.currentTime >= 3.3) {
                 this.cutsceneVideoThreeSlowed = true;
                 incoming.playbackRate = 0.6;
-            }
-            if (index === 3 && !this.cutsceneBossMusicStarted && incoming.currentTime >= 2) {
-                this.cutsceneBossMusicStarted = true;
-                this.audioManager.crossfadeToMusic('openingBadNewsFinal', 3000);
             }
             if (index === 3 && !this.cutsceneVideoFourSlowed && incoming.currentTime >= 2) {
                 this.cutsceneVideoFourSlowed = true;
@@ -736,12 +740,16 @@ class ArmorOfGodGame {
         [this.cutsceneCurrentVideo, this.cutsceneOtherVideo].forEach(video => { video?.pause(); video?.classList.remove('cutscene-video--visible'); });
         const thunder = this.audioManager.audio.thunderAmbience;
         thunder.pause(); thunder.currentTime = 0;
-        this.showLevelIntro();
+        // Let the final dramatic cue resolve over the first moments of the intro.
+        this.audioManager.fadeOutCurrentMusic(1500);
+        this.showLevelIntro(1500);
     }
     
-    showLevelIntro() {
+    showLevelIntro(musicDelay = 0) {
         clearTimeout(this.levelIntroFastForwardTimer);
         clearTimeout(this.levelIntroExitTimer);
+        clearTimeout(this.levelIntroMusicTimer);
+        clearTimeout(this.levelIntroReadyTimer);
         document.getElementById('levelIntroScreen').classList.remove('level-intro--fast-forward', 'level-intro--exiting');
         document.querySelectorAll('#levelIntroScreen .level-intro-rush-target').forEach(element => element.classList.remove('level-intro-rush-target'));
         this.levelIntroFastForwarding = false;
@@ -752,11 +760,17 @@ class ArmorOfGodGame {
             return;
         }
         this.gameState = 'levelIntro';
+        this.levelIntroReadyToStart = false;
+        this.levelIntroReadyTimer = setTimeout(() => {
+            if (this.gameState === 'levelIntro') this.levelIntroReadyToStart = true;
+        }, 3500);
         document.getElementById('startLevelBtn').innerHTML = 'Start Level <span class="chevron-icon">❯</span>';
         this.showScreen('levelIntro');
         
-        // Play level intro music
-        this.audioManager.playMusic('levelIntro');
+        // Let a cutscene music fade complete before the intro track takes over.
+        this.levelIntroMusicTimer = setTimeout(() => {
+            if (this.gameState === 'levelIntro') this.audioManager.playMusic('levelIntro');
+        }, musicDelay);
         
         // Update intro screen content
         const levelData = this.levelData[this.level];
@@ -783,12 +797,23 @@ class ArmorOfGodGame {
         introScreen.classList.add('level-intro--fast-forward');
         this.levelIntroFastForwardTimer = setTimeout(() => {
             this.levelIntroFastForwarding = false;
-            this.exitLevelIntro();
+            this.levelIntroReadyToStart = true;
         }, 550);
+    }
+
+    advanceLevelIntro() {
+        if (this.gameState !== 'levelIntro') return;
+        if (this.levelIntroReadyToStart) {
+            this.exitLevelIntro();
+            return;
+        }
+        this.fastForwardLevelIntro();
     }
 
     exitLevelIntro() {
         if (this.gameState !== 'levelIntro' || this.levelIntroExiting) return;
+        clearTimeout(this.levelIntroReadyTimer);
+        this.levelIntroReadyToStart = false;
         this.levelIntroExiting = true;
         const introScreen = document.getElementById('levelIntroScreen');
         introScreen.classList.add('level-intro--exiting');
@@ -1743,6 +1768,7 @@ class ArmorOfGodGame {
                 } else if (this.hasArmor) {
                     // Already have armor - reset timer instead of incrementing count
                     this.armorTimer = this.armorDuration;
+                    this.addScore(200, '#8EE7FF', 'Armor Refill');
                     this.uiRenderer.showMessage('Armor Timer Reset!', 120, '#FFD700', 15, 400);
                 }
             }

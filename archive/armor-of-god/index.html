@@ -45,7 +45,11 @@
         <div id="menuScreen" class="screen">
             <img src="images/armorOfGodTitleImage.png" alt="Armor of God Title" class="title-image">
             <h1>Armor of God</h1>
-            <p class="scripture">"Put on the whole armor of God..."<span class="scripture-reference">Ephesians 6:11</span></p>
+            <p class="scripture">
+                <span class="scripture-full">“Put on the whole armor of God, that ye may be able to stand against the wiles of the devil”</span>
+                <span class="scripture-short">“Put on the whole armor of God...”</span>
+                <span class="scripture-reference">Ephesians 6:11</span>
+            </p>
             <div class="game-setup">
                 <div class="pet-selection">
                     <span class="pet-label">Companion:</span>
@@ -248,32 +252,41 @@
 
     <!-- Instructions Modal -->
     <div id="instructionsModal" class="modal hidden">
-        <div class="modal-content">
+        <div class="modal-content how-to-play-modal" role="dialog" aria-modal="true" aria-labelledby="howToPlayTitle">
             <span class="close-btn" id="closeModal">&times;</span>
-            <h2>How to Play</h2>
-            <div class="instructions-content">
-                <div class="instruction-item">
-                    <span class="key">↑</span>
-                    <span class="action">Jump over obstacles</span>
-                </div>
-                <div class="instruction-item">
-                    <span class="key">↓</span>
-                    <span class="action">Duck under arrows</span>
-                </div>
-                <div class="instruction-item">
-                    <span class="key">D</span>
-                    <span class="action">Pet your animal</span>
-                </div>
-                <div class="instruction-item">
-                    <span class="key">P</span>
-                    <span class="action">Pause the game</span>
-                </div>
-                <div class="game-objective">
-                    <h3>Objective:</h3>
-                    <p>Collect 3 scriptures to receive God's armor, then reach the holy temple!</p>
-                    <p>The armor protects you from arrows and enhances your abilities for 30 seconds.</p>
-                </div>
+            <header class="how-to-play-header"><h2 id="howToPlayTitle">How to Play</h2></header>
+            <div class="how-to-play-content">
+                <section class="how-to-play-section how-to-move" aria-labelledby="howToMoveTitle">
+                    <h3 id="howToMoveTitle">How to Move</h3>
+                    <div class="how-to-play-grid how-to-move-grid">
+                        <div class="how-to-play-card">
+                            <h4>Jump</h4>
+                            <div class="control-demo"><span class="how-to-key" aria-label="Up arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 21v-9H5l7-8 7 8h-5v9z"/></svg></span><img src="images/sprites/main-char/jump.png" alt="Hero jumping"></div>
+                        </div>
+                        <div class="how-to-play-card">
+                            <h4>Move</h4>
+                            <div class="control-demo control-demo--move"><img src="images/sprites/main-char/run3.png" alt="Hero running"><span class="how-to-key" aria-label="Left arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10h-9V5l-8 7 8 7v-5h9z"/></svg></span><span class="how-to-key" aria-label="Right arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h9V5l8 7-8 7v-5H3z"/></svg></span><img src="images/sprites/main-char/run8.png" alt="Hero running"></div>
+                        </div>
+                        <div class="how-to-play-card">
+                            <h4>Duck</h4>
+                            <div class="control-demo"><span class="how-to-key" aria-label="Down arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v9h5l-7 8-7-8h5z"/></svg></span><img src="images/sprites/main-char/duck1.png" alt="Hero ducking"></div>
+                        </div>
+                    </div>
+                </section>
+                <section class="how-to-play-section how-to-do" aria-labelledby="whatToDoTitle">
+                    <h3 id="whatToDoTitle">What to Do</h3>
+                    <div class="how-to-play-grid how-to-do-grid">
+                        <div class="how-to-play-card"><h4>Dodge<br>Arrows</h4><img class="how-to-sprite how-to-arrows" src="images/sprites/enemy/fiery-arrow.png" alt="Fiery arrows"></div>
+                        <div class="how-to-play-card"><h4>Defeat<br>Enemies</h4><img class="how-to-sprite how-to-enemy" src="images/sprites/enemy/snail-crawl1.png" alt="Enemy snail"></div>
+                        <div class="how-to-play-card"><h4>Reach the<br>Temple</h4><img class="how-to-sprite how-to-temple" src="images/sprites/temple.png" alt="Temple"></div>
+                    </div>
+                    <div class="armor-objective">
+                        <p>Collect scriptures to put on your armor</p>
+                        <div class="armor-objective-sprites"><img src="images/sprites/bom.png" alt="Scripture"><span>+</span><img src="images/sprites/bom.png" alt="Scripture"><span>+</span><img src="images/sprites/bom.png" alt="Scripture"><span>=</span><img src="images/sprites/main-char/armor-standing.png" alt="Hero in armor"></div>
+                    </div>
+                </section>
             </div>
+            <footer class="how-to-play-footer"><button id="instructionsDoneBtn" class="menu-btn start-btn" type="button">Done</button></footer>
         </div>
     </div>
 
