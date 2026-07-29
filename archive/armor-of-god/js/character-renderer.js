@@ -221,7 +221,7 @@ class CharacterRenderer {
     
     renderPlayer(ctx, player, hasArmor, gameState, isPaused = false) {
         // Update animation states based on player movement (but freeze when dying, celebrating, or paused)
-        if (gameState !== 'dying' && gameState !== 'celebrating' && !isPaused) {
+        if (gameState !== 'dying' && gameState !== 'celebrating' && gameState !== 'bossCutscene' && !isPaused) {
             this.updateAnimationStates(player);
         }
         

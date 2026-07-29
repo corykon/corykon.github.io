@@ -129,6 +129,9 @@ class WorldManager {
             { x: 4380, y: 320, width: 140, height: 25, type: 'branch' },
             { x: 4640, y: 380, width: 160, height: 25, type: 'branch' },
             { x: 4860, y: 180, width: 100, height: 20, type: 'tree_platform' },
+            // Midpoint branches bridge the unusually wide gap before the next platform run.
+            { x: 5220, y: 250, width: 110, height: 25, type: 'branch' },
+            { x: 5580, y: 325, width: 110, height: 25, type: 'branch' },
             
             // Mid-section with mixed platforms and floating blocks
             { x: 6000, y: 400, width: 100, height: 30, type: 'tree_platform' },
@@ -146,6 +149,8 @@ class WorldManager {
             
             // Final approach and more floating blocks
             { x: 8600, y: 468, width: 500, height: 135, type: 'ground' },
+            // Safety branch for the long jump immediately before the final ascending run.
+            { x: 9165, y: 430, width: 70, height: 24, type: 'branch' },
             { x: 9300, y: 400, width: 120, height: 30, type: 'tree_platform' },
             { x: 9500, y: 360, width: 120, height: 30, type: 'tree_platform' },
             { x: 9700, y: 320, width: 120, height: 30, type: 'tree_platform' },
@@ -159,7 +164,8 @@ class WorldManager {
             
             // More ground with gaps
             { x: 12000, y: 468, width: 600, height: 135, type: 'ground' },
-            // GAP
+            // Small safety branch in the last wide ground gap before the final jungle run.
+            { x: 12715, y: 430, width: 70, height: 24, type: 'branch' },
             { x: 12900, y: 468, width: 900, height: 135, type: 'ground' },
             
             // Final tree-top challenge before temple
@@ -332,7 +338,7 @@ class WorldManager {
             
             // Late jungle books
             { x: 11300, y: 150, width: 50, height: 50, collected: false, verse: "Hope" },
-            { x: 16800, y: 415, width: 50, height: 50, collected: false, verse: "Joy" }  // Temple approach
+            { x: 17900, y: 415, width: 50, height: 50, collected: false, verse: "Joy" }  // 50px inside the temple-floor edge
         ];
     }
     
@@ -916,12 +922,22 @@ class WorldManager {
     
     renderPlatforms(ctx) {
         this.platforms.forEach(platform => {
+            if (platform.hidden) return;
             this.renderPlatform(ctx, platform);
         });
     }
     
     renderPlatform(ctx, platform) {
-        if (this.currentLevel === 1) {
+        if (this.currentLevel === 'boss') {
+            ctx.fillStyle = '#302a3c';
+            ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+            ctx.fillStyle = '#5b5069';
+            ctx.fillRect(platform.x, platform.y, platform.width, 8);
+            ctx.fillStyle = '#42384e';
+            for (let x = 0; x < platform.width; x += 18) {
+                for (let y = 14; y < platform.height; y += 16) ctx.fillRect(platform.x + x + (y % 9), platform.y + y, 8, 5);
+            }
+        } else if (this.currentLevel === 1) {
             // Castle level - original grass platforms
             // Draw dirt base (underneath) - lighter for better dog visibility
             ctx.fillStyle = '#D2B48C'; // Light tan/sandy brown for better contrast
@@ -1134,12 +1150,16 @@ class WorldManager {
             if (!heart.collected) {
                 // Floating effect (same as scripture books but slightly different timing)
                 const time = Date.now() * 0.003; // Slightly faster float
-                const floatY = Math.sin(time + heart.x * 0.015) * 3; // Slightly more float amplitude
+                const floatY = heart.phase === 'falling' ? 0 : Math.sin(time + heart.x * 0.015) * 3; // Slightly more float amplitude
                 
                 // Pulsing scale effect
-                const pulseScale = 1.0 + Math.sin(time * 2 + heart.x * 0.02) * 0.1;
+                const pulseScale = heart.phase === 'falling' ? 1 : 1.0 + Math.sin(time * 2 + heart.x * 0.02) * 0.1;
                 
                 ctx.save();
+                if (heart.timed && heart.age >= 210) {
+                    const fadeProgress = (heart.age - 210) / 90;
+                    ctx.globalAlpha = Math.max(0, 1 - fadeProgress) * (Math.floor(heart.age / 5) % 2 === 0 ? 1 : .28);
+                }
                 ctx.translate(0, floatY);
                 
                 // Draw glow behind heart
@@ -1179,15 +1199,90 @@ class WorldManager {
     
     renderForegroundSprites(ctx, foregroundImages) {
         this.foregroundSprites.forEach(sprite => {
+            if (sprite.type === 'surface-cave-mountain') {
+                this.renderSurfaceCaveMountain(ctx, sprite);
+                return;
+            }
             const image = foregroundImages[sprite.image];
+            const fallOffset = sprite.collapseOffsetY || 0;
+            const alpha = sprite.collapseAlpha === undefined ? 1 : sprite.collapseAlpha;
+            ctx.save();
+            ctx.globalAlpha = alpha;
             if (image && image.complete) {
-                ctx.drawImage(image, sprite.x, sprite.y, sprite.width, sprite.height);
+                if (sprite.flipX) {
+                    ctx.translate(sprite.x + sprite.width, sprite.y + fallOffset);
+                    ctx.scale(-1, 1);
+                    ctx.drawImage(image, 0, 0, sprite.width, sprite.height);
+                } else {
+                    ctx.drawImage(image, sprite.x, sprite.y + fallOffset, sprite.width, sprite.height);
+                }
             } else {
                 // Fallback: simple colored rectangle based on sprite type
                 ctx.fillStyle = this.getFallbackColor(sprite.image);
-                ctx.fillRect(sprite.x, sprite.y, sprite.width, sprite.height);
+                ctx.fillRect(sprite.x, sprite.y + fallOffset, sprite.width, sprite.height);
             }
+            ctx.restore();
         });
+    }
+
+    beginCutsceneSceneryFall(centerX, leftReach, rightReach) {
+        this.foregroundSprites.forEach(sprite => {
+            const spriteCenter = sprite.x + sprite.width / 2;
+            const inCollapse = spriteCenter >= centerX - leftReach && spriteCenter <= centerX + rightReach;
+            if (!inCollapse || !sprite.image || sprite.collapseAlpha !== undefined) return;
+            sprite.collapseOffsetY = 0;
+            sprite.collapseVelocityY = 1.8 + Math.random() * 1.2;
+            sprite.collapseAlpha = 1;
+        });
+    }
+
+    updateCutsceneSceneryFall() {
+        this.foregroundSprites.forEach(sprite => {
+            if (sprite.collapseAlpha === undefined || sprite.collapseAlpha <= 0) return;
+            sprite.collapseOffsetY += sprite.collapseVelocityY;
+            sprite.collapseVelocityY += .32;
+            sprite.collapseAlpha = Math.max(0, sprite.collapseAlpha - .025);
+        });
+    }
+
+    renderSurfaceCaveMountain(ctx, mountain) {
+        const { x, y, width, height } = mountain;
+        ctx.save();
+        // Layered, faceted rock echoes the dark cave walls below the surface.
+        ctx.fillStyle = '#4a4d55';
+        ctx.beginPath();
+        // The peak lies off-screen left; only the broad, rocky base reaches the clearing.
+        ctx.moveTo(x, y + height); ctx.lineTo(x, y); ctx.lineTo(x + width * .36, y + height * .03);
+        ctx.lineTo(x + width * .55, y + height * .17); ctx.lineTo(x + width * .7, y + height * .3); ctx.lineTo(x + width * .9, y + height * .6);
+        ctx.lineTo(x + width, y + height); ctx.closePath(); ctx.fill();
+        const facets = [
+            ['#62666e', [[0,.08],[.36,.03],[.5,.42],[.25,.76]]],
+            ['#3d4149', [[.36,.03],[.55,.17],[.64,.52],[.5,.42]]],
+            ['#777b82', [[.55,.17],[.7,.3],[.9,.6],[.64,.52]]],
+            ['#51545b', [[0,.08],[.25,.76],[.5,1],[0,1]]],
+            ['#363a42', [[.64,.52],[.9,.6],[1,1],[.5,1]]]
+        ];
+        facets.forEach(([color, points]) => {
+            ctx.fillStyle = color; ctx.beginPath();
+            points.forEach(([px, py], i) => i ? ctx.lineTo(x + px * width, y + py * height) : ctx.moveTo(x + px * width, y + py * height));
+            ctx.closePath(); ctx.fill();
+        });
+        ctx.strokeStyle = 'rgba(36, 39, 45, .7)'; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(x + width * .18, y + height * .66); ctx.lineTo(x + width * .37, y + height * .5); ctx.lineTo(x + width * .49, y + height * .72); ctx.lineTo(x + width * .68, y + height * .56); ctx.lineTo(x + width * .86, y + height * .75); ctx.stroke();
+        // The cave face carries the same muted purple dash texture from the supplied reference.
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x, y + height); ctx.lineTo(x, y); ctx.lineTo(x + width * .36, y + height * .03);
+        ctx.lineTo(x + width * .55, y + height * .17); ctx.lineTo(x + width * .7, y + height * .3); ctx.lineTo(x + width * .9, y + height * .6);
+        ctx.lineTo(x + width, y + height); ctx.closePath(); ctx.clip();
+        ctx.fillStyle = 'rgba(73, 61, 85, .72)';
+        for (let textureY = y + 16; textureY < y + height; textureY += 28) {
+            for (let textureX = x + 18 + ((Math.floor((textureY - y) / 28) % 2) * 10); textureX < x + width; textureX += 36) {
+                ctx.fillRect(textureX, textureY, 15, 5);
+            }
+        }
+        ctx.restore();
+        ctx.restore();
     }
     
     getFallbackColor(imageName) {
@@ -1247,7 +1342,7 @@ class WorldManager {
                    castle.width + glowRadius, castle.height + glowRadius);
         
         if (templeImage.complete) {
-            ctx.drawImage(templeImage, castle.x, castle.y, castle.width, castle.height);
+            ctx.drawImage(templeImage, castle.x, castle.y + (castle.visualGroundOffset || 0), castle.width, castle.height);
         } else {
             // Fallback if image isn't loaded yet
             ctx.fillStyle = '#D4AF37'; // Gold color for temple
@@ -1299,6 +1394,7 @@ class WorldManager {
         
         // Platform collisions for floating platforms
         this.platforms.forEach(platform => {
+            if (platform.disabled) return;
             // Only check collisions when falling down
             if (entity.velocityY >= 0) {
                 // Check for horizontal overlap - more forgiving for edge landings
@@ -1383,4 +1479,186 @@ class WorldManager {
         this.createScriptureBooks();
         this.createHearts();
         this.createForegroundSprites();
-    }}
+    }
+
+    createBossArena() {
+        this.currentLevel = 'boss';
+        this.worldWidth = 1200;
+        this.theme = 'cave';
+        this.groundY = 468;
+        this.platforms = [
+            { x: 0, y: 468, width: 1200, height: 140, type: 'rock' },
+            { x: 0, y: 75, width: 68, height: 393, type: 'rock', blockSides: true },
+            { x: 1132, y: 75, width: 68, height: 393, type: 'rock', blockSides: true },
+            // Symmetrical escape platforms: low sides and a higher center perch.
+            { x: 215, y: 270, width: 88, height: 32, type: 'rock_platform', arenaPlatform: true },
+            { x: 510, y: 215, width: 180, height: 32, type: 'rock_platform', arenaPlatform: true },
+            { x: 875, y: 270, width: 88, height: 32, type: 'rock_platform', arenaPlatform: true }
+        ];
+        this.platforms.filter(platform => platform.arenaPlatform).forEach(platform => {
+            platform.homeX = platform.x; platform.homeY = platform.y;
+            platform.arenaMotion = 'idle'; platform.motionVelocity = 0;
+        });
+        this.clouds = []; this.scriptureBooks = []; this.hearts = []; this.foregroundSprites = [];
+    }
+
+    beginBossPlatformCollapse() {
+        this.platforms.filter(platform => platform.arenaPlatform).forEach(platform => {
+            if (platform.arenaMotion !== 'idle') return;
+            platform.arenaMotion = 'falling'; platform.motionTimer = 0; platform.motionVelocity = 0;
+            platform.disabled = true;
+        });
+    }
+
+    restoreBossPlatforms() {
+        this.platforms.filter(platform => platform.arenaPlatform).forEach(platform => {
+            if (platform.arenaMotion === 'idle' || platform.arenaMotion === 'restoring' || platform.arenaMotion === 'bouncing') return;
+            platform.x = platform.homeX; platform.y = -platform.height - 24;
+            platform.hidden = false; platform.disabled = true;
+            platform.motionVelocity = 2.5; platform.arenaMotion = 'restoring';
+        });
+    }
+
+    updateBossPlatformMotion() {
+        this.platforms.filter(platform => platform.arenaPlatform).forEach(platform => {
+            if (platform.arenaMotion === 'falling') {
+                platform.motionTimer++;
+                platform.motionVelocity += .58;
+                platform.y += platform.motionVelocity;
+                platform.x = platform.homeX + Math.sin(platform.motionTimer * 1.1) * 4;
+                if (platform.y > 640) platform.hidden = true;
+            } else if (platform.arenaMotion === 'restoring') {
+                platform.motionVelocity += .68;
+                platform.y += platform.motionVelocity;
+                if (platform.y >= platform.homeY) {
+                    platform.y = platform.homeY; platform.motionVelocity = -7;
+                    platform.arenaMotion = 'bouncing';
+                }
+            } else if (platform.arenaMotion === 'bouncing') {
+                platform.motionVelocity += .72;
+                platform.y += platform.motionVelocity;
+                if (platform.y >= platform.homeY && platform.motionVelocity > 0) {
+                    platform.y = platform.homeY; platform.x = platform.homeX;
+                    platform.arenaMotion = 'idle'; platform.disabled = false;
+                }
+            }
+        });
+    }
+
+    createTempleClearing() {
+        // Keep the level-one grass rendering for the peaceful surface path; the background
+        // manager independently supplies the mountain sunrise.
+        this.currentLevel = 1;
+        this.theme = 'mountain';
+        this.worldWidth = 4700;
+        this.groundY = 468;
+        // Fifteen-pixel risers are low enough for the existing landing tolerance to step up
+        // automatically while walking, so the post-boss climb never requires a jump.
+        this.platforms = [
+            { x: 0, y: 468, width: 600, height: 140, type: 'ground' },
+            { x: 600, y: 453, width: 300, height: 155, type: 'ground' },
+            { x: 900, y: 438, width: 300, height: 170, type: 'ground' },
+            { x: 1200, y: 423, width: 300, height: 185, type: 'ground' },
+            { x: 1500, y: 408, width: 300, height: 200, type: 'ground' },
+            { x: 1800, y: 393, width: 300, height: 215, type: 'ground' },
+            { x: 2100, y: 378, width: 300, height: 230, type: 'ground' },
+            { x: 2400, y: 363, width: 300, height: 245, type: 'ground' },
+            { x: 2700, y: 348, width: 300, height: 260, type: 'ground' },
+            { x: 3000, y: 333, width: 300, height: 275, type: 'ground' },
+            { x: 3300, y: 318, width: 300, height: 290, type: 'ground' },
+            { x: 3600, y: 303, width: 1100, height: 315, type: 'ground' }
+        ];
+        this.clouds = []; this.scriptureBooks = []; this.hearts = [];
+        this.foregroundSprites = [
+            // A surface mountain carries the same cave doorway the player emerged from.
+            { x: -380, y: 170, width: 760, height: 298, type: 'surface-cave-mountain' },
+            { x: 95, y: 328, width: 80, height: 140, image: 'cave-exit.png', flipX: true },
+            { x: 250, y: 338, width: 108, height: 130, image: 'pine-tree-1.png' },
+            { x: 450, y: 298, width: 142, height: 170, image: 'pine-tree-2.png' },
+            { x: 650, y: 333, width: 88, height: 110, image: 'pine-tree-1.png' },
+            { x: 900, y: 303, width: 105, height: 140, image: 'pine-tree-1.png' },
+            { x: 1110, y: 250, width: 132, height: 168, image: 'pine-tree-2.png' },
+            { x: 1260, y: 238, width: 150, height: 180, image: 'pine-tree-2.png' },
+            { x: 1450, y: 298, width: 100, height: 120, image: 'pine-tree-1.png' },
+            { x: 1630, y: 233, width: 135, height: 160, image: 'pine-tree-2.png' },
+            { x: 1810, y: 283, width: 88, height: 110, image: 'pine-tree-1.png' },
+            // Frame the temple with a denser, welcoming grove while keeping its doorway clear.
+            { x: 1990, y: 243, width: 120, height: 150, image: 'pine-tree-1.png' },
+            { x: 2160, y: 168, width: 158, height: 200, image: 'pine-tree-2.png' },
+            { x: 2245, y: 248, width: 92, height: 120, image: 'pine-tree-1.png' },
+            { x: 2610, y: 153, width: 150, height: 190, image: 'pine-tree-2.png' },
+            { x: 2745, y: 213, width: 108, height: 130, image: 'pine-tree-1.png' },
+            { x: 2940, y: 163, width: 142, height: 180, image: 'pine-tree-2.png' },
+            { x: 3150, y: 198, width: 100, height: 120, image: 'pine-tree-1.png' },
+            { x: 3590, y: 138, width: 135, height: 180, image: 'pine-tree-2.png' },
+            { x: 3810, y: 183, width: 100, height: 120, image: 'pine-tree-1.png' },
+            { x: 4250, y: 113, width: 150, height: 190, image: 'pine-tree-2.png' }
+        ];
+        // Keep every tree rooted when the walkable approach risers change height.
+        this.foregroundSprites.forEach(sprite => {
+            if (!sprite.image || !sprite.image.startsWith('pine-tree')) return;
+            const centerX = sprite.x + sprite.width / 2;
+            const ground = this.platforms.find(platform => centerX >= platform.x && centerX <= platform.x + platform.width);
+            if (ground) sprite.y = ground.y - sprite.height;
+        });
+    }
+    renderBossCave(ctx, cameraX, canvasWidth, canvasHeight, crystalImages) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
+        gradient.addColorStop(0, '#080715'); gradient.addColorStop(1, '#191131');
+        ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        // Jagged closed-rock ceiling and sidewalls keep the arena feeling underground.
+        ctx.fillStyle = '#241d3f';
+        const ceilingProfile = [
+            [-20, 48], [70, 78], [150, 54], [250, 86], [345, 61], [445, 48],
+            [535, 76], [640, 50], [745, 84], [845, 57], [950, 72], [1050, 45],
+            [1140, 82], [1220, 54]
+        ];
+        ctx.beginPath();
+        ctx.moveTo(0, 0); ctx.lineTo(canvasWidth, 0);
+        [...ceilingProfile].reverse().forEach(([x, y]) => ctx.lineTo(x, y));
+        ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#302a3c';
+        ctx.beginPath();
+        ctx.moveTo(0, 62); ctx.lineTo(68, 82); ctx.lineTo(68, 468); ctx.lineTo(0, 468); ctx.closePath(); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(canvasWidth, 62); ctx.lineTo(canvasWidth - 68, 82); ctx.lineTo(canvasWidth - 68, 468); ctx.lineTo(canvasWidth, 468); ctx.closePath(); ctx.fill();
+
+        // Floor, ceiling, and wall crystal formations use all supplied sprites at varied scales.
+        const placements = [
+            [85, 415, 1, 50, 60, 'up'], [315, 426, 2, 42, 52, 'up'], [640, 418, 0, 60, 70, 'up'], [905, 424, 1, 48, 58, 'up'], [1080, 412, 2, 58, 70, 'up'],
+            // Ceiling crystals are placed against the rock line above, not free-floating.
+            [100, 62, 0, 38, 55, 'down'], [255, 72, 2, 62, 72, 'down'], [535, 48, 1, 50, 64, 'down'], [770, 68, 0, 70, 78, 'down'], [1010, 45, 2, 45, 58, 'down'],
+            [22, 165, 1, 54, 72, 'right'], [30, 305, 2, 42, 55, 'right'], [1125, 175, 0, 55, 70, 'left'], [1132, 315, 1, 45, 58, 'left']
+        ];
+        // Rock roots overlap each crystal cap, visually connecting every stalactite to the roof.
+        ctx.fillStyle = '#302a3c';
+        placements.filter(([, , , , , direction]) => direction === 'down').forEach(([x, y, , width]) => {
+            const drawX = x - cameraX;
+            ctx.beginPath();
+            ctx.moveTo(drawX - 18, 34);
+            ctx.lineTo(drawX + width + 18, 34);
+            ctx.lineTo(drawX + width + 8, y + 18);
+            ctx.lineTo(drawX + width / 2, y + 28);
+            ctx.lineTo(drawX - 8, y + 18);
+            ctx.closePath();
+            ctx.fill();
+        });
+        placements.forEach(([x, y, index, width, height, direction]) => {
+            const image = crystalImages[index];
+            if (!image || !image.complete) return;
+            ctx.save();
+            const drawX = x - cameraX;
+            if (direction === 'down') {
+                ctx.translate(drawX + width / 2, y + height / 2); ctx.scale(1, -1);
+                ctx.drawImage(image, -width / 2, -height / 2, width, height);
+            } else if (direction === 'right' || direction === 'left') {
+                ctx.translate(drawX + width / 2, y + height / 2);
+                ctx.rotate(direction === 'right' ? Math.PI / 2 : -Math.PI / 2);
+                ctx.drawImage(image, -height / 2, -width / 2, height, width);
+            } else {
+                ctx.drawImage(image, drawX, y, width, height);
+            }
+            ctx.restore();
+        });
+    }
+}

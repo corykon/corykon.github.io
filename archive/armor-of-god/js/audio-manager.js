@@ -10,6 +10,7 @@ class AudioManager {
             menu: new Audio('sounds/menu-song.mp3'),
             adventure: new Audio('sounds/adventure.mp3'),
             winner: new Audio('sounds/winner1.mp3'),
+            victory: new Audio('sounds/victory.mp3'),
             gameOver: new Audio('sounds/gameover.mp3'),
             jump: new Audio('sounds/jump.wav'),
             armormarch: new Audio('sounds/armormarch.mp3'),
@@ -38,7 +39,25 @@ class AudioManager {
             snailYell: new Audio('sounds/snail-yell.wav'),
             snailPop: new Audio('sounds/snail-pop.wav'),
             falling: new Audio('sounds/falling.mp3'),
-            grunt1: new Audio('sounds/grunt1.mp3')
+            fallingRock: new Audio('sounds/falling.mp3'),
+            grunt1: new Audio('sounds/grunt1.mp3'),
+            grunt2: new Audio('sounds/grunt2.mp3'),
+            grunt1Low: new Audio('sounds/grunt1.mp3'),
+            grunt2Low: new Audio('sounds/grunt2.mp3'),
+            golem: new Audio('sounds/golem.mp3'),
+            golemLanding: new Audio('sounds/golem-landing.mp3'),
+            golemPowerup: new Audio('sounds/golem-powerup.mp3'),
+            golemReignite: new Audio('sounds/golem-reignite.mp3'),
+            golemDefeated: new Audio('sounds/golem-defeated.mp3'),
+            stonesFalling: new Audio('sounds/stones-falling.mp3'),
+            earthquakeRumble: new Audio('sounds/earthquake-rumble.mp3'),
+            bossFight: new Audio('sounds/boss-fight.mp3'),
+            openingCutscene: new Audio('sounds/opening-cutscene-peaceful.mp3'),
+            openingBadNews: new Audio('sounds/bad-news2.mp3'),
+            openingBadNewsFinal: new Audio('sounds/bad-news.mp3'),
+            thunderAmbience: new Audio('sounds/thunder-ambience.mp3'),
+            hallOfHeroes: new Audio('sounds/hall-of-heroes.mp3'),
+            credits: new Audio('sounds/closing-credits.mp3')
         };
         
         // Define loop and volume settings for each audio file
@@ -46,6 +65,9 @@ class AudioManager {
             menu: { loop: true, volume: 0.4 },
             adventure: { loop: true, volume: 0.4 },
             winner: { loop: false, volume: 0.4 },
+            // The post-boss ascent can run longer than a single pass; keep this same track
+            // through the temple entrance and its fireworks celebration.
+            victory: { loop: true, volume: 0.4 },
             gameOver: { loop: false, volume: 0.4 },
             jump: { loop: false, volume: 0.6 },
             armormarch: { loop: true, volume: 0.5 },
@@ -55,7 +77,7 @@ class AudioManager {
             collect2: { loop: false, volume: 0.5 },
             thud: { loop: false, volume: 0.5 },
             thud2: { loop: false, volume: 0.5 },
-            thud3: { loop: false, volume: 0.5 },
+            thud3: { loop: false, volume: 1.0 },
             heal2: { loop: false, volume: 0.5 },
             ricochet: { loop: false, volume: 0.8 },
             ricochet2: { loop: false, volume: 0.8 },
@@ -75,7 +97,25 @@ class AudioManager {
             snailYell: { loop: false, volume: 0.5},
             snailPop: { loop: false, volume: 0.5},
             falling: { loop: false, volume: 0.5},
-            grunt1: { loop: false, volume: 0.3}
+            fallingRock: { loop: false, volume: 0.125},
+            grunt1: { loop: false, volume: 0.3},
+            grunt2: { loop: false, volume: 0.3},
+            grunt1Low: { loop: false, volume: 1.0, playbackRate: 0.6},
+            grunt2Low: { loop: false, volume: 1.0, playbackRate: 0.6},
+            golemReignite: { loop: false, volume: 0.35},
+            golemDefeated: { loop: false, volume: 0.7},
+            stonesFalling: { loop: false, volume: 0.55},
+            golem: { loop: false, volume: 0.7},
+            golemLanding: { loop: false, volume: 0.55},
+            golemPowerup: { loop: false, volume: 0.65},
+            earthquakeRumble: { loop: false, volume: 1.0, fadeOutAfterMs: 1500, fadeOutDurationMs: 500},
+            bossFight: { loop: true, volume: 0.45},
+            openingCutscene: { loop: true, volume: 0.4},
+            openingBadNews: { loop: true, volume: 0.45},
+            openingBadNewsFinal: { loop: true, volume: 0.45},
+            thunderAmbience: { loop: true, volume: 0.55},
+            hallOfHeroes: { loop: true, volume: 0.4},
+            credits: { loop: false, volume: 0.4}
         };
         
         // Apply settings to each audio file
@@ -116,7 +156,20 @@ class AudioManager {
     }
     
     playMusic(musicKey) {
-        if (!this.audioEnabled) return;
+        // A rapid retry can happen before the delayed Game Over song starts.
+        // Starting any other track must cancel that pending transition.
+        if (musicKey !== 'gameoversong') this.cancelGameOverSequence();
+        const newMusic = this.audio[musicKey];
+        // Muting must not freeze the music selection.  Remember the requested track so
+        // unmuting during a boss fight resumes boss music rather than an earlier level song.
+        if (!this.audioEnabled) {
+            if (this.currentMusic && this.currentMusic !== newMusic) {
+                this.currentMusic.pause();
+                this.currentMusic.currentTime = 0;
+            }
+            if (newMusic) this.currentMusic = newMusic;
+            return;
+        }
         
         // Stop current music
         if (this.currentMusic) {
@@ -125,7 +178,6 @@ class AudioManager {
         }
         
         // Start new music
-        const newMusic = this.audio[musicKey];
         if (newMusic) {
             this.currentMusic = newMusic;
             this.playCurrentMusic();
@@ -138,6 +190,75 @@ class AudioManager {
                 // Silently handle autoplay restrictions - will work after user interaction
             });
         }
+    }
+
+    fadeOutCurrentMusic(duration = 3000) {
+        const music = this.currentMusic;
+        if (!music || !this.audioEnabled) return;
+        const startingVolume = music.volume;
+        const steps = 30;
+        let step = 0;
+        const fadeTimer = setInterval(() => {
+            step++;
+            music.volume = startingVolume * Math.max(0, 1 - step / steps);
+            if (step >= steps) {
+                clearInterval(fadeTimer);
+                music.pause();
+                music.currentTime = 0;
+                music.volume = startingVolume;
+                if (this.currentMusic === music) this.currentMusic = null;
+            }
+        }, duration / steps);
+    }
+
+    fadeOutSound(soundKey, duration = 1000) {
+        const sound = this.audio[soundKey];
+        if (!sound || sound.paused || !this.audioEnabled) return;
+        const startingVolume = sound.volume;
+        const steps = 20;
+        let step = 0;
+        const fadeTimer = setInterval(() => {
+            step++;
+            sound.volume = startingVolume * Math.max(0, 1 - step / steps);
+            if (step >= steps) {
+                clearInterval(fadeTimer);
+                sound.pause();
+                sound.currentTime = 0;
+                sound.volume = startingVolume;
+            }
+        }, duration / steps);
+    }
+
+    crossfadeToMusic(musicKey, duration = 2000) {
+        const incoming = this.audio[musicKey];
+        const outgoing = this.currentMusic;
+        if (!incoming || outgoing === incoming) return;
+        if (!this.audioEnabled) {
+            this.currentMusic = incoming;
+            return;
+        }
+        const outgoingVolume = outgoing?.volume ?? 0;
+        const incomingVolume = incoming.volume;
+        incoming.currentTime = 0;
+        incoming.volume = 0;
+        incoming.play().catch(() => {});
+        this.currentMusic = incoming;
+        const steps = 20;
+        let step = 0;
+        const fadeTimer = setInterval(() => {
+            step++;
+            if (outgoing) outgoing.volume = outgoingVolume * Math.max(0, 1 - step / steps);
+            incoming.volume = incomingVolume * Math.min(1, step / steps);
+            if (step >= steps) {
+                clearInterval(fadeTimer);
+                if (outgoing) {
+                    outgoing.pause();
+                    outgoing.currentTime = 0;
+                    outgoing.volume = outgoingVolume;
+                }
+                incoming.volume = incomingVolume;
+            }
+        }, duration / steps);
     }
     
     playSoundEffect(soundKey) {
@@ -154,6 +275,7 @@ class AudioManager {
             const settings = this.audioSettings[soundKey];
             if (settings && settings.playbackRate) {
                 soundClone.playbackRate = settings.playbackRate;
+                soundClone.preservesPitch = false;
             }
             
             // Auto-stop the sound when it ends to prevent any repeats
@@ -161,6 +283,25 @@ class AudioManager {
                 soundClone.pause();
                 soundClone.currentTime = 0;
             });
+
+            // The earthquake file is longer than a single impact. Fade its tail so a pound
+            // feels heavy without leaving a rumble playing through the next boss action.
+            if (settings && settings.fadeOutAfterMs) {
+                const initialVolume = soundClone.volume;
+                setTimeout(() => {
+                    const fadeSteps = 10;
+                    let step = 0;
+                    const fadeInterval = setInterval(() => {
+                        step++;
+                        soundClone.volume = initialVolume * Math.max(0, 1 - step / fadeSteps);
+                        if (step >= fadeSteps) {
+                            clearInterval(fadeInterval);
+                            soundClone.pause();
+                            soundClone.currentTime = 0;
+                        }
+                    }, settings.fadeOutDurationMs / fadeSteps);
+                }, settings.fadeOutAfterMs);
+            }
             
             soundClone.play().catch(e => {
                 console.log('Sound effect play failed:', e);
@@ -199,6 +340,9 @@ class AudioManager {
                 break;
             case 'gameOver':
                 this.playMusic('gameOver');
+                break;
+            case 'credits':
+                this.playMusic('credits');
                 break;
         }
     }

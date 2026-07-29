@@ -157,10 +157,37 @@ class InputHandler {
     }
     
     handleKeyDown(e) {
+        if (this.game.gameState === 'cutscene' && (e.code === 'Enter' || e.code === 'Escape')) {
+            this.game.skipOpeningCutscene();
+            e.preventDefault();
+            return;
+        }
+        // Credits are intentionally dismissible from anywhere in the roll.
+        if (this.game.gameState === 'credits' && e.code === 'Escape') {
+            this.game.skipCredits();
+            e.preventDefault();
+            return;
+        }
+        if (this.game.gameState === 'credits' && e.code === 'Space') {
+            this.game.nextCreditsSection();
+            e.preventDefault();
+            return;
+        }
+        if (this.game.gameState === 'credits' && ['ArrowRight', 'ArrowDown'].includes(e.code)) {
+            this.game.nextCreditsSection();
+            e.preventDefault();
+            return;
+        }
+        if (this.game.gameState === 'credits' && ['ArrowLeft', 'ArrowUp'].includes(e.code)) {
+            this.game.previousCreditsSection();
+            e.preventDefault();
+            return;
+        }
+
         // Handle level intro screen
         if (this.game.gameState === 'levelIntro') {
             if (e.code === 'Space' || e.code === 'Enter') {
-                this.game.startGameAfterIntro();
+                this.game.advanceLevelIntro();
                 e.preventDefault();
                 return;
             }
@@ -169,7 +196,8 @@ class InputHandler {
         // Handle level complete screen
         if (this.game.gameState === 'levelComplete') {
             if (e.code === 'Space' || e.code === 'Enter') {
-                this.game.startNextLevel();
+                if (this.game.pendingLevelThreeBoss) this.game.continueToBossFight();
+                else this.game.startNextLevel();
                 e.preventDefault();
                 return;
             }

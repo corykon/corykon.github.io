@@ -26,27 +26,35 @@ class UIRenderer {
         });
     }
     
-    renderUI(ctx, player, booksCollected, audioManager, isPaused, gameState, hoveredButton = null, hasArmor = false, armorTimer = 0, armorDuration = 1800, comboMode = false, comboMultiplier = 1, airborneKills = 0) {
+    renderUI(ctx, player, booksCollected, audioManager, isPaused, gameState, hoveredButton = null, hasArmor = false, armorTimer = 0, armorDuration = 1800, comboMode = false, comboMultiplier = 1, airborneKills = 0, boss = null, heartImage = null) {
         // Health UI Panel
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.fillRect(20, 20, 200, 50);
-        
-        // Health bar background
-        ctx.fillStyle = '#000';
-        ctx.fillRect(30, 30, 180, 15);
-        
-        // Health bar fill
-        ctx.fillStyle = player.health <= 1 ? '#FF0000' : '#3ACF5D';
-        const healthWidth = (player.health / player.maxHealth) * 180;
-        ctx.fillRect(30, 30, healthWidth, 15);
-        
-        // Health text
-        ctx.fillStyle = 'white';
-        ctx.font = '12px "Press Start 2P", monospace';
-        ctx.fillText(`Health: ${player.health}/${player.maxHealth}`, 30, 64);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fillRect(20, 20, 155, 50);
+        // Four copies of the pickup sprite make each 25% of health immediately legible.
+        for (let i = 0; i < 4; i++) {
+            const x = 30 + i * 37, y = 33, size = 25;
+            const filled = i < player.health;
+            if (heartImage && heartImage.complete) {
+                ctx.save();
+                if (!filled) { ctx.filter = 'brightness(0)'; ctx.globalAlpha = 0.9; }
+                ctx.drawImage(heartImage, x, y, size, size);
+                ctx.restore();
+            } else {
+                ctx.font = '32px sans-serif'; ctx.fillStyle = filled ? '#e53935' : '#161616'; ctx.fillText('♥', x, 57);
+            }
+        }
+
+        if (boss && boss.active && boss.state !== 'cutscene') {
+            const bossPanelX = ctx.canvas.width - 350;
+            const bossPanelY = ctx.canvas.height - 70;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; ctx.fillRect(bossPanelX, bossPanelY, 330, 50);
+            ctx.fillStyle = '#000'; ctx.fillRect(bossPanelX + 10, bossPanelY + 10, 310, 15);
+            ctx.fillStyle = '#d83b32'; ctx.fillRect(bossPanelX + 10, bossPanelY + 10, (boss.health / boss.maxHealth) * 310, 15);
+            ctx.fillStyle = '#fff'; ctx.font = '12px "Press Start 2P", monospace'; ctx.fillText(`Boss Health: ${boss.health} HP`, bossPanelX + 10, bossPanelY + 44);
+        }
         
         // Scriptures UI Panel (dynamically sized for text)
-        const panelX = 240;
+        const panelX = 191;
         const panelY = 20;
         const panelHeight = 50;
         
@@ -62,7 +70,7 @@ class UIRenderer {
         ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
         
         // Scriptures bar background
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         const barWidth = panelWidth - 20; // 10px padding on each side
         ctx.fillRect(panelX + 10, 30, barWidth, 15);
         
@@ -87,7 +95,7 @@ class UIRenderer {
             if (booksCollected >= 3) {
                 fillColor = '#FFD700'; // Gold when all 3 collected
             } else {
-                fillColor = '#007BFF'; // Blue as it fills
+                fillColor = '#0A81FF'; // Scripture-progress blue
             }
         }
         ctx.fillStyle = fillColor;
@@ -122,7 +130,7 @@ class UIRenderer {
         ctx.fillRect(uiX, timerY, uiWidth, uiHeight);
         
         // Timer text
-        const levelTime = player.levelTime || 0;
+        const levelTime = boss && boss.active ? (player.bossFightTime || 0) : (player.levelTime || 0);
         const minutes = Math.floor(levelTime / 3600);
         const seconds = Math.floor((levelTime % 3600) / 60);
         const timeDisplay = `${minutes}:${seconds.toString().padStart(2, '0')}`;

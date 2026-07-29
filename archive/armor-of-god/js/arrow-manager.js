@@ -30,27 +30,9 @@ class ArrowManager {
     }
     
     spawnInitialArrows(player) {
-        const initialArrowCount = 2 + Math.floor(Math.random());
-        
-        for (let i = 0; i < initialArrowCount; i++) {
-            // Stagger the initial arrows across different distances
-            const spawnX = player.x + 400 + (i * 150) + Math.random() * 100;
-            
-            const arrowType = this.arrowTypes[Math.floor(Math.random() * this.arrowTypes.length)];
-            
-            const newArrow = {
-                x: spawnX,
-                y: arrowType.y,
-                width: 40,
-                height: 24,
-                speedX: arrowType.speedX,
-                speedY: arrowType.speedY,
-                active: true,
-                hasPlayedRicochetSound: false
-            };
-            
-            this.arrows.push(newArrow);
-        }
+        // Let the standard spawn timer introduce the first arrow after the player starts.
+        this.arrowSpawnTimer = 0;
+        this.arrowSpawnDelay = 28 + Math.random() * 39;
     }
     
     spawnNewArrow(player, castle, hasArmor, xOffset = 0) {
@@ -277,6 +259,7 @@ class ArrowManager {
                             const randomSound = ricochetSounds[Math.floor(Math.random() * ricochetSounds.length)];
                             this.audioManager.playSound(randomSound);
                             arrow.hasPlayedRicochetSound = true;
+                            this.game?.addScore(10, '#8EE7FF', 'Armor Ricochet');
                         }
                     } else {
                         // Player takes damage

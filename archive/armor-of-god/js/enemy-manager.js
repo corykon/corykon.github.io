@@ -24,7 +24,8 @@ class Snail {
         
         // Health and state
         this.alive = true;
-        this.health = 1;
+        this.health = options.health || 1;
+        this.isMega = Boolean(options.isMega);
         this.invulnerable = false;
         this.invulnerabilityTimer = 0;
         this.killed = false; // Track if this specific snail has been killed
@@ -41,7 +42,12 @@ class Snail {
         this.wiggleTimer = 0;
         this.wiggleAmplitude = 0;
         this.groundY = this.y; // Remember ground position for effects
+        this.groundOffset = options.groundOffset !== undefined ? options.groundOffset : 8;
         this.baseX = null; // For wiggle position tracking
+        this.hitTimer = 0;
+        this.stompCooldown = 0;
+        // Some larger sprites include transparent padding below their feet.
+        this.visualGroundOffset = options.visualGroundOffset || 0;
     }
 }
 
@@ -143,9 +149,17 @@ class EnemyManager {
             }),
             new Snail({
                 x: 3700,
-                y: 404,
+                y: 318,
+                width: 225,
+                height: 150,
+                groundOffset: 0,
                 platformX: 3522,
-                platformWidth: 700
+                platformWidth: 700,
+                direction: -1,
+                speed: 0.8,
+                isMega: true,
+                health: 3,
+                visualGroundOffset: 20
             }),
             new Snail({
                 x: 5100,
@@ -265,11 +279,15 @@ class EnemyManager {
             }),
             new Snail({
                 x: 11250,
-                y: 292, // Platform at y=450 minus snail height of 150 minus ground offset of 8 = 292
+                y: 300,
                 platformX: 11250,
                 platformWidth: 750, // Updated to match actual platform width
                 height: 150,
-                width: 225
+                width: 225,
+                groundOffset: 0,
+                isMega: true,
+                health: 3,
+                visualGroundOffset: 20
             }),
             new Snail({
                 x: 11350,
@@ -285,8 +303,6 @@ class EnemyManager {
             })
         );
         
-        // Set isMega property for the large snail
-        this.snails.find(snail => snail.width === 225 && snail.height === 150).isMega = true;
     }
 
     update(player, worldManager, gameState, cameraX = 0, screenWidth = 1200, inputHandler = null, getCurrentJumpPower = null) {
@@ -294,6 +310,8 @@ class EnemyManager {
         
         // Update each snail
         this.snails.forEach(snail => {
+            if (snail.hitTimer > 0) snail.hitTimer--;
+            if (snail.stompCooldown > 0) snail.stompCooldown--;
             // Update hidden timer
             if (snail.hidden) {
                 snail.hiddenTimer++;
@@ -387,7 +405,7 @@ class EnemyManager {
             worldManager.checkPlatformCollisions(snail);
             
             if (snail.isGrounded) {
-                snail.y += 8;
+                snail.y += snail.groundOffset;
             }
             
             // Update animation
@@ -452,7 +470,7 @@ class EnemyManager {
         const collisions = [];
         
         this.snails.forEach(snail => {
-            if (!snail.alive || snail.invulnerable) return;
+            if (!snail.alive || snail.invulnerable || snail.stompCooldown > 0) return;
             
             // Create player hitbox
             const playerHitbox = {
@@ -476,8 +494,12 @@ class EnemyManager {
                 const comingFromAbove = player.y < snailTop; // Player's top must be above snail's top
                 
                 if (landingOnTop && horizontalAlignment && downwardMovement && comingFromAbove) {
-                    // Player jumped on snail - kill it
-                    this.killSnail(snail);
+                    if (snail.isMega && !hasArmor && snail.health > 1) {
+                        this.damageMegaSnail(snail);
+                    } else {
+                        // A normal snail, or an armored hit on a mega snail, is defeated at once.
+                        this.killSnail(snail);
+                    }
                     // Give player a bounce - use full jump power if jump key is held
                     const jumpKeyHeld = typeof inputHandler !== 'undefined' && inputHandler && inputHandler.keys && 
                                        (inputHandler.keys['ArrowUp'] || inputHandler.keys['Space']);
@@ -562,6 +584,16 @@ class EnemyManager {
             alpha: 1
         });
     }
+
+    damageMegaSnail(snail) {
+        snail.health--;
+        snail.hitTimer = 12;
+        // Prevent the rebound from registering as a side hit, without delaying the next stomp.
+        snail.stompCooldown = 8;
+        snail.wiggleTimer = 12;
+        snail.wiggleAmplitude = 2;
+        this.audioManager.playSound('snailYell');
+    }
     
     checkCollision(rect1, rect2) {
         return rect1.x < rect2.x + rect2.width &&
@@ -578,13 +610,14 @@ class EnemyManager {
                 const shellImg = this.snailImages.shell;
                 if (shellImg && shellImg.complete) {
                     ctx.save();
+                    const shellY = snail.y + snail.visualGroundOffset;
                     
                     // Flip horizontally if snail was moving left
                     if (snail.shellDirection === -1) {
                         ctx.scale(-1, 1);
-                        ctx.drawImage(shellImg, -snail.x - snail.width, snail.y, snail.width, snail.height);
+                        ctx.drawImage(shellImg, -snail.x - snail.width, shellY, snail.width, snail.height);
                     } else {
-                        ctx.drawImage(shellImg, snail.x, snail.y, snail.width, snail.height);
+                        ctx.drawImage(shellImg, snail.x, shellY, snail.width, snail.height);
                     }
                     
                     ctx.restore();
@@ -596,11 +629,12 @@ class EnemyManager {
                     ctx.save();
                     
                     // Flip horizontally if moving left
+                    const hitOffset = snail.visualGroundOffset + (snail.hitTimer > 0 ? 6 : 0);
                     if (snail.direction === -1) {
                         ctx.scale(-1, 1);
-                        ctx.drawImage(frameImg, -snail.x - snail.width, snail.y, snail.width, snail.height);
+                        ctx.drawImage(frameImg, -snail.x - snail.width, snail.y + hitOffset, snail.width, snail.height);
                     } else {
-                        ctx.drawImage(frameImg, snail.x, snail.y, snail.width, snail.height);
+                        ctx.drawImage(frameImg, snail.x, snail.y + hitOffset, snail.width, snail.height);
                     }
                     
                     ctx.restore();
