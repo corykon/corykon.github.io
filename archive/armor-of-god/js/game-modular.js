@@ -359,6 +359,20 @@ class ArmorOfGodGame {
             this.audioManager.playSoundEffect('modalClose');
             this.hideInstructionsModal();
         });
+
+        ['scoringLink', 'scoringBackBtn'].forEach(id => {
+            document.getElementById(id).addEventListener('mouseenter', () => {
+                this.audioManager.playSoundEffect('buttonHover');
+            });
+        });
+        document.getElementById('scoringLink').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
+            this.showScoringInstructions();
+        });
+        document.getElementById('scoringBackBtn').addEventListener('click', () => {
+            this.audioManager.playSoundEffect('buttonClick');
+            this.showGameplayInstructions();
+        });
         
         // Close modal when clicking outside content
         document.getElementById('instructionsModal').addEventListener('click', (e) => {
@@ -422,6 +436,21 @@ class ArmorOfGodGame {
         document.getElementById('retryLevelBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
             this.retryCurrentLevel();
+        });
+
+        const scoreDetailsTrigger = document.getElementById('completionScoreDetailsTrigger');
+        scoreDetailsTrigger.addEventListener('click', () => this.showCompletionScoreDetails());
+        scoreDetailsTrigger.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                this.showCompletionScoreDetails();
+            }
+        });
+        ['closeScoreDetailsBtn', 'scoreDetailsDoneBtn'].forEach(id => {
+            document.getElementById(id).addEventListener('click', () => this.hideCompletionScoreDetails());
+        });
+        document.getElementById('completionScoreDetailsModal').addEventListener('click', event => {
+            if (event.target.id === 'completionScoreDetailsModal') this.hideCompletionScoreDetails();
         });
         
         document.getElementById('retryLevelBtn').addEventListener('mouseenter', () => {
@@ -530,6 +559,8 @@ class ArmorOfGodGame {
         this.totalPausedTime = 0; // Reset paused time tracking
         this.pauseStartTime = 0;
         this.floatingScores = [];
+        this.scoreBreakdown = [];
+        this.levelThreeCollapseBonusesPrepared = false;
         this.damageTaken = 0; // Reset damage tracking
         this.enemiesKilled = new Set(); // Reset enemy tracking
         this.deathCount = 0;
@@ -538,6 +569,7 @@ class ArmorOfGodGame {
     
     addScore(points, color = '#FFD700', label = '') {
         // Don't add to score immediately - wait for floating score to finish
+        this.scoreBreakdown.push({ points, label: label || 'Points' });
         
         // Add floating score indicator (always add since we want all scores to show)
         this.floatingScores.push({
@@ -579,19 +611,20 @@ class ArmorOfGodGame {
     
     calculateSpeedBonus() {
         if (this.bossFightEndTime > 0) {
-            const twoMinutes = 120 * 60;
-            return Math.max(0, Math.floor((1 - Math.min(this.getBossFightTime(), twoMinutes) / twoMinutes) * 3000));
+            const targetTime = 105 * 60;
+            const secondsUnderTarget = Math.max(0, (targetTime - this.getBossFightTime()) / 60);
+            return Math.min(3000, Math.floor(secondsUnderTarget * 100));
         }
         const levelTime = this.getLevelTime();
         const targetTime = {
-            1: 2400, // 40 seconds
-            2: 5400, // 90 seconds
-            3: 5400  // 90 seconds
+            1: 45 * 60,
+            2: 80 * 60,
+            3: 65 * 60
         };
         
         const target = targetTime[this.level] || 3000;
         if (levelTime <= target) {
-            const bonus = Math.max(0, Math.floor((target - levelTime) * 2));
+            const bonus = Math.max(0, Math.floor((target - levelTime) / 60 * 100));
             return Math.min(bonus, 2000); // Cap at 2000 points
         }
         return 0;
@@ -739,6 +772,9 @@ class ArmorOfGodGame {
         document.querySelectorAll('#levelIntroScreen .level-intro-rush-target').forEach(element => element.classList.remove('level-intro-rush-target'));
         this.levelIntroFastForwarding = false;
         this.levelIntroExiting = false;
+        // Preserve an early second Enter press while the reveal is rushing.  It should
+        // continue into gameplay as soon as the fast-forward has caught up.
+        this.levelIntroAdvanceQueued = false;
         if (this.level === 'boss') {
             this.bossManager.reset();
             this.enterBossArena();
@@ -783,6 +819,7 @@ class ArmorOfGodGame {
         this.levelIntroFastForwardTimer = setTimeout(() => {
             this.levelIntroFastForwarding = false;
             this.levelIntroReadyToStart = true;
+            if (this.levelIntroAdvanceQueued) this.exitLevelIntro();
         }, 550);
     }
 
@@ -792,12 +829,18 @@ class ArmorOfGodGame {
             this.exitLevelIntro();
             return;
         }
+        if (this.levelIntroFastForwarding) {
+            this.levelIntroAdvanceQueued = true;
+            return;
+        }
         this.fastForwardLevelIntro();
     }
 
     exitLevelIntro() {
         if (this.gameState !== 'levelIntro' || this.levelIntroExiting) return;
         clearTimeout(this.levelIntroReadyTimer);
+        clearTimeout(this.levelIntroFastForwardTimer);
+        this.levelIntroAdvanceQueued = false;
         this.levelIntroReadyToStart = false;
         this.levelIntroExiting = true;
         const introScreen = document.getElementById('levelIntroScreen');
@@ -1349,6 +1392,10 @@ class ArmorOfGodGame {
         
         if (this.gameState === 'bossCutscene') {
             this.bossManager.update(this);
+            this.updateFloatingScores();
+            this.player.levelTime = this.getLevelTime();
+            this.player.score = this.score;
+            this.player.floatingScores = this.floatingScores;
             return;
         }
 
@@ -1478,6 +1525,9 @@ class ArmorOfGodGame {
         this.checkCollisions();
 
         if (this.gameState === 'playing' && this.level === 3 && !this.bossManager.active && this.bossManager.checkForTrigger(this.player.x, this.player.y, this.castle.x, this.level)) {
+            // Freeze Level 3 at the moment the golem appears; the cutscene and boss are
+            // separate encounters and must not add to this level's time.
+            this.levelEndTime = performance.now();
             this.player.isMoving = false;
             this.player.velocityY = 0;
             this.player.isJumping = false;
@@ -1901,11 +1951,23 @@ class ArmorOfGodGame {
         this.player.isJumping = false;
         this.player.isGrounded = true;
         this.arrowManager.reset();
-        this.levelEndTime = performance.now();
+        if (this.levelEndTime === 0) this.levelEndTime = performance.now();
         this.pendingLevelThreeBoss = true;
         this.unlockStage(4);
 
-        // Settle pending points and calculate the same completion bonuses used by other levels.
+        this.prepareLevelThreeCollapseBonuses();
+
+        // The fall has finished. Keep this score reveal silent except for one heavy thud.
+        this.audioManager.stopAllAudio();
+        this.audioManager.playSound('thud3');
+        this.gameState = 'levelComplete';
+        this.showScreen('levelComplete');
+    }
+
+    prepareLevelThreeCollapseBonuses() {
+        if (this.levelThreeCollapseBonusesPrepared) return;
+        this.levelThreeCollapseBonusesPrepared = true;
+        // Settle already-earned points, then show the completion bonuses during the fall.
         this.floatingScores.forEach(indicator => {
             if (indicator.pendingPoints) this.score += indicator.pendingPoints;
         });
@@ -1913,15 +1975,6 @@ class ArmorOfGodGame {
         this.finalLevelScore = this.score;
         this.finalTotalScore = this.totalScore + this.score;
         this.calculateAndDisplayBonuses();
-        // The completion screen uses finalLevelScore/finalTotalScore directly.  Do not let
-        // delayed bonus indicators survive into the separate boss score.
-        this.floatingScores = [];
-
-        // The fall has finished. Keep this score reveal silent except for one heavy thud.
-        this.audioManager.stopAllAudio();
-        this.audioManager.playSound('thud3');
-        this.gameState = 'levelComplete';
-        this.showScreen('levelComplete');
     }
 
     continueToBossFight() {
@@ -2557,13 +2610,92 @@ class ArmorOfGodGame {
         }
     }
     
+    getScoreDetailSprite(label) {
+        if (label.startsWith('Scripture')) return 'images/sprites/bom.png';
+        if (label.startsWith('Heart') || label.startsWith('Health')) return null;
+        if (label.startsWith('Mega Snail')) return 'images/sprites/enemy/snail-shell.png';
+        if (label.startsWith('Snail')) return 'images/sprites/enemy/snail-crawl1.png';
+        if (label.startsWith('Arrow')) return 'images/sprites/enemy/fiery-arrow.png';
+        if (label.startsWith('Armor')) return 'images/sprites/main-char/armor-standing.png';
+        if (label.startsWith('Head Stomp') || label.startsWith('Stone Golem')) return 'images/sprites/enemy/golem-stand.png';
+        if (label.startsWith('Speed')) return 'images/sprites/main-char/jump.png';
+        return null;
+    }
+
+    getScoreDetailLabel(label) {
+        if (label.startsWith('Scripture')) return 'Scriptures gathered';
+        if (label === 'Heart') return 'Hearts gathered';
+        if (label.startsWith('Snail')) {
+            const combo = label.match(/ x(\d+)/);
+            return combo ? `Snails defeated — airborne combo x${combo[1]}` : 'Snails defeated';
+        }
+        if (label.startsWith('Mega Snail')) return 'Mega snails defeated';
+        if (label.startsWith('Armor Ricochet')) return 'Arrow armor ricochet';
+        if (label === 'Arrow') return 'Arrows deflected';
+        return label;
+    }
+
+    showCompletionScoreDetails() {
+        if (this.gameState !== 'levelComplete') return;
+        const list = document.getElementById('completionScoreDetailsList');
+        list.replaceChildren();
+        const totals = new Map();
+        this.scoreBreakdown.forEach(entry => totals.set(entry.label, (totals.get(entry.label) || 0) + entry.points));
+        if (this.deathPenaltyTotal > 0) totals.set(`Game Over x${this.deathCount}`, -this.deathPenaltyTotal);
+
+        totals.forEach((points, label) => {
+            const row = document.createElement('div');
+            row.className = `score-details-row${points < 0 ? ' score-details-row--negative' : ''}`;
+            const sprite = this.getScoreDetailSprite(label);
+            if (sprite) {
+                const image = document.createElement('img');
+                image.src = sprite; image.alt = '';
+                row.append(image);
+            } else {
+                const icon = document.createElement('span');
+                icon.className = 'score-details-icon'; icon.textContent = label.startsWith('Heart') || label.startsWith('Health') ? '♥' : '✦';
+                row.append(icon);
+            }
+            const name = document.createElement('span'); name.textContent = this.getScoreDetailLabel(label);
+            const value = document.createElement('strong'); value.textContent = `${points < 0 ? '−' : '+'}${Math.abs(points).toLocaleString()}`;
+            row.append(name, value);
+            list.append(row);
+        });
+
+        const total = document.createElement('div');
+        total.className = 'score-details-total';
+        const totalLabel = document.createElement('span'); totalLabel.textContent = 'Level Score';
+        const totalValue = document.createElement('strong'); totalValue.textContent = Math.max(0, this.finalLevelScore ?? this.score).toLocaleString();
+        total.append(totalLabel, totalValue);
+        list.append(total);
+        document.getElementById('completionScoreDetailsModal').classList.remove('hidden');
+    }
+
+    hideCompletionScoreDetails() {
+        document.getElementById('completionScoreDetailsModal').classList.add('hidden');
+    }
+
     showInstructionsModal() {
         if (!this.isPaused) document.getElementById('instructionsDoneBtn').textContent = 'Done';
+        this.showGameplayInstructions();
         document.getElementById('instructionsModal').classList.remove('hidden');
+    }
+
+    showScoringInstructions() {
+        const modalContent = document.querySelector('#instructionsModal .how-to-play-modal');
+        modalContent.classList.add('how-to-play-modal--scoring');
+        document.querySelector('.how-to-score-content').setAttribute('aria-hidden', 'false');
+    }
+
+    showGameplayInstructions() {
+        const modalContent = document.querySelector('#instructionsModal .how-to-play-modal');
+        modalContent.classList.remove('how-to-play-modal--scoring');
+        document.querySelector('.how-to-score-content').setAttribute('aria-hidden', 'true');
     }
     
     hideInstructionsModal() {
         document.getElementById('instructionsModal').classList.add('hidden');
+        this.showGameplayInstructions();
         const shouldResume = this.autoResumeAfterInstructions;
         this.autoResumeAfterInstructions = false;
         if (shouldResume && this.isPaused && this.gameState === 'playing') this.togglePause();
