@@ -270,15 +270,18 @@ class ArmorOfGodGame {
     updateMobileOrientation() {
         const shouldRotate = this.gameState === 'playing' && this.isTouchMobile() && window.innerHeight > window.innerWidth;
         const notice = document.getElementById('rotateDeviceNotice');
-        notice?.classList.toggle('hidden', !shouldRotate);
-        if (shouldRotate && !this.isPaused) {
+        if (shouldRotate && !this.mobileOrientationPaused) {
             this.mobileOrientationPaused = true;
+            this.mobileOrientationWasAlreadyPaused = this.isPaused;
             this.inputHandler.clearTouchInputs();
-            this.togglePause();
+            if (!this.isPaused) this.togglePause();
         } else if (!shouldRotate && this.mobileOrientationPaused) {
             this.mobileOrientationPaused = false;
-            if (this.isPaused) this.togglePause();
+            if (!this.mobileOrientationWasAlreadyPaused && this.isPaused) this.togglePause();
+            this.mobileOrientationWasAlreadyPaused = false;
         }
+        // Only reveal the orientation notice after the game is safely paused.
+        notice?.classList.toggle('hidden', !shouldRotate);
     }
     
     initializeAudio() {
@@ -1105,7 +1108,7 @@ class ArmorOfGodGame {
 
         levelText.textContent = isBossFight ? 'Boss Fight' : `L${this.level}: ${this.levelData[this.level].name}`;
         if (mobileLevelText) {
-            mobileLevelText.textContent = isBossFight ? 'Boss Fight' : `L${this.level}`;
+            mobileLevelText.textContent = isBossFight ? 'Boss' : `L${this.level}`;
         }
     }
 
@@ -1239,9 +1242,9 @@ class ArmorOfGodGame {
             const scripture = document.getElementById('levelCompleteScripture');
             subtitle?.classList.toggle('level-clear-subtitle', !this.pendingLevelThreeBoss);
             if (this.pendingLevelThreeBoss) {
-                if (title) title.textContent = 'Level Complete';
+                if (title) title.textContent = 'Level Cleared';
                 if (victoryImage) { victoryImage.src = 'images/sprites/enemy/golem-stand.png'; victoryImage.alt = 'Stone Golem'; }
-                if (subtitle) subtitle.textContent = '...but a wild stone golem is blocking the temple!';
+                if (subtitle) subtitle.textContent = '...but a stone golem is blocking the way  !';
                 if (scripture) scripture.textContent = '"For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind"';
             } else {
                 if (title) title.textContent = 'Level Cleared';
@@ -1282,7 +1285,7 @@ class ArmorOfGodGame {
         if (nextLevelButton) {
             const nextChevron = '<svg class="chevron-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
             nextLevelButton.innerHTML = this.pendingLevelThreeBoss
-                ? `Continue to Boss Fight ${nextChevron}`
+                ? `Boss Fight ${nextChevron}`
                 : (this.level === 3 || this.level === 'boss' ? `Go to Leaderboard ${nextChevron}` : `Next Level ${nextChevron}`);
         }
     }
@@ -1492,12 +1495,12 @@ class ArmorOfGodGame {
             );
         }
 
-        // The post-boss temple door is the end of the walkable approach.  Keep horizontal
-        // movement at its center while allowing a jump's vertical arc to resolve naturally.
+        // Leave room beyond the post-boss temple for the same complete hop available on
+        // the other levels.  The normal temple collision still ends a walk-in approach.
         if (this.postBossSurface && this.gameState === 'playing') {
-            const templeDoorX = this.castle.x + this.castle.width / 2 - this.player.width / 2;
-            if (this.player.x > templeDoorX) {
-                this.player.x = templeDoorX;
+            const postTempleBoundaryX = this.castle.x + this.castle.width + 260;
+            if (this.player.x > postTempleBoundaryX) {
+                this.player.x = postTempleBoundaryX;
                 this.player.blockedRight = true;
             }
         }
@@ -1956,8 +1959,10 @@ class ArmorOfGodGame {
         }
 
         // Castle collision
-        const hasLandedBeyondTemple = this.templeJumpBonusAwarded &&
-            this.player.x >= this.castle.x + this.castle.width;
+        const templeCompletionX = this.postBossSurface
+            ? this.castle.x + this.castle.width + 240
+            : this.castle.x + this.castle.width;
+        const hasLandedBeyondTemple = this.templeJumpBonusAwarded && this.player.x >= templeCompletionX;
         if (this.checkCollision(this.player, this.castle) || hasLandedBeyondTemple) {
             this.levelComplete();
         }
@@ -2119,6 +2124,8 @@ class ArmorOfGodGame {
         this.cameraX = 0;
         this.postBossSurface = true;
         this.postBossTempleCelebrated = false;
+        // This is a fresh temple approach, so it earns its own temple-hop bonus.
+        this.templeJumpBonusAwarded = false;
         this.surfaceCaveExit = { x: 95, y: 328, width: 80, height: 140 };
         this.gameState = 'playing';
         this.audioManager.playMusic('victory');
@@ -2348,6 +2355,8 @@ class ArmorOfGodGame {
     }
     
     togglePause() {
+        // The portrait-orientation prompt owns this pause until the player rotates back.
+        if (this.mobileOrientationPaused && this.isPaused) return;
         this.isPaused = !this.isPaused;
         this.updatePauseButton();
         
@@ -2692,7 +2701,7 @@ class ArmorOfGodGame {
                 this.ctx.fillRect(promptCenterX - promptWidth / 2, promptBottomY - promptHeight, promptWidth, promptHeight);
                 
                 this.ctx.fillStyle = '#FFD700';
-                this.ctx.font = isTouchPrompt ? '24px Arial' : '12px Arial';
+                this.ctx.font = isTouchPrompt ? '24px "Press Start 2P", monospace' : '12px "Press Start 2P", monospace';
                 this.ctx.textAlign = 'center';
                 const petPrompt = isTouchPrompt
                     ? 'Double tap!'
