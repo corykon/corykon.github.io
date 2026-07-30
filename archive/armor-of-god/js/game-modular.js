@@ -1540,6 +1540,9 @@ class ArmorOfGodGame {
         
         this.effectsManager.updateArmorActivation();
         this.effectsManager.updateSparkleTrails();
+        // Pet affection is decorative; an older cached effects file must never
+        // be able to halt the gameplay loop and leave touch input stuck.
+        this.effectsManager.updatePetAffectionEffects?.();
         
         // Update background elements
         this.backgroundManager.updateElements(this.cameraX);
@@ -1819,6 +1822,22 @@ class ArmorOfGodGame {
     
     tryPetAnimal() {
         this.petManager.tryPetting();
+    }
+
+    hasPettedThisSession() {
+        try {
+            return sessionStorage.getItem('armor-of-god-petting-tutorial-complete') === 'true';
+        } catch (_) {
+            return false;
+        }
+    }
+
+    completePettingTutorial() {
+        try {
+            sessionStorage.setItem('armor-of-god-petting-tutorial-complete', 'true');
+        } catch (_) {
+            // Petting remains fully playable if storage is unavailable.
+        }
     }
     
     checkCollisions() {
@@ -2693,20 +2712,27 @@ class ArmorOfGodGame {
                 
                 // Show the pet interaction prompt above the companion.
                 const isTouchPrompt = window.matchMedia('(pointer: coarse)').matches;
-                const promptWidth = isTouchPrompt ? 250 : 120;
-                const promptHeight = isTouchPrompt ? 40 : 20;
+                const pettingTutorialComplete = this.hasPettedThisSession();
                 const promptCenterX = this.pet.x + 25;
                 const promptBottomY = this.pet.y - 5;
+                const promptSize = pettingTutorialComplete
+                    ? (isTouchPrompt ? 12 : 8)
+                    : (isTouchPrompt ? 21 : 14);
+                const petPrompt = isTouchPrompt
+                    ? (pettingTutorialComplete ? 'Double tap?' : 'Double tap!')
+                    : (pettingTutorialComplete ? "Press 'D'?" : "Press 'D'!");
+                this.ctx.font = `${promptSize}px "Press Start 2P", monospace`;
+                const promptWidth = Math.ceil(this.ctx.measureText(petPrompt).width) + 24;
+                // The compact completed desktop prompt needs a slightly tighter badge.
+                const promptHeight = pettingTutorialComplete && !isTouchPrompt
+                    ? 18
+                    : Math.max(26, promptSize + 16);
                 this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
                 this.ctx.fillRect(promptCenterX - promptWidth / 2, promptBottomY - promptHeight, promptWidth, promptHeight);
                 
                 this.ctx.fillStyle = '#FFD700';
-                this.ctx.font = isTouchPrompt ? '24px "Press Start 2P", monospace' : '12px "Press Start 2P", monospace';
                 this.ctx.textAlign = 'center';
-                const petPrompt = isTouchPrompt
-                    ? 'Double tap!'
-                    : "Press 'D'!";
-                this.ctx.fillText(petPrompt, promptCenterX, promptBottomY - (isTouchPrompt ? 10 : 5));
+                this.ctx.fillText(petPrompt, promptCenterX, promptBottomY - promptHeight / 2 + promptSize * .35);
                 
                 this.ctx.restore();
             }
@@ -2735,6 +2761,7 @@ class ArmorOfGodGame {
         this.ctx.save();
         this.ctx.translate(-this.cameraX, -this.cameraY);
         this.effectsManager.renderSparkleTrails(this.ctx, 0); // Pass 0 since we already translated
+        this.effectsManager.renderPetAffectionEffects?.(this.ctx, 0);
         this.ctx.restore();
     }
     

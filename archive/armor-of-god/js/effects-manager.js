@@ -3,6 +3,7 @@ class EffectsManager {
         this.fireworks = [];
         this.armorExplosion = [];
         this.sparkleTrails = []; // Sparkle trail particles
+        this.petAffectionEffects = [];
         this.fireworkTimers = new Set();
         
         // Celebration properties
@@ -240,6 +241,64 @@ class EffectsManager {
         
         ctx.restore();
     }
+
+    triggerPetAffection(x, y) {
+        const lifetime = 120;
+        this.petAffectionEffects.push({ type: 'heart', x, y, vx: 0.08, vy: -0.42, life: lifetime, maxLife: lifetime, size: 20 });
+        for (let index = 0; index < 6; index++) {
+            const angle = (Math.PI * 2 * index) / 6 + Math.random() * .35;
+            this.petAffectionEffects.push({
+                type: 'sparkle', x: x + (Math.random() - .5) * 12, y: y + 8,
+                vx: Math.cos(angle) * .45, vy: -0.25 + Math.sin(angle) * .35,
+                life: lifetime - 12 - Math.floor(Math.random() * 20), maxLife: lifetime, size: 2 + Math.random() * 2
+            });
+        }
+    }
+
+    updatePetAffectionEffects() {
+        for (let index = this.petAffectionEffects.length - 1; index >= 0; index--) {
+            const effect = this.petAffectionEffects[index];
+            effect.x += effect.vx;
+            effect.y += effect.vy;
+            effect.vy *= .99;
+            effect.life--;
+            if (effect.life <= 0) this.petAffectionEffects.splice(index, 1);
+        }
+    }
+
+    renderPetAffectionEffects(ctx, cameraX) {
+        ctx.save();
+        this.petAffectionEffects.forEach(effect => {
+            const elapsed = effect.maxLife - effect.life;
+            const fadeIn = Math.min(1, elapsed / 12);
+            const alpha = Math.max(0, effect.life / effect.maxLife) * fadeIn;
+            const x = effect.x - cameraX;
+            ctx.globalAlpha = alpha;
+            if (effect.type === 'heart') {
+                ctx.fillStyle = '#ff4d6d';
+                ctx.shadowColor = '#ff9aae';
+                ctx.shadowBlur = 6;
+                ctx.font = `${effect.size}px sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('♥', x, effect.y);
+            } else {
+                ctx.fillStyle = '#fff6a6';
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(x, effect.y, effect.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(x - effect.size * 1.5, effect.y);
+                ctx.lineTo(x + effect.size * 1.5, effect.y);
+                ctx.moveTo(x, effect.y - effect.size * 1.5);
+                ctx.lineTo(x, effect.y + effect.size * 1.5);
+                ctx.stroke();
+            }
+        });
+        ctx.restore();
+    }
     
     updateArmorActivation() {
         if (this.armorActivating) {
@@ -295,6 +354,7 @@ class EffectsManager {
         this.fireworkCastle = null;
         this.armorExplosion = [];
         this.sparkleTrails = [];
+        this.petAffectionEffects = [];
         this.celebrationTimer = 0;
         this.armorActivating = false;
         this.armorActivationTimer = 0;
