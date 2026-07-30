@@ -482,7 +482,9 @@ class BossManager {
         if (this.timer % 5 === 0) this.shake = 24;
         if (this.timer >= 70) {
             this.state = 'finalLeap'; this.timer = 0; this.golem.velocityY = -15;
-            this.golem.velocityX = (540 - this.golem.x) / 42;
+            // A -15 launch with .48 gravity is airborne for 64 frames. Match the
+            // horizontal travel to that full arc so the golem lands at center naturally.
+            this.golem.velocityX = (540 - this.golem.x) / 64;
             this.golem.facingLeft = this.golem.velocityX < 0;
             game.worldManager.beginBossPlatformCollapse();
             this.shake = 28;
@@ -493,7 +495,7 @@ class BossManager {
         game.worldManager.updateBossPlatformMotion();
         this.golem.x += this.golem.velocityX; this.golem.y += this.golem.velocityY; this.golem.velocityY += .48; this.setJumpSprite(this.golem.velocityY < 0 ? 2 : 4, false);
         if (this.golem.y < this.golem.groundY - this.golem.height) return;
-        this.golem.x = 540; this.golem.y = this.golem.groundY - this.golem.height; this.state = 'stoneVolley'; this.timer = 0; this.finalVolleyCount = 0; this.shake = 38;
+        this.golem.y = this.golem.groundY - this.golem.height; this.state = 'stoneVolley'; this.timer = 0; this.finalVolleyCount = 0; this.shake = 38;
         game.audioManager.playSound('golemLanding'); game.audioManager.playSound('earthquakeRumble');
     }
     updateStoneVolley(game) {
