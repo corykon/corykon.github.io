@@ -413,6 +413,13 @@ class PetManager {
             
             // Tail wagging animation
             this.pet.tailWagTimer++;
+
+            // Save the companion sound for the top of its first happy jump, rather than
+            // playing it while the player is still beginning the petting gesture.
+            if (!this.pet.isGrounded && !this.pet.pettingJumpSoundPlayed && this.pet.velocityY >= 0) {
+                this.pet.pettingJumpSoundPlayed = true;
+                this.game.audioManager.playSound(this.pet.type === 'cat' ? 'meow' : 'bark1');
+            }
             
             // Handle jumps after petting starts
             if (this.pet.pettingTimer > 30 && this.pet.jumpCount < this.pet.maxJumps) { // Wait 0.5 seconds before first jump
@@ -422,6 +429,7 @@ class PetManager {
                         // Little happy jump
                         this.pet.velocityY = -8; // Smaller jump than regular jump
                         this.pet.isGrounded = false;
+                        this.pet.pettingJumpSoundPlayed = false;
                         this.pet.jumpCount++;
                         this.pet.jumpTimer = 0;
                     }
@@ -473,6 +481,7 @@ class PetManager {
             this.pet.pettingTimer = 0;
             this.pet.tailWagTimer = 0;
             this.pet.jumpCount = 0;
+            this.pet.pettingJumpSoundPlayed = false;
             
             // Start player petting animation
             this.game.characterRenderer.startPettingAnimation();
@@ -484,13 +493,13 @@ class PetManager {
             this.game.player.isPetting = true;
             this.game.player.pettingTimer = 0;
             this.game.player.handOffset = 0;
+            this.game.completePettingTutorial();
+            // These are presentation-only. Keep controls alive even if Safari
+            // has retained an older cached support script during a refresh.
+            this.game.effectsManager.triggerPetAffection?.(this.pet.x + this.pet.width / 2, this.pet.y - 4);
+            this.game.audioManager.playSound?.('petSparkles');
             
-            // Play appropriate sound based on pet type
-            if (this.pet.type === 'cat') {
-                this.game.audioManager.playSound('meow');
-            } else {
-                this.game.audioManager.playSound('bark1');
-            }
+            this.pet.pettingJumpSoundPlayed = false;
         }
     }
     
