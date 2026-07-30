@@ -3,6 +3,7 @@ class EffectsManager {
         this.fireworks = [];
         this.armorExplosion = [];
         this.sparkleTrails = []; // Sparkle trail particles
+        this.fireworkTimers = new Set();
         
         // Celebration properties
         this.celebrationTimer = 0;
@@ -15,13 +16,34 @@ class EffectsManager {
     }
     
     initializeFireworks(castle) {
+        this.clearFireworkTimers();
         this.fireworks = [];
-        // Create multiple firework bursts around the temple
-        for (let i = 0; i < 8; i++) {
-            setTimeout(() => {
-                this.createFireworkBurst(castle);
-            }, i * 300); // Stagger the fireworks
+        this.pendingFireworkBursts = 8;
+        this.fireworkCastle = castle;
+        this.scheduleFireworkBursts(300);
+    }
+
+    scheduleFireworkBursts(interval) {
+        for (let i = 0; i < this.pendingFireworkBursts; i++) {
+            const timer = setTimeout(() => {
+                this.fireworkTimers.delete(timer);
+                this.pendingFireworkBursts--;
+                this.createFireworkBurst(this.fireworkCastle);
+            }, i * interval);
+            this.fireworkTimers.add(timer);
         }
+    }
+
+    accelerateFireworks() {
+        if (!this.pendingFireworkBursts || !this.fireworkCastle) return;
+        this.clearFireworkTimers();
+        // Keep bursts staggered, just tightly enough to match the faster finale.
+        this.scheduleFireworkBursts(100);
+    }
+
+    clearFireworkTimers() {
+        this.fireworkTimers.forEach(timer => clearTimeout(timer));
+        this.fireworkTimers.clear();
     }
     
     createFireworkBurst(castle) {
@@ -58,18 +80,19 @@ class EffectsManager {
         return colors[Math.floor(Math.random() * colors.length)];
     }
     
-    updateCelebration() {
-        this.celebrationTimer++;
+    updateCelebration(speed = 1) {
+        this.celebrationTimer += speed;
         
         // Update fireworks
-        this.fireworks = this.fireworks.filter(firework => {
-            firework.x += firework.vx;
-            firework.y += firework.vy;
-            firework.vy += 0.1; // Gravity (reduced by 50% for slower speed)
-            firework.vx *= 0.99; // Air resistance
-            firework.life--;
-            return firework.life > 0;
-        });
+        for (let index = this.fireworks.length - 1; index >= 0; index--) {
+            const firework = this.fireworks[index];
+            firework.x += firework.vx * speed;
+            firework.y += firework.vy * speed;
+            firework.vy += 0.1 * speed;
+            firework.vx *= Math.pow(0.99, speed);
+            firework.life -= speed;
+            if (firework.life <= 0) this.fireworks.splice(index, 1);
+        }
         
         // Return true when celebration should end
         return this.celebrationTimer >= this.celebrationDuration;
@@ -176,14 +199,15 @@ class EffectsManager {
     }
     
     updateSparkleTrails() {
-        this.sparkleTrails = this.sparkleTrails.filter(sparkle => {
+        for (let index = this.sparkleTrails.length - 1; index >= 0; index--) {
+            const sparkle = this.sparkleTrails[index];
             sparkle.x += sparkle.vx;
             sparkle.y += sparkle.vy;
             sparkle.vx *= 0.95; // Air resistance
             sparkle.vy *= 0.95;
             sparkle.life--;
-            return sparkle.life > 0;
-        });
+            if (sparkle.life <= 0) this.sparkleTrails.splice(index, 1);
+        }
     }
     
     renderSparkleTrails(ctx, cameraX) {
@@ -222,14 +246,15 @@ class EffectsManager {
             this.armorActivationTimer++;
             
             // Update explosion particles
-            this.armorExplosion = this.armorExplosion.filter(particle => {
+            for (let index = this.armorExplosion.length - 1; index >= 0; index--) {
+                const particle = this.armorExplosion[index];
                 particle.x += particle.vx;
                 particle.y += particle.vy;
                 particle.vy += 0.1; // Gravity (reduced by 50% for slower speed)
                 particle.vx *= 0.98; // Air resistance
                 particle.life--;
-                return particle.life > 0;
-            });
+                if (particle.life <= 0) this.armorExplosion.splice(index, 1);
+            }
             
             // End armor activation
             if (this.armorActivationTimer >= this.armorActivationDuration) {
@@ -264,7 +289,10 @@ class EffectsManager {
     }
     
     reset() {
+        this.clearFireworkTimers();
         this.fireworks = [];
+        this.pendingFireworkBursts = 0;
+        this.fireworkCastle = null;
         this.armorExplosion = [];
         this.sparkleTrails = [];
         this.celebrationTimer = 0;

@@ -37,9 +37,9 @@ class ArrowManager {
     
     spawnNewArrow(player, castle, hasArmor, xOffset = 0) {
         // Only spawn if we're playing and haven't hit the max
-        if (this.arrows.filter(a => a.active).length >= this.maxArrows) {
-            return;
-        }
+        let activeArrowCount = 0;
+        for (const arrow of this.arrows) activeArrowCount += arrow.active ? 1 : 0;
+        if (activeArrowCount >= this.maxArrows) return;
         
         // Spawn arrow ahead of the player with optional offset for bursts
         const spawnX = player.x + 800 + Math.random() * 400 + xOffset; // 800-1200 pixels ahead + offset
@@ -99,11 +99,17 @@ class ArrowManager {
         });
         
         // Remove finished broken arrow effects
-        this.brokenArrows = this.brokenArrows.filter(brokenArrow => brokenArrow.timer < brokenArrow.duration);
+        for (let index = this.brokenArrows.length - 1; index >= 0; index--) {
+            if (this.brokenArrows[index].timer >= this.brokenArrows[index].duration) {
+                this.brokenArrows.splice(index, 1);
+            }
+        }
         
         // Clean up inactive arrows periodically
         if (Math.random() < 0.02) { // 2% chance each frame
-            this.arrows = this.arrows.filter(arrow => arrow.active);
+            for (let index = this.arrows.length - 1; index >= 0; index--) {
+                if (!this.arrows[index].active) this.arrows.splice(index, 1);
+            }
         }
         
         // Spawn new arrows continuously

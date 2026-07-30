@@ -88,9 +88,7 @@ class HighScoreBoard {
     }
 
     async load() {
-        this.entries.replaceChildren();
-        this.entries.classList.remove('leaderboard-entries--notice', 'leaderboard-entries--revealed');
-        this.entries.classList.add('hidden');
+        this.showLoading();
         this.heading.classList.add('hidden');
         this.heading.classList.remove('leaderboard-heading--revealed');
         if (!this.isAvailable()) {
@@ -100,6 +98,8 @@ class HighScoreBoard {
         try {
             const scores = await window.FirebaseLeaderboard.fetchTopScores();
             if (!scores.length) { this.setNotice('empty', 'NO HEROES YET', 'BEAT THE GAME TO BE THE FIRST TO WRITE YOUR NAME IN THE HALL OF HEROES.'); return; }
+            this.entries.replaceChildren();
+            this.entries.classList.remove('leaderboard-entries--notice');
             this.heading.classList.remove('hidden');
             scores.forEach((entry, index) => this.entries.append(this.renderEntry(entry, index + 1)));
             this.revealResults();
@@ -109,6 +109,22 @@ class HighScoreBoard {
             console.error('Leaderboard load failed:', error);
             this.setNotice('offline', 'LEADERBOARD TEMPORARILY OFFLINE', 'PLEASE TRY AGAIN IN A MOMENT.');
         }
+    }
+
+    showLoading() {
+        this.entries.replaceChildren();
+        this.entries.classList.remove('leaderboard-entries--notice', 'leaderboard-entries--revealed');
+        this.entries.classList.remove('hidden');
+        const loading = document.createElement('div');
+        loading.className = 'leaderboard-loading';
+        loading.setAttribute('role', 'status');
+        const spinner = document.createElement('span');
+        spinner.className = 'leaderboard-loading-spinner';
+        spinner.setAttribute('aria-hidden', 'true');
+        const message = document.createElement('p');
+        message.textContent = 'SUMMONING HEROES…';
+        loading.append(spinner, message);
+        this.entries.append(loading);
     }
 
     setNotice(type, title, message) {
@@ -152,7 +168,8 @@ class HighScoreBoard {
             row.setAttribute('aria-label', 'Your score');
         }
         const date = entry.createdAt?.toDate ? entry.createdAt.toDate() : new Date();
-        [['#', rank], ['NAME', this.cleanName(String(entry.name || 'UNKNOWN')) || 'UNKNOWN'], ['DATE', date.toLocaleDateString()], ['SCORE', Number(entry.score || 0).toLocaleString()]].forEach(([label, value]) => {
+        const shortDate = `${date.getMonth() + 1}/${date.getDate()}/${String(date.getFullYear()).slice(-2)}`;
+        [['#', rank], ['NAME', this.cleanName(String(entry.name || 'UNKNOWN')) || 'UNKNOWN'], ['DATE', shortDate], ['SCORE', Number(entry.score || 0).toLocaleString()]].forEach(([label, value]) => {
             const cell = document.createElement('span'); cell.dataset.label = label; cell.textContent = value; row.append(cell);
         });
         return row;

@@ -2,6 +2,11 @@ class InputHandler {
     constructor() {
         this.keys = {};
         this.keysPressed = {};
+        this.touchKeys = {};
+        this.touchKeysPressed = {};
+        this.activeCanvasTouches = new Map();
+        this.canvasTouchGestureIsMultiTouch = false;
+        this.lastCanvasTap = null;
         
         // Mouse state
         this.hoveredButton = null;
@@ -18,6 +23,8 @@ class InputHandler {
         // Keyboard input
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
+        document.querySelectorAll('[data-touch-key]').forEach(button => this.bindTouchControl(button));
+        this.bindCanvasPetting(canvas);
         
         // Mouse events for pause menu buttons
         canvas.addEventListener('click', (e) => {
@@ -43,10 +50,11 @@ class InputHandler {
                 const centerY = canvasHeight / 2;
                 
                 // Three button layout: wide Resume button on top, Restart and Main Menu side by side below
-                const wideButtonWidth = 300;
-                const narrowButtonWidth = 140;
-                const buttonHeight = 50;
-                const verticalSpacing = 20;
+                const isTouchLayout = window.matchMedia('(pointer: coarse)').matches;
+                const wideButtonWidth = isTouchLayout ? 380 : 300;
+                const narrowButtonWidth = isTouchLayout ? 180 : 140;
+                const buttonHeight = isTouchLayout ? 70 : 50;
+                const verticalSpacing = isTouchLayout ? 24 : 20;
                 const horizontalSpacing = 20;
                 
                 // Resume button positioning
@@ -104,10 +112,11 @@ class InputHandler {
                 const centerY = canvasHeight / 2;
                 
                 // Three button layout: wide Resume button on top, Restart and Main Menu side by side below
-                const wideButtonWidth = 300;
-                const narrowButtonWidth = 140;
-                const buttonHeight = 50;
-                const verticalSpacing = 20;
+                const isTouchLayout = window.matchMedia('(pointer: coarse)').matches;
+                const wideButtonWidth = isTouchLayout ? 380 : 300;
+                const narrowButtonWidth = isTouchLayout ? 180 : 140;
+                const buttonHeight = isTouchLayout ? 70 : 50;
+                const verticalSpacing = isTouchLayout ? 24 : 20;
                 const horizontalSpacing = 20;
                 
                 // Resume button positioning
@@ -170,9 +179,95 @@ class InputHandler {
             }
         });
     }
+
+    bindTouchControl(button) {
+        const key = button.dataset.touchKey;
+        const release = event => {
+            if (event.pointerId !== undefined && button.hasPointerCapture?.(event.pointerId)) button.releasePointerCapture(event.pointerId);
+            this.touchKeys[key] = false;
+            button.classList.remove('touch-control--active');
+        };
+        button.addEventListener('pointerdown', event => {
+            if (event.pointerType === 'mouse' && event.button !== 0) return;
+            event.preventDefault();
+            button.setPointerCapture?.(event.pointerId);
+            if (!this.touchKeys[key]) this.touchKeysPressed[key] = true;
+            this.touchKeys[key] = true;
+            button.classList.add('touch-control--active');
+        });
+        ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => button.addEventListener(type, release));
+    }
+
+    bindCanvasPetting(canvas) {
+        const maxTapDuration = 300;
+        const maxTapMovement = 24;
+        const doubleTapDelay = 350;
+        const maxDoubleTapDistance = 72;
+
+        canvas.addEventListener('pointerdown', event => {
+            if (event.pointerType !== 'touch') return;
+            if (this.activeCanvasTouches.size > 0) this.canvasTouchGestureIsMultiTouch = true;
+            this.activeCanvasTouches.set(event.pointerId, {
+                x: event.clientX,
+                y: event.clientY,
+                time: performance.now()
+            });
+        });
+
+        canvas.addEventListener('pointerup', event => {
+            if (event.pointerType !== 'touch') return;
+
+            const touchStart = this.activeCanvasTouches.get(event.pointerId);
+            this.activeCanvasTouches.delete(event.pointerId);
+            if (!touchStart) return;
+
+            if (this.canvasTouchGestureIsMultiTouch) {
+                if (this.activeCanvasTouches.size === 0) this.canvasTouchGestureIsMultiTouch = false;
+                this.lastCanvasTap = null;
+                return;
+            }
+
+            const now = performance.now();
+            const movement = Math.hypot(event.clientX - touchStart.x, event.clientY - touchStart.y);
+            if (now - touchStart.time > maxTapDuration || movement > maxTapMovement) return;
+
+            if (this.game.gameState !== 'playing' || this.game.isPaused) {
+                this.lastCanvasTap = null;
+                return;
+            }
+
+            const currentTap = { x: event.clientX, y: event.clientY, time: now };
+            const previousTap = this.lastCanvasTap;
+            this.lastCanvasTap = currentTap;
+
+            if (!previousTap || now - previousTap.time > doubleTapDelay ||
+                Math.hypot(currentTap.x - previousTap.x, currentTap.y - previousTap.y) > maxDoubleTapDistance) {
+                return;
+            }
+
+            this.lastCanvasTap = null;
+            event.preventDefault();
+            this.game.tryPetAnimal();
+        });
+
+        ['pointercancel', 'lostpointercapture'].forEach(type => canvas.addEventListener(type, event => {
+            this.activeCanvasTouches.delete(event.pointerId);
+            if (this.activeCanvasTouches.size === 0) this.canvasTouchGestureIsMultiTouch = false;
+        }));
+    }
+
+    isKeyDown(code) { return Boolean(this.keys[code] || this.touchKeys[code]); }
+
+    wasKeyPressed(code) { return Boolean(this.keysPressed[code] || this.touchKeysPressed[code]); }
+
+    clearTouchInputs() {
+        this.touchKeys = {};
+        this.touchKeysPressed = {};
+        document.querySelectorAll('.touch-control--active').forEach(button => button.classList.remove('touch-control--active'));
+    }
     
     handleKeyDown(e) {
-        if (this.game.gameState === 'cutscene' && (e.code === 'Enter' || e.code === 'Escape')) {
+        if (this.game.gameState === 'cutscene' && ['Enter', 'Escape', 'Space'].includes(e.code)) {
             this.game.skipOpeningCutscene();
             e.preventDefault();
             return;
@@ -199,10 +294,24 @@ class InputHandler {
             return;
         }
 
+        // Let Enter hurry the temple-fireworks finale without skipping rewards.
+        if (this.game.gameState === 'celebrating' && e.code === 'Enter') {
+            this.game.fastForwardCelebration();
+            e.preventDefault();
+            return;
+        }
+
         // Handle level intro screen
         if (this.game.gameState === 'levelIntro') {
             if (e.code === 'Space' || e.code === 'Enter') {
-                this.game.advanceLevelIntro();
+                // Desktop keeps the original two-step flow: the first press
+                // rushes the reveal, and a later press continues once it is ready.
+                // Touch layouts retain their direct start behavior.
+                if (window.matchMedia('(pointer: fine)').matches) {
+                    this.game.advanceLevelIntro();
+                } else {
+                    this.game.exitLevelIntro();
+                }
                 e.preventDefault();
                 return;
             }
@@ -256,7 +365,7 @@ class InputHandler {
         // Horizontal movement (armor enhances speed)
         player.isMoving = false;
         const currentSpeed = this.game.getCurrentSpeed();
-        if (this.keys['ArrowLeft'] && player.x > cameraX && !player.blockedLeft) {
+        if (this.isKeyDown('ArrowLeft') && player.x > cameraX && !player.blockedLeft) {
             player.x -= currentSpeed;
             player.isMoving = true;
             player.facingRight = false; // Facing left
@@ -265,7 +374,7 @@ class InputHandler {
                 this.game.petManager.stopPetting();
             }
         }
-        if (this.keys['ArrowRight'] && player.x < worldWidth - player.width && !player.blockedRight) {
+        if (this.isKeyDown('ArrowRight') && player.x < worldWidth - player.width && !player.blockedRight) {
             player.x += currentSpeed;
             player.isMoving = true;
             player.facingRight = true; // Facing right
@@ -276,7 +385,7 @@ class InputHandler {
         }
         
         // Jumping (armor enhances jump height) - Variable jump implementation
-        if ((this.keysPressed['ArrowUp'] || this.keysPressed['Space']) && player.isGrounded && !player.isDucking) {
+        if ((this.wasKeyPressed('ArrowUp') || this.wasKeyPressed('Space')) && player.isGrounded && !player.isDucking) {
             const currentJumpPower = this.game.getCurrentJumpPower();
             player.velocityY = currentJumpPower;
             player.isJumping = true;
@@ -290,13 +399,15 @@ class InputHandler {
             // Clear the key press flags so jump doesn't repeat
             this.keysPressed['ArrowUp'] = false;
             this.keysPressed['Space'] = false;
+            this.touchKeysPressed['ArrowUp'] = false;
+            this.touchKeysPressed['Space'] = false;
         }
         
         // Track if jump key is still held (for variable jump height)
-        player.jumpHeld = (this.keys['ArrowUp'] || this.keys['Space']) && player.isJumping;
+        player.jumpHeld = (this.isKeyDown('ArrowUp') || this.isKeyDown('Space')) && player.isJumping;
         
         // Ducking
-        player.isDucking = this.keys['ArrowDown'] && player.isGrounded;
+        player.isDucking = this.isKeyDown('ArrowDown') && player.isGrounded;
     }
     
     cleanup() {

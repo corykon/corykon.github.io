@@ -514,8 +514,10 @@ class EnemyManager {
                         this.killSnail(snail);
                     }
                     // Give player a bounce - use full jump power if jump key is held
-                    const jumpKeyHeld = typeof inputHandler !== 'undefined' && inputHandler && inputHandler.keys && 
-                                       (inputHandler.keys['ArrowUp'] || inputHandler.keys['Space']);
+                    const jumpKeyHeld = typeof inputHandler !== 'undefined' && inputHandler &&
+                                       (typeof inputHandler.isKeyDown === 'function'
+                                           ? (inputHandler.isKeyDown('ArrowUp') || inputHandler.isKeyDown('Space'))
+                                           : (inputHandler.keys?.['ArrowUp'] || inputHandler.keys?.['Space']));
                     const jumpPower = (jumpKeyHeld && typeof getCurrentJumpPower !== 'undefined' && getCurrentJumpPower) ? 
                                      getCurrentJumpPower() : -6;
                     player.velocityY = jumpPower;
@@ -615,9 +617,12 @@ class EnemyManager {
                rect1.y + rect1.height > rect2.y;
     }
     
-    render(ctx) {
+    render(ctx, cameraX = 0, viewportWidth = ctx.canvas.width) {
+        const viewLeft = cameraX - 64;
+        const viewRight = cameraX + viewportWidth + 64;
         // Render snails
         this.snails.forEach(snail => {
+            if (snail.x + snail.width < viewLeft || snail.x > viewRight) return;
             if (snail.hidden) {
                 // Render shell facing the direction snail was going
                 const shellImg = this.snailImages.shell;
@@ -657,6 +662,7 @@ class EnemyManager {
         
         // Render defeat effects
         this.defeatEffects.forEach(effect => {
+            if (effect.x + effect.width < viewLeft || effect.x > viewRight) return;
             if (this.defeatImage && this.defeatImage.complete) {
                 ctx.save();
                 ctx.globalAlpha = effect.alpha;
