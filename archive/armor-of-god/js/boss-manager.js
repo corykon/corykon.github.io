@@ -269,14 +269,22 @@ class BossManager {
             this.golem.y = Math.min(this.golem.groundY - this.golem.height, this.golem.y + 5);
             if (this.timer > 70 && this.golem.x <= this.cutsceneTargetX) { this.cutsceneStage = 'quake'; this.timer = 0; this.golem.animation = 'slam'; this.shake = 28; game.audioManager.playSound('golem'); game.audioManager.playSound('earthquakeRumble'); }
         } else if (this.cutsceneStage === 'quake' && this.timer > 95) {
-            this.cutsceneStage = 'falling'; this.timer = 0; game.audioManager.playSound('falling');
+            this.cutsceneStage = 'falling'; this.timer = 0;
+            game.prepareLevelThreeCollapseBonuses();
+            game.audioManager.playSound('falling');
         } else if (this.cutsceneStage === 'falling') {
             if (this.timer === 1) game.worldManager.beginCutsceneSceneryFall(this.golem.x + 55, 340, 215);
             game.worldManager.updateCutsceneSceneryFall();
-            this.golem.y += 12;
-            game.player.y += 12;
-            game.pet.y += 12;
-            if (this.timer > 90) game.showLevelThreeCompletion();
+            if (this.timer <= 90) {
+                this.golem.y += 12;
+                game.player.y += 12;
+                game.pet.y += 12;
+            }
+            // Completion bonuses are credited as their score cards begin fading.  Their
+            // full five-second lifetime is longer than their visible travel, so do not
+            // hold the sequence until every expired card is removed.
+            const bonusesCredited = game.floatingScores.every(score => score.pendingPoints === null);
+            if (this.timer > 105 && bonusesCredited) game.showLevelThreeCompletion();
         }
     }
 
@@ -339,14 +347,38 @@ class BossManager {
                     if (rock.y + rock.height > 468) { this.shake = Math.max(this.shake, 6); return false; }
                     if (this.overlaps(rock, game.player) && !game.hasArmor) game.takeDamage(game.player.x < rock.x ? -1 : 1);
                 } else if (rock.phase === 'rise') {
-                    rock.alpha = Math.min(1, rock.age / 16); rock.y -= 2.7;
-                    if (rock.age >= 20) { rock.phase = 'hover'; rock.age = 0; }
+                    // Final-phase stones are summoned from beneath the cave floor.  Their
+                    // bottom stays planted on the ground as they emerge, making the rise
+                    // read as a ground attack rather than a ceiling drop.
+                    rock.alpha = Math.min(1, rock.age / 10);
+                    rock.y = Math.max(rock.hoverY, rock.startY - rock.age * 3.1);
+                    if (rock.y <= rock.hoverY) { rock.y = rock.hoverY; rock.phase = 'hover'; rock.age = 0; }
                 } else if (rock.phase === 'fly') {
-                    rock.x += rock.velocityX; rock.y += rock.velocityY; rock.velocityY += .08;
+                    rock.x += rock.velocityX; rock.y += rock.velocityY;
                     if (this.overlaps(rock, game.player) && !game.hasArmor) game.takeDamage(rock.direction);
-                    if (rock.x < 22 || rock.x + rock.width > 1178) { rock.phase = 'break'; rock.sprite = 2; rock.age = 0; rock.alpha = 1; this.shake = 12; game.audioManager.playSound('thud'); game.audioManager.playSound('golemLanding'); }
-                } else { rock.alpha = Math.max(0, 1 - rock.age / 35); rock.y += 4; }
-                return rock.phase !== 'break' || rock.age < 35;
+                    // Use the actual inner edges of the arena walls, rather than letting
+                    // the projectile visibly pass into the wall before it impacts.
+                    if (rock.x < 68 || rock.x + rock.width > 1132) {
+                        rock.x = Math.max(68, Math.min(1132 - rock.width, rock.x));
+                        rock.phase = 'impactSmoke'; rock.age = 0; rock.alpha = 0;
+                        this.shake = 12; game.audioManager.playSound('thud'); game.audioManager.playSound('golemLanding');
+                    }
+                } else if (rock.phase === 'impactSmoke') {
+                    // The enemy-defeated puff gets a short, readable beat before it
+                    // dissolves into the spent third rock.
+                    rock.smokeAlpha = Math.min(1, rock.age / 5);
+                    if (rock.age >= 12) { rock.phase = 'impactSink'; rock.sprite = 2; rock.age = 0; }
+                } else if (rock.phase === 'impactSink') {
+                    const progress = Math.min(1, rock.age / 28);
+                    rock.alpha = progress;
+                    rock.smokeAlpha = 1 - progress;
+                    rock.y += 1.9;
+                    if (rock.age >= 28) { rock.phase = 'impactFade'; rock.age = 0; }
+                } else if (rock.phase === 'impactFade') {
+                    rock.alpha = Math.max(0, 1 - rock.age / 20);
+                    rock.y += 2.6;
+                }
+                return !['impactFade'].includes(rock.phase) || rock.age < 20;
             }
             rock.velocityY += 0.0384; rock.y += rock.velocityY;
             if (!rock.entrySoundPlayed && rock.y >= 0) {
@@ -361,6 +393,10 @@ class BossManager {
 
     checkCollisions(game) {
         if (!this.active || this.state === 'cutscene' || this.state === 'dead' || this.contactInvulnerability > 0) return;
+        // A successful stomp buys the player a real recovery window.  The boss cannot be
+        // stomped again during it, and its body stays harmless until it has fully reignited.
+        const postStompRecovery = ['hitRecover', 'reigniteFlash', 'vulnerabilityExit', 'finalPrep', 'finalLeap'].includes(this.state);
+        if (postStompRecovery) return;
         const p = game.player, b = this.golem;
         if (!this.overlaps(p, b)) return;
         const playerCenter = p.x + p.width / 2;
@@ -468,8 +504,11 @@ class BossManager {
         // launch on the exact impact frame instead of drifting away long after the fist lands.
         if (this.timer === 1) {
             [-1, 1].forEach((direction, index) => this.rocks.push({
-                x: direction < 0 ? this.golem.x - 20 : this.golem.x + this.golem.width - 34,
-                y: 452, width: 54, height: 54, sprite: (this.finalVolleyCount + index) % 2,
+                // Start completely underground, then settle just above the floor on
+                // opposite sides of the golem.  Only rock 1/2 are used for the attack.
+                x: direction < 0 ? this.golem.x - 72 : this.golem.x + this.golem.width + 18,
+                y: 468, startY: 468, hoverY: 399, width: 54, height: 54,
+                sprite: (this.finalVolleyCount + index) % 2,
                 phase: 'rise', direction, volley: this.finalVolleyCount, age: 0, alpha: 0
             }));
         }
@@ -478,7 +517,7 @@ class BossManager {
         if (this.timer === 52) {
             this.rocks.forEach(rock => {
                 if (rock.volley !== this.finalVolleyCount || rock.phase !== 'hover') return;
-                rock.phase = 'fly'; rock.velocityX = rock.direction * 9.5; rock.velocityY = -1.2;
+                rock.phase = 'fly'; rock.velocityX = rock.direction * 10.5; rock.velocityY = 0;
             });
             this.shake = 20; game.audioManager.playSound('golem'); game.audioManager.playSound('stonesFalling'); game.dropBossHeartFromCeiling();
             this.finalVolleyCount++;
@@ -618,7 +657,18 @@ class BossManager {
     render(ctx, cameraX) {
         if (!this.active) return;
         ctx.save();
-        this.rocks.forEach(rock => { const sprite = this.rockSprites[rock.sprite]; if (sprite.complete) { ctx.save(); ctx.globalAlpha = rock.alpha === undefined ? 1 : rock.alpha; ctx.drawImage(sprite, rock.x - cameraX, rock.y, rock.width, rock.height); if (rock.phase === 'break' && this.hitSmokeImage.complete) ctx.drawImage(this.hitSmokeImage, rock.x - cameraX - 12, rock.y - 12, 78, 78); ctx.restore(); } });
+        this.rocks.forEach(rock => {
+            const sprite = this.rockSprites[rock.sprite];
+            if (!sprite.complete) return;
+            ctx.save();
+            ctx.globalAlpha = rock.alpha === undefined ? 1 : rock.alpha;
+            ctx.drawImage(sprite, rock.x - cameraX, rock.y, rock.width, rock.height);
+            if ((rock.phase === 'impactSmoke' || rock.phase === 'impactSink') && this.hitSmokeImage.complete) {
+                ctx.globalAlpha = rock.smokeAlpha === undefined ? 1 : rock.smokeAlpha;
+                ctx.drawImage(this.hitSmokeImage, rock.x - cameraX - 12, rock.y - 12, 78, 78);
+            }
+            ctx.restore();
+        });
         if (this.state === 'jumpPrep' || this.state === 'redBurst' || this.state === 'vulnerabilityExit') this.renderJumpPrep(ctx, cameraX);
         if (this.state === 'finalPrep') this.renderFinalPrep(ctx, cameraX);
         if (this.state !== 'dead') this.renderGolem(ctx, cameraX);

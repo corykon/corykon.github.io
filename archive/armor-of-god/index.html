@@ -147,7 +147,7 @@
             <h1 id="levelCompleteTitle">Level Cleared</h1>
             <p id="levelCompleteSubtitle">You've made it safely to the House of the Lord!</p>
             <p id="levelCompleteScripture" class="victory-message">"Well done, thou good and faithful servant!"</p>
-            <div class="score-display-small">
+            <div id="completionScoreDetailsTrigger" class="score-display-small score-display-small--details" role="button" tabindex="0" aria-label="View score breakdown" data-tooltip="See score breakdown">
                 <div class="score-row-small">
                     <span class="score-label-small">Level:</span>
                     <span id="levelScore">0</span>
@@ -165,6 +165,13 @@
             <div class="button-row">
                 <button id="retryLevelBtn" class="menu-btn half-width"><span class="chevron-icon chev-left">❮</span>Retry Level</button>
                 <button id="mainMenuBtn2" class="menu-btn half-width">Main Menu</button>
+            </div>
+        </div>
+        <div id="completionScoreDetailsModal" class="modal hidden">
+            <div class="modal-content how-to-play-modal score-details-modal" role="dialog" aria-modal="true" aria-labelledby="scoreDetailsTitle">
+                <header class="how-to-play-header"><h2 id="scoreDetailsTitle">Score Breakdown</h2><button id="closeScoreDetailsBtn" class="close-btn" type="button" aria-label="Close score breakdown">&times;</button></header>
+                <div id="completionScoreDetailsList" class="score-details-list"></div>
+                <footer class="how-to-play-footer"><button id="scoreDetailsDoneBtn" class="menu-btn start-btn" type="button">Done</button></footer>
             </div>
         </div>
         <div id="leaderboardScreen" class="screen hidden">
@@ -221,7 +228,7 @@
                     
                     <h2>SPRITE DESIGN ASSISTANT</h2>
                     <p>GOOGLE GEMINI</p>
-                    <h2>AI VIDEO TOOL</h2>
+                    <h2>AI VIDEO TOOLS</h2>
                     <p>ADOBE FIREFLY</p>
                     <p>GOOGLE FLOW</p>
                     <h2>SPRITE EDITOR TOOL</h2>
@@ -259,9 +266,9 @@
     <!-- Instructions Modal -->
     <div id="instructionsModal" class="modal hidden">
         <div class="modal-content how-to-play-modal" role="dialog" aria-modal="true" aria-labelledby="howToPlayTitle">
-            <span class="close-btn" id="closeModal">&times;</span>
-            <header class="how-to-play-header"><h2 id="howToPlayTitle">How to Play</h2></header>
-            <div class="how-to-play-content">
+            <header class="how-to-play-header"><h2 id="howToPlayTitle">How to Play</h2><span class="close-btn" id="closeModal">&times;</span></header>
+            <div class="how-to-play-panels">
+            <div class="how-to-play-content how-to-play-panel">
                 <section class="how-to-play-section how-to-move" aria-labelledby="howToMoveTitle">
                     <h3 id="howToMoveTitle">How to Move</h3>
                     <div class="how-to-play-grid how-to-move-grid">
@@ -271,11 +278,11 @@
                         </div>
                         <div class="how-to-play-card">
                             <h4>Move</h4>
-                            <div class="control-demo control-demo--move"><img src="images/sprites/main-char/run3.png" alt="Hero running"><span class="how-to-key" aria-label="Left arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10h-9V5l-8 7 8 7v-5h9z"/></svg></span><span class="how-to-key" aria-label="Right arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h9V5l8 7-8 7v-5H3z"/></svg></span><img src="images/sprites/main-char/run8.png" alt="Hero running"></div>
+                            <div class="control-demo control-demo--move"><img class="how-to-move-left" src="images/sprites/main-char/run3.png" alt="Hero running left"><span class="how-to-key" aria-label="Left arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10h-9V5l-8 7 8 7v-5h9z"/></svg></span><span class="how-to-key" aria-label="Right arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h9V5l8 7-8 7v-5H3z"/></svg></span><img src="images/sprites/main-char/run8.png" alt="Hero running right"></div>
                         </div>
                         <div class="how-to-play-card">
                             <h4>Duck</h4>
-                            <div class="control-demo"><span class="how-to-key" aria-label="Down arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v9h5l-7 8-7-8h5z"/></svg></span><img src="images/sprites/main-char/duck1.png" alt="Hero ducking"></div>
+                            <div class="control-demo control-demo--duck"><span class="how-to-key" aria-label="Down arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v9h5l-7 8-7-8h5z"/></svg></span><img src="images/sprites/main-char/duck1.png" alt="Hero ducking"></div>
                         </div>
                     </div>
                     <p class="how-to-space-hint">You can also press Spacebar to jump.</p>
@@ -293,7 +300,44 @@
                     </div>
                 </section>
             </div>
-            <footer class="how-to-play-footer"><button id="instructionsDoneBtn" class="menu-btn start-btn" type="button">Done</button></footer>
+            <div class="how-to-score-content how-to-play-panel" aria-labelledby="howToScoreTitle" aria-hidden="true">
+                <section class="how-to-score-section">
+                    <h3 id="howToScoreTitle">How to Score</h3>
+                    <p class="how-to-score-intro">Points stack up as you play.</p>
+                    <div class="score-rule-groups">
+                        <section class="score-rule-group" aria-labelledby="scorePickupsTitle">
+                            <h4 id="scorePickupsTitle">Pick up</h4>
+                            <div class="score-rule"><img src="images/sprites/bom.png" alt=""><span>Scripture</span><strong>+300</strong></div>
+                            <div class="score-rule"><span class="score-rule-icon">♥</span><span>Heart</span><strong>+500</strong></div>
+                            <div class="score-rule"><img src="images/sprites/main-char/armor-standing.png" alt="Hero wearing armor"><span>Armor refill</span><strong>+200</strong></div>
+                        </section>
+                        <section class="score-rule-group" aria-labelledby="scoreDefeatTitle">
+                            <h4 id="scoreDefeatTitle">Defeat</h4>
+                            <div class="score-rule"><img src="images/sprites/enemy/snail-crawl1.png" alt=""><span>Snail</span><strong>+200</strong></div>
+                            <div class="score-rule"><img src="images/sprites/enemy/snail-shell.png" alt=""><span>Mega snail</span><strong>+1,000</strong></div>
+                            <div class="score-rule"><img src="images/sprites/enemy/fiery-arrow.png" alt=""><span>Break an arrow</span><strong>+300</strong></div>
+                            <div class="score-rule"><img src="images/sprites/enemy/fiery-arrow.png" alt="Fiery arrow"><span>Arrows deflected</span><strong>+10</strong></div>
+                            <div class="score-rule"><span class="score-rule-icon score-rule-icon--boss">◆</span><span>Boss head stomp</span><strong>+100</strong></div>
+                            <div class="score-rule"><span class="score-rule-icon score-rule-icon--boss">◆</span><span>Defeat the golem</span><strong>+10,000</strong></div>
+                            <div class="score-rule"><img src="images/sprites/main-char/jump.png" alt="Hero jumping"><span>Airborne Combos</span><strong>x1, x2, x3 …</strong></div>
+                        </section>
+                        <section class="score-rule-group score-rule-group--bonuses" aria-labelledby="scoreBonusesTitle">
+                            <h4 id="scoreBonusesTitle">End-of-Level Bonuses</h4>
+                            <div class="score-rule"><span>Health remaining</span><strong>+250 / heart</strong></div>
+                            <div class="score-rule"><span>Take no damage</span><strong>+3,000</strong></div>
+                            <div class="score-rule"><span>Defeat every enemy</span><strong>+1,000</strong></div>
+                            <div class="score-rule score-rule--speed"><span>Speed bonus</span><strong>up to 2,000</strong></div>
+                            <div class="score-rule score-rule--negative"><span>Game Over</span><strong>−1,000 each</strong></div>
+                        </section>
+                    </div>
+                </section>
+            </div>
+            </div>
+            <footer class="how-to-play-footer">
+                <button id="scoringBackBtn" class="how-to-modal-link how-to-modal-link--back" type="button" aria-label="Back to How to Play"><span class="how-to-modal-link__chevron" aria-hidden="true">‹</span> Back</button>
+                <button id="instructionsDoneBtn" class="menu-btn start-btn" type="button">Done</button>
+                <button id="scoringLink" class="how-to-modal-link" type="button">Scoring <span class="how-to-modal-link__chevron" aria-hidden="true">›</span></button>
+            </footer>
         </div>
     </div>
 

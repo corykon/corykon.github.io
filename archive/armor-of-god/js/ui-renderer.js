@@ -3,6 +3,7 @@ class UIRenderer {
         // Message system
         this.messages = [];
         this.messageTimer = 0;
+        this.displayedScore = null;
         
         // Pause menu buttons (will be set by game)
         this.pauseRestartButton = null;
@@ -109,7 +110,7 @@ class UIRenderer {
             ctx.font = '12px "Press Start 2P", monospace';
             ctx.fillText(`Armor: ${secondsLeft}s`, panelX + 10, 64);
         } else if (booksCollected >= 3) {
-            ctx.fillStyle = '#FFD700';
+            ctx.fillStyle = '#fff';
             ctx.font = '12px "Press Start 2P", monospace';
             ctx.fillText('Armor Activated!', panelX + 10, 64);
         } else {
@@ -130,7 +131,8 @@ class UIRenderer {
         ctx.fillRect(uiX, timerY, uiWidth, uiHeight);
         
         // Timer text
-        const levelTime = boss && boss.active ? (player.bossFightTime || 0) : (player.levelTime || 0);
+        const inBossArena = boss && boss.active && boss.state !== 'cutscene';
+        const levelTime = inBossArena ? (player.bossFightTime || 0) : (player.levelTime || 0);
         const minutes = Math.floor(levelTime / 3600);
         const seconds = Math.floor((levelTime % 3600) / 60);
         const timeDisplay = `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -158,9 +160,18 @@ class UIRenderer {
         ctx.textAlign = 'left';
         ctx.fillText('Score:', uiX + 8, scoreY + 25);
         
+        // Roll the HUD value rapidly toward newly-earned points instead of jumping.
+        const targetScore = player.score || 0;
+        if (this.displayedScore === null) this.displayedScore = targetScore;
+        if (this.displayedScore < targetScore) {
+            this.displayedScore = Math.min(targetScore, this.displayedScore + Math.max(1, Math.ceil((targetScore - this.displayedScore) * .32)));
+        } else if (this.displayedScore > targetScore) {
+            this.displayedScore = targetScore;
+        }
+
         // Right-aligned value
         ctx.textAlign = 'right';
-        ctx.fillText(`${player.score || 0}`, uiX + uiWidth - 8, scoreY + 25);
+        ctx.fillText(`${this.displayedScore}`, uiX + uiWidth - 8, scoreY + 25);
         ctx.textAlign = 'left';
         
         // Render floating score indicators
@@ -422,23 +433,29 @@ class UIRenderer {
             // Skip rendering if completely faded
             if (finalOpacity <= 0) return;
             
-            // Use the score indicator's color, or default to yellow
-            ctx.fillStyle = scoreIndicator.color || '#FFD700';
+            // Keep the score-feed callouts visually consistent for every event.
+            ctx.fillStyle = '#0A81FF';
             ctx.globalAlpha = finalOpacity;
             ctx.font = 'bold 12px "Press Start 2P", monospace';
             ctx.textAlign = 'right'; // Right align the text
             
             // Add drop shadow
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-            ctx.shadowBlur = 3;
-            ctx.shadowOffsetX = 2;
-            ctx.shadowOffsetY = 2;
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
             
             // Create the display text with label if available
             const displayText = scoreIndicator.label ? 
                 `${scoreIndicator.label} +${scoreIndicator.points}` : 
                 `+${scoreIndicator.points}`;
             
+            const textWidth = ctx.measureText(displayText).width;
+            ctx.fillStyle = '#000';
+            ctx.globalAlpha = finalOpacity * .5;
+            ctx.fillRect(scoreX - textWidth - 11, y - 16, textWidth + 22, 23);
+            ctx.fillStyle = '#fff';
+            ctx.globalAlpha = finalOpacity;
             ctx.fillText(displayText, scoreX, y);
             
             // Reset shadow
