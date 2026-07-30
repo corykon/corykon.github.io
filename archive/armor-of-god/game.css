@@ -531,9 +531,9 @@ body.menu-ready #menuScreen {
 .leaderboard-frame h1 { margin: 15px 0; color: #ffd700; font-size: clamp(24px, 4vw, 46px); text-shadow: 4px 4px #7b4e11; }
 .leaderboard-status { min-height: 22px; color: #fff; font-size: clamp(10px, 1.4vw, 14px); line-height: 1.6; }
 .leaderboard-entry { margin: 20px auto; }
-#leaderboardEntry:not(.hidden) { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; margin: 0; }
+#leaderboardEntry:not(.hidden) { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0; text-align: center; }
 .leaderboard-entry label { display: block; margin-bottom: 12px; color: #8ee7ff; font-size: 12px; }
-#leaderboardName { width: min(540px, 90%); padding: 16px; border: 3px solid #fff; outline: none; background: #11172b; color: #ffd700; font: 26px 'Press Start 2P', monospace; text-align: center; text-transform: uppercase; }
+#leaderboardName { box-sizing: border-box; display: block; width: min(540px, 90%); margin: 0 auto; padding: 16px; border: 3px solid #fff; outline: none; background: #11172b; color: #ffd700; font: 26px 'Press Start 2P', monospace; text-align: center; text-transform: uppercase; }
 #leaderboardName:focus { border-color: #ffd700; box-shadow: 0 0 18px rgba(255, 215, 0, .5); }
 .leaderboard-submit-wrap { display: flex; justify-content: center; margin-top: 30px; }
 .leaderboard-submit { margin: 0; }
@@ -1235,14 +1235,15 @@ body.menu-ready #menuScreen {
     #gameUI { top: 28px; }
     .touch-controls { width: min(100%, 920px); flex: 0 0 70px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px; touch-action: none; user-select: none; -webkit-user-select: none; }
     .touch-controls__move, .touch-controls__actions { display: flex; align-items: end; gap: 10px; }
-    .touch-controls__actions { width: clamp(220px, 29vw, 290px); display: grid; grid-template-columns: 1fr 2fr; grid-template-rows: 1fr; align-items: center; }
-    .touch-control { min-width: 58px; min-height: 56px; border: 3px solid rgba(255,255,255,.82); border-radius: 12px; background: rgba(10, 19, 44, .88); color: #fff; font: 12px 'Press Start 2P', monospace; box-shadow: inset 0 0 14px rgba(53, 185, 192, .16), 0 3px 8px rgba(0,0,0,.35); touch-action: none; }
+    .touch-controls__actions { width: clamp(272px, calc(36.96vw - 11px), 359px); display: grid; grid-template-columns: 94px minmax(0, 1fr); grid-template-rows: 1fr; align-items: center; }
+    .touch-control { min-width: 58px; min-height: 56px; border: 3px solid rgba(255,255,255,.82); border-radius: 12px; background: rgba(10, 19, 44, .88); color: #fff; font: 12px 'Press Start 2P', monospace; box-shadow: inset 0 0 14px rgba(53, 185, 192, .16), 0 3px 8px rgba(0,0,0,.35); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-user-drag: none; -webkit-tap-highlight-color: transparent; }
     .touch-control svg { display: block; width: 26px; height: 26px; margin: 0; fill: currentColor; }
-    .touch-control--move { width: clamp(58px, 10vw, 82px); display: grid; place-items: center; }
+    .touch-control--move { width: clamp(87px, 15vw, 123px); display: grid; place-items: center; }
     .touch-control--move svg { width: 26px; height: 26px; }
     .touch-control--jump, .touch-control--duck { width: 100%; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 10px; white-space: nowrap; }
     .touch-control--jump { grid-column: 2; grid-row: 1; min-height: 60px; border-color: #1e7e34; background: #28a745; }
-    .touch-control--duck { grid-column: 1; grid-row: 1; min-height: 56px; }
+    .touch-control--duck { grid-column: 1; grid-row: 1; min-height: 56px; padding-left: 17px; padding-right: 7px; }
+    .touch-control--duck svg { flex: 0 0 26px; width: 26px; height: 26px; }
     .touch-control__label { font: 10px 'Press Start 2P', monospace; }
     .touch-control--active { transform: translateY(2px) scale(.98); background: #28648a; box-shadow: inset 0 0 18px rgba(255,255,255,.35); }
     .touch-control--jump.touch-control--active {

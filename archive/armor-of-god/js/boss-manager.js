@@ -10,6 +10,7 @@ class BossManager {
         this.exitFade = 0;
         this.rocks = [];
         this.deathParticles = [];
+        this.petAssistSmoke = null;
         this.defeatTimer = 0;
         this.shake = 0;
         this.chaseSpeed = 3.36;
@@ -65,7 +66,7 @@ class BossManager {
         });
     }
 
-    reset() { this.state = 'dormant'; this.active = false; this.exit = null; this.exitFade = 0; this.rocks = []; this.deathParticles = []; this.defeatTimer = 0; this.timer = 0; this.health = this.maxHealth; this.poundRounds = 0; this.jumpPasses = 0; this.jumpCount = 0; this.jumpGroundTimer = 0; this.landingPoseTimer = 0; this.landingSoundPlayed = false; this.returnToLavaAfterLanding = false; this.defeatAfterFinalJump = false; this.jumpVulnerable = false; this.redWarning = false; this.tooHotCooldown = 0; this.contactInvulnerability = 0; this.finalVolleyCount = 0; this.finalStoneTimer = 0; this.airChaseOffset = 0; this.airChaseTimer = 0; this.stompedMidair = false; this.hasEnteredFinalPhase = false; this.finalPhasePending = false; this.golem.stompBounceOffset = 0; this.golem.stompBounceVelocity = 0; this.afterHitAction = 'lava'; }
+    reset() { this.state = 'dormant'; this.active = false; this.exit = null; this.exitFade = 0; this.rocks = []; this.deathParticles = []; this.petAssistSmoke = null; this.defeatTimer = 0; this.timer = 0; this.health = this.maxHealth; this.poundRounds = 0; this.jumpPasses = 0; this.jumpCount = 0; this.jumpGroundTimer = 0; this.landingPoseTimer = 0; this.landingSoundPlayed = false; this.returnToLavaAfterLanding = false; this.defeatAfterFinalJump = false; this.jumpVulnerable = false; this.redWarning = false; this.tooHotCooldown = 0; this.contactInvulnerability = 0; this.finalVolleyCount = 0; this.finalStoneTimer = 0; this.airChaseOffset = 0; this.airChaseTimer = 0; this.stompedMidair = false; this.hasEnteredFinalPhase = false; this.finalPhasePending = false; this.golem.stompBounceOffset = 0; this.golem.stompBounceVelocity = 0; this.afterHitAction = 'lava'; }
 
     checkForTrigger(playerX, playerY, templeX, level) {
         if (level !== 3 || this.state !== 'dormant' || playerX < templeX - 500) return false;
@@ -79,6 +80,7 @@ class BossManager {
         if (!this.active) return;
         this.timer++; this.updateAnimation();
         this.updateDeathParticles();
+        if (this.petAssistSmoke && --this.petAssistSmoke.timer <= 0) this.petAssistSmoke = null;
         if (this.exit && this.exitFade < 1) this.exitFade = Math.min(1, this.exitFade + 1 / 60);
         if (this.shake > 0) this.shake--;
         if (this.golem.flash > 0) this.golem.flash--;
@@ -98,6 +100,7 @@ class BossManager {
         if (this.state === 'redBurst') return this.updateRedBurst(game);
         if (this.state === 'hitRecover') return this.updateHitRecover(game);
         if (this.state === 'reigniteFlash') return this.updateReigniteFlash(game);
+        if (this.state === 'petAssist') return this.updatePetAssist(game);
         if (this.state === 'defeating') {
             // Hold the golem in the hit pose for one full, rumbling second before it bursts.
             this.golem.animation = 'hit';
@@ -182,14 +185,8 @@ class BossManager {
                     this.landingPoseTimer = 6;
                     this.shake = this.returnToLavaAfterLanding ? 24 : 12;
                     if (this.returnToLavaAfterLanding) {
-                        this.state = 'lava'; this.timer = 0; this.poundRounds = 0;
-                        this.jumpVulnerable = false; this.redWarning = false;
                         this.returnToLavaAfterLanding = false;
-                        game.worldManager.restoreBossPlatforms();
-                        if (this.defeatAfterFinalJump) {
-                            this.defeatAfterFinalJump = false;
-                            this.die(game);
-                        }
+                        this.finishJumpSeries(game);
                         return;
                     }
                 }
@@ -199,13 +196,13 @@ class BossManager {
                 this.golem.velocityX *= -1;
                 this.golem.facingLeft = this.golem.velocityX < 0;
                 this.jumpPasses++;
+                // The companion only starts staging once the final blue/vulnerable pass
+                // begins, so it does not distract from the first two red jump passes.
+                if (this.jumpPasses === 2) game.petManager.prepareBossAssist();
                 if (this.jumpPasses >= 3) {
                     // If the last pass reaches the wall mid-air, let gravity finish the landing.
                     if (this.golem.velocityY === 0) {
-                        this.state = 'lava'; this.timer = 0; this.poundRounds = 0;
-                        this.jumpVulnerable = false; this.redWarning = false;
-                        this.shake = 24;
-                        game.worldManager.restoreBossPlatforms();
+                        this.finishJumpSeries(game);
                     } else {
                         this.returnToLavaAfterLanding = true;
                     }
@@ -263,6 +260,37 @@ class BossManager {
         }
     }
 
+    finishJumpSeries(game) {
+        this.jumpVulnerable = false;
+        this.redWarning = false;
+        this.shake = 24;
+        game.worldManager.restoreBossPlatforms();
+        if (this.defeatAfterFinalJump) {
+            this.defeatAfterFinalJump = false;
+            this.die(game);
+            return;
+        }
+        // The companion's comic head-bump is a post-series beat, before the golem returns
+        // to its normal lava/ground-pound pattern.
+        if (game.petManager.startBossAssist()) {
+            this.state = 'petAssist';
+            this.timer = 0;
+            this.golem.animation = 'stand';
+            return;
+        }
+        this.state = 'lava';
+        this.timer = 0;
+        this.poundRounds = 0;
+    }
+
+    updatePetAssist(game) {
+        this.golem.animation = 'stand';
+        if (game.petManager.bossAssist) return;
+        this.state = 'lava';
+        this.timer = 0;
+        this.poundRounds = 0;
+    }
+
     updateCutscene(game) {
         if (this.cutsceneStage === 'arrival') {
             this.golem.x = Math.max(this.cutsceneTargetX, this.golem.x - 6);
@@ -312,23 +340,35 @@ class BossManager {
             .filter(({ x }) => {
                 const center = x + 21;
                 const inDodgeLane = Math.abs(center - dodgeCenter) < safeLaneHalfWidth;
-                const besideBoss = Math.abs(center - bossCenter) < 135;
-                return !inDodgeLane && !besideBoss;
+                // Stones may land near the golem, but never in the column directly
+                // above its body.
+                const directlyAboveBoss = center >= this.golem.x - 28 && center <= this.golem.x + this.golem.width + 28;
+                return !inDodgeLane && !directlyAboveBoss;
             })
             .sort(() => Math.random() - .5);
 
         // Every ground pound gets a substantial five-stone ceiling shower. Prefer the safe
-        // columns first, then fill from the remaining columns if the boss/player exclusion
-        // left fewer than five candidates.
+        // columns first, then use dodge-lane columns if necessary.  The boss's own column
+        // remains excluded in both passes.
         const selected = eligibleColumns.slice(0, 5);
         columns.forEach((x, index) => {
             if (selected.length >= 5 || selected.some(column => column.index === index)) return;
-            selected.push({ x, index });
+            const center = x + 21;
+            const directlyAboveBoss = center >= this.golem.x - 28 && center <= this.golem.x + this.golem.width + 28;
+            if (!directlyAboveBoss) selected.push({ x, index });
         });
 
         selected.forEach((column, i) => {
             const size = 32 + Math.random() * 28;
-            const x = column.x + (Math.random() - .5) * 24;
+            let x = column.x + (Math.random() - .5) * 24;
+            // The small random stagger must not let a nearby stone drift over the golem.
+            const clearance = 4;
+            const overlapsBoss = x < this.golem.x + this.golem.width + clearance && x + size > this.golem.x - clearance;
+            if (overlapsBoss) {
+                x = x + size / 2 < bossCenter
+                    ? this.golem.x - clearance - size
+                    : this.golem.x + this.golem.width + clearance;
+            }
             // Stagger horizontally only; every rock starts completely above the ceiling.
             this.rocks.push({ x, baseX: x, y: -size - 8, width: size, height: size, phase: 'ceilingWarning', age: 0, alpha: 0, sprite: Math.floor(Math.random() * this.rockSprites.length), entrySoundPlayed: false });
         });
@@ -392,7 +432,7 @@ class BossManager {
     }
 
     checkCollisions(game) {
-        if (!this.active || this.state === 'cutscene' || this.state === 'dead' || this.contactInvulnerability > 0) return;
+        if (!this.active || this.state === 'cutscene' || this.state === 'defeating' || this.state === 'dead' || this.contactInvulnerability > 0) return;
         // A successful stomp buys the player a real recovery window.  The boss cannot be
         // stomped again during it, and its body stays harmless until it has fully reignited.
         const postStompRecovery = ['hitRecover', 'reigniteFlash', 'vulnerabilityExit', 'finalPrep', 'finalLeap'].includes(this.state);
@@ -404,7 +444,11 @@ class BossManager {
         const landedOnHead = headZone && p.velocityY > 0 && p.y + p.height - p.velocityY <= b.y + 62;
         if ((this.state === 'vulnerable' || this.state === 'finalVulnerable' || (this.state === 'jump' && this.jumpVulnerable)) && landedOnHead) {
             const stompedMidair = this.state === 'jump';
-            this.health -= 25; this.golem.flash = 60; this.contactInvulnerability = 30; this.golem.hitPose = this.state === 'jump' ? 0 : 18; this.golem.animation = 'hit'; this.hitSmoke = this.health <= 0 ? 60 : 28; this.golem.stompBounceVelocity = -3; p.velocityY = -9; p.isGrounded = false;
+            const jumpKeyHeld = game.inputHandler && (typeof game.inputHandler.isKeyDown === 'function'
+                ? (game.inputHandler.isKeyDown('ArrowUp') || game.inputHandler.isKeyDown('Space'))
+                : (game.inputHandler.keys?.ArrowUp || game.inputHandler.keys?.Space));
+            const stompBouncePower = jumpKeyHeld ? game.getCurrentJumpPower() : -9;
+            this.health = Math.max(0, this.health - 25); this.golem.flash = 60; this.contactInvulnerability = 30; this.golem.hitPose = this.state === 'jump' ? 0 : 18; this.golem.animation = 'hit'; this.hitSmoke = this.health <= 0 ? 60 : 28; this.golem.stompBounceVelocity = -3; p.velocityY = stompBouncePower; p.isGrounded = false;
             if (stompedMidair) {
                 this.golem.velocityY = 4;
                 this.golem.velocityX = 0;
@@ -635,6 +679,20 @@ class BossManager {
     updateDeathParticles() {
         this.deathParticles = this.deathParticles.filter(particle => { particle.x += particle.vx; particle.y += particle.vy; particle.vy += .16; particle.vx *= .97; particle.life--; return particle.life > 0; });
     }
+    triggerPetAssistImpact() {
+        this.petAssistSmoke = {
+            x: this.golem.x + this.golem.width / 2,
+            y: this.golem.y + 16,
+            timer: 18,
+            maxTimer: 18
+        };
+    }
+    applyPetAssistDamage(game) {
+        if (this.state !== 'petAssist' || this.health <= 0) return;
+        this.health = Math.max(0, this.health - 5);
+        this.golem.flash = 12;
+        if (this.health === 0) this.die(game);
+    }
     updateStompBounce() {
         if (this.golem.stompBounceVelocity === 0) return;
         this.golem.stompBounceOffset += this.golem.stompBounceVelocity;
@@ -674,6 +732,14 @@ class BossManager {
         if (this.state === 'jumpPrep' || this.state === 'redBurst' || this.state === 'vulnerabilityExit') this.renderJumpPrep(ctx, cameraX);
         if (this.state === 'finalPrep') this.renderFinalPrep(ctx, cameraX);
         if (this.state !== 'dead') this.renderGolem(ctx, cameraX);
+        if (this.petAssistSmoke && this.hitSmokeImage.complete) {
+            const smoke = this.petAssistSmoke;
+            const progress = 1 - smoke.timer / smoke.maxTimer;
+            const size = 42 + progress * 18;
+            ctx.globalAlpha = Math.min(1, smoke.timer / 6);
+            ctx.drawImage(this.hitSmokeImage, smoke.x - cameraX - size / 2, smoke.y - size / 2, size, size);
+            ctx.globalAlpha = 1;
+        }
         this.deathParticles.forEach(particle => { ctx.globalAlpha = particle.life / particle.maxLife; ctx.fillStyle = particle.color; ctx.fillRect(particle.x - cameraX - particle.size / 2, particle.y - particle.size / 2, particle.size, particle.size); });
         ctx.globalAlpha = 1;
         if (this.hitSmoke > 0 && this.hitSmokeImage.complete) {

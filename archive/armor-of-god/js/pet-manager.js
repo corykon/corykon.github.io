@@ -6,6 +6,7 @@ class PetManager {
         this.pet = pet;
         this.game = game; // Reference to main game for accessing other systems
         this.respawnCooldown = 0;
+        this.bossAssist = null;
     }
     
     update() {
@@ -21,6 +22,8 @@ class PetManager {
             this.updateAnimation();
             return;
         }
+
+        if (this.updateBossAssist()) return;
         
         const distanceToPlayer = Math.abs(this.game.player.x - this.pet.x);
         const playerMovingTowardsPet = this.game.player.isMoving && 
@@ -96,8 +99,7 @@ class PetManager {
             const shouldJump = this.shouldJump(moveDirection);
             
             if (shouldJump && this.pet.isGrounded) {
-                const jumpPower = this.game.hasArmor ? this.game.getCurrentJumpPower() * 0.9 : this.game.jumpPower * 0.9;
-                this.pet.velocityY = jumpPower;
+                this.pet.velocityY = this.getFollowJumpPower();
                 this.pet.isGrounded = false;
             }
             
@@ -114,8 +116,7 @@ class PetManager {
             } else if (!canMoveLeft || !canMoveRight) {
                 // Blocked by wall - try to jump if grounded
                 if (this.pet.isGrounded) {
-                    const jumpPower = this.game.hasArmor ? this.game.getCurrentJumpPower() * 0.9 : this.game.jumpPower * 0.9;
-                    this.pet.velocityY = jumpPower;
+                    this.pet.velocityY = this.getFollowJumpPower();
                     this.pet.isGrounded = false;
                 }
             }
@@ -252,7 +253,8 @@ class PetManager {
         
         if (playerPlatform && petPlatform && playerPlatform.y < petPlatform.y) {
             const horizontalDistance = Math.abs(this.game.player.x - this.pet.x);
-            if (horizontalDistance < 80) {
+            const climbRange = this.game.bossManager.active ? 150 : 80;
+            if (horizontalDistance < climbRange) {
                 return true; // Jump up to player's platform
             }
         }
@@ -280,6 +282,128 @@ class PetManager {
         }
         
         return false;
+    }
+
+    getFollowJumpPower() {
+        const baseJumpPower = this.game.hasArmor
+            ? this.game.getCurrentJumpPower() * 0.9
+            : this.game.jumpPower * 0.9;
+        const playerPlatform = this.findPlatformUnderEntity(this.game.player);
+        const petPlatform = this.findPlatformUnderEntity(this.pet);
+        const isClimbingToPlayer = this.game.bossManager.active && playerPlatform && petPlatform &&
+            playerPlatform.y < petPlatform.y - 30;
+        // The center boss perch is just beyond the regular follow jump. Use a modest
+        // boost only while climbing up to the player; all other boss-arena jumps stay normal.
+        return isClimbingToPlayer ? Math.min(baseJumpPower, -15.2) : baseJumpPower;
+    }
+
+    startBossAssist() {
+        if (!this.game.bossManager.active || this.game.bossManager.state !== 'jump') return false;
+        if (this.bossAssist) {
+            this.bossAssist.activated = true;
+            return true;
+        }
+        this.bossAssist = { phase: 'approach', timer: 0, activated: true, takeoffSounded: false, impacted: false };
+        this.pet.isMoving = true;
+        return true;
+    }
+
+    prepareBossAssist() {
+        if (this.bossAssist || !this.game.bossManager.active || this.game.bossManager.state !== 'jump') return false;
+        this.bossAssist = { phase: 'approach', timer: 0, activated: false, takeoffSounded: false, impacted: false };
+        this.pet.isMoving = true;
+        return true;
+    }
+
+    updateBossAssist() {
+        const assist = this.bossAssist;
+        if (!assist) return false;
+        const boss = this.game.bossManager;
+        if (!boss.active || boss.state === 'dead' || boss.state === 'defeating') {
+            this.bossAssist = null;
+            return false;
+        }
+
+        assist.timer++;
+        const moveToward = (targetX, speed) => {
+            const direction = targetX >= this.pet.x ? 1 : -1;
+            this.pet.x += direction * speed;
+            this.pet.facingRight = direction > 0;
+        };
+        const applyPhysics = () => {
+            this.pet.velocityY += this.game.gravity;
+            this.pet.y += this.pet.velocityY;
+            this.game.worldManager.checkPlatformCollisions(this.pet);
+        };
+        const targetX = boss.golem.x + boss.golem.width / 2 - this.pet.width / 2;
+        const travelSpeed = this.pet.normalSpeed * 2;
+        const arenaLeft = 68;
+        const arenaRight = 1132 - this.pet.width;
+        let launchDirection = this.pet.x + this.pet.width / 2 <= boss.golem.x + boss.golem.width / 2 ? 1 : -1;
+        let launchX = targetX - launchDirection * 200;
+        // A golem at a cave wall has only one viable 200px launch side. Flip to it
+        // instead of sending the pet into the wall to run in place.
+        if (launchX < arenaLeft || launchX > arenaRight) {
+            launchDirection *= -1;
+            launchX = targetX - launchDirection * 200;
+        }
+        launchX = Math.max(arenaLeft, Math.min(arenaRight, launchX));
+
+        if (assist.phase === 'approach') {
+            const isAtLaunchPoint = Math.abs(this.pet.x - launchX) <= travelSpeed + 2;
+            this.pet.isMoving = !isAtLaunchPoint;
+            if (!isAtLaunchPoint) moveToward(launchX, travelSpeed);
+            applyPhysics();
+            // Wait at a 200px launch point until the jump series finishes, then make a
+            // single normal leap across to the golem.
+            const hasLaunchFooting = this.pet.isGrounded || Boolean(this.findPlatformUnderEntity(this.pet));
+            if (assist.activated && Math.abs(this.pet.x - launchX) <= travelSpeed + 2 && hasLaunchFooting) {
+                assist.phase = 'jump';
+                this.pet.velocityY = this.game.jumpPower * 0.9;
+                this.pet.isGrounded = false;
+                if (!assist.takeoffSounded) {
+                    assist.takeoffSounded = true;
+                    this.game.audioManager.playSound(this.pet.type === 'dog' ? 'bark1' : 'meow');
+                }
+            }
+        } else if (assist.phase === 'jump') {
+            this.pet.isMoving = true;
+            moveToward(targetX, travelSpeed);
+            applyPhysics();
+            const reachesHead = this.pet.velocityY > 0 &&
+                Math.abs(this.pet.x + this.pet.width / 2 - (boss.golem.x + boss.golem.width / 2)) < 22 &&
+                this.pet.y + this.pet.height >= boss.golem.y + 8;
+            if (reachesHead) {
+                this.pet.y = boss.golem.y - this.pet.height + 8;
+                this.pet.velocityY = -4;
+                this.pet.isGrounded = false;
+                assist.phase = 'return';
+            }
+        } else {
+            // After the bump, the pet heads back to the player at the same quick assist pace.
+            this.pet.isMoving = true;
+            const returnX = this.game.player.x + (this.game.player.facingRight ? -20 : 20);
+            moveToward(returnX, travelSpeed);
+            applyPhysics();
+            if (Math.abs(this.pet.x - returnX) <= this.pet.followDistance + 5 && this.pet.isGrounded) {
+                this.bossAssist = null;
+            }
+        }
+
+        if (!assist.impacted && assist.phase === 'return') {
+            assist.impacted = true;
+            this.game.audioManager.playSound('thud');
+            boss.triggerPetAssistImpact();
+            boss.applyPetAssistDamage(this.game);
+            this.game.audioManager.playSound('golemPet');
+            boss.shake = Math.max(boss.shake, 5);
+        }
+
+        if (assist.timer >= 720) {
+            this.bossAssist = null;
+        }
+        this.updateAnimation();
+        return true;
     }
     
     updateAnimation() {
