@@ -15,6 +15,18 @@
  * 
  * Platform types: 'ground', 'floating', 'tree_platform', 'branch'
  */
+const BOSS_CAVE_CEILING_PROFILE = [
+    [-20, 48], [70, 78], [150, 54], [250, 86], [345, 61], [445, 48],
+    [535, 76], [640, 50], [745, 84], [845, 57], [950, 72], [1050, 45],
+    [1140, 82], [1220, 54]
+];
+
+const BOSS_CAVE_CRYSTAL_PLACEMENTS = [
+    [85, 415, 1, 50, 60, 'up'], [315, 426, 2, 42, 52, 'up'], [640, 418, 0, 60, 70, 'up'], [905, 424, 1, 48, 58, 'up'], [1080, 412, 2, 58, 70, 'up'],
+    [100, 62, 0, 38, 55, 'down'], [255, 72, 2, 62, 72, 'down'], [535, 48, 1, 50, 64, 'down'], [770, 68, 0, 70, 78, 'down'], [1010, 45, 2, 45, 58, 'down'],
+    [22, 165, 1, 54, 72, 'right'], [30, 305, 2, 42, 55, 'right'], [1125, 175, 0, 55, 70, 'left'], [1132, 315, 1, 45, 58, 'left']
+];
+
 class WorldManager {
     constructor(level = 1) {
         this.currentLevel = level;
@@ -919,21 +931,29 @@ class WorldManager {
         });
     }
     
-    renderPlatforms(ctx) {
+    renderPlatforms(ctx, cameraX = 0, viewportWidth = ctx.canvas.width) {
+        const viewLeft = cameraX - 64;
+        const viewRight = cameraX + viewportWidth + 64;
         this.platforms.forEach(platform => {
-            if (platform.hidden) return;
-            this.renderPlatform(ctx, platform);
+            if (platform.hidden || platform.x + platform.width < viewLeft || platform.x > viewRight) return;
+            this.renderPlatform(ctx, platform, viewLeft, viewRight);
         });
     }
     
-    renderPlatform(ctx, platform) {
+    alignPatternStart(minOffset, origin, step) {
+        return origin + Math.max(0, Math.ceil((minOffset - origin) / step)) * step;
+    }
+
+    renderPlatform(ctx, platform, viewLeft = -Infinity, viewRight = Infinity) {
+        const visibleStart = Math.max(0, viewLeft - platform.x);
+        const visibleEnd = Math.min(platform.width, viewRight - platform.x);
         if (this.currentLevel === 'boss') {
             ctx.fillStyle = '#302a3c';
             ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
             ctx.fillStyle = '#5b5069';
             ctx.fillRect(platform.x, platform.y, platform.width, 8);
             ctx.fillStyle = '#42384e';
-            for (let x = 0; x < platform.width; x += 18) {
+            for (let x = this.alignPatternStart(visibleStart, 0, 18); x < visibleEnd; x += 18) {
                 for (let y = 14; y < platform.height; y += 16) ctx.fillRect(platform.x + x + (y % 9), platform.y + y, 8, 5);
             }
         } else if (this.currentLevel === 1) {
@@ -944,7 +964,7 @@ class WorldManager {
             
             // Add dirt texture/variation - lighter tones
             ctx.fillStyle = '#DEB887'; // Burlywood - lighter brown texture
-            for (let i = 0; i < platform.width; i += 15) {
+            for (let i = this.alignPatternStart(visibleStart, 0, 15); i < visibleEnd; i += 15) {
                 for (let j = 15; j < platform.height - 8; j += 12) {
                     ctx.fillRect(platform.x + i, platform.y + 8 + j, 6, 4);
                     ctx.fillRect(platform.x + i + 8, platform.y + 8 + j + 6, 4, 3);
@@ -957,7 +977,7 @@ class WorldManager {
             
             // Add grass texture on top
             ctx.fillStyle = '#32CD32'; // Lime green grass blades
-            for (let i = 0; i < platform.width; i += 10) {
+            for (let i = this.alignPatternStart(visibleStart, 0, 10); i < visibleEnd; i += 10) {
                 ctx.fillRect(platform.x + i, platform.y, 2, 5);
                 ctx.fillRect(platform.x + i + 4, platform.y, 2, 8);
                 ctx.fillRect(platform.x + i + 7, platform.y, 1, 6);
@@ -972,7 +992,7 @@ class WorldManager {
                     
                     // Add darker brown texture/variation - consistent pattern
                     ctx.fillStyle = '#4A2C17'; // Darker brown texture
-                    for (let i = 0; i < platform.width; i += 18) {
+                    for (let i = this.alignPatternStart(visibleStart, 0, 18); i < visibleEnd; i += 18) {
                         for (let j = 12; j < platform.height - 6; j += 15) {
                             ctx.fillRect(platform.x + i, platform.y + 6 + j, 8, 5);
                             ctx.fillRect(platform.x + i + 10, platform.y + 6 + j + 8, 6, 4);
@@ -981,7 +1001,7 @@ class WorldManager {
                     
                     // Add medium brown patches - consistent pattern
                     ctx.fillStyle = '#8B4513'; // Saddle brown patches
-                    for (let i = 5; i < platform.width; i += 22) {
+                    for (let i = this.alignPatternStart(visibleStart, 5, 22); i < visibleEnd; i += 22) {
                         for (let j = 8; j < platform.height - 6; j += 18) {
                             ctx.fillRect(platform.x + i, platform.y + 6 + j, 4, 6);
                         }
@@ -993,7 +1013,7 @@ class WorldManager {
                     
                     // Add jungle grass texture
                     ctx.fillStyle = '#228B22';
-                    for (let i = 0; i < platform.width; i += 8) {
+                    for (let i = this.alignPatternStart(visibleStart, 0, 8); i < visibleEnd; i += 8) {
                         ctx.fillRect(platform.x + i, platform.y, 3, 8);
                         ctx.fillRect(platform.x + i + 4, platform.y, 2, 10);
                     }
@@ -1005,7 +1025,7 @@ class WorldManager {
                     // Add wood grain lines
                     ctx.strokeStyle = '#654321';
                     ctx.lineWidth = 1;
-                    for (let i = 0; i < platform.width; i += 12) {
+                    for (let i = this.alignPatternStart(visibleStart, 0, 12); i < visibleEnd; i += 12) {
                         ctx.beginPath();
                         ctx.moveTo(platform.x + i, platform.y);
                         ctx.lineTo(platform.x + i, platform.y + platform.height);
@@ -1021,7 +1041,7 @@ class WorldManager {
                     ctx.fillRect(platform.x + platform.width - 2, platform.y, 4, platform.height);
                     // Add bark texture
                     ctx.fillStyle = '#8B4513';
-                    for (let i = 0; i < platform.width; i += 20) {
+                    for (let i = this.alignPatternStart(visibleStart, 0, 20); i < visibleEnd; i += 20) {
                         ctx.fillRect(platform.x + i, platform.y + 2, 3, platform.height - 4);
                     }
                     break;
@@ -1041,7 +1061,7 @@ class WorldManager {
                     
                     // Add rock texture
                     ctx.fillStyle = '#556B2F'; // Dark olive green (moss on rocks)
-                    for (let i = 0; i < platform.width; i += 25) {
+                    for (let i = this.alignPatternStart(visibleStart, 0, 25); i < visibleEnd; i += 25) {
                         for (let j = 8; j < platform.height; j += 20) {
                             // Use consistent offsets based on position instead of random
                             const offsetX = ((platform.x + i) * 7) % 5;
@@ -1052,7 +1072,7 @@ class WorldManager {
                     
                     // Add darker rock patches
                     ctx.fillStyle = '#2F4F4F'; // Dark slate gray
-                    for (let i = 10; i < platform.width; i += 30) {
+                    for (let i = this.alignPatternStart(visibleStart, 10, 30); i < visibleEnd; i += 30) {
                         for (let j = 12; j < platform.height; j += 25) {
                             ctx.fillRect(platform.x + i, platform.y + j, 8, 6);
                         }
@@ -1066,7 +1086,7 @@ class WorldManager {
                     
                     // Add jagged rocky edges
                     ctx.fillStyle = '#2F4F4F'; // Dark slate gray
-                    for (let i = 0; i < platform.width; i += 15) {
+                    for (let i = this.alignPatternStart(visibleStart, 0, 15); i < visibleEnd; i += 15) {
                         // Use consistent pattern based on position
                         if (((platform.x + i) * 17) % 10 > 5) {
                             ctx.fillRect(platform.x + i, platform.y - 2, 8, 4); // Top jagged edge
@@ -1078,7 +1098,7 @@ class WorldManager {
                     
                     // Add rock texture spots
                     ctx.fillStyle = '#696969';
-                    for (let i = 5; i < platform.width; i += 12) {
+                    for (let i = this.alignPatternStart(visibleStart, 5, 12); i < visibleEnd; i += 12) {
                         ctx.fillRect(platform.x + i, platform.y + 4, 4, 3);
                         ctx.fillRect(platform.x + i + 6, platform.y + 8, 3, 4);
                     }
@@ -1097,9 +1117,11 @@ class WorldManager {
         }
     }
     
-    renderScriptureBooks(ctx, bomImage) {
+    renderScriptureBooks(ctx, bomImage, cameraX = 0, viewportWidth = ctx.canvas.width) {
+        const viewLeft = cameraX - 64;
+        const viewRight = cameraX + viewportWidth + 64;
         this.scriptureBooks.forEach(book => {
-            if (!book.collected) {
+            if (!book.collected && book.x + book.width >= viewLeft && book.x <= viewRight) {
                 // Floating effect (simple up/down animation)
                 const time = Date.now() * 0.002;
                 const floatY = Math.sin(time + book.x * 0.01) * 2;
@@ -1144,9 +1166,11 @@ class WorldManager {
         });
     }
     
-    renderHearts(ctx, heartImage) {
+    renderHearts(ctx, heartImage, cameraX = 0, viewportWidth = ctx.canvas.width) {
+        const viewLeft = cameraX - 64;
+        const viewRight = cameraX + viewportWidth + 64;
         this.hearts.forEach(heart => {
-            if (!heart.collected) {
+            if (!heart.collected && heart.x + heart.width >= viewLeft && heart.x <= viewRight) {
                 // Floating effect (same as scripture books but slightly different timing)
                 const time = Date.now() * 0.003; // Slightly faster float
                 const floatY = heart.phase === 'falling' ? 0 : Math.sin(time + heart.x * 0.015) * 3; // Slightly more float amplitude
@@ -1196,8 +1220,11 @@ class WorldManager {
         });
     }
     
-    renderForegroundSprites(ctx, foregroundImages) {
+    renderForegroundSprites(ctx, foregroundImages, cameraX = 0, viewportWidth = ctx.canvas.width) {
+        const viewLeft = cameraX - 64;
+        const viewRight = cameraX + viewportWidth + 64;
         this.foregroundSprites.forEach(sprite => {
+            if (sprite.x + sprite.width < viewLeft || sprite.x > viewRight) return;
             if (sprite.type === 'surface-cave-mountain') {
                 this.renderSurfaceCaveMountain(ctx, sprite);
                 return;
@@ -1351,9 +1378,10 @@ class WorldManager {
     }
 
     
-    renderTemple(ctx, templeImage, castle) {
+    renderTemple(ctx, templeImage, castle, cameraX = 0, viewportWidth = ctx.canvas.width) {
         // Draw prominent divine glow behind temple
         const glowRadius = 80; // Increased from 50 for larger glow
+        if (castle.x + castle.width + glowRadius < cameraX || castle.x - glowRadius > cameraX + viewportWidth) return;
         const gradient = ctx.createRadialGradient(
             castle.x + castle.width/2, castle.y + castle.height/2, 0,
             castle.x + castle.width/2, castle.y + castle.height/2, glowRadius
@@ -1623,14 +1651,12 @@ class WorldManager {
         ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         // Jagged closed-rock ceiling and sidewalls keep the arena feeling underground.
         ctx.fillStyle = '#241d3f';
-        const ceilingProfile = [
-            [-20, 48], [70, 78], [150, 54], [250, 86], [345, 61], [445, 48],
-            [535, 76], [640, 50], [745, 84], [845, 57], [950, 72], [1050, 45],
-            [1140, 82], [1220, 54]
-        ];
         ctx.beginPath();
         ctx.moveTo(0, 0); ctx.lineTo(canvasWidth, 0);
-        [...ceilingProfile].reverse().forEach(([x, y]) => ctx.lineTo(x, y));
+        for (let index = BOSS_CAVE_CEILING_PROFILE.length - 1; index >= 0; index--) {
+            const [x, y] = BOSS_CAVE_CEILING_PROFILE[index];
+            ctx.lineTo(x, y);
+        }
         ctx.closePath(); ctx.fill();
         ctx.fillStyle = '#302a3c';
         ctx.beginPath();
@@ -1639,15 +1665,10 @@ class WorldManager {
         ctx.moveTo(canvasWidth, 62); ctx.lineTo(canvasWidth - 68, 82); ctx.lineTo(canvasWidth - 68, 468); ctx.lineTo(canvasWidth, 468); ctx.closePath(); ctx.fill();
 
         // Floor, ceiling, and wall crystal formations use all supplied sprites at varied scales.
-        const placements = [
-            [85, 415, 1, 50, 60, 'up'], [315, 426, 2, 42, 52, 'up'], [640, 418, 0, 60, 70, 'up'], [905, 424, 1, 48, 58, 'up'], [1080, 412, 2, 58, 70, 'up'],
-            // Ceiling crystals are placed against the rock line above, not free-floating.
-            [100, 62, 0, 38, 55, 'down'], [255, 72, 2, 62, 72, 'down'], [535, 48, 1, 50, 64, 'down'], [770, 68, 0, 70, 78, 'down'], [1010, 45, 2, 45, 58, 'down'],
-            [22, 165, 1, 54, 72, 'right'], [30, 305, 2, 42, 55, 'right'], [1125, 175, 0, 55, 70, 'left'], [1132, 315, 1, 45, 58, 'left']
-        ];
         // Rock roots overlap each crystal cap, visually connecting every stalactite to the roof.
         ctx.fillStyle = '#302a3c';
-        placements.filter(([, , , , , direction]) => direction === 'down').forEach(([x, y, , width]) => {
+        BOSS_CAVE_CRYSTAL_PLACEMENTS.forEach(([x, y, , width, , direction]) => {
+            if (direction !== 'down') return;
             const drawX = x - cameraX;
             ctx.beginPath();
             ctx.moveTo(drawX - 18, 34);
@@ -1658,7 +1679,7 @@ class WorldManager {
             ctx.closePath();
             ctx.fill();
         });
-        placements.forEach(([x, y, index, width, height, direction]) => {
+        BOSS_CAVE_CRYSTAL_PLACEMENTS.forEach(([x, y, index, width, height, direction]) => {
             const image = crystalImages[index];
             if (!image || !image.complete) return;
             ctx.save();

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Armor of God: Pixel Adventure</title>
     <meta property="og:title" content="Armor of God: Pixel Adventure">
     <meta property="og:description" content="A pixel-art platformer inspired by Ephesians 6.">
@@ -49,22 +49,24 @@
     <div id="gameContainer">
         <!-- Main Menu Screen -->
         <div id="menuScreen" class="screen">
-            <img src="images/armorOfGodTitleImage.png" alt="Armor of God Title" class="title-image">
-            <h1>Armor of God</h1>
-            <p class="scripture">
-                <span class="scripture-full">“Put on the whole armor of God, that ye may be able to stand against the wiles of the devil”</span>
-                <span class="scripture-short">“Put on the whole armor of God...”</span>
-                <span class="scripture-reference">Ephesians 6:11</span>
-            </p>
+            <div class="menu-brand">
+                <img src="images/armorOfGodTitleImage.png" alt="Armor of God Title" class="title-image">
+                <h1>Armor of God</h1>
+                <p class="scripture">
+                    <span class="scripture-full">“Put on the whole armor of God, that ye may be able to stand against the wiles of the devil”</span>
+                    <span class="scripture-short">“Put on the whole armor of God...”</span>
+                    <span class="scripture-reference">Ephesians 6:11</span>
+                </p>
+            </div>
             <div class="game-setup">
                 <div class="pet-selection">
                     <span class="pet-label">Companion:</span>
                     <div class="pet-options">
                         <button id="selectDog" class="pet-btn selected" data-pet="dog">
-                            <img src="images/dog-ico.svg" alt="Dog" class="pet-icon"> Dog
+                            <img src="images/dog-ico.svg" alt="Dog" class="pet-icon"> <span class="pet-btn-text">Dog</span>
                         </button>
                         <button id="selectCat" class="pet-btn" data-pet="cat">
-                            <img src="images/cat-ico.svg" alt="Cat" class="pet-icon"> Cat
+                            <img src="images/cat-ico.svg" alt="Cat" class="pet-icon"> <span class="pet-btn-text">Cat</span>
                         </button>
                     </div>
                 </div>
@@ -72,7 +74,7 @@
                     <span class="pet-label">Level:</span>
                     <div class="level-control">
                         <button id="previousLevelBtn" class="level-nav-btn" type="button" aria-label="Previous level"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-                        <button id="levelSelectorBtn" class="level-chip" type="button" title="Choose level"><span id="levelSelectorText">L1: Clover Hills</span></button>
+                        <button id="levelSelectorBtn" class="level-chip" type="button" title="Choose level"><span id="levelSelectorText" class="level-selector-text level-selector-text--full">L1: Clover Hills</span><span id="levelSelectorTextMobile" class="level-selector-text level-selector-text--short" aria-hidden="true">L1</span></button>
                         <button id="nextLevelBtnMenu" class="level-nav-btn" type="button" aria-label="Next level"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
                     </div>
                 </div>
@@ -91,12 +93,30 @@
         <!-- Game Screen -->
         <div id="gameScreen" class="screen hidden">
             <div id="levelInfo" class="level-indicator">Level 1: Clover Hills</div>
-            <canvas id="gameCanvas" width="1200" height="600"></canvas>
+            <div class="gameplay-stage">
+                <canvas id="gameCanvas" width="1200" height="600"></canvas>
+                <div id="rotateDeviceNotice" class="rotate-device-notice hidden" role="status">
+                    <span class="rotate-device-icon" aria-hidden="true">↻</span>
+                    <strong>Rotate your device</strong>
+                    <span>Turn sideways to play</span>
+                </div>
+            </div>
+            <div id="touchControls" class="touch-controls" aria-label="Game controls">
+                <div class="touch-controls__move">
+                    <button class="touch-control touch-control--move" type="button" data-touch-key="ArrowLeft" aria-label="Move left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10h-9V5l-8 7 8 7v-5h9z"/></svg></button>
+                    <button class="touch-control touch-control--move" type="button" data-touch-key="ArrowRight" aria-label="Move right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h9V5l8 7-8 7v-5H3z"/></svg></button>
+                </div>
+                <div class="touch-controls__actions">
+                    <button class="touch-control touch-control--jump" type="button" data-touch-key="Space" aria-label="Jump"><span class="touch-control__label">Jump</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 21v-9H5l7-8 7 8h-5v9z"/></svg></button>
+                    <button class="touch-control touch-control--duck" type="button" data-touch-key="ArrowDown" aria-label="Duck"><span class="touch-control__label">Duck</span></button>
+                </div>
+            </div>
             <div id="gameUI">
                 <div id="armorStatus"></div>
             </div>
             <div id="controlsReminder" class="controls-reminder">
-                <p>Press 'ESC' to pause</p>
+                <p id="pauseReminderText">Press 'esc' to pause</p>
+                <button id="pauseTouchBtn" type="button" aria-label="Pause game"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg></button>
             </div>
         </div>
 
@@ -115,7 +135,7 @@
                     </div>
                     <button id="startLevelBtn" class="menu-btn next-level-wide start-level-btn">Start Level <span class="chevron-icon">❯</span></button>
                     <div class="continue-prompt">
-                        <p>(Press enter)</p>
+                        <p>(Press enter/space)</p>
                     </div>                </div>
             </div>
         </div>
@@ -126,16 +146,23 @@
                 <video id="cutsceneVideoA" class="cutscene-video" muted playsinline preload="auto"></video>
                 <video id="cutsceneVideoB" class="cutscene-video" muted playsinline preload="auto"></video>
             </div>
-            <p class="cutscene-skip">ENTER / ESC: SKIP</p>
+            <p class="cutscene-keyboard-hint">Press enter/space to skip</p>
+            <button id="skipCutsceneBtn" class="menu-btn cutscene-skip" type="button">Skip cutscene</button>
         </div>
 
         <!-- Game Over Screen -->
         <div id="gameOverScreen" class="screen hidden">
-            <img src="./images/game-over.png" alt="Game Over" class="game-over-image">
-            <h1>Game Over</h1>
-            <p id="gameOverMessage"></p>
-            <button id="restartBtn" class="menu-btn">Try Again</button>
-            <button id="mainMenuBtn" class="menu-btn">Main Menu</button>
+            <div class="game-over-content">
+                <img src="./images/game-over.png" alt="Game Over" class="game-over-image">
+                <div class="game-over-copy">
+                    <h1>Game Over</h1>
+                    <p id="gameOverMessage"></p>
+                </div>
+            </div>
+            <div class="game-over-actions">
+                <button id="restartBtn" class="menu-btn">Try Again</button>
+                <button id="mainMenuBtn" class="menu-btn">Main Menu</button>
+            </div>
         </div>
 
         <!-- Level Complete Screen -->
@@ -167,9 +194,9 @@
                     <span id="totalScore">0</span>
                 </div>
             </div>
-            <button id="nextLevelBtn" class="menu-btn next-level-wide">Next Level <span class="chevron-icon">❯</span></button>
+            <button id="nextLevelBtn" class="menu-btn next-level-wide">Next Level <svg class="chevron-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
             <div class="button-row">
-                <button id="retryLevelBtn" class="menu-btn half-width"><span class="chevron-icon chev-left">❮</span>Retry Level</button>
+                <button id="retryLevelBtn" class="menu-btn half-width"><svg class="chevron-icon chev-left" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Retry Level</button>
                 <button id="mainMenuBtn2" class="menu-btn half-width">Main Menu</button>
             </div>
         </div>
@@ -265,7 +292,12 @@
                 <button id="creditsMenuBtn" class="menu-btn">Main Menu</button>
             </div>
             <div class="credits-progress" aria-hidden="true"><div class="credits-progress-fill"></div></div>
-            <p class="credits-skip"><span id="creditsBackControl" class="credits-control credits-control--disabled"><span class="credits-control-arrow">↑</span>BACK</span> &nbsp;•&nbsp; <span class="credits-control"><span class="credits-control-arrow">↓</span>NEXT</span> &nbsp;•&nbsp; ESC EXIT</p>
+            <p class="credits-skip"><span id="creditsBackControl" class="credits-control credits-control--disabled"><span class="credits-control-arrow">↑</span>BACK</span> &nbsp;•&nbsp; <span class="credits-control"><span class="credits-control-arrow">↓</span>NEXT</span> &nbsp;•&nbsp; 'ESC' EXIT</p>
+            <div class="credits-touch-controls" aria-label="Credits controls">
+                <button id="creditsPreviousBtn" class="credits-control credits-control--disabled" type="button">Back</button>
+                <button id="creditsNextBtn" class="credits-control" type="button">Next</button>
+                <button id="creditsSkipBtn" class="credits-control" type="button">Exit</button>
+            </div>
         </div>
     </div>
 
@@ -291,7 +323,6 @@
                             <div class="control-demo control-demo--duck"><span class="how-to-key" aria-label="Down arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v9h5l-7 8-7-8h5z"/></svg></span><img src="images/sprites/main-char/duck1.png" alt="Hero ducking"></div>
                         </div>
                     </div>
-                    <p class="how-to-space-hint">You can also press Spacebar to jump.</p>
                 </section>
                 <section class="how-to-play-section how-to-do" aria-labelledby="whatToDoTitle">
                     <h3 id="whatToDoTitle">What to Do</h3>
@@ -348,6 +379,20 @@
     </div>
 
     <script type="module" src="js/firebase.js"></script>
+
+    <script>
+        // iOS Safari can still permit pinch zoom despite the viewport setting.
+        // Restrict these guards to touch devices so desktop browser controls are unaffected.
+        if (window.matchMedia('(pointer: coarse)').matches) {
+            ['gesturestart', 'gesturechange', 'gestureend'].forEach(type => {
+                document.addEventListener(type, event => event.preventDefault(), { passive: false });
+            });
+            document.addEventListener('touchmove', event => {
+                if (event.touches.length > 1) event.preventDefault();
+            }, { passive: false });
+            document.addEventListener('dblclick', event => event.preventDefault(), { passive: false });
+        }
+    </script>
 
     <!-- Load modular game files -->
     <script src="js/audio-manager.js"></script>

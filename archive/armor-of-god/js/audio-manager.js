@@ -4,6 +4,7 @@ class AudioManager {
         this.audioEnabled = this.loadAudioSetting();
         this.currentMusic = null;
         this.gameOverTimeout = null;
+        this.soundPools = {};
         
         // Load audio files with individual loop settings
         this.audio = {
@@ -192,6 +193,23 @@ class AudioManager {
         }
     }
 
+    preloadMusic(...musicKeys) {
+        musicKeys.forEach(musicKey => {
+            const music = this.audio[musicKey];
+            if (!music || music === this.currentMusic || music.readyState >= 3) return;
+            music.preload = 'auto';
+            music.load();
+        });
+    }
+
+    stopMusic(musicKey) {
+        const music = this.audio[musicKey];
+        if (!music) return;
+        music.pause();
+        music.currentTime = 0;
+        if (this.currentMusic === music) this.currentMusic = null;
+    }
+
     fadeOutCurrentMusic(duration = 3000) {
         const music = this.currentMusic;
         if (!music || !this.audioEnabled) return;
@@ -261,15 +279,34 @@ class AudioManager {
         }, duration / steps);
     }
     
+    getPooledSoundEffect(soundKey, source) {
+        const pool = this.soundPools[soundKey] || (this.soundPools[soundKey] = []);
+        let sound = pool.find(candidate => candidate.paused);
+        if (sound) return sound;
+
+        sound = source.cloneNode();
+        sound.loop = false;
+        sound.addEventListener('ended', () => {
+            sound.pause();
+            sound.currentTime = 0;
+        });
+        pool.push(sound);
+        return sound;
+    }
+
     playSoundEffect(soundKey) {
         if (!this.audioEnabled) return;
         
         const sound = this.audio[soundKey];
         if (sound) {
-            // Clone the audio to allow multiple simultaneous plays
-            const soundClone = sound.cloneNode();
+            // Reuse an idle clone, creating another only when this effect overlaps itself.
+            // This keeps simultaneous effects while avoiding a media request on every play.
+            const soundClone = this.getPooledSoundEffect(soundKey, sound);
             soundClone.volume = sound.volume; // Use the original volume setting
             soundClone.loop = false; // Ensure sound effects don't loop
+            soundClone.currentTime = 0;
+            soundClone._poolPlaybackId = (soundClone._poolPlaybackId || 0) + 1;
+            const playbackId = soundClone._poolPlaybackId;
             
             // Apply playback rate if specified in settings
             const settings = this.audioSettings[soundKey];
@@ -278,20 +315,19 @@ class AudioManager {
                 soundClone.preservesPitch = false;
             }
             
-            // Auto-stop the sound when it ends to prevent any repeats
-            soundClone.addEventListener('ended', () => {
-                soundClone.pause();
-                soundClone.currentTime = 0;
-            });
-
             // The earthquake file is longer than a single impact. Fade its tail so a pound
             // feels heavy without leaving a rumble playing through the next boss action.
             if (settings && settings.fadeOutAfterMs) {
                 const initialVolume = soundClone.volume;
                 setTimeout(() => {
+                    if (soundClone._poolPlaybackId !== playbackId || soundClone.paused) return;
                     const fadeSteps = 10;
                     let step = 0;
                     const fadeInterval = setInterval(() => {
+                        if (soundClone._poolPlaybackId !== playbackId || soundClone.paused) {
+                            clearInterval(fadeInterval);
+                            return;
+                        }
                         step++;
                         soundClone.volume = initialVolume * Math.max(0, 1 - step / fadeSteps);
                         if (step >= fadeSteps) {
@@ -351,6 +387,13 @@ class AudioManager {
         Object.values(this.audio).forEach(audio => {
             audio.pause();
             audio.currentTime = 0;
+        });
+        Object.values(this.soundPools).forEach(pool => {
+            pool.forEach(sound => {
+                sound._poolPlaybackId = (sound._poolPlaybackId || 0) + 1;
+                sound.pause();
+                sound.currentTime = 0;
+            });
         });
         this.currentMusic = null;
     }

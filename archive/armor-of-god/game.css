@@ -512,6 +512,8 @@ body {
 }
 
 #menuScreen .bottom-footer { z-index: 1; }
+.menu-brand { position: relative; z-index: 1; }
+
 
 body.menu-ready #menuScreen {
     animation: menuReveal .65s ease-out forwards;
@@ -524,11 +526,12 @@ body.menu-ready #menuScreen {
 
 /* Arcade leaderboard */
 #leaderboardScreen { background: radial-gradient(circle at 50% 0%, #373b64 0, #17192d 44%, #090a13 100%); padding: 16px; }
-.leaderboard-frame { width: min(920px, 100%); max-height: calc(100vh - 32px); padding: clamp(18px, 3vw, 38px); border: 4px solid #ffd700; background: rgba(4, 7, 20, .9); box-shadow: 0 0 0 5px #7b4e11, 0 0 42px rgba(255, 215, 0, .35); }
+.leaderboard-frame { width: min(920px, 100%); height: min(670px, calc(100vh - 32px)); display: flex; flex-direction: column; padding: clamp(18px, 3vw, 38px); border: 4px solid #ffd700; background: rgba(4, 7, 20, .9); box-shadow: 0 0 0 5px #7b4e11, 0 0 42px rgba(255, 215, 0, .35); overflow: hidden; }
 .leaderboard-kicker { color: #8ee7ff; font-size: 11px; letter-spacing: 2px; }
 .leaderboard-frame h1 { margin: 15px 0; color: #ffd700; font-size: clamp(24px, 4vw, 46px); text-shadow: 4px 4px #7b4e11; }
 .leaderboard-status { min-height: 22px; color: #fff; font-size: clamp(10px, 1.4vw, 14px); line-height: 1.6; }
 .leaderboard-entry { margin: 20px auto; }
+#leaderboardEntry:not(.hidden) { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; margin: 0; }
 .leaderboard-entry label { display: block; margin-bottom: 12px; color: #8ee7ff; font-size: 12px; }
 #leaderboardName { width: min(540px, 90%); padding: 16px; border: 3px solid #fff; outline: none; background: #11172b; color: #ffd700; font: 26px 'Press Start 2P', monospace; text-align: center; text-transform: uppercase; }
 #leaderboardName:focus { border-color: #ffd700; box-shadow: 0 0 18px rgba(255, 215, 0, .5); }
@@ -538,7 +541,7 @@ body.menu-ready #menuScreen {
 .leaderboard-skip:hover { color: #fff; text-decoration: none; }
 .leaderboard-heading, .leaderboard-row { display: grid; grid-template-columns: 65px 1.45fr 1.2fr 1.1fr; gap: 10px; align-items: center; text-align: left; }
 .leaderboard-heading { padding: 12px 14px; color: #8ee7ff; border-bottom: 2px solid #8ee7ff; font-size: 10px; }
-.leaderboard-entries { min-height: 100px; max-height: min(37vh, 355px); overflow-y: auto; color: #fff; font-size: clamp(9px, 1.3vw, 12px); }
+.leaderboard-entries { flex: 1 1 auto; min-height: 100px; max-height: min(37vh, 355px); overflow-y: auto; color: #fff; font-size: clamp(9px, 1.3vw, 12px); }
 .leaderboard-heading--revealed, .leaderboard-entries--revealed { animation: leaderboardReveal .38s ease-out both; }
 .leaderboard-entries--notice { margin: 16px 0; }
 .leaderboard-row { min-height: 48px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.14); line-height: 1.5; }
@@ -547,9 +550,12 @@ body.menu-ready #menuScreen {
 .leaderboard-row--highlighted::before { content: '›'; position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: #35c8d3; font-size: 28px; line-height: 1; text-shadow: 0 0 8px rgba(53, 200, 211, .6); }
 .leaderboard-row--highlighted span:first-child { padding-left: 22px; }
 .leaderboard-heading span:last-child, .leaderboard-row span:last-child { text-align: right; }
-.leaderboard-continue-wrap { display: flex; justify-content: center; margin-top: 28px; }
+.leaderboard-continue-wrap { display: flex; justify-content: center; margin-top: auto; padding-top: 28px; }
 .leaderboard-continue { margin: 0; background: #28a745; border-color: #1e7e34; }
 .leaderboard-continue:hover { background: #34ce57; }
+.leaderboard-loading { min-height: 190px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; color: #8ee7ff; }
+.leaderboard-loading-spinner { width: 46px; height: 46px; border: 5px solid rgba(142, 231, 255, .22); border-top-color: #ffd700; border-right-color: #35b9c0; border-radius: 50%; box-shadow: 0 0 15px rgba(53, 185, 192, .3); animation: leaderboardSpinner .8s linear infinite; }
+.leaderboard-loading p { font-size: clamp(10px, 1.3vw, 13px); line-height: 1.6; }
 .leaderboard-notice { min-height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; border: 2px dashed rgba(142, 231, 255, .65); background: linear-gradient(135deg, rgba(142, 231, 255, .1), rgba(255, 215, 0, .06)); text-align: center; }
 .leaderboard-notice-icon { width: 48px; height: 48px; display: grid; place-items: center; border: 2px solid #ffd700; border-radius: 50%; color: #ffd700; font-size: 26px; }
 .leaderboard-notice h2 { color: #ffd700; font-size: clamp(14px, 2vw, 20px); line-height: 1.5; }
@@ -557,6 +563,7 @@ body.menu-ready #menuScreen {
 .leaderboard-notice--offline { border-color: rgba(255, 116, 116, .75); background: rgba(115, 24, 35, .22); }
 .leaderboard-notice--offline .leaderboard-notice-icon, .leaderboard-notice--offline h2 { color: #ff8b8b; border-color: #ff8b8b; }
 @keyframes leaderboardReveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes leaderboardSpinner { to { transform: rotate(360deg); } }
 
 .title-image {
     max-width: 400px;
@@ -724,6 +731,7 @@ body.menu-ready #menuScreen {
 #nextLevelBtnMenu { border-radius: 0 8px 8px 0; }
 
 .level-chip { width: 280px; min-width: 280px; padding: 12px 10px; font-size: 10px; white-space: nowrap; }
+.level-selector-text--short { display: none; }
 .level-nav-btn:hover, .level-chip:hover { background: rgba(255, 215, 0, .2); transform: translateY(-2px); box-shadow: 0 0 10px rgba(255, 215, 0, .4); }
 
 /* Pet Selection Styles */
@@ -885,6 +893,8 @@ body.menu-ready #menuScreen {
     background: linear-gradient(135deg, #000000, #251742);
 }
 
+.gameplay-stage { position: relative; display: flex; justify-content: center; width: 100%; }
+
 #gameCanvas {
     border: 4px solid #333;
     background: #87ceeb;
@@ -945,7 +955,24 @@ body.menu-ready #menuScreen {
     color: rgba(255, 255, 255, 0.8);
     margin: 0;
     line-height: 1.2;
+    min-width: 240px;
+    text-align: center;
 }
+
+.controls-reminder { display: none; }
+.touch-controls { display: none; }
+.rotate-device-notice { display: none; }
+
+@media (pointer: fine) {
+    .controls-reminder { display: block; }
+    #pauseTouchBtn { display: none; }
+}
+
+.credits-touch-controls { position: absolute; bottom: 16px; left: 50%; z-index: 2; display: none; gap: 10px; transform: translateX(-50%); }
+.credits-touch-controls .credits-control { border: 1px solid rgba(142, 231, 255, .7); border-radius: 5px; background: rgba(0, 0, 0, .72); color: rgba(255,255,255,.9); padding: 10px 12px; font: 10px 'Press Start 2P', monospace; cursor: pointer; }
+.credits-touch-controls .credits-control:hover { border-color: #ffd700; color: #ffd700; }
+.credits-control--disabled { opacity: .38; pointer-events: none; }
+.credits-finale--visible ~ .credits-touch-controls { display: none; }
 
 /* Game Over and Complete Screens */
 #gameOverScreen {
@@ -953,6 +980,12 @@ body.menu-ready #menuScreen {
     position: relative;
     overflow: hidden;
 }
+
+/* Preserve the original desktop/portrait flow; landscape touch screens opt in
+   to the compact side-by-side layout below. */
+.game-over-content,
+.game-over-copy,
+.game-over-actions { display: contents; }
 
 #gameOverScreen::before {
     content: '';
@@ -1169,12 +1202,365 @@ body.menu-ready #menuScreen {
     .scripture-short { display: inline; }
 }
 
+/* Phone and tablet touch layout. Gameplay controls live below the canvas so
+   boss tells and platform edges remain visible. */
+@media (pointer: coarse) {
+    body {
+        overscroll-behavior: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        touch-action: manipulation;
+    }
+    input, textarea, [contenteditable="true"] {
+        -webkit-user-select: text;
+        user-select: text;
+    }
+    #audioPrompt { white-space: nowrap; }
+    .credits-skip { display: none; }
+    .speed-toggle-btn, .speed-dropdown { display: none !important; }
+    .level-selector-text--full { display: none; }
+    .level-selector-text--short { display: inline; }
+    .level-chip { width: 120px; min-width: 120px; }
+    #levelIntroScreen #startLevelBtn { width: min(260px, calc(100vw - 48px)) !important; }
+    #levelIntroScreen .level-number-container,
+    #levelIntroScreen .level-name-container,
+    #levelIntroScreen .level-image-container,
+    #levelIntroScreen .start-level-btn { opacity: 1; animation: none; }
+    #levelIntroScreen .continue-prompt { display: none; }
+    #gameScreen { justify-content: flex-start; height: 100dvh; min-height: 100dvh; padding: 8px max(10px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
+    .gameplay-stage { flex: 1 1 auto; min-height: 0; align-items: center; }
+    #gameCanvas { width: min(100%, calc((100dvh - 88px) * 2)); height: auto; max-height: calc(100dvh - 88px); border-width: 3px; touch-action: none; }
+    .level-indicator { position: absolute; top: 4px; left: 50%; z-index: 15; max-width: 72vw; margin: 0; padding: 4px 8px; font-size: 9px; line-height: 1.2; text-shadow: 1px 1px 0 #333; white-space: nowrap; -webkit-text-size-adjust: none; text-size-adjust: none; transform: translateX(-50%); }
+    #gameUI { top: 28px; }
+    .touch-controls { width: min(100%, 920px); flex: 0 0 70px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px; touch-action: none; user-select: none; -webkit-user-select: none; }
+    .touch-controls__move, .touch-controls__actions { display: flex; align-items: end; gap: 10px; }
+    .touch-controls__actions { width: clamp(220px, 29vw, 290px); display: grid; grid-template-columns: 1fr 2fr; grid-template-rows: 1fr; align-items: center; }
+    .touch-control { min-width: 58px; min-height: 56px; border: 3px solid rgba(255,255,255,.82); border-radius: 12px; background: rgba(10, 19, 44, .88); color: #fff; font: 12px 'Press Start 2P', monospace; box-shadow: inset 0 0 14px rgba(53, 185, 192, .16), 0 3px 8px rgba(0,0,0,.35); touch-action: none; }
+    .touch-control svg { display: block; width: 26px; height: 26px; margin: 0; fill: currentColor; }
+    .touch-control--move { width: clamp(58px, 10vw, 82px); display: grid; place-items: center; }
+    .touch-control--move svg { width: 26px; height: 26px; }
+    .touch-control--jump, .touch-control--duck { width: 100%; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 10px; white-space: nowrap; }
+    .touch-control--jump { grid-column: 2; grid-row: 1; min-height: 60px; border-color: #1e7e34; background: #28a745; }
+    .touch-control--duck { grid-column: 1; grid-row: 1; min-height: 56px; }
+    .touch-control__label { font: 10px 'Press Start 2P', monospace; }
+    .touch-control--active { transform: translateY(2px) scale(.98); background: #28648a; box-shadow: inset 0 0 18px rgba(255,255,255,.35); }
+    .touch-control--jump.touch-control--active {
+        background: #1e7e34;
+        box-shadow: inset 0 0 18px rgba(168, 255, 181, .45), 0 0 14px rgba(40, 167, 69, .55);
+    }
+    .audio-toggle-btn, .speed-toggle-btn, .controls-reminder { right: 20px; }
+    .audio-toggle-btn { top: 80px; }
+    .speed-toggle-btn { top: 80px; }
+    .controls-reminder { display: block; position: fixed; top: 20px; z-index: 1000; margin: 0; padding: 0; background: transparent; }
+    .controls-reminder p { display: none; }
+    #pauseTouchBtn { width: 50px; height: 50px; display: grid; place-items: center; border: 2px solid rgba(255,255,255,.8); border-radius: 8px; background: rgba(0,0,0,.8); color: #fff; }
+    #pauseTouchBtn svg { width: 24px; height: 24px; fill: currentColor; }
+    .rotate-device-notice { position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(4, 7, 17, .94); color: #fff; text-align: center; font-size: 13px; line-height: 1.7; }
+    .rotate-device-notice strong { color: #ffd700; font-size: 19px; }
+    .rotate-device-icon { color: #35b9c0; font: 74px sans-serif; animation: rotateDevicePrompt 1.8s ease-in-out infinite; }
+    .rotate-device-notice.hidden { display: none; }
+    .cutscene-keyboard-hint { display: none; }
+    .cutscene-skip { display: block; min-height: 44px; margin-top: 18px; font-size: 10px; }
+    #creditsScreen { position: fixed; inset: 0; width: 100vw; height: 100dvh; min-height: 100dvh; padding: 0; }
+    .credits-progress { bottom: max(66px, calc(env(safe-area-inset-bottom) + 54px)); }
+    .credits-touch-controls { bottom: max(14px, env(safe-area-inset-bottom)); display: flex; }
+}
+
+@media (pointer: coarse) and (orientation: landscape) {
+    #gameOverScreen {
+        display: grid;
+        grid-template-columns: minmax(210px, 260px) minmax(350px, 580px);
+        grid-template-rows: auto auto;
+        justify-content: center;
+        align-content: center;
+        column-gap: 34px;
+        row-gap: 12px;
+        padding: 16px 70px 16px 20px;
+    }
+    #gameOverScreen .game-over-content {
+        display: contents;
+    }
+    #gameOverScreen .game-over-image {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        width: min(240px, 30vw);
+        margin: 0;
+        justify-self: center;
+        align-self: end;
+    }
+    #gameOverScreen .game-over-copy {
+        grid-column: 2;
+        grid-row: 1;
+        display: block;
+        min-width: 0;
+        text-align: left;
+        align-self: end;
+    }
+    #gameOverScreen h1 {
+        margin: 0 0 12px;
+        font-size: 22px;
+        line-height: 1.2;
+        -webkit-text-size-adjust: none;
+        text-size-adjust: none;
+    }
+    #gameOverMessage {
+        margin: 0;
+        font-size: 9px;
+        line-height: 1.5;
+        -webkit-text-size-adjust: none;
+        text-size-adjust: none;
+    }
+    #gameOverScreen .game-over-actions {
+        grid-column: 2;
+        grid-row: 2;
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-self: end;
+        gap: 12px;
+        margin: 0;
+    }
+    #gameOverScreen .game-over-actions .menu-btn {
+        min-width: 170px;
+        min-height: 40px;
+        margin: 0;
+        padding: 9px 12px;
+        font-size: 8px;
+    }
+    #gameOverScreen #mainMenuBtn { order: 1; }
+    #gameOverScreen #restartBtn { order: 2; }
+
+    /* Portrait already has a compact level label; landscape needs its own
+       override instead of inheriting the larger general touch value. */
+    #gameScreen .level-indicator { font-size: 9px; }
+    #gameScreen .controls-reminder { top: 72px; right: 10px; }
+    #creditsScreen .credits-card {
+        width: min(82vw, 760px);
+        display: grid;
+        grid-template-columns: minmax(180px, .75fr) minmax(0, 1fr);
+        align-items: center;
+        column-gap: 32px;
+        text-align: left;
+    }
+    #creditsScreen .credits-card > img {
+        grid-column: 1;
+        grid-row: 1 / span 20;
+        width: 100%;
+        max-width: min(32vw, 270px);
+        max-height: min(62dvh, 250px);
+        margin: 0;
+        justify-self: center;
+    }
+    #creditsScreen .credits-card > :not(img) { grid-column: 2; }
+    #creditsScreen .credits-card:nth-of-type(odd) > img { grid-column: 2; }
+    #creditsScreen .credits-card:nth-of-type(odd) > :not(img) { grid-column: 1; text-align: right; }
+    #creditsScreen .credits-card h2 { margin: 8px 0 5px; font-size: clamp(10px, 1.5vw, 15px); }
+    #creditsScreen .credits-card p { margin: 4px 0; font-size: clamp(9px, 1.25vw, 12px); }
+    #creditsScreen .credits-card .credits-small { font-size: clamp(7px, .95vw, 9px); line-height: 1.4; }
+    #menuScreen { justify-content: flex-start; overflow-y: auto; padding-top: 24px; padding-bottom: 28px; -webkit-overflow-scrolling: touch; }
+    #menuScreen .bottom-footer { position: static; flex: 0 0 auto; margin-top: 24px; }
+    #menuScreen .menu-brand { width: min(720px, 100%); display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; column-gap: 16px; text-align: left; }
+    #menuScreen .title-image { grid-column: 2; grid-row: 1 / 3; width: 94px; height: 68px; max-width: none; max-height: none; margin: 0; object-fit: cover; }
+    #menuScreen h1 { grid-column: 1; grid-row: 1; margin: 0; font-size: 26px; line-height: 1.1; }
+    #menuScreen .scripture { grid-column: 1; grid-row: 2; max-width: none; margin: 7px 0 4px; color: rgba(255,255,255,.82); font-size: 8px; line-height: 1.4; white-space: nowrap; }
+    #menuScreen .scripture-full { display: none; }
+    #menuScreen .scripture-short { display: inline; }
+    #menuScreen .scripture-reference { display: inline; margin: 0 0 0 10px; font-size: 1em; }
+    #menuScreen .game-setup { transform: scale(.88); transform-origin: top center; margin-top: -4px; margin-bottom: -20px; }
+    #levelIntroScreen { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .level-intro-container { min-height: 100dvh; height: auto; padding: 18px 16px; }
+    .level-intro-content { width: min(100%, 760px); display: grid; grid-template-columns: minmax(170px, .82fr) minmax(240px, 1fr); grid-template-rows: auto auto auto; align-items: center; column-gap: 28px; padding: 0; text-align: left; }
+    .level-image-container { grid-column: 1; grid-row: 1 / 4; margin: 0; text-align: center; }
+    .level-image { width: 100%; max-height: min(52dvh, 250px); border-radius: 10px; }
+    .level-number-container { grid-column: 2; grid-row: 1; margin: 0 0 12px; }
+    .level-number { font-size: 1.4rem; letter-spacing: 1px; }
+    .level-name-container { grid-column: 2; grid-row: 2; margin: 0 0 20px; }
+    .level-name { font-size: 1rem; letter-spacing: 1px; }
+    .start-level-btn { grid-column: 2; grid-row: 3; width: 100%; margin: 0; transform: translateY(-20px); }
+    #startLevelBtn { min-height: 44px; font-size: 11px; }
+    .continue-prompt { display: none; }
+
+    #levelCompleteScreen { height: 100dvh; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: auto auto auto auto auto; align-content: center; column-gap: 12px; row-gap: 6px; padding: 14px 70px 14px 20px; overflow: hidden; }
+    #levelCompleteScreen .victory-temple { grid-column: 1 / 3; grid-row: 1 / 4; width: 132px; height: 138px; margin: 0 auto; }
+    #levelCompleteScreen h1 { grid-column: 3 / 7; grid-row: 1; margin: 0; font-size: 22px; text-align: left; }
+    #levelCompleteSubtitle { grid-column: 3 / 7; grid-row: 2; margin: 0; font-size: 10px; line-height: 1.5; text-align: left; }
+    #levelCompleteScripture { grid-column: 3 / 7; grid-row: 3; margin: 2px 0 0; font-size: 9px; line-height: 1.45; text-align: left; }
+    #levelCompleteScreen .victory-runners { display: none; }
+    #levelCompleteScreen .score-display-small { grid-column: 1 / 7; grid-row: 4; width: min(100%, 560px); margin: 6px auto; padding: 8px 12px; font-size: 9px; }
+    #levelCompleteScreen .score-row-small { margin: 3px 0; }
+    #levelCompleteScreen #nextLevelBtn { grid-column: 1 / 3; grid-row: 5; width: 100% !important; }
+    #levelCompleteScreen .button-row { display: contents; }
+    #levelCompleteScreen #retryLevelBtn { grid-column: 3 / 5; grid-row: 5; width: 100% !important; }
+    #levelCompleteScreen #mainMenuBtn2 { grid-column: 5 / 7; grid-row: 5; width: 100% !important; }
+    #levelCompleteScreen .menu-btn { min-height: 38px; margin: 0; padding: 8px 6px; font-size: 8px !important; white-space: nowrap; }
+}
+
+@media (pointer: coarse) and (orientation: portrait) {
+    #gameScreen .touch-controls,
+    #gameScreen .controls-reminder { display: none; }
+    #gameScreen .level-indicator {
+        width: calc(100% - 92px);
+        max-width: none;
+        white-space: normal;
+        text-align: center;
+        font-size: 9px;
+    }
+    #levelCompleteScreen { height: 100dvh; min-height: 100dvh; justify-content: flex-start; padding: max(18px, env(safe-area-inset-top)) 14px 14px; overflow: hidden; }
+    #levelCompleteScreen .victory-temple { width: 148px; height: 154px; margin: 0 0 10px; }
+    #levelCompleteScreen h1 { margin: 0 0 8px; font-size: 28px; line-height: 1.1; }
+    #levelCompleteSubtitle { max-width: 350px; margin: 0 0 8px; font-size: 10px; line-height: 1.45; }
+    #levelCompleteScripture { max-width: 350px; margin: 0 0 10px; font-size: 9px; line-height: 1.4; }
+    #levelCompleteScreen .victory-runners { top: 22%; gap: 4px; }
+    #levelCompleteScreen .victory-player { width: 46px; height: 46px; margin-bottom: 3px; }
+    #levelCompleteScreen .victory-pet { width: 40px; height: 30px; }
+    #levelCompleteScreen .score-display-small { width: min(100%, 340px); margin: 8px auto; padding: 8px; font-size: 9px; }
+    #levelCompleteScreen .score-row-small { margin: 3px 0; }
+    #levelCompleteScreen .menu-btn { min-height: 42px; margin: 3px; padding: 9px 10px; font-size: 9px !important; }
+    #levelCompleteScreen #nextLevelBtn { width: min(100%, 340px) !important; }
+    #levelCompleteScreen .button-row { margin-top: 0; gap: 2px; }
+    #levelCompleteScreen .half-width { width: min(48%, 166px) !important; }
+}
+
+@media (max-width: 700px) {
+    .screen { padding: 16px; overflow-y: auto; justify-content: center; }
+    #menuScreen { justify-content: flex-start; padding-top: 54px; }
+    .title-image { width: min(65vw, 250px); max-height: 120px; margin-bottom: 10px; }
+    #menuScreen h1 { margin-bottom: 12px; font-size: clamp(28px, 9vw, 40px); }
+    .scripture { max-width: 330px; margin-bottom: 18px; line-height: 1.55; }
+    .game-setup { width: min(100%, 360px); }
+    .pet-selection, .pet-options, .level-control, .button-row { flex-wrap: wrap; justify-content: center; }
+    .bottom-footer { position: static; flex-wrap: wrap; gap: 12px; margin-top: 22px; padding: 0; }
+    .footer-divider { display: none; }
+    .bottom-footer .instructions-link { font-size: 10px; }
+    .audio-toggle-btn, .speed-toggle-btn { width: 42px; height: 42px; }
+    .audio-toggle-btn { right: 10px; }
+    .speed-toggle-btn { top: 60px; right: 10px; }
+    .audio-toggle-btn { top: 60px; }
+    .controls-reminder { top: 10px; right: 10px; }
+    #pauseTouchBtn { width: 42px; height: 42px; }
+    .credits-touch-controls { width: calc(100% - 24px); justify-content: center; gap: 6px; }
+    .credits-touch-controls .credits-control { padding: 10px 8px; font-size: 8px; }
+    .leaderboard-frame { height: min(670px, calc(100svh - 32px)); }
+}
+
+/* Keep the menu compact without changing its desktop composition. */
+@media (pointer: coarse) and (orientation: portrait) {
+    .audio-toggle-btn {
+        top: max(8px, env(safe-area-inset-top));
+        right: max(8px, env(safe-area-inset-right));
+        left: auto;
+    }
+    #menuScreen h1 {
+        margin-bottom: 8px;
+        font-size: clamp(22px, 6.6vw, 28px);
+        line-height: 1.1;
+        white-space: nowrap;
+    }
+    #menuScreen .scripture {
+        max-width: none;
+        margin-bottom: 14px;
+        font-size: clamp(7px, 2.15vw, 9px);
+        line-height: 1.35;
+    }
+    #menuScreen .scripture-short { white-space: nowrap; }
+    #menuScreen .title-image {
+        width: auto;
+        height: min(144px, 70vw);
+        max-width: 78vw;
+        object-fit: contain;
+    }
+    #menuScreen .level-selection { gap: 8px; padding: 8px 10px; }
+    #menuScreen .level-control { flex-wrap: nowrap; gap: 6px; }
+    #menuScreen .level-nav-btn { width: 32px; height: 32px; flex: 0 0 32px; }
+    #menuScreen .level-nav-btn svg { width: 16px; height: 16px; }
+    #menuScreen .level-chip { width: 82px; min-width: 82px; padding: 10px 4px; font-size: 9px; }
+    #menuScreen .pet-selection {
+        min-height: 52px;
+        flex-wrap: nowrap;
+        gap: 10px;
+        padding: 8px 12px;
+        justify-content: space-between;
+    }
+    #menuScreen .pet-selection .pet-label { font-size: 14px; }
+    #menuScreen .pet-selection .pet-label::after { content: none; }
+    #menuScreen .pet-options { flex-wrap: nowrap; gap: 8px; margin-left: auto; }
+    #menuScreen .pet-btn { width: 48px; min-width: 48px; padding: 8px; }
+    #menuScreen .pet-btn-text { display: none; }
+    #menuScreen .bottom-footer {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 14px;
+    }
+}
+
+@media (pointer: coarse) and (orientation: landscape) {
+    .audio-toggle-btn {
+        top: max(10px, env(safe-area-inset-top));
+        right: max(10px, env(safe-area-inset-right));
+        left: auto;
+    }
+    #menuScreen .menu-brand {
+        width: min(582px, calc(100% - 32px));
+        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-rows: auto auto;
+        column-gap: 16px;
+    }
+    #menuScreen .title-image {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        width: 108px;
+        height: auto;
+        max-height: 78px;
+        object-fit: contain;
+    }
+    #menuScreen h1 { grid-column: 2; grid-row: 1; font-size: 27px; }
+    #menuScreen .scripture {
+        grid-column: 2;
+        grid-row: 2;
+        font-size: 10px;
+        line-height: 1.5;
+        white-space: normal;
+    }
+    #menuScreen .scripture-reference {
+        display: block;
+        margin: 6px 0 0;
+        font-size: .8em;
+    }
+    #menuScreen .game-setup {
+        width: min(760px, calc(100% - 32px));
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        padding: 12px 16px;
+        gap: 10px;
+        transform: none;
+        margin-top: 16px;
+        margin-bottom: 0;
+    }
+    #menuScreen .pet-selection,
+    #menuScreen .level-selection {
+        min-height: 48px;
+        padding: 8px 10px;
+    }
+    #menuScreen .pet-selection { grid-column: 1; grid-row: 1; justify-content: flex-start; }
+    #menuScreen .level-selection { grid-column: 2; grid-row: 1; justify-content: flex-end; }
+    #menuScreen .pet-label { display: none; }
+    #menuScreen .pet-options,
+    #menuScreen .level-control { flex-wrap: nowrap; }
+    #menuScreen .pet-options { width: auto; gap: 6px; }
+    #menuScreen .pet-btn { min-width: 120px; flex: 0 0 auto; padding: 8px 6px; font-size: 10px; }
+    #menuScreen .start-btn { grid-column: 1 / -1; grid-row: 2; margin: 0 auto; }
+}
+
+@keyframes rotateDevicePrompt { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
+
 /* Victory Temple Image */
 .victory-temple {
     width: 240px;
     height: 248px;
     margin-bottom: 90px;
     margin-top: -80px; /* Move temple up */
+    --victory-temple-offset-y: 0px;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
@@ -1209,6 +1595,30 @@ body.menu-ready #menuScreen {
     margin-right: 8px;
     position: relative;
     top: -2px;
+}
+
+/* Level-clear navigation now uses SVG chevrons.  Give them an explicit
+   intrinsic size outside of the touch-only rules so desktop does not fall
+   back to the browser's 300×150 SVG default. */
+#levelCompleteScreen .menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+#levelCompleteScreen .chevron-icon {
+    display: block;
+    flex: 0 0 12px;
+    width: 12px;
+    height: 12px;
+    margin: 0 6px;
+    position: static;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
 }
 
 #nextLevelBtn:hover {
@@ -1277,11 +1687,11 @@ body.menu-ready #menuScreen {
 @keyframes templeGlow {
     from { 
         filter: drop-shadow(0 0 20px #ffd700) brightness(1);
-        transform: scale(1);
+        transform: translateY(var(--victory-temple-offset-y)) scale(1);
     }
     to { 
         filter: drop-shadow(0 0 30px #ffff00) brightness(1.1);
-        transform: scale(1.02);
+        transform: translateY(var(--victory-temple-offset-y)) scale(1.02);
     }
 }
 
@@ -1403,7 +1813,8 @@ body.menu-ready #menuScreen {
     box-sizing: border-box;
     width: min(900px, calc(100vw - 44px));
     max-width: none;
-    max-height: calc(100vh - 44px);
+    height: min(760px, calc(100dvh - 24px));
+    max-height: calc(100dvh - 24px);
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -1573,6 +1984,67 @@ body.menu-ready #menuScreen {
     .score-rule--speed small { font-size: 7px; }
 }
 
+@media (pointer: coarse) and (orientation: portrait) {
+    .how-to-play-footer #instructionsDoneBtn { width: 130px; }
+    .leaderboard-heading,
+    .leaderboard-row {
+        grid-template-columns: 42px minmax(0, 1fr) 64px 78px;
+        gap: 10px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    .leaderboard-heading { font-size: 8px; }
+    .leaderboard-row { font-size: 9px; }
+    .leaderboard-heading span,
+    .leaderboard-row span { min-width: 0; white-space: nowrap; }
+    .leaderboard-row span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; }
+    .leaderboard-row--highlighted::before { left: 3px; }
+    .leaderboard-row--highlighted span:first-child { padding-left: 16px; }
+}
+
+@media (pointer: coarse) and (orientation: landscape) {
+    .how-to-play-modal { height: min(500px, calc(100dvh - 24px)); border-width: 4px; border-radius: 16px; }
+    .how-to-play-header { min-height: 54px; }
+    .how-to-play-modal h2 { font-size: 18px; }
+    .how-to-play-modal .close-btn { right: 22px; font-size: 22px; }
+    .how-to-play-section { padding: 10px 28px; }
+    .how-to-play-section h3 { margin-bottom: 10px; font-size: 10px; }
+    .how-to-play-grid { gap: 12px; }
+    .how-to-play-card h4 { margin-bottom: 7px; font-size: 10px; }
+    .control-demo { min-height: 38px; gap: 7px; }
+    .how-to-key { width: 28px; height: 28px; border-width: 2px; border-radius: 6px; }
+    .how-to-key svg { width: 18px; height: 18px; }
+    .control-demo img, .control-demo--move img { width: 36px; height: 36px; }
+    .how-to-arrows, .how-to-enemy, .how-to-temple { width: 56px; height: 42px; }
+    .armor-objective { margin-top: 10px; }
+    .armor-objective p { margin-bottom: 6px; font-size: 9px; }
+    .armor-objective-sprites { gap: 6px; }
+    .armor-objective-sprites img { width: 20px; height: 27px; }
+    .armor-objective-sprites img:last-child { width: 42px; height: 42px; margin-left: 3px; }
+    .armor-objective-sprites span { font-size: 11px; }
+    .how-to-play-footer { min-height: 58px; }
+    .how-to-play-footer .start-btn { width: 180px; font-size: 10px; }
+    .how-to-modal-link { right: 18px; font-size: 9px; }
+    .how-to-score-section { padding: 10px 28px; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    .how-to-score-section h3 { margin-bottom: 6px; font-size: 10px; }
+    .how-to-score-intro { margin-bottom: 8px; font-size: 8px; }
+    .score-rule-groups { gap: 8px; }
+    .score-rule-group { padding: 8px 10px; }
+    .score-rule-group h4 { margin-bottom: 6px; font-size: 10px; }
+    .score-rule,
+    .score-rule strong { min-height: 18px; font-size: 10px; }
+    .score-rule + .score-rule { margin-top: 4px; padding-top: 4px; }
+    .score-rule--speed small { font-size: 7px; }
+    .leaderboard-kicker { display: none; }
+    .leaderboard-frame h1 { margin: 8px 0; font-size: 22px; }
+    .leaderboard-heading,
+    .leaderboard-row { grid-template-columns: 42px minmax(0, 1fr) 86px 92px; gap: 8px; padding-left: 10px; padding-right: 10px; }
+    .leaderboard-heading { padding-top: 8px; padding-bottom: 8px; font-size: 8px; }
+    .leaderboard-row { min-height: 38px; padding-top: 7px; padding-bottom: 7px; }
+    .leaderboard-continue-wrap { padding-top: 12px; }
+    .leaderboard-continue { width: 260px; min-height: 36px; padding: 8px 10px; font-size: 8px; }
+}
+
 /* Level Intro Screen Styles */
 #levelIntroScreen {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -1620,8 +2092,15 @@ body.menu-ready #menuScreen {
 .cutscene-loading { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; color: #ffd700; font-size: 12px; background: #05070f; }
 .cutscene-loading.hidden { display: none; }
 .cutscene-spinner { width: 28px; height: 28px; border: 4px solid rgba(255, 215, 0, .25); border-top-color: #ffd700; border-radius: 50%; animation: cutsceneSpin .8s linear infinite; }
-.cutscene-skip { position: relative; z-index: 1; margin-top: 12px; padding: 6px 10px; border-radius: 5px; background: rgba(0, 0, 0, .5); color: rgba(255,255,255,.55); font-size: 9px; }
+.cutscene-keyboard-hint { position: relative; z-index: 1; margin: 12px 0 0; padding: 6px 10px; border-radius: 5px; background: rgba(0, 0, 0, .5); color: rgba(255,255,255,.65); font-size: 9px; }
+.cutscene-skip { position: relative; z-index: 1; display: none; margin-top: 12px; padding: 6px 10px; border-radius: 5px; background: rgba(0, 0, 0, .5); color: rgba(255,255,255,.55); font-size: 9px; }
 @keyframes cutsceneSpin { to { transform: rotate(360deg); } }
+
+/* Keep the touch action visible; this comes after the desktop default above. */
+@media (pointer: coarse) {
+    .cutscene-keyboard-hint { display: none; }
+    .cutscene-skip { display: block; }
+}
 
 @keyframes stars {
     0% { transform: translateY(0px); }
@@ -1843,5 +2322,150 @@ body.menu-ready #menuScreen {
     
     .level-image {
         max-height: 200px;
+    }
+}
+
+@media (pointer: coarse) and (orientation: portrait) {
+    #levelIntroScreen .level-number {
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+}
+
+/* Mobile level-clear layout: compact copy and predictable action order. */
+@media (pointer: coarse) {
+    /* Completion content used one-shot fade animations with an opacity-zero base.
+       Mobile Safari can fail to restart those when this screen is reused for the
+       next level, leaving only the temple visible. Reveal it deterministically. */
+    #levelCompleteScreen:not(.hidden) h1,
+    #levelCompleteScreen:not(.hidden) p,
+    #levelCompleteScreen:not(.hidden) .score-display-small,
+    #levelCompleteScreen:not(.hidden) .menu-btn,
+    #gameOverScreen:not(.hidden) h1,
+    #gameOverScreen:not(.hidden) p,
+    #gameOverScreen:not(.hidden) .game-over-image,
+    #gameOverScreen:not(.hidden) .menu-btn {
+        opacity: 1;
+        animation: none;
+    }
+    #levelCompleteScreen .victory-runners { display: none; }
+    #levelCompleteSubtitle.level-clear-subtitle {
+        font-size: 9px;
+        white-space: nowrap;
+    }
+    #levelCompleteScreen #nextLevelBtn,
+    #levelCompleteScreen #retryLevelBtn,
+    #levelCompleteScreen #mainMenuBtn2 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    #levelCompleteScreen .chevron-icon,
+    #levelCompleteScreen .chevron-icon.chev-left {
+        display: block;
+        align-self: center;
+        margin: 0 5px;
+        flex: 0 0 10px;
+        width: 10px;
+        height: 10px;
+        position: static;
+        transform: none;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 3;
+        stroke-linecap: square;
+        stroke-linejoin: miter;
+    }
+}
+
+@media (pointer: coarse) and (orientation: landscape) {
+    #levelCompleteScreen {
+        grid-template-rows: 40px 36px 36px auto 42px;
+        row-gap: 3px;
+    }
+    #levelCompleteScreen .victory-temple {
+        align-self: start;
+        /* The glow animation owns transform, so keep the landscape offset in
+           its custom property; this makes every temple-clear screen align
+           identically instead of depending on the completion copy's height. */
+        --victory-temple-offset-y: -40px;
+    }
+    #levelCompleteScreen h1 {
+        align-self: start;
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.15;
+        -webkit-text-size-adjust: none;
+        text-size-adjust: none;
+    }
+    #levelCompleteSubtitle.level-clear-subtitle {
+        align-self: start;
+        margin: 0;
+        font-size: 9px;
+        line-height: 1.25;
+        white-space: normal;
+        -webkit-text-size-adjust: none;
+        text-size-adjust: none;
+    }
+    #levelCompleteScripture {
+        align-self: start;
+        margin: 0;
+        font-size: 9px;
+        line-height: 1.25;
+        -webkit-text-size-adjust: none;
+        text-size-adjust: none;
+    }
+    #levelCompleteScreen .score-display-small { width: min(100%, 660px); }
+    #levelCompleteScreen #retryLevelBtn { grid-column: 1 / 3; }
+    #levelCompleteScreen #mainMenuBtn2 { grid-column: 3 / 5; }
+    #levelCompleteScreen #nextLevelBtn { grid-column: 5 / 7; }
+}
+
+@media (pointer: coarse) and (orientation: portrait) {
+    #gameOverScreen {
+        justify-content: flex-start;
+        padding-top: max(14px, env(safe-area-inset-top));
+    }
+    #gameOverScreen .game-over-image {
+        width: min(240px, 60vw);
+        margin: 10px 0;
+    }
+    #gameOverScreen h1 {
+        margin: 6px 0 16px;
+        font-size: 27px;
+        line-height: 1.1;
+        white-space: nowrap;
+        -webkit-text-size-adjust: none;
+        text-size-adjust: none;
+    }
+    #gameOverMessage {
+        max-width: 350px;
+        margin: 0 0 18px;
+        font-size: 9px;
+        line-height: 1.45;
+        -webkit-text-size-adjust: none;
+        text-size-adjust: none;
+    }
+    #gameOverScreen .game-over-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    #gameOverScreen .game-over-actions .menu-btn { margin: 0; }
+    #levelCompleteScreen .button-row {
+        width: min(100%, 340px);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 10px 0 0;
+    }
+    #levelCompleteScreen #nextLevelBtn { margin: 8px auto 12px; }
+    #levelCompleteScreen #retryLevelBtn,
+    #levelCompleteScreen #mainMenuBtn2 {
+        width: 100% !important;
+        min-width: 0;
+        margin: 0;
     }
 }

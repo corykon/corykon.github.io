@@ -1,3 +1,28 @@
+const JUNGLE_EARLY_SUNSET = [
+    [0, [0.70, 0.19, 45]], [0.3, [0.76, 0.17, 62]],
+    [0.7, [0.66, 0.21, 35]], [1, [0.48, 0.12, 52]]
+];
+const JUNGLE_TWILIGHT = [
+    [0, [0.43, 0.20, 335]], [0.3, [0.34, 0.18, 300]],
+    [0.7, [0.27, 0.12, 285]], [1, [0.22, 0.09, 275]]
+];
+const NIGHT_SKY = [
+    [0, [0.22, 0.05, 275]], [0.3, [0.19, 0.05, 265]],
+    [0.7, [0.14, 0.04, 275]], [1, [0.10, 0.02, 270]]
+];
+const MOUNTAIN_PRE_DAWN = [
+    [0, [0.28, 0.09, 285]], [0.3, [0.25, 0.13, 290]],
+    [0.7, [0.31, 0.17, 305]], [1, [0.18, 0.06, 275]]
+];
+const MOUNTAIN_SUNRISE = [
+    [0, [0.72, 0.17, 48]], [0.3, [0.70, 0.17, 355]],
+    [0.7, [0.83, 0.17, 92]], [1, [0.55, 0.13, 50]]
+];
+const MOUNTAIN_DAYLIGHT = [
+    [0, [0.82, 0.08, 225]], [0.3, [0.86, 0.06, 220]],
+    [0.7, [0.92, 0.04, 215]], [1, [0.97, 0.02, 215]]
+];
+
 class BackgroundManager {
     constructor(level = 1) {
         this.currentLevel = level;
@@ -23,24 +48,27 @@ class BackgroundManager {
     // Canvas gradients are built from OKLCH values, then converted to sRGB. That
     // lets each dawn/dusk hue change at a much more even perceived brightness.
     oklchToRgb([lightness, chroma, hue]) {
+        return this.oklchValuesToRgb(lightness, chroma, hue);
+    }
+
+    oklchValuesToRgb(lightness, chroma, hue) {
         const radians = hue * Math.PI / 180;
         const a = chroma * Math.cos(radians);
         const b = chroma * Math.sin(radians);
         const l = Math.pow(lightness + 0.3963377774 * a + 0.2158037573 * b, 3);
         const m = Math.pow(lightness - 0.1055613458 * a - 0.0638541728 * b, 3);
         const s = Math.pow(lightness - 0.0894841775 * a - 1.291485548 * b, 3);
-        const linear = [
-            4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
-            -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
-            -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s
-        ];
-        const toSrgb = value => {
-            const encoded = value <= 0.0031308
-                ? 12.92 * value
-                : 1.055 * Math.pow(value, 1 / 2.4) - 0.055;
-            return Math.round(Math.min(1, Math.max(0, encoded)) * 255);
-        };
-        return `rgb(${linear.map(toSrgb).join(', ')})`;
+        const red = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+        const green = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+        const blue = -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s;
+        return `rgb(${this.toSrgb(red)}, ${this.toSrgb(green)}, ${this.toSrgb(blue)})`;
+    }
+
+    toSrgb(value) {
+        const encoded = value <= 0.0031308
+            ? 12.92 * value
+            : 1.055 * Math.pow(value, 1 / 2.4) - 0.055;
+        return Math.round(Math.min(1, Math.max(0, encoded)) * 255);
     }
 
     smoothstep(value) {
@@ -58,12 +86,22 @@ class BackgroundManager {
         ];
     }
 
+    interpolateOklchToRgb(from, to, amount) {
+        const t = this.smoothstep(amount);
+        const hueDelta = ((to[2] - from[2] + 540) % 360) - 180;
+        return this.oklchValuesToRgb(
+            from[0] + (to[0] - from[0]) * t,
+            from[1] + (to[1] - from[1]) * t,
+            (from[2] + hueDelta * t + 360) % 360
+        );
+    }
+
     drawOklchGradient(ctx, width, height, fromPalette, toPalette = fromPalette, amount = 0) {
         const gradient = ctx.createLinearGradient(0, 0, 0, height);
         fromPalette.forEach((stop, index) => {
             gradient.addColorStop(
                 stop[0],
-                this.oklchToRgb(this.interpolateOklch(stop[1], toPalette[index][1], amount))
+                this.interpolateOklchToRgb(stop[1], toPalette[index][1], amount)
             );
         });
         ctx.fillStyle = gradient;
@@ -315,24 +353,11 @@ class BackgroundManager {
         // Blend each sky stop in OKLCH instead of alpha-stacking separate RGB
         // gradients. The result avoids the dull, muddy midpoint that RGB fades
         // often create around twilight.
-        const earlySunset = [
-            [0, [0.70, 0.19, 45]], [0.3, [0.76, 0.17, 62]],
-            [0.7, [0.66, 0.21, 35]], [1, [0.48, 0.12, 52]]
-        ];
-        const twilight = [
-            [0, [0.43, 0.20, 335]], [0.3, [0.34, 0.18, 300]],
-            [0.7, [0.27, 0.12, 285]], [1, [0.22, 0.09, 275]]
-        ];
-        const night = [
-            [0, [0.22, 0.05, 275]], [0.3, [0.19, 0.05, 265]],
-            [0.7, [0.14, 0.04, 275]], [1, [0.10, 0.02, 270]]
-        ];
-
         ctx.save();
         if (progress < 0.2) {
-            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, earlySunset, twilight, progress / 0.2);
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, JUNGLE_EARLY_SUNSET, JUNGLE_TWILIGHT, progress / 0.2);
         } else {
-            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, twilight, night, (progress - 0.2) / 0.12);
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, JUNGLE_TWILIGHT, NIGHT_SKY, (progress - 0.2) / 0.12);
         }
         
         ctx.restore();
@@ -499,28 +524,11 @@ class BackgroundManager {
             this.sunriseStartTime = currentTime;
         }
 
-        const night = [
-            [0, [0.22, 0.05, 275]], [0.3, [0.19, 0.05, 265]],
-            [0.7, [0.14, 0.04, 275]], [1, [0.10, 0.02, 270]]
-        ];
-        const preDawn = [
-            [0, [0.28, 0.09, 285]], [0.3, [0.25, 0.13, 290]],
-            [0.7, [0.31, 0.17, 305]], [1, [0.18, 0.06, 275]]
-        ];
-        const sunrise = [
-            [0, [0.72, 0.17, 48]], [0.3, [0.70, 0.17, 355]],
-            [0.7, [0.83, 0.17, 92]], [1, [0.55, 0.13, 50]]
-        ];
-        const daylight = [
-            [0, [0.82, 0.08, 225]], [0.3, [0.86, 0.06, 220]],
-            [0.7, [0.92, 0.04, 215]], [1, [0.97, 0.02, 215]]
-        ];
-        
         const timeSinceStart = currentTime - this.sunriseStartTime;
         
         // Don't start sunrise until delay period is over
         if (timeSinceStart < sunriseDelay) {
-            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, night);
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, NIGHT_SKY);
             return;
         }
         
@@ -545,11 +553,11 @@ class BackgroundManager {
         ctx.save();
         
         if (progress < 0.25) {
-            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, night, preDawn, progress / 0.25);
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, NIGHT_SKY, MOUNTAIN_PRE_DAWN, progress / 0.25);
         } else if (progress < 0.6) {
-            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, preDawn, sunrise, (progress - 0.25) / 0.35);
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, MOUNTAIN_PRE_DAWN, MOUNTAIN_SUNRISE, (progress - 0.25) / 0.35);
         } else {
-            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, sunrise, daylight, (progress - 0.6) / 0.4);
+            this.drawOklchGradient(ctx, canvasWidth, canvasHeight, MOUNTAIN_SUNRISE, MOUNTAIN_DAYLIGHT, (progress - 0.6) / 0.4);
         }
         
         ctx.restore();
@@ -612,8 +620,10 @@ class BackgroundManager {
     // Add more elements dynamically if needed (for very long gameplay)
     updateElements(cameraX) {
         this.layers.forEach(layer => {
-            const rightmostElement = Math.max(...layer.elements.map(el => el.x));
-            const leftmostElement = Math.min(...layer.elements.map(el => el.x));
+            let rightmostElement = -Infinity;
+            for (const element of layer.elements) {
+                if (element.x > rightmostElement) rightmostElement = element.x;
+            }
             
             // Add elements to the right if camera is approaching the end
             if (rightmostElement < cameraX + 2000) {
@@ -627,7 +637,9 @@ class BackgroundManager {
             }
             
             // Remove elements that are far behind the camera
-            layer.elements = layer.elements.filter(el => el.x > cameraX - 1000);
+            for (let index = layer.elements.length - 1; index >= 0; index--) {
+                if (layer.elements[index].x <= cameraX - 1000) layer.elements.splice(index, 1);
+            }
         });
     }
     

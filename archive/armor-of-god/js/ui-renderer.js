@@ -8,6 +8,13 @@ class UIRenderer {
         // Pause menu buttons (will be set by game)
         this.pauseRestartButton = null;
         this.pauseMainMenuButton = null;
+
+        // Reusable off-screen surface for the empty-heart silhouette. Keeping
+        // compositing off the game canvas prevents it from affecting the world.
+        this.heartMaskCanvas = document.createElement('canvas');
+        this.heartMaskCanvas.width = 25;
+        this.heartMaskCanvas.height = 25;
+        this.heartMaskCtx = this.heartMaskCanvas.getContext('2d');
     }
     
     showMessage(text, duration = 180, color = '#FFD700', backgroundWidth = 600) {
@@ -36,10 +43,21 @@ class UIRenderer {
             const x = 30 + i * 37, y = 33, size = 25;
             const filled = i < player.health;
             if (heartImage && heartImage.complete) {
-                ctx.save();
-                if (!filled) { ctx.filter = 'brightness(0)'; ctx.globalAlpha = 0.9; }
-                ctx.drawImage(heartImage, x, y, size, size);
-                ctx.restore();
+                if (filled) {
+                    ctx.drawImage(heartImage, x, y, size, size);
+                } else {
+                    // Build a black version in the small off-screen canvas. Doing
+                    // source-in on the game canvas cleared unrelated gameplay art.
+                    const maskCtx = this.heartMaskCtx;
+                    maskCtx.clearRect(0, 0, size, size);
+                    maskCtx.globalCompositeOperation = 'source-over';
+                    maskCtx.drawImage(heartImage, 0, 0, size, size);
+                    maskCtx.globalCompositeOperation = 'source-in';
+                    maskCtx.fillStyle = '#000';
+                    maskCtx.fillRect(0, 0, size, size);
+                    maskCtx.globalCompositeOperation = 'source-over';
+                    ctx.drawImage(this.heartMaskCanvas, x, y, size, size);
+                }
             } else {
                 ctx.font = '32px sans-serif'; ctx.fillStyle = filled ? '#e53935' : '#161616'; ctx.fillText('♥', x, 57);
             }
@@ -222,6 +240,7 @@ class UIRenderer {
     renderPauseOverlay(ctx, hoveredButton = null) {
         const canvasWidth = ctx.canvas.width;
         const canvasHeight = ctx.canvas.height;
+        const isTouchLayout = window.matchMedia('(pointer: coarse)').matches;
         
         // Semi-transparent overlay with cool gradient effect
         const gradient = ctx.createRadialGradient(
@@ -249,19 +268,15 @@ class UIRenderer {
         
         // Subtitle text
         ctx.shadowBlur = 0;
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = '14px "Press Start 2P", monospace';
-        ctx.fillText("Press 'ESC' to resume the game.", centerX, centerY - 30);
-        
         // Reset shadow for other text
         ctx.shadowBlur = 0;
         
         // Three button layout: wide Resume button on top, Restart and Main Menu side by side below
-        const wideButtonWidth = 300;
-        const narrowButtonWidth = 140;
-        const buttonHeight = 50;
-        const verticalSpacing = 20;
-        const horizontalSpacing = 20;
+        const wideButtonWidth = isTouchLayout ? 380 : 300;
+        const narrowButtonWidth = isTouchLayout ? 180 : 140;
+        const buttonHeight = isTouchLayout ? 70 : 50;
+        const verticalSpacing = isTouchLayout ? 24 : 20;
+        const horizontalSpacing = isTouchLayout ? 20 : 20;
         
         // Resume button (top, wide, green)
         const resumeButtonY = centerY;
@@ -301,7 +316,7 @@ class UIRenderer {
         
         // Resume button text
         ctx.fillStyle = isResumeHovered ? '#FFFFFF' : '#F0FFF0';
-        ctx.font = 'bold 16px "Press Start 2P", monospace';
+        ctx.font = `bold ${isTouchLayout ? 20 : 16}px "Press Start 2P", monospace`;
         ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
         ctx.shadowBlur = isResumeHovered ? 4 : 2;
         ctx.fillText('RESUME', centerX, resumeButtonY + buttonHeight/2);
@@ -344,7 +359,7 @@ class UIRenderer {
         
         // Restart button text
         ctx.fillStyle = isRestartHovered ? '#FFFF00' : 'white';
-        ctx.font = 'bold 12px "Press Start 2P", monospace';
+        ctx.font = `bold ${isTouchLayout ? 15 : 12}px "Press Start 2P", monospace`;
         ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
         ctx.shadowBlur = isRestartHovered ? 4 : 2;
         ctx.fillText('RESTART', restartButtonX + narrowButtonWidth/2, bottomButtonY + buttonHeight/2);
@@ -382,25 +397,27 @@ class UIRenderer {
         
         // Main menu button text
         ctx.fillStyle = isMainMenuHovered ? '#FFFF00' : 'white';
-        ctx.font = 'bold 12px "Press Start 2P", monospace';
+        ctx.font = `bold ${isTouchLayout ? 15 : 12}px "Press Start 2P", monospace`;
         ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
         ctx.shadowBlur = isMainMenuHovered ? 4 : 2;
         ctx.fillText('MAIN MENU', mainMenuButtonX + narrowButtonWidth/2, bottomButtonY + buttonHeight/2);
         ctx.shadowBlur = 0;
 
-        this.pauseHowToButton = { x: centerX - 100, y: canvasHeight - 52, width: 200, height: 40 };
+        const howToWidth = isTouchLayout ? 260 : 200;
+        const howToHeight = isTouchLayout ? 54 : 40;
+        this.pauseHowToButton = { x: centerX - howToWidth / 2, y: canvasHeight - howToHeight - 12, width: howToWidth, height: howToHeight };
         ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.fillRect(this.pauseHowToButton.x, this.pauseHowToButton.y, this.pauseHowToButton.width, this.pauseHowToButton.height);
         // Match the main-menu instruction link: gold by default, white on hover.
         ctx.fillStyle = hoveredButton === 'howTo' ? '#fff' : '#FFD700';
-        ctx.font = '12px "Press Start 2P", monospace';
+        ctx.font = `${isTouchLayout ? 15 : 12}px "Press Start 2P", monospace`;
         const howToLabel = 'HOW TO PLAY';
         // Offset the text slightly upward so its underline is centered with the label.
         const howToY = this.pauseHowToButton.y + this.pauseHowToButton.height / 2 - 2;
         ctx.fillText(howToLabel, centerX, howToY);
         if (hoveredButton !== 'howTo') {
-            const howToWidth = ctx.measureText(howToLabel).width;
-            ctx.fillRect(centerX - howToWidth / 2, howToY + 9, howToWidth, 1);
+            const howToLabelWidth = ctx.measureText(howToLabel).width;
+            ctx.fillRect(centerX - howToLabelWidth / 2, howToY + (isTouchLayout ? 11 : 9), howToLabelWidth, 1);
         }
         
         // Reset text properties

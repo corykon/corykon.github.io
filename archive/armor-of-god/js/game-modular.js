@@ -213,6 +213,8 @@ class ArmorOfGodGame {
         this.inputHandler.setupEventListeners(this.canvas, this);
         this.setupMenuEvents();
         this.setupCreditsKeyboardControls();
+        this.setupMobileExperience();
+        this.gameLoop = this.gameLoop.bind(this);
         this.setLevelSelectorVisible(true);
         
         // Initialize game state for current level
@@ -229,6 +231,54 @@ class ArmorOfGodGame {
 
         // Let the first layout paint at its final dimensions before revealing the menu.
         requestAnimationFrame(() => document.body.classList.add('menu-ready'));
+    }
+
+    setupMobileExperience() {
+        const pauseButton = document.getElementById('pauseTouchBtn');
+        pauseButton?.addEventListener('click', () => {
+            if (!this.mobileOrientationPaused) this.togglePause();
+        });
+        document.getElementById('skipCutsceneBtn')?.addEventListener('click', () => this.skipOpeningCutscene());
+        document.getElementById('creditsPreviousBtn')?.addEventListener('click', () => this.previousCreditsSection());
+        document.getElementById('creditsNextBtn')?.addEventListener('click', () => this.nextCreditsSection());
+        document.getElementById('creditsSkipBtn')?.addEventListener('click', () => this.skipCredits());
+        const creditsScreen = document.getElementById('creditsScreen');
+        let creditsTouchStartY = null;
+        creditsScreen?.addEventListener('touchstart', event => {
+            if (!this.isTouchMobile()) return;
+            creditsTouchStartY = event.changedTouches[0]?.clientY ?? null;
+        }, { passive: true });
+        creditsScreen?.addEventListener('touchend', event => {
+            if (!this.isTouchMobile() || creditsTouchStartY === null || this.gameState !== 'credits') return;
+            const touchEndY = event.changedTouches[0]?.clientY;
+            const distance = touchEndY - creditsTouchStartY;
+            creditsTouchStartY = null;
+            if (Math.abs(distance) < 48) return;
+            if (distance < 0) this.nextCreditsSection();
+            else this.previousCreditsSection();
+        }, { passive: true });
+        this.mobileOrientationPaused = false;
+        this.updateMobileOrientation = this.updateMobileOrientation.bind(this);
+        window.addEventListener('resize', this.updateMobileOrientation);
+        window.addEventListener('orientationchange', this.updateMobileOrientation);
+    }
+
+    isTouchMobile() {
+        return window.matchMedia('(pointer: coarse)').matches && navigator.maxTouchPoints > 0;
+    }
+
+    updateMobileOrientation() {
+        const shouldRotate = this.gameState === 'playing' && this.isTouchMobile() && window.innerHeight > window.innerWidth;
+        const notice = document.getElementById('rotateDeviceNotice');
+        notice?.classList.toggle('hidden', !shouldRotate);
+        if (shouldRotate && !this.isPaused) {
+            this.mobileOrientationPaused = true;
+            this.inputHandler.clearTouchInputs();
+            this.togglePause();
+        } else if (!shouldRotate && this.mobileOrientationPaused) {
+            this.mobileOrientationPaused = false;
+            if (this.isPaused) this.togglePause();
+        }
     }
     
     initializeAudio() {
@@ -252,11 +302,17 @@ class ArmorOfGodGame {
     showAudioPrompt() {
         // Create a subtle prompt to let users know they can interact to start audio
         const prompt = document.createElement('div');
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+        const mobilePromptBottom = isLandscape ? 'max(2px, env(safe-area-inset-bottom))' : 'max(12px, env(safe-area-inset-bottom))';
         prompt.id = 'audioPrompt';
         prompt.style.cssText = `
             position: fixed;
-            top: 20px;
-            left: 20px;
+            top: ${isTouchDevice ? 'auto' : '20px'};
+            right: auto;
+            bottom: ${isTouchDevice ? mobilePromptBottom : 'auto'};
+            left: ${isTouchDevice ? '50%' : '20px'};
+            transform: ${isTouchDevice ? 'translateX(-50%)' : 'none'};
             background: rgba(0,0,0,0.8);
             color: #FFD700;
             padding: 10px 15px;
@@ -267,7 +323,7 @@ class ArmorOfGodGame {
             pointer-events: none;
             opacity: 0.7;
         `;
-        prompt.textContent = 'Click anywhere to enable audio';
+        prompt.textContent = isTouchDevice ? 'Tap anywhere to enable audio' : 'Click anywhere to enable audio';
         document.body.appendChild(prompt);
         
         // Remove prompt after user interaction or timeout
@@ -561,6 +617,7 @@ class ArmorOfGodGame {
         this.floatingScores = [];
         this.scoreBreakdown = [];
         this.levelThreeCollapseBonusesPrepared = false;
+        this.templeJumpBonusAwarded = false;
         this.damageTaken = 0; // Reset damage tracking
         this.enemiesKilled = new Set(); // Reset enemy tracking
         this.deathCount = 0;
@@ -582,9 +639,9 @@ class ArmorOfGodGame {
         });
     }
     
-    updateFloatingScores() {
+    updateFloatingScores(speed = 1) {
         this.floatingScores = this.floatingScores.filter(scoreIndicator => {
-            scoreIndicator.timer++;
+            scoreIndicator.timer += speed;
             
             // Calculate opacity to determine when to add points
             const opacity = Math.max(0, (scoreIndicator.duration - scoreIndicator.timer) / scoreIndicator.duration);
@@ -764,6 +821,10 @@ class ArmorOfGodGame {
     }
     
     showLevelIntro(musicDelay = 0) {
+        // Give mobile browsers the entire intro to fetch the tracks that follow it.
+        // Level three also warms the boss track before its immediate arena transition.
+        this.audioManager.preloadMusic('levelIntro', 'adventure');
+        if (this.level === 3 || this.level === 'boss') this.audioManager.preloadMusic('bossFight');
         clearTimeout(this.levelIntroFastForwardTimer);
         clearTimeout(this.levelIntroExitTimer);
         clearTimeout(this.levelIntroMusicTimer);
@@ -894,6 +955,7 @@ class ArmorOfGodGame {
             document.getElementById('levelIntroScreen').classList.remove('level-intro--exiting');
             document.getElementById('gameScreen').classList.remove('game-screen--entering');
             this.gameState = 'playing';
+            this.updateMobileOrientation();
             beginGameplay();
         }, 250);
     }
@@ -903,6 +965,10 @@ class ArmorOfGodGame {
         this.audioManager.cancelGameOverSequence();
         this.pendingLevelThreeBoss = false;
         this.postBossTimerFrames = 0;
+        this.bossFightStartTime = 0;
+        this.bossFightEndTime = 0;
+        this.bossFightPausedTime = 0;
+        this.bossFightPauseStartTime = 0;
         
         // Reset player
         this.player.x = 150;
@@ -1034,7 +1100,13 @@ class ArmorOfGodGame {
     
     updateLevelSelector() {
         const levelText = document.getElementById('levelSelectorText');
-        levelText.textContent = this.level === 'boss' ? 'Boss Fight' : `L${this.level}: ${this.levelData[this.level].name}`;
+        const mobileLevelText = document.getElementById('levelSelectorTextMobile');
+        const isBossFight = this.level === 'boss';
+
+        levelText.textContent = isBossFight ? 'Boss Fight' : `L${this.level}: ${this.levelData[this.level].name}`;
+        if (mobileLevelText) {
+            mobileLevelText.textContent = isBossFight ? 'Boss Fight' : `L${this.level}`;
+        }
     }
 
     setLevelSelectorVisible(visible) {
@@ -1126,6 +1198,11 @@ class ArmorOfGodGame {
     }
     
     showScreen(screenName) {
+        // A menu click can transition before another screen has selected its own
+        // soundtrack. Stop the menu source explicitly so it cannot continue under
+        // a delayed intro, cutscene, or gameplay track.
+        if (screenName !== 'menu') this.audioManager.stopMusic('menu');
+
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.add('hidden');
         });
@@ -1142,6 +1219,7 @@ class ArmorOfGodGame {
         };
         
         document.getElementById(screens[screenName]).classList.remove('hidden');
+        requestAnimationFrame(this.updateMobileOrientation);
         // Level choice is available only on the initial/main-menu screen.  Keeping the
         // control out of every other screen prevents a live level swap from mismatching
         // the active world layout with its background.
@@ -1159,6 +1237,7 @@ class ArmorOfGodGame {
             const victoryImage = document.getElementById('victoryTempleImage');
             const subtitle = document.getElementById('levelCompleteSubtitle');
             const scripture = document.getElementById('levelCompleteScripture');
+            subtitle?.classList.toggle('level-clear-subtitle', !this.pendingLevelThreeBoss);
             if (this.pendingLevelThreeBoss) {
                 if (title) title.textContent = 'Level Complete';
                 if (victoryImage) { victoryImage.src = 'images/sprites/enemy/golem-stand.png'; victoryImage.alt = 'Stone Golem'; }
@@ -1167,7 +1246,7 @@ class ArmorOfGodGame {
             } else {
                 if (title) title.textContent = 'Level Cleared';
                 if (victoryImage) { victoryImage.src = './images/sprites/temple.png'; victoryImage.alt = 'Holy Temple'; }
-                if (subtitle) subtitle.textContent = "You've made it safely to the House of the Lord!";
+                if (subtitle) subtitle.textContent = "You've made it to the House of the Lord!";
                 if (scripture) scripture.textContent = '"Well done, thou good and faithful servant!"';
             }
             if (!this.pendingLevelThreeBoss && this.bossFightEndTime > 0) this.completedGameRun = true;
@@ -1201,9 +1280,10 @@ class ArmorOfGodGame {
         }
         const nextLevelButton = document.getElementById('nextLevelBtn');
         if (nextLevelButton) {
+            const nextChevron = '<svg class="chevron-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
             nextLevelButton.innerHTML = this.pendingLevelThreeBoss
-                ? 'Continue to Boss Fight <span class="chevron-icon">❯</span>'
-                : (this.level === 3 || this.level === 'boss' ? 'Go to Leaderboard <span class="chevron-icon">❯</span>' : 'Next Level <span class="chevron-icon">❯</span>');
+                ? `Continue to Boss Fight ${nextChevron}`
+                : (this.level === 3 || this.level === 'boss' ? `Go to Leaderboard ${nextChevron}` : `Next Level ${nextChevron}`);
         }
     }
 
@@ -1332,8 +1412,10 @@ class ArmorOfGodGame {
     }
 
     updateCreditsControls() {
-        const backControl = document.getElementById('creditsBackControl');
-        if (backControl) backControl.classList.toggle('credits-control--disabled', this.creditsSectionIndex === 0);
+        ['creditsBackControl', 'creditsPreviousBtn'].forEach(id => {
+            const backControl = document.getElementById(id);
+            if (backControl) backControl.classList.toggle('credits-control--disabled', this.creditsSectionIndex === 0);
+        });
     }
 
     showCreditsFinale() {
@@ -1379,7 +1461,7 @@ class ArmorOfGodGame {
             this.lastFrameTime = currentTime;
         }
         
-        requestAnimationFrame((time) => this.gameLoop(time));
+        requestAnimationFrame(this.gameLoop);
     }
     
     update() {
@@ -1504,8 +1586,9 @@ class ArmorOfGodGame {
             this.pendingBossHeartDrop = false;
         }
         
-        // Update floating scores
-        this.updateFloatingScores();
+        // Update floating scores. Enter can speed the fireworks finale and its bonuses together.
+        const celebrationSpeed = this.gameState === 'celebrating' && this.isCelebrationFastForward ? 2.5 : 1;
+        this.updateFloatingScores(celebrationSpeed);
         
         // Update player properties for UI
         this.player.levelTime = this.postBossSurface ? this.postBossTimerFrames : this.getLevelTime();
@@ -1514,7 +1597,7 @@ class ArmorOfGodGame {
         this.player.floatingScores = this.floatingScores;
         
         if (this.gameState === 'celebrating') {
-            if (this.effectsManager.updateCelebration()) {
+            if (this.effectsManager.updateCelebration(celebrationSpeed)) {
                 // Celebration is complete, move to level complete screen
                 this.gameState = 'levelComplete';
                 this.showScreen('levelComplete');
@@ -1861,8 +1944,21 @@ class ArmorOfGodGame {
             return;
         }
 
+        // A high enough leap across the temple is an intentional secret. It also
+        // preserves completion when the player lands beyond the temple hitbox.
+        const playerBottom = this.player.y + this.player.height;
+        const playerOverTemple = this.player.x + this.player.width > this.castle.x &&
+            this.player.x < this.castle.x + this.castle.width;
+        const clearsTempleRoof = playerBottom <= this.castle.y + 60;
+        if (!this.templeJumpBonusAwarded && !this.player.isGrounded && playerOverTemple && clearsTempleRoof) {
+            this.templeJumpBonusAwarded = true;
+            this.addScore(1000, '#FFD700', 'Jumped the Temple');
+        }
+
         // Castle collision
-        if (this.checkCollision(this.player, this.castle)) {
+        const hasLandedBeyondTemple = this.templeJumpBonusAwarded &&
+            this.player.x >= this.castle.x + this.castle.width;
+        if (this.checkCollision(this.player, this.castle) || hasLandedBeyondTemple) {
             this.levelComplete();
         }
     }
@@ -2253,6 +2349,7 @@ class ArmorOfGodGame {
     
     togglePause() {
         this.isPaused = !this.isPaused;
+        this.updatePauseButton();
         
         if (this.isPaused) {
             // Starting a pause - record when it began
@@ -2273,6 +2370,17 @@ class ArmorOfGodGame {
             this.audioManager.playSoundEffect('unpause');
             this.audioManager.resumeCurrentMusic();
         }
+    }
+
+    updatePauseButton() {
+        const button = document.getElementById('pauseTouchBtn');
+        const reminder = document.getElementById('pauseReminderText');
+        if (reminder) reminder.textContent = this.isPaused ? "Press 'esc' to resume" : "Press 'esc' to pause";
+        if (!button) return;
+        button.innerHTML = this.isPaused
+            ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>'
+            : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg>';
+        button.setAttribute('aria-label', this.isPaused ? 'Resume game' : 'Pause game');
     }
     
     restartLevel() {
@@ -2388,6 +2496,10 @@ class ArmorOfGodGame {
         this.gameState = 'enteringTemple';
         this.templeEntranceTimer = 0;
         this.templeCenterX = this.castle.x + this.castle.width / 2;
+        const templeTargetX = this.templeCenterX - this.player.width / 2;
+        // A temple-jump can finish on the far side of the temple. Record which
+        // way the victory walk should travel instead of always assuming right.
+        this.templeEntranceDirection = this.player.x > templeTargetX ? -1 : 1;
         
         // Calculate the correct temple platform Y based on castle position
         const templePlatformY = this.castle.y + this.castle.height;
@@ -2395,7 +2507,7 @@ class ArmorOfGodGame {
         // If pet is far away (more than 300 pixels), teleport it next to player
         const distanceFromPlayer = Math.abs(this.pet.x - this.player.x);
         if (distanceFromPlayer > 300) {
-            this.pet.x = this.player.x - 50; // Place pet slightly behind player
+            this.pet.x = this.player.x - this.templeEntranceDirection * 50; // Place pet slightly behind player
             this.pet.y = templePlatformY - this.pet.height; // Place on temple platform
             this.pet.isGrounded = true;
             this.pet.velocityY = 0;
@@ -2408,8 +2520,8 @@ class ArmorOfGodGame {
         this.movingTogether = false;
         
         // Make both face the temple
-        this.player.facingRight = true;
-        this.pet.facingRight = true;
+        this.player.facingRight = this.templeEntranceDirection > 0;
+        this.pet.facingRight = this.templeEntranceDirection > 0;
         this.pet.isMoving = true;
         this.player.isMoving = false; // Player waits initially
     }
@@ -2418,6 +2530,7 @@ class ArmorOfGodGame {
     
     updateTempleEntrance() {
         this.templeEntranceTimer++;
+        const direction = this.templeEntranceDirection || 1;
         
         // Calculate the correct temple platform Y based on castle position
         const templePlatformY = this.castle.y + this.castle.height;
@@ -2428,17 +2541,22 @@ class ArmorOfGodGame {
         
         if (!playerGrounded || !petGrounded) {
             // Still waiting for landing - keep facing temple
-            this.player.facingRight = true;
-            this.pet.facingRight = true;
+            this.player.facingRight = direction > 0;
+            this.pet.facingRight = direction > 0;
             return;
         }
         
         const targetX = this.templeCenterX - this.player.width / 2;
+        const petTargetX = targetX - direction * 30;
         
         if (this.waitingForPet) {
             // Pet catches up to player
             if (this.pet.x < this.player.x - 20) {
+                this.pet.facingRight = true;
                 this.pet.x += this.templeEntranceSpeed;
+            } else if (this.pet.x > this.player.x + 20) {
+                this.pet.facingRight = false;
+                this.pet.x -= this.templeEntranceSpeed;
             } else {
                 // Pet caught up - now move together
                 this.waitingForPet = false;
@@ -2448,9 +2566,17 @@ class ArmorOfGodGame {
             }
         } else if (this.movingTogether) {
             // Both move toward temple center together
-            if (this.player.x < targetX && this.pet.x < targetX - 30) {
-                this.player.x += this.templeEntranceSpeed;
-                this.pet.x += this.templeEntranceSpeed;
+            const playerHasArrived = direction > 0 ? this.player.x >= targetX : this.player.x <= targetX;
+            const petHasArrived = direction > 0 ? this.pet.x >= petTargetX : this.pet.x <= petTargetX;
+            if (!playerHasArrived || !petHasArrived) {
+                this.player.facingRight = direction > 0;
+                this.pet.facingRight = direction > 0;
+                this.player.x = direction > 0
+                    ? Math.min(targetX, this.player.x + this.templeEntranceSpeed)
+                    : Math.max(targetX, this.player.x - this.templeEntranceSpeed);
+                this.pet.x = direction > 0
+                    ? Math.min(petTargetX, this.pet.x + this.templeEntranceSpeed)
+                    : Math.max(petTargetX, this.pet.x - this.templeEntranceSpeed);
             } else {
                 // Both reached the temple - start fading together
                 this.movingTogether = false;
@@ -2473,6 +2599,7 @@ class ArmorOfGodGame {
     
     startCelebration() {
         this.gameState = 'celebrating';
+        this.isCelebrationFastForward = false;
         this.effectsManager.initializeFireworks(this.castle);
         if (!this.keepVictoryMusicForCompletion) this.audioManager.playMusic('winner');
         
@@ -2484,6 +2611,12 @@ class ArmorOfGodGame {
         if (this.level === 1) this.unlockStage(2);
         if (this.level === 2) this.unlockStage(3);
         if (this.level === 3) this.unlockStage(4);
+    }
+
+    fastForwardCelebration() {
+        if (this.gameState !== 'celebrating' || this.isCelebrationFastForward) return;
+        this.isCelebrationFastForward = true;
+        this.effectsManager.accelerateFireworks();
     }
     
     render() {
@@ -2507,22 +2640,22 @@ class ArmorOfGodGame {
         this.ctx.translate(-this.cameraX + shakeOffset, -this.cameraY + shakeOffset);
         
         // Render world platforms and objects
-        this.worldManager.renderPlatforms(this.ctx);
-        this.worldManager.renderForegroundSprites(this.ctx, this.foregroundImages);
+        this.worldManager.renderPlatforms(this.ctx, this.cameraX, this.canvas.width);
+        this.worldManager.renderForegroundSprites(this.ctx, this.foregroundImages, this.cameraX, this.canvas.width);
         // During the level-three collapse, mask only the broken ground and nearby scenery
         // before drawing the temple and falling characters over the opening.
         this.bossManager.renderFade(this.ctx, 0, this.bossManager.state === 'cutscene');
         if (!this.bossManager.active || this.bossManager.state === 'cutscene') {
-            this.worldManager.renderTemple(this.ctx, this.templeImage, this.castle);
+            this.worldManager.renderTemple(this.ctx, this.templeImage, this.castle, this.cameraX, this.canvas.width);
         }
         
         // Render game objects
         if (!this.bossManager.active) this.arrowManager.render(this.ctx);
-        this.enemyManager.render(this.ctx);
+        this.enemyManager.render(this.ctx, this.cameraX, this.canvas.width);
         // The world has already been translated by cameraX, so the boss uses world coordinates here.
         this.bossManager.render(this.ctx, 0);
-        this.worldManager.renderScriptureBooks(this.ctx, this.bomImage);
-        this.worldManager.renderHearts(this.ctx, this.heartImage);
+        this.worldManager.renderScriptureBooks(this.ctx, this.bomImage, this.cameraX, this.canvas.width);
+        this.worldManager.renderHearts(this.ctx, this.heartImage, this.cameraX, this.canvas.width);
         
         // Render characters
         this.characterRenderer.renderPlayer(this.ctx, this.player, this.hasArmor, this.gameState, this.isPaused);
@@ -2549,14 +2682,22 @@ class ArmorOfGodGame {
                 this.ctx.save();
                 this.ctx.translate(-this.cameraX, -this.cameraY); // Translate back for world coordinates
                 
-                // Show "Press D to pet!" above the pet
+                // Show the pet interaction prompt above the companion.
+                const isTouchPrompt = window.matchMedia('(pointer: coarse)').matches;
+                const promptWidth = isTouchPrompt ? 250 : 120;
+                const promptHeight = isTouchPrompt ? 40 : 20;
+                const promptCenterX = this.pet.x + 25;
+                const promptBottomY = this.pet.y - 5;
                 this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-                this.ctx.fillRect(this.pet.x - 25, this.pet.y - 25, 80, 20);
+                this.ctx.fillRect(promptCenterX - promptWidth / 2, promptBottomY - promptHeight, promptWidth, promptHeight);
                 
                 this.ctx.fillStyle = '#FFD700';
-                this.ctx.font = '12px Arial';
+                this.ctx.font = isTouchPrompt ? '24px Arial' : '12px Arial';
                 this.ctx.textAlign = 'center';
-                this.ctx.fillText('Press D to pet!', this.pet.x + 15, this.pet.y - 10);
+                const petPrompt = isTouchPrompt
+                    ? 'Double tap!'
+                    : "Press 'D'!";
+                this.ctx.fillText(petPrompt, promptCenterX, promptBottomY - (isTouchPrompt ? 10 : 5));
                 
                 this.ctx.restore();
             }
