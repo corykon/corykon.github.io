@@ -274,6 +274,60 @@ body {
     display: none !important;
 }
 
+/* Temporary Phase 0 phone notice. It is activated by a phone user-agent plus
+   coarse-pointer check in index.html and intentionally does not apply to tablets. */
+.mobile-support-notice {
+    position: fixed;
+    z-index: 2000;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+    background: rgba(4, 7, 17, .94);
+}
+
+.mobile-support-notice__card {
+    width: min(100%, 420px);
+    padding: 36px 28px 30px;
+    border: 3px solid #ffd700;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #17213d, #0a1020);
+    box-shadow: 0 0 36px rgba(255, 215, 0, .3);
+    text-align: center;
+}
+
+.mobile-support-notice__device {
+    width: 112px;
+    height: 92px;
+    margin: 0 auto 24px;
+    color: #35b9c0;
+}
+
+.mobile-support-notice__device svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.mobile-support-notice h1 {
+    margin: 0 0 18px;
+    color: #ffd700;
+    font-size: clamp(20px, 6vw, 28px);
+    line-height: 1.45;
+}
+
+.mobile-support-notice p {
+    margin: 0 0 28px;
+    color: #fff;
+    font-size: clamp(13px, 4vw, 17px);
+    line-height: 1.7;
+}
+
+.mobile-support-notice__dismiss {
+    min-width: 190px;
+}
+
 /* Closing credits */
 #creditsScreen {
     position: relative;
