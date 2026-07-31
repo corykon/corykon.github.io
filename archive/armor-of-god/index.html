@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="game.css">
+    <link rel="stylesheet" href="game.css?v=leaderboard-chevron-fix">
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQ0NT1894T"></script>
@@ -220,6 +220,7 @@
                 </div>
                 <div id="leaderboardHeading" class="leaderboard-heading"><span>RANK</span><span>NAME</span><span>DATE</span><span>SCORE</span></div>
                 <div id="leaderboardEntries" class="leaderboard-entries" aria-live="polite"></div>
+                <div id="leaderboardScrollHint" class="leaderboard-scroll-hint" aria-hidden="true"><span>MORE SCORES</span><svg viewBox="0 0 88 52" focusable="false"><path d="M8 10 H80 L44 43 Z"/></svg></div>
                 <div class="leaderboard-continue-wrap"><button id="leaderboardContinueBtn" class="menu-btn leaderboard-continue">Back to Main Menu</button></div>
             </div>
         </div>
@@ -406,7 +407,7 @@
     <script src="js/character-renderer.js"></script>
     <script src="js/pet-manager.js?v=pet-controls-fix"></script>
     <script src="js/boss-manager.js"></script>
-    <script src="js/high-score.js"></script>
+    <script src="js/high-score.js?v=leaderboard-chevron-fix"></script>
     <script src="js/game-modular.js?v=pet-controls-fix"></script>
 </body>
 </html>

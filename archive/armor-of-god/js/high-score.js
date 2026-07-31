@@ -5,6 +5,7 @@ class HighScoreBoard {
         this.nameEntry = document.getElementById('leaderboardEntry');
         this.nameInput = document.getElementById('leaderboardName');
         this.entries = document.getElementById('leaderboardEntries');
+        this.scrollHint = document.getElementById('leaderboardScrollHint');
         this.heading = document.getElementById('leaderboardHeading');
         this.status = document.getElementById('leaderboardStatus');
         this.continueButton = document.getElementById('leaderboardContinueBtn');
@@ -16,6 +17,7 @@ class HighScoreBoard {
         this.skipButton.addEventListener('click', () => this.skip());
         this.nameInput.addEventListener('keydown', event => { if (event.key === 'Enter') this.submit(); });
         this.continueButton.addEventListener('click', () => this.exit());
+        this.entries.addEventListener('scroll', () => this.updateScrollHint());
     }
 
     // Allow only a compact arcade-name character set. textContent is used for output too.
@@ -103,8 +105,12 @@ class HighScoreBoard {
             this.heading.classList.remove('hidden');
             scores.forEach((entry, index) => this.entries.append(this.renderEntry(entry, index + 1)));
             this.revealResults();
+            requestAnimationFrame(() => this.updateScrollHint());
             const highlighted = this.entries.querySelector('.leaderboard-row--highlighted');
-            if (highlighted) highlighted.scrollIntoView({ block: 'center' });
+            if (highlighted) {
+                highlighted.scrollIntoView({ block: 'center' });
+                requestAnimationFrame(() => this.updateScrollHint());
+            }
         } catch (error) {
             console.error('Leaderboard load failed:', error);
             this.setNotice('offline', 'LEADERBOARD TEMPORARILY OFFLINE', 'PLEASE TRY AGAIN IN A MOMENT.');
@@ -112,6 +118,7 @@ class HighScoreBoard {
     }
 
     showLoading() {
+        this.scrollHint.classList.remove('is-visible');
         this.entries.replaceChildren();
         this.entries.classList.remove('leaderboard-entries--notice', 'leaderboard-entries--revealed');
         this.entries.classList.remove('hidden');
@@ -128,6 +135,7 @@ class HighScoreBoard {
     }
 
     setNotice(type, title, message) {
+        this.scrollHint.classList.remove('is-visible');
         this.entries.replaceChildren();
         this.entries.classList.remove('hidden');
         this.entries.classList.add('leaderboard-entries--notice');
@@ -153,11 +161,18 @@ class HighScoreBoard {
     }
 
     hideResults() {
+        this.scrollHint.classList.remove('is-visible');
         this.entries.replaceChildren();
         this.entries.classList.add('hidden');
         this.entries.classList.remove('leaderboard-entries--notice', 'leaderboard-entries--revealed');
         this.heading.classList.add('hidden');
         this.heading.classList.remove('leaderboard-heading--revealed');
+    }
+
+    updateScrollHint() {
+        const remaining = this.entries.scrollHeight - this.entries.clientHeight - this.entries.scrollTop;
+        const hasScores = Boolean(this.entries.querySelector('.leaderboard-row'));
+        this.scrollHint.classList.toggle('is-visible', hasScores && remaining > 2);
     }
 
     renderEntry(entry, rank) {
@@ -170,9 +185,28 @@ class HighScoreBoard {
         const date = entry.createdAt?.toDate ? entry.createdAt.toDate() : new Date();
         const shortDate = `${date.getMonth() + 1}/${date.getDate()}/${String(date.getFullYear()).slice(-2)}`;
         [['#', rank], ['NAME', this.cleanName(String(entry.name || 'UNKNOWN')) || 'UNKNOWN'], ['DATE', shortDate], ['SCORE', Number(entry.score || 0).toLocaleString()]].forEach(([label, value]) => {
-            const cell = document.createElement('span'); cell.dataset.label = label; cell.textContent = value; row.append(cell);
+            const cell = document.createElement('span');
+            cell.dataset.label = label;
+            cell.textContent = value;
+            if (label === '#') {
+                cell.classList.add('leaderboard-rank');
+                if (rank <= 3) cell.append(this.createCrownIcon());
+            }
+            row.append(cell);
         });
         return row;
+    }
+
+    createCrownIcon() {
+        const namespace = 'http://www.w3.org/2000/svg';
+        const crown = document.createElementNS(namespace, 'svg');
+        crown.setAttribute('class', 'leaderboard-crown');
+        crown.setAttribute('viewBox', '0 0 24 18');
+        crown.setAttribute('aria-hidden', 'true');
+        const shape = document.createElementNS(namespace, 'path');
+        shape.setAttribute('d', 'M2 3 6.5 7 12 1 17.5 7 22 3 19 15H5Z');
+        crown.append(shape);
+        return crown;
     }
 
     exit() { this.isFinalLeaderboard ? this.game.startCredits() : this.game.goToMainMenu(); }
