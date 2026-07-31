@@ -28,9 +28,9 @@ class ArmorOfGodGame {
         
         // Level data
         this.levelData = {
-            1: { name: 'Clover Hills', image: 'images/level1.png' },
-            2: { name: 'Midnight Jungle', image: 'images/level2.png' },
-            3: { name: 'Granite Mountain Pass', image: 'images/level3.png' }
+            1: { name: 'Clover Hills', image: 'images/ui/level-01-clover-hills.png' },
+            2: { name: 'Midnight Jungle', image: 'images/ui/level-02-midnight-jungle.png' },
+            3: { name: 'Granite Mountain Pass', image: 'images/ui/level-03-granite-mountain-pass.png' }
         };
         
         this.cameraX = 0;
@@ -70,15 +70,15 @@ class ArmorOfGodGame {
         
         // Load images
         this.templeImage = new Image();
-        this.templeImage.src = 'images/sprites/temple.png';
+        this.templeImage.src = 'images/sprites/world/temple/temple.png';
         this.bomImage = new Image();
-        this.bomImage.src = 'images/sprites/bom.png';
+        this.bomImage.src = 'images/sprites/pickups/scripture-pickup.png';
         this.heartImage = new Image();
-        this.heartImage.src = 'images/sprites/heartUp.png';
+        this.heartImage.src = 'images/sprites/pickups/health-up.png';
         this.arrowImage = new Image();
-        this.arrowImage.src = 'images/sprites/enemy/fiery-arrow.png';
+        this.arrowImage.src = 'images/sprites/enemies/fiery-arrow.png';
         this.brokenArrowImage = new Image();
-        this.brokenArrowImage.src = 'images/sprites/enemy/fiery-arrow-broken.png';
+        this.brokenArrowImage.src = 'images/sprites/enemies/fiery-arrow-broken.png';
         
         // Load foreground images
         this.foregroundImages = {};
@@ -196,7 +196,7 @@ class ArmorOfGodGame {
         this.bossManager = new BossManager();
         this.caveCrystalImages = ['crystal-1.png', 'crystal-2.png', 'crystal-3.png'].map(file => {
             const image = new Image();
-            image.src = `images/sprites/foreground/${file}`;
+            image.src = `images/sprites/world/props/${file}`;
             return image;
         });
         this.pendingBossIntro = false;
@@ -1073,9 +1073,9 @@ class ArmorOfGodGame {
             'tall-tree.png',
             'long-bush.png',
             'jungle-bush.png',
-            'jungle-foilage-1.png',
-            'jungle-foilage-2.png',
-            'jungle-foilage-3.png',
+            'jungle-foliage-01.png',
+            'jungle-foliage-02.png',
+            'jungle-foliage-03.png',
             'jungle-tree-1.png',
             'jungle-tree-2.png',
             'jungle-tree-3.png',
@@ -1087,8 +1087,13 @@ class ArmorOfGodGame {
         
         foregroundSprites.forEach(filename => {
             const img = new Image();
-            img.src = `images/sprites/foreground/${filename}`;
+            img.src = `images/sprites/world/props/${filename}`;
             this.foregroundImages[filename] = img;
+
+            // Level placement data predates the corrected foliage spelling. Keep
+            // its internal keys stable while loading the normalized asset names.
+            const legacyFilename = filename.replace(/^jungle-foliage-0([1-3])\.png$/, 'jungle-foilage-$1.png');
+            this.foregroundImages[legacyFilename] = img;
         });
     }
     
@@ -1244,12 +1249,12 @@ class ArmorOfGodGame {
             subtitle?.classList.toggle('level-clear-subtitle', !this.pendingLevelThreeBoss);
             if (this.pendingLevelThreeBoss) {
                 if (title) title.textContent = 'Level Cleared';
-                if (victoryImage) { victoryImage.src = 'images/sprites/enemy/golem-stand.png'; victoryImage.alt = 'Stone Golem'; }
+                if (victoryImage) { victoryImage.src = 'images/sprites/enemies/golem/golem-stand.png'; victoryImage.alt = 'Stone Golem'; }
                 if (subtitle) subtitle.textContent = '...but a stone golem is blocking the way  !';
                 if (scripture) scripture.textContent = '"For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind"';
             } else {
                 if (title) title.textContent = 'Level Cleared';
-                if (victoryImage) { victoryImage.src = './images/sprites/temple.png'; victoryImage.alt = 'Holy Temple'; }
+                if (victoryImage) { victoryImage.src = './images/sprites/world/temple/temple.png'; victoryImage.alt = 'Holy Temple'; }
                 if (subtitle) subtitle.textContent = "You've made it to the House of the Lord!";
                 if (scripture) scripture.textContent = '"Well done, thou good and faithful servant!"';
             }
@@ -1297,7 +1302,7 @@ class ArmorOfGodGame {
         const hero = document.getElementById('creditsHero');
         if (hero) {
             const petType = this.selectedPetType === 'cat' ? 'cat' : 'dog';
-            hero.src = `images/hero-credits-${petType}.png`;
+            hero.src = `images/ui/hero-${petType}.png`;
             hero.alt = `Hero and ${petType} companion`;
         }
         this.showScreen('credits');
@@ -2123,7 +2128,7 @@ class ArmorOfGodGame {
         this.audioManager.playMusic('bossFight');
         document.getElementById('introLevelNumber').textContent = 'BOSS FIGHT';
         document.getElementById('introLevelName').textContent = 'STONE GOLEM';
-        document.getElementById('introLevelImage').src = 'images/boss-fight.png';
+        document.getElementById('introLevelImage').src = 'images/ui/stone-golem-boss-fight.png';
         document.getElementById('introLevelImage').alt = 'Stone Golem boss fight';
         document.getElementById('startLevelBtn').innerHTML = 'Start Battle <span class="chevron-icon">❯</span>';
     }
@@ -2797,14 +2802,14 @@ class ArmorOfGodGame {
     }
     
     getScoreDetailSprite(label) {
-        if (label.startsWith('Scripture')) return 'images/sprites/bom.png';
+        if (label.startsWith('Scripture')) return 'images/sprites/pickups/scripture-pickup.png';
         if (label.startsWith('Heart') || label.startsWith('Health')) return null;
-        if (label.startsWith('Mega Snail')) return 'images/sprites/enemy/snail-shell.png';
-        if (label.startsWith('Snail')) return 'images/sprites/enemy/snail-crawl1.png';
-        if (label.startsWith('Arrow')) return 'images/sprites/enemy/fiery-arrow.png';
-        if (label.startsWith('Armor')) return 'images/sprites/main-char/armor-standing.png';
-        if (label.startsWith('Head Stomp') || label.startsWith('Stone Golem')) return 'images/sprites/enemy/golem-stand.png';
-        if (label.startsWith('Speed')) return 'images/sprites/main-char/jump.png';
+        if (label.startsWith('Mega Snail')) return 'images/sprites/enemies/snail/snail-shell.png';
+        if (label.startsWith('Snail')) return 'images/sprites/enemies/snail/snail-crawl-01.png';
+        if (label.startsWith('Arrow')) return 'images/sprites/enemies/fiery-arrow.png';
+        if (label.startsWith('Armor')) return 'images/sprites/player/armored-stand.png';
+        if (label.startsWith('Head Stomp') || label.startsWith('Stone Golem')) return 'images/sprites/enemies/golem/golem-stand.png';
+        if (label.startsWith('Speed')) return 'images/sprites/player/jump.png';
         return null;
     }
 
@@ -2949,18 +2954,18 @@ class ArmorOfGodGame {
         runnersEl.classList.remove('running', 'level-three-pose');
         const petType = this.selectedPet === 'cat' ? 'cat' : 'dog';
         if (this.pendingLevelThreeBoss) {
-            petImgEl.src = `images/sprites/main-char/${petType}-jump1.png`;
-            playerImgEl.src = this.hasArmor ? 'images/sprites/main-char/armor-drop.png' : 'images/sprites/main-char/drop.png';
+            petImgEl.src = petType === 'dog' ? 'images/sprites/pets/dog-jump-01.png' : 'images/sprites/pets/cat-run-01.png';
+            playerImgEl.src = this.hasArmor ? 'images/sprites/player/armored-fall.png' : 'images/sprites/player/fall.png';
             runnersEl.classList.add('level-three-pose');
         } else {
-            petImgEl.src = `images/sprites/main-char/${petType}-run1.png`;
-            playerImgEl.src = 'images/sprites/main-char/run1.png';
+            petImgEl.src = `images/sprites/pets/${petType}-run-01.png`;
+            playerImgEl.src = 'images/sprites/player/run-01.png';
             runnersEl.classList.add('running');
             let playerFrame = 0, petFrame = 0;
             this.victoryAnimationInterval = setInterval(() => {
-                playerImgEl.src = `images/sprites/main-char/run${(playerFrame++ % 14) + 1}.png`;
+                playerImgEl.src = `images/sprites/player/run-${String((playerFrame++ % 14) + 1).padStart(2, '0')}.png`;
                 const frames = petType === 'cat' ? 4 : 5;
-                petImgEl.src = `images/sprites/main-char/${petType}-run${(petFrame++ % frames) + 1}.png`;
+                petImgEl.src = `images/sprites/pets/${petType}-run-${String((petFrame++ % frames) + 1).padStart(2, '0')}.png`;
             }, 80);
             setTimeout(() => {
                 if (this.victoryAnimationInterval) {

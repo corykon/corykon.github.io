@@ -40,33 +40,25 @@ class CharacterRenderer {
     }
     
     loadSprites() {
-        const spriteNames = [
-            'standing', 'jump', 'drop', 'stopping',
-            'pet1', 'pet2', 'pet3',
-            'duck1', 'duck2', 'duck3',
-            'run1', 'run2', 'run3', 'run4', 'run5', 'run6', 'run7',
-            'run8', 'run9', 'run10', 'run11', 'run12', 'run13', 'run14'
+        const playerSprites = [
+            'stand', 'jump', 'fall', 'brake',
+            'pet-01', 'pet-02', 'pet-03',
+            'duck-01', 'duck-02', 'duck-03',
+            ...Array.from({ length: 14 }, (_, index) => `run-${String(index + 1).padStart(2, '0')}`),
+            'armored-stand', 'armored-jump', 'armored-fall',
+            'armored-pet-01', 'armored-pet-02', 'armored-pet-03',
+            'armored-duck-01', 'armored-duck-02', 'armored-duck-03',
+            ...Array.from({ length: 8 }, (_, index) => `armored-run-${String(index + 1).padStart(2, '0')}`)
         ];
-        
-        const armorSpriteNames = [
-            'armor-standing', 'armor-jump', 'armor-drop',
-            'armor-pet1', 'armor-pet2', 'armor-pet3',
-            'armor-duck1', 'armor-duck2', 'armor-duck3',
-            'armor-run1', 'armor-run2', 'armor-run3', 'armor-run4',
-            'armor-run5', 'armor-run6', 'armor-run7', 'armor-run8'
+
+        const petSprites = [
+            'dog-stand', ...Array.from({ length: 5 }, (_, index) => `dog-run-${String(index + 1).padStart(2, '0')}`),
+            'dog-jump-01', 'dog-tailwag-01', 'dog-tailwag-02',
+            'cat-stand', ...Array.from({ length: 4 }, (_, index) => `cat-run-${String(index + 1).padStart(2, '0')}`),
+            'cat-tailwag-01', 'cat-tailwag-02'
         ];
-        
-        // Pet sprites
-        const petSpriteNames = [
-            // Dog sprites
-            'dog-stand', 'dog-run1', 'dog-run2', 'dog-run3', 'dog-run4', 'dog-run5',
-            'dog-jump1', 'dog-jump2', 'dog-tailwag1', 'dog-tailwag2',
-            // Cat sprites  
-            'cat-stand', 'cat-run1', 'cat-run2', 'cat-run3', 'cat-run4',
-            'cat-jump1', 'cat-jump2', 'cat-tailwag1', 'cat-tailwag2'
-        ];
-        
-        const allSpriteNames = [...spriteNames, ...armorSpriteNames, ...petSpriteNames];
+
+        const allSpriteNames = [...playerSprites, ...petSprites];
         let loadedCount = 0;
         const totalSprites = allSpriteNames.length;
         
@@ -78,9 +70,15 @@ class CharacterRenderer {
                     this.spritesLoaded = true;
                 }
             };
-            img.src = `images/sprites/main-char/${spriteName}.png`;
+            const directory = spriteName.startsWith('dog-') || spriteName.startsWith('cat-') ? 'pets' : 'player';
+            img.src = `images/sprites/${directory}/${spriteName}.png`;
             this.sprites[spriteName] = img;
         });
+
+        // These poses intentionally reuse identical run frames instead of storing duplicate files.
+        this.sprites['dog-jump-02'] = this.sprites['dog-run-03'];
+        this.sprites['cat-jump-01'] = this.sprites['cat-run-01'];
+        this.sprites['cat-jump-02'] = this.sprites['cat-run-02'];
     }
     
     // Reusable frame cycling function for any animation sequence
@@ -113,45 +111,45 @@ class CharacterRenderer {
             const currentFrameIndex = Math.min(this.petAnimFrame, petFrames.length - 1);
             const spriteIndex = petFrames[currentFrameIndex];
             
-            const prefix = hasArmor ? 'armor-' : '';
-            if (spriteIndex === 0) return this.sprites[`${prefix}pet1`];
-            if (spriteIndex === 1) return this.sprites[`${prefix}pet2`];
-            if (spriteIndex === 2) return this.sprites[`${prefix}pet3`];
-            return this.sprites[`${prefix}standing`];
+            const prefix = hasArmor ? 'armored-' : '';
+            if (spriteIndex === 0) return this.sprites[`${prefix}pet-01`];
+            if (spriteIndex === 1) return this.sprites[`${prefix}pet-02`];
+            if (spriteIndex === 2) return this.sprites[`${prefix}pet-03`];
+            return this.sprites[`${prefix}stand`];
         }
         
         // Handle stopping animation
         if (this.stoppingAnimTimer > 0) {
-            const prefix = hasArmor ? 'armor-' : '';
-            return this.sprites[`${prefix}standing`]; // Use standing for armor since no armor-stopping
+            const prefix = hasArmor ? 'armored-' : '';
+            return this.sprites[`${prefix}stand`]; // Use stand for armor since no armored brake frame exists.
         }
         
         // Handle ducking states
         if (player.isDucking && player.isGrounded) {
-            const prefix = hasArmor ? 'armor-' : '';
+            const prefix = hasArmor ? 'armored-' : '';
             if (player.isMoving) {
                 // Cycle: duck2, duck1, duck3, duck1 when moving while ducking
                 const duckFrames = [1, 0, 2, 0]; // duck2=1, duck1=0, duck3=2, duck1=0
                 const spriteIndex = duckFrames[this.duckAnimFrame];
                 
-                if (spriteIndex === 0) return this.sprites[`${prefix}duck1`];
-                if (spriteIndex === 1) return this.sprites[`${prefix}duck2`];
-                if (spriteIndex === 2) return this.sprites[`${prefix}duck3`];
-                return this.sprites[`${prefix}duck1`];
+                if (spriteIndex === 0) return this.sprites[`${prefix}duck-01`];
+                if (spriteIndex === 1) return this.sprites[`${prefix}duck-02`];
+                if (spriteIndex === 2) return this.sprites[`${prefix}duck-03`];
+                return this.sprites[`${prefix}duck-01`];
             } else {
                 // Use duck1 when ducking at rest
-                return this.sprites[`${prefix}duck1`];
+                return this.sprites[`${prefix}duck-01`];
             }
         }
         
         // Handle jumping states
         if (!player.isGrounded) {
-            const prefix = hasArmor ? 'armor-' : '';
+            const prefix = hasArmor ? 'armored-' : '';
             if (player.velocityY < 0) {
                 return this.sprites[`${prefix}jump`];
             } else {
                 // Check if this is a drop from ledge vs normal fall
-                return this.wasFalling ? this.sprites[`${prefix}drop`] : this.sprites[`${prefix}drop`];
+                return this.wasFalling ? this.sprites[`${prefix}fall`] : this.sprites[`${prefix}fall`];
             }
         }
         
@@ -159,21 +157,19 @@ class CharacterRenderer {
         if (player.isMoving) {
             if (hasArmor) {
                 // Armor has 8 running frames
-                const armorRunFrames = ['armor-run1', 'armor-run2', 'armor-run3', 'armor-run4', 
-                                       'armor-run5', 'armor-run6', 'armor-run7', 'armor-run8'];
+                const armorRunFrames = Array.from({ length: 8 }, (_, index) => `armored-run-${String(index + 1).padStart(2, '0')}`);
                 const frameIndex = this.runAnimFrame % armorRunFrames.length;
                 return this.sprites[armorRunFrames[frameIndex]];
             } else {
                 // Regular has 14 running frames
-                const runFrames = ['run1', 'run2', 'run3', 'run4', 'run5', 'run6', 'run7', 
-                                  'run8', 'run9', 'run10', 'run11', 'run12', 'run13', 'run14'];
+                const runFrames = Array.from({ length: 14 }, (_, index) => `run-${String(index + 1).padStart(2, '0')}`);
                 return this.sprites[runFrames[this.runAnimFrame]];
             }
         }
         
         // Default standing
-        const prefix = hasArmor ? 'armor-' : '';
-        return this.sprites[`${prefix}standing`];
+        const prefix = hasArmor ? 'armored-' : '';
+        return this.sprites[`${prefix}stand`];
     }
     
     update() {
@@ -241,7 +237,7 @@ class CharacterRenderer {
         
         if (currentSprite && this.spritesLoaded) {
             // Check if this is the armor-jump frame which needs special scaling (45% taller)
-            const isArmorJump = hasArmor && currentSprite === this.sprites['armor-jump'];
+            const isArmorJump = hasArmor && currentSprite === this.sprites['armored-jump'];
             const jumpScaleMultiplier = isArmorJump ? 1.45 : 1.0;
             
             // Render sprite-based character (72.8% bigger total - 1.44 * 1.2 = 1.728)
@@ -298,8 +294,7 @@ class CharacterRenderer {
         
         // Handle running animation (only when not ducking)
         if (player.isMoving && player.isGrounded && !player.isDucking) {
-            const runFrames = ['run1', 'run2', 'run3', 'run4', 'run5', 'run6', 'run7', 
-                              'run8', 'run9', 'run10', 'run11', 'run12', 'run13', 'run14'];
+            const runFrames = Array.from({ length: 14 }, (_, index) => `run-${String(index + 1).padStart(2, '0')}`);
             const result = this.cycleFrames(runFrames, this.runAnimFrame, this.runAnimTimer, this.runAnimSpeed);
             this.runAnimFrame = result.frame;
             this.runAnimTimer = result.timer;
@@ -579,23 +574,24 @@ class CharacterRenderer {
         // Handle jumping states
         if (!pet.isGrounded) {
             if (pet.velocityY < 0) {
-                return this.sprites[`${prefix}-jump1`]; // Going up
+                return this.sprites[`${prefix}-jump-01`]; // Going up
             } else {
-                return this.sprites[`${prefix}-jump2`]; // Coming down
+                const fallFrame = prefix === 'dog' ? 'dog-jump-02' : 'cat-jump-02';
+                return this.sprites[fallFrame]; // Coming down
             }
         }
         
         // Handle running animation
         if (pet.isMoving) {
             const runFrame = this.petRunAnimFrame + 1; // Frames are 1-indexed
-            return this.sprites[`${prefix}-run${runFrame}`];
+            return this.sprites[`${prefix}-run-${String(runFrame).padStart(2, '0')}`];
         }
         
         // Handle idle tail wagging animation
         if (this.petTailWagFrame === 1) {
-            return this.sprites[`${prefix}-tailwag1`];
+            return this.sprites[`${prefix}-tailwag-01`];
         } else if (this.petTailWagFrame === 2) {
-            return this.sprites[`${prefix}-tailwag2`];
+            return this.sprites[`${prefix}-tailwag-02`];
         }
         
         // Default standing position

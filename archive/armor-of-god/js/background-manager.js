@@ -110,9 +110,9 @@ class BackgroundManager {
     
     loadImages() {
         const imageUrls = {
-            cloud1: 'images/sprites/cloud1.png',
-            cloud2: 'images/sprites/cloud2.png',
-            cloud3: 'images/sprites/cloud3.png',
+            cloud1: 'images/sprites/world/clouds/cloud-01.png',
+            cloud2: 'images/sprites/world/clouds/cloud-02.png',
+            cloud3: 'images/sprites/world/clouds/cloud-03.png',
         };
         
         let loadedCount = 0;

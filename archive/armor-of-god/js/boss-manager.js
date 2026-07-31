@@ -38,31 +38,31 @@ class BossManager {
         this.finalPhasePending = false;
         this.afterHitAction = 'lava';
         this.exitImage = new Image();
-        this.exitImage.src = 'images/sprites/foreground/cave-exit.png';
+        this.exitImage.src = 'images/sprites/world/props/cave-exit.png';
         this.sprites = {};
         this.loadSprites();
         this.hitSmokeImage = new Image();
-        this.hitSmokeImage.src = 'images/sprites/enemy/bad-guy-defeated.png';
+        this.hitSmokeImage.src = 'images/sprites/enemies/defeat-smoke.png';
         this.rockSprites = ['falling-rock-1.png', 'falling-rock-2.png', 'falling-rock-3.png'].map(file => {
-            const image = new Image(); image.src = `images/sprites/foreground/${file}`; return image;
+            const image = new Image(); image.src = `images/sprites/world/props/${file}`; return image;
         });
     }
 
     loadSprites() {
         const definitions = {
             stand: ['golem-stand.png'],
-            standBlue: ['golem-stand-b.png'],
-            run: ['golem-run1.png', 'golem-run2.png', 'golem-run3.png', 'golem-run4.png', 'golem-run5.png', 'golem-run6.png', 'golem-run7.png'],
-            runBlue: ['golem-run1-b.png', 'golem-run2-b.png', 'golem-run3-b.png', 'golem-run4-b.png', 'golem-run5-b.png', 'golem-run6-b.png', 'golem-run7-b.png'],
-            slam: ['golem-slam1.png', 'golem-slam2.png', 'golem-slam3.png', 'golem-slam4.png', 'golem-slam5.png', 'golem-slam6.png', 'golem-slam7.png', 'golem-slam8.png'],
+            standBlue: ['golem-stand-blue.png'],
+            run: Array.from({ length: 7 }, (_, index) => `golem-run-${String(index + 1).padStart(2, '0')}.png`),
+            runBlue: Array.from({ length: 7 }, (_, index) => `golem-run-${String(index + 1).padStart(2, '0')}-blue.png`),
+            slam: Array.from({ length: 8 }, (_, index) => `golem-slam-${String(index + 1).padStart(2, '0')}.png`),
             // Vulnerability is a stationary recovery window, so never cycle running frames here.
-            vulnerable: ['golem-stand-b.png'],
-            jump1: ['golem-jump1.png'], jump2: ['golem-jump2.png'], jump3: ['golem-jump3.png'], jump4: ['golem-jump4.png'], jump5: ['golem-jump5.png'],
-            jump1Blue: ['golem-jump1-b.png'], jump2Blue: ['golem-jump2-b.png'], jump3Blue: ['golem-jump3-b.png'], jump4Blue: ['golem-jump4-b.png'], jump5Blue: ['golem-jump5-b.png'],
-            hit: ['golem-slam4.png']
+            vulnerable: ['golem-stand-blue.png'],
+            jump1: ['golem-jump-01.png'], jump2: ['golem-jump-02.png'], jump3: ['golem-jump-03.png'], jump4: ['golem-jump-04.png'], jump5: ['golem-jump-05.png'],
+            jump1Blue: ['golem-jump-01-blue.png'], jump2Blue: ['golem-jump-02-blue.png'], jump3Blue: ['golem-jump-03-blue.png'], jump4Blue: ['golem-jump-04-blue.png'], jump5Blue: ['golem-jump-05-blue.png'],
+            hit: ['golem-slam-04.png']
         };
         Object.entries(definitions).forEach(([name, files]) => {
-            this.sprites[name] = files.map(file => { const image = new Image(); image.src = `images/sprites/enemy/${file}`; return image; });
+            this.sprites[name] = files.map(file => { const image = new Image(); image.src = `images/sprites/enemies/golem/${file}`; return image; });
         });
     }
 
