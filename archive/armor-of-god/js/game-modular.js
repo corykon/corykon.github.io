@@ -1024,6 +1024,7 @@ class ArmorOfGodGame {
         this.lastSafePlatformTimer = 0;
         
         this.isPaused = false;
+        this.updatePauseButton();
         this.postBossSurface = false;
         this.keepVictoryMusicForCompletion = false;
         this.surfaceCaveExit = null;
@@ -2403,7 +2404,7 @@ class ArmorOfGodGame {
     updatePauseButton() {
         const button = document.getElementById('pauseTouchBtn');
         const reminder = document.getElementById('pauseReminderText');
-        if (reminder) reminder.textContent = this.isPaused ? "Press 'esc' to resume" : "Press 'esc' to pause";
+        if (reminder) reminder.textContent = this.isPaused ? "Press 'ESC' to resume" : "Press 'ESC' to pause";
         if (!button) return;
         button.innerHTML = this.isPaused
             ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>'
@@ -2457,6 +2458,8 @@ class ArmorOfGodGame {
     }
 
     restartBossFight() {
+        this.isPaused = false;
+        this.updatePauseButton();
         this.bossManager.reset();
         this.bossManager.active = true;
         this.worldManager.createBossArena();
@@ -2630,6 +2633,10 @@ class ArmorOfGodGame {
         this.isCelebrationFastForward = false;
         this.effectsManager.initializeFireworks(this.castle);
         if (!this.keepVictoryMusicForCompletion) this.audioManager.playMusic('winner');
+        // Let the level-clear music establish first, then layer the fireworks over it.
+        setTimeout(() => {
+            if (this.gameState === 'celebrating') this.audioManager.playSound('fireworks');
+        }, 500);
         
         // Don't reset alpha values here - let the fade effect continue
         // through the celebration until the level complete screen shows
