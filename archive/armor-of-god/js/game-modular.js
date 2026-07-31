@@ -2722,7 +2722,9 @@ class ArmorOfGodGame {
                     ? (pettingTutorialComplete ? 'Double tap?' : 'Double tap!')
                     : (pettingTutorialComplete ? "Press 'D'?" : "Press 'D'!");
                 this.ctx.font = `${promptSize}px "Press Start 2P", monospace`;
-                const promptWidth = Math.ceil(this.ctx.measureText(petPrompt).width) + 24;
+                // iOS can briefly measure the fallback font narrower than the loaded
+                // pixel font, so give touch prompts enough extra side room to contain it.
+                const promptWidth = Math.ceil(this.ctx.measureText(petPrompt).width) + (isTouchPrompt ? 48 : 24);
                 // The compact completed desktop prompt needs a slightly tighter badge.
                 const promptHeight = pettingTutorialComplete && !isTouchPrompt
                     ? 18
