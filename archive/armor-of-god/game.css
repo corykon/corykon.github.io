@@ -254,10 +254,6 @@ body {
 .startup-loading--visible { opacity: 1; }
 .startup-loading--leaving { opacity: 0; pointer-events: none; }
 .startup-loading__title { font-size: clamp(18px, 4vw, 34px); text-shadow: 3px 3px 0 #46300a; }
-.startup-loading__runners { position: relative; width: min(280px, 72vw); height: 94px; border-bottom: 3px solid rgba(255, 215, 0, .55); }
-.startup-loading__hero, .startup-loading__dog { position: absolute; bottom: -24px; width: 112px; height: 112px; object-fit: contain; image-rendering: pixelated; }
-.startup-loading__hero { left: calc(50% - 8px); filter: drop-shadow(3px 4px 0 rgba(0, 0, 0, .35)); }
-.startup-loading__dog { left: calc(50% - 94px); width: 92px; height: 92px; bottom: -18px; opacity: .96; }
 .startup-loading p { margin: 0; font-size: clamp(9px, 1.5vw, 13px); line-height: 1.6; }
 .startup-loading__track { width: min(360px, 78vw); height: 12px; border: 2px solid #ffd700; background: #070914; }
 .startup-loading__progress { width: 0; height: 100%; background: linear-gradient(90deg, #35b9c0, #ffd700); transition: width .12s linear; }

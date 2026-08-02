@@ -306,13 +306,17 @@ class ArmorOfGodGame {
         ]);
     }
 
-    revealMenuAfterStartup() {
+    revealMenuAfterStartup(loaderWasShown = true) {
         this.initializeAudio();
         requestAnimationFrame(() => {
             document.body.classList.add('menu-ready');
             const loader = document.getElementById('startupLoading');
-            loader.classList.add('startup-loading--leaving');
-            setTimeout(() => loader.classList.add('hidden'), 650);
+            if (loaderWasShown) {
+                loader.classList.add('startup-loading--leaving');
+                setTimeout(() => loader.classList.add('hidden'), 650);
+            } else {
+                loader.classList.add('hidden');
+            }
             document.getElementById('startBtn').focus({ preventScroll: true });
         });
     }
@@ -3303,18 +3307,21 @@ class ArmorOfGodGame {
 // can stall forever on mobile while Safari is still fetching a noncritical image.
 async function startGameAfterDomReady() {
     const loadingStartedAt = performance.now();
-    requestAnimationFrame(() => document.getElementById('startupLoading').classList.add('startup-loading--visible'));
+    const loader = document.getElementById('startupLoading');
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+    let loaderWasShown = false;
+    const showLoader = () => {
+        loaderWasShown = true;
+        loader.classList.add('startup-loading--visible');
+    };
+    // Cached desktop starts should go straight to the menu. Phones always show
+    // the loading screen because their asset and media startup is less predictable.
+    const desktopLoaderTimer = isTouchDevice ? null : setTimeout(showLoader, 350);
+    if (isTouchDevice) {
+        loaderWasShown = true;
+        requestAnimationFrame(() => loader.classList.add('startup-loading--visible'));
+    }
     const game = new ArmorOfGodGame();
-    const loaderHero = document.querySelector('.startup-loading__hero');
-    const loaderDog = document.querySelector('.startup-loading__dog');
-    let heroFrame = 11;
-    let dogFrame = 0;
-    const loaderRunAnimation = setInterval(() => {
-        heroFrame = (heroFrame + 1) % 14;
-        dogFrame = (dogFrame + 1) % 5;
-        loaderHero.src = `images/sprites/player/run-${String(heroFrame + 1).padStart(2, '0')}.png`;
-        loaderDog.src = `images/sprites/pets/dog-run-${String(dogFrame + 1).padStart(2, '0')}.png`;
-    }, 80);
     const status = document.getElementById('startupLoadingStatus');
     const progress = document.getElementById('startupLoadingProgress');
     const preloadPromise = game.preloadStartupAssets((loaded, total) => {
@@ -3337,12 +3344,12 @@ async function startGameAfterDomReady() {
         progress.style.width = '100%';
         status.textContent = 'STARTING ADVENTURE…';
     }
-    const remainingDisplayTime = 2000 - (performance.now() - loadingStartedAt);
-    if (remainingDisplayTime > 0) {
+    if (desktopLoaderTimer) clearTimeout(desktopLoaderTimer);
+    const remainingDisplayTime = 1500 - (performance.now() - loadingStartedAt);
+    if (loaderWasShown && remainingDisplayTime > 0) {
         await new Promise(resolve => setTimeout(resolve, remainingDisplayTime));
     }
-    clearInterval(loaderRunAnimation);
-    game.revealMenuAfterStartup();
+    game.revealMenuAfterStartup(loaderWasShown);
 }
 
 if (document.readyState === 'loading') {
