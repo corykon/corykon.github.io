@@ -3306,6 +3306,8 @@ class ArmorOfGodGame {
 // Start loading as soon as the document structure is ready. Waiting for window.load
 // can stall forever on mobile while Safari is still fetching a noncritical image.
 async function startGameAfterDomReady() {
+    const isDevelopmentEnvironment = location.protocol === 'file:' || ['localhost', '127.0.0.1', '::1', '0.0.0.0'].includes(location.hostname);
+    document.body.classList.toggle('development-mode', isDevelopmentEnvironment);
     const loadingStartedAt = performance.now();
     const loader = document.getElementById('startupLoading');
     const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
