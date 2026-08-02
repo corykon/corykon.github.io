@@ -310,7 +310,9 @@ class ArmorOfGodGame {
         this.initializeAudio();
         requestAnimationFrame(() => {
             document.body.classList.add('menu-ready');
-            document.getElementById('startupLoading').classList.add('hidden');
+            const loader = document.getElementById('startupLoading');
+            loader.classList.add('startup-loading--leaving');
+            setTimeout(() => loader.classList.add('hidden'), 650);
             document.getElementById('startBtn').focus({ preventScroll: true });
         });
     }
@@ -3301,6 +3303,7 @@ class ArmorOfGodGame {
 // can stall forever on mobile while Safari is still fetching a noncritical image.
 async function startGameAfterDomReady() {
     const loadingStartedAt = performance.now();
+    requestAnimationFrame(() => document.getElementById('startupLoading').classList.add('startup-loading--visible'));
     const game = new ArmorOfGodGame();
     const loaderHero = document.querySelector('.startup-loading__hero');
     const loaderDog = document.querySelector('.startup-loading__dog');
