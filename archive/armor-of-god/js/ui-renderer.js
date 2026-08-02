@@ -4,6 +4,8 @@ class UIRenderer {
         this.messages = [];
         this.messageTimer = 0;
         this.displayedScore = null;
+        this.armorCard = null;
+        this.armorCardHovered = false;
         
         // Pause menu buttons (will be set by game)
         this.pauseRestartButton = null;
@@ -17,14 +19,16 @@ class UIRenderer {
         this.heartMaskCtx = this.heartMaskCanvas.getContext('2d');
     }
     
-    showMessage(text, duration = 180, color = '#FFD700', backgroundWidth = 600) {
-        this.messages.push({
+    showMessage(text, duration = 180, color = '#FFD700', backgroundWidth = 600, placeBelowExisting = false) {
+        const message = {
             text: text,
-            duration: duration,
+            duration: Math.round(duration * 1.5),
             timer: 0,
             color: color,
             backgroundWidth: backgroundWidth
-        });
+        };
+        if (placeBelowExisting) this.messages.unshift(message);
+        else this.messages.push(message);
     }
     
     updateMessages() {
@@ -33,8 +37,64 @@ class UIRenderer {
             return message.timer < message.duration;
         });
     }
+
+    showArmorCard(piece) {
+        this.armorCard = { piece, timer: 300, duration: 300 };
+        this.armorCardHovered = false;
+    }
+
+    updateArmorCard() {
+        if (!this.armorCard) return;
+        if (this.armorCardHovered) return;
+        this.armorCard.timer--;
+        if (this.armorCard.timer <= 0) {
+            this.armorCard = null;
+            this.armorCardHovered = false;
+        }
+    }
+
+    getArmorCardBounds() {
+        return this.armorCard ? { x: 20, y: 76, width: 411, height: 70 } : null;
+    }
+
+    setArmorCardHovered(hovered) {
+        this.armorCardHovered = Boolean(hovered && this.armorCard);
+    }
+
+    renderArmorCard(ctx) {
+        const card = this.armorCard;
+        if (!card) return;
+        const bounds = this.getArmorCardBounds();
+        const alpha = Math.min(1, card.timer / 45);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = this.armorCardHovered ? 'rgba(0, 0, 0, .72)' : 'rgba(0, 0, 0, .6)';
+        ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        if (this.armorCardHovered) {
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#ffd700';
+            ctx.shadowBlur = 9;
+            ctx.strokeRect(bounds.x + 1, bounds.y + 1, bounds.width - 2, bounds.height - 2);
+            ctx.shadowBlur = 0;
+        }
+        if (card.piece.image?.complete) ctx.drawImage(card.piece.image, bounds.x, bounds.y + 6, 58, 58);
+        ctx.fillStyle = '#ffd700';
+        ctx.font = '12px "Press Start 2P", monospace';
+        ctx.fillText(card.piece.name, bounds.x + 64, bounds.y + 29);
+        ctx.fillStyle = '#d8d8d8';
+        ctx.font = '10px "Press Start 2P", monospace';
+        ctx.fillText(`— ${card.piece.reference}`, bounds.x + 64, bounds.y + 51);
+        if (card.piece.name !== 'Breastplate of Righteousness') {
+            ctx.fillStyle = '#ffd700';
+            ctx.font = '34px sans-serif';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('›', bounds.x + bounds.width - 31, bounds.y + bounds.height / 2);
+        }
+        ctx.restore();
+    }
     
-    renderUI(ctx, player, booksCollected, audioManager, isPaused, gameState, hoveredButton = null, hasArmor = false, armorTimer = 0, armorDuration = 1800, comboMode = false, comboMultiplier = 1, airborneKills = 0, boss = null, heartImage = null) {
+    renderUI(ctx, player, booksCollected, audioManager, isPaused, gameState, hoveredButton = null, hasArmor = false, armorTimer = 0, armorDuration = 1800, comboMode = false, comboMultiplier = 1, airborneKills = 0, boss = null, heartImage = null, suppressPauseOverlay = false) {
         // Health UI Panel
         ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.fillRect(20, 20, 155, 50);
@@ -68,7 +128,11 @@ class UIRenderer {
             const bossPanelY = ctx.canvas.height - 70;
             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; ctx.fillRect(bossPanelX, bossPanelY, 330, 50);
             ctx.fillStyle = '#000'; ctx.fillRect(bossPanelX + 10, bossPanelY + 10, 310, 15);
-            ctx.fillStyle = '#d83b32'; ctx.fillRect(bossPanelX + 10, bossPanelY + 10, (boss.health / boss.maxHealth) * 310, 15);
+            const bossHealthWidth = (boss.health / boss.maxHealth) * 310;
+            ctx.fillStyle = '#7B25B8'; ctx.fillRect(bossPanelX + 10, bossPanelY + 10, bossHealthWidth, 15);
+            if (bossHealthWidth > 0) {
+                ctx.strokeStyle = '#CE80E7'; ctx.lineWidth = 2; ctx.strokeRect(bossPanelX + 10, bossPanelY + 10, bossHealthWidth, 15);
+            }
             ctx.fillStyle = '#fff'; ctx.font = '12px "Press Start 2P", monospace'; ctx.fillText(`Boss Health: ${boss.health} HP`, bossPanelX + 10, bossPanelY + 44);
         }
         
@@ -94,7 +158,7 @@ class UIRenderer {
         ctx.fillRect(panelX + 10, 30, barWidth, 15);
         
         // Scriptures bar fill - shows armor timer when armor is active
-        let fillWidth, fillColor;
+        let fillWidth, fillColor, fillStrokeColor;
         if (hasArmor && armorTimer > 0) {
             // Show armor timer countdown
             const timeRatio = armorTimer / armorDuration;
@@ -103,22 +167,33 @@ class UIRenderer {
             // Color changes as time runs out: gold > orange > red
             if (timeRatio > 0.5) {
                 fillColor = '#FFD700'; // Gold
+                fillStrokeColor = '#FFF1A6';
             } else if (timeRatio > 0.25) {
                 fillColor = '#FFA500'; // Orange
+                fillStrokeColor = '#FFD27A';
             } else {
                 fillColor = '#FF4500'; // Red-Orange
+                fillStrokeColor = '#FF9A8A';
             }
         } else {
             // Show scripture collection progress
             fillWidth = Math.min((booksCollected / 3) * barWidth, barWidth); // Cap at 100%
             if (booksCollected >= 3) {
                 fillColor = '#FFD700'; // Gold when all 3 collected
+                fillStrokeColor = '#FFF1A6';
             } else {
                 fillColor = '#0A81FF'; // Scripture-progress blue
+                fillStrokeColor = '#72D9FF';
             }
         }
+        this.renderArmorCard(ctx);
         ctx.fillStyle = fillColor;
         ctx.fillRect(panelX + 10, 30, fillWidth, 15);
+        if (fillWidth > 0) {
+            ctx.strokeStyle = fillStrokeColor;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(panelX + 10, 30, fillWidth, 15);
+        }
         
         // Scriptures text (changes when armor is activated or shows timer)
         if (hasArmor && armorTimer > 0) {
@@ -199,7 +274,7 @@ class UIRenderer {
         this.renderMessages(ctx);
         
         // Render pause overlay if paused
-        if (isPaused && gameState === 'playing') {
+        if (isPaused && gameState === 'playing' && !suppressPauseOverlay) {
             this.renderPauseOverlay(ctx, hoveredButton);
         }
     }
@@ -208,7 +283,9 @@ class UIRenderer {
         let yOffset = 0;
         this.messages.forEach(message => {
             const opacity = Math.min(1.0, (message.duration - message.timer) / 60);
-            const fontSize = 15; // Fixed 15px font size
+            const fontSize = 14;
+            // One character per frame keeps the type-on effect crisp and easy to remove.
+            const visibleText = message.text.slice(0, message.timer);
             
             // Calculate message width for proper background sizing
             ctx.font = `bold ${fontSize}px "Press Start 2P", monospace`;
@@ -220,16 +297,16 @@ class UIRenderer {
             const textX = backgroundX + backgroundWidth / 2; // Center text in background
             const textY = backgroundY + backgroundHeight / 2 + fontSize / 3; // Properly center text vertically
             
-            // Message background - same style as other UI panels
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            // Match the background used by the floating score feed.
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
             ctx.fillRect(backgroundX, backgroundY, backgroundWidth, backgroundHeight);
             
             // Message text
-            ctx.fillStyle = message.color;
+            ctx.fillStyle = '#fff';
             ctx.globalAlpha = opacity;
             ctx.font = `bold ${fontSize}px "Press Start 2P", monospace`;
             ctx.textAlign = 'center';
-            ctx.fillText(message.text, textX, textY);
+            ctx.fillText(visibleText, textX, textY);
             ctx.textAlign = 'left';
             ctx.globalAlpha = 1.0;
             
@@ -302,12 +379,26 @@ class UIRenderer {
             resumeGradient.addColorStop(1, 'rgba(40, 160, 40, 0.9)');
         }
         ctx.fillStyle = resumeGradient;
+        if (isResumeHovered) {
+            ctx.shadowColor = '#7dff7d';
+            ctx.shadowBlur = 14;
+        }
         ctx.fillRect(resumeButtonX, resumeButtonY, wideButtonWidth, buttonHeight);
+        ctx.shadowBlur = 0;
         
         // Resume button border
         ctx.strokeStyle = isResumeHovered ? '#90FF90' : '#60C060';
         ctx.lineWidth = isResumeHovered ? 4 : 3;
         ctx.strokeRect(resumeButtonX, resumeButtonY, wideButtonWidth, buttonHeight);
+
+        if (isResumeHovered) {
+            ctx.fillStyle = '#ffd700';
+            ctx.shadowColor = '#ffd700';
+            ctx.shadowBlur = 8;
+            ctx.font = '20px sans-serif';
+            ctx.fillText('▶', resumeButtonX - 21, resumeButtonY + buttonHeight / 2);
+            ctx.shadowBlur = 0;
+        }
         
         // Resume button inner border
         ctx.strokeStyle = isResumeHovered ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.5)';

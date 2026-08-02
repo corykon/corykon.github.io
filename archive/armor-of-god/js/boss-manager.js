@@ -11,6 +11,7 @@ class BossManager {
         this.rocks = [];
         this.deathParticles = [];
         this.petAssistSmoke = null;
+        this.petAssistCrouchTimer = 0;
         this.defeatTimer = 0;
         this.shake = 0;
         this.chaseSpeed = 3.36;
@@ -66,7 +67,7 @@ class BossManager {
         });
     }
 
-    reset() { this.state = 'dormant'; this.active = false; this.exit = null; this.exitFade = 0; this.rocks = []; this.deathParticles = []; this.petAssistSmoke = null; this.defeatTimer = 0; this.timer = 0; this.health = this.maxHealth; this.poundRounds = 0; this.jumpPasses = 0; this.jumpCount = 0; this.jumpGroundTimer = 0; this.landingPoseTimer = 0; this.landingSoundPlayed = false; this.returnToLavaAfterLanding = false; this.defeatAfterFinalJump = false; this.jumpVulnerable = false; this.redWarning = false; this.tooHotCooldown = 0; this.contactInvulnerability = 0; this.finalVolleyCount = 0; this.finalStoneTimer = 0; this.airChaseOffset = 0; this.airChaseTimer = 0; this.stompedMidair = false; this.hasEnteredFinalPhase = false; this.finalPhasePending = false; this.golem.stompBounceOffset = 0; this.golem.stompBounceVelocity = 0; this.afterHitAction = 'lava'; }
+    reset() { this.state = 'dormant'; this.active = false; this.exit = null; this.exitFade = 0; this.rocks = []; this.deathParticles = []; this.petAssistSmoke = null; this.petAssistCrouchTimer = 0; this.defeatTimer = 0; this.timer = 0; this.health = this.maxHealth; this.poundRounds = 0; this.jumpPasses = 0; this.jumpCount = 0; this.jumpGroundTimer = 0; this.landingPoseTimer = 0; this.landingSoundPlayed = false; this.returnToLavaAfterLanding = false; this.defeatAfterFinalJump = false; this.jumpVulnerable = false; this.redWarning = false; this.tooHotCooldown = 0; this.contactInvulnerability = 0; this.finalVolleyCount = 0; this.finalStoneTimer = 0; this.airChaseOffset = 0; this.airChaseTimer = 0; this.stompedMidair = false; this.hasEnteredFinalPhase = false; this.finalPhasePending = false; this.golem.stompBounceOffset = 0; this.golem.stompBounceVelocity = 0; this.afterHitAction = 'lava'; }
 
     checkForTrigger(playerX, playerY, templeX, level) {
         if (level !== 3 || this.state !== 'dormant' || playerX < templeX - 500) return false;
@@ -81,6 +82,7 @@ class BossManager {
         this.timer++; this.updateAnimation();
         this.updateDeathParticles();
         if (this.petAssistSmoke && --this.petAssistSmoke.timer <= 0) this.petAssistSmoke = null;
+        if (this.petAssistCrouchTimer > 0) this.petAssistCrouchTimer--;
         if (this.exit && this.exitFade < 1) this.exitFade = Math.min(1, this.exitFade + 1 / 60);
         if (this.shake > 0) this.shake--;
         if (this.golem.flash > 0) this.golem.flash--;
@@ -284,7 +286,7 @@ class BossManager {
     }
 
     updatePetAssist(game) {
-        this.golem.animation = 'stand';
+        this.golem.animation = this.petAssistCrouchTimer > 0 ? 'jump5' : 'stand';
         if (game.petManager.bossAssist) return;
         this.state = 'lava';
         this.timer = 0;
@@ -384,8 +386,19 @@ class BossManager {
                     if (rock.age >= 30) { rock.phase = 'ceilingFall'; rock.velocityY = .45; rock.x = rock.baseX; }
                 } else if (rock.phase === 'ceilingFall') {
                     rock.velocityY += .046; rock.y += rock.velocityY;
-                    if (rock.y + rock.height > 468) { this.shake = Math.max(this.shake, 6); return false; }
+                    if (rock.y + rock.height > 468) {
+                        rock.y = 468 - rock.height;
+                        rock.phase = 'groundImpactSmoke';
+                        rock.age = 0;
+                        rock.alpha = 0;
+                        rock.smokeAlpha = 1;
+                        rock.smokeY = 468;
+                        this.shake = Math.max(this.shake, 6);
+                    }
                     if (this.overlaps(rock, game.player) && !game.hasArmor) game.takeDamage(game.player.x < rock.x ? -1 : 1);
+                } else if (rock.phase === 'groundImpactSmoke') {
+                    rock.smokeAlpha = Math.max(0, 1 - rock.age / 18);
+                    return rock.age < 18;
                 } else if (rock.phase === 'rise') {
                     // Final-phase stones are summoned from beneath the cave floor.  Their
                     // bottom stays planted on the ground as they emerge, making the rise
@@ -478,10 +491,10 @@ class BossManager {
                 this.tooHotCooldown = 75;
             }
             if (!game.hasArmor) game.takeDamage(p.x < b.x ? -1 : 1);
-        } else if (this.state !== 'vulnerable' && this.state !== 'finalVulnerable' && !(this.state === 'jump' && this.jumpVulnerable) && !game.hasArmor) {
+        } else if (!game.hasArmor) {
             game.takeDamage(p.x < b.x ? -1 : 1);
         }
-        // Blue/vulnerable contact is deliberately harmless; only a descending head-stomp damages it.
+        // Blue exposes the head for a stomp, but touching the boss is still dangerous until a stomp starts recovery.
     }
 
     reignite(game) {
@@ -674,12 +687,13 @@ class BossManager {
         // The boss is the timed objective; the peaceful walk to the temple is untimed.
         if (game.levelEndTime === 0) game.levelEndTime = performance.now();
         game.audioManager.playMusic('winner');
-        game.uiRenderer.showMessage('Stone Golem Defeated! Head to the exit.', 420, '#FFD700');
+        game.uiRenderer.showMessage('Stone golem defeated! Head to the exit.', 420, '#FFD700');
     }
     updateDeathParticles() {
         this.deathParticles = this.deathParticles.filter(particle => { particle.x += particle.vx; particle.y += particle.vy; particle.vy += .16; particle.vx *= .97; particle.life--; return particle.life > 0; });
     }
     triggerPetAssistImpact() {
+        this.petAssistCrouchTimer = 18;
         this.petAssistSmoke = {
             x: this.golem.x + this.golem.width / 2,
             y: this.golem.y + 16,
@@ -723,9 +737,16 @@ class BossManager {
             ctx.save();
             ctx.globalAlpha = rock.alpha === undefined ? 1 : rock.alpha;
             ctx.drawImage(sprite, rock.x - cameraX, rock.y, rock.width, rock.height);
-            if ((rock.phase === 'impactSmoke' || rock.phase === 'impactSink') && this.hitSmokeImage.complete) {
+            if ((rock.phase === 'impactSmoke' || rock.phase === 'impactSink' || rock.phase === 'groundImpactSmoke') && this.hitSmokeImage.complete) {
                 ctx.globalAlpha = rock.smokeAlpha === undefined ? 1 : rock.smokeAlpha;
-                ctx.drawImage(this.hitSmokeImage, rock.x - cameraX - 12, rock.y - 12, 78, 78);
+                const smokeSize = rock.phase === 'groundImpactSmoke' ? 68 + rock.age : 78;
+                const smokeX = rock.phase === 'groundImpactSmoke'
+                    ? rock.x - cameraX + rock.width / 2 - smokeSize / 2
+                    : rock.x - cameraX - 12;
+                const smokeY = rock.phase === 'groundImpactSmoke'
+                    ? rock.smokeY - smokeSize / 2
+                    : rock.y - 12;
+                ctx.drawImage(this.hitSmokeImage, smokeX, smokeY, smokeSize, smokeSize);
             }
             ctx.restore();
         });

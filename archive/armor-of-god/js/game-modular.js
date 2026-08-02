@@ -36,9 +36,25 @@ class ArmorOfGodGame {
         this.cameraX = 0;
         this.cameraY = 0;
         this.booksCollected = 0;
+        this.armorPieces = [
+            { name: 'Belt of Truth', reference: 'Ephesians 6:14', verse: '“Stand therefore, having your loins girt about with truth,”', link: 'https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p14#p14', imagePath: 'images/armor-pieces/armor-skirt.png' },
+            { name: 'Breastplate of Righteousness', reference: 'Ephesians 6:14', verse: '“And having on the breastplate of righteousness;”', link: 'https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p14#p14', imagePath: 'images/armor-pieces/armor-breastplate.png' },
+            { name: 'Boots of the Gospel', reference: 'Ephesians 6:15', verse: '“And your feet shod with the preparation of the gospel of peace;”', link: 'https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p15#p15', imagePath: 'images/armor-pieces/armor-boots.png' },
+            { name: 'Shield of Faith', reference: 'Ephesians 6:16', verse: '“Above all, taking the shield of faith, wherewith ye shall be able to quench all the fiery darts of the wicked.”', link: 'https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p16#p16', imagePath: 'images/armor-pieces/armor-shield.png' },
+            { name: 'Helmet of Salvation', reference: 'Ephesians 6:17', verse: '“And take the helmet of salvation,”', link: 'https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p17#p17', imagePath: 'images/armor-pieces/armor-helmet.png' },
+            { name: 'Sword of the Spirit', reference: 'Ephesians 6:17', verse: '“And the sword of the Spirit, which is the word of God:”', link: 'https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p17#p17', imagePath: 'images/armor-pieces/armor-sword.png' },
+            { name: 'Heart of Prayer', reference: 'Ephesians 6:18', verse: '“Praying always with all prayer and supplication in the Spirit”', link: 'https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p18#p18', imagePath: 'images/armor-pieces/pray-always.png' }
+        ].map(piece => ({ ...piece, image: Object.assign(new Image(), { src: piece.imagePath }) }));
+        this.armorPiecesFound = 0;
+        this.armorPiecesSeen = new Set();
+        this.currentArmorPiece = null;
+        this.armorLearningDismissed = this.loadArmorLearningPreference();
+        this.armorLearningButtonLabels = ['Let\'s get it!', 'Righteous!', 'Ah yeah!', 'Onward!', 'Amen!', 'Suit up!'];
+        this.armorLearningButtonIndex = 0;
         this.selectedPetType = 'dog'; // Default to dog
         this.creditsEndTimer = null;
         this.creditsSectionCleanupTimer = null;
+        this.levelOneWelcomeTimer = null;
         this.cutsceneSources = [1, 2, 3].map(number => `cutscenes/opening-${number}.mp4`);
         this.cutsceneCrossfadeDuration = 1;
         this.cutscenePreloadPromise = null;
@@ -208,12 +224,15 @@ class ArmorOfGodGame {
         this.bossFightPausedTime = 0;
         this.bossFightPauseStartTime = 0;
         this.heartSpawnTimer = 0;
+        this.scriptureSpawnTimer = 0;
+        this.bossScriptureSpawnIndex = 0;
         
         // Setup event listeners
         this.inputHandler.setupEventListeners(this.canvas, this);
         this.setupMenuEvents();
         this.setupCreditsKeyboardControls();
         this.setupMobileExperience();
+        this.setupArmorLearningEvents();
         this.gameLoop = this.gameLoop.bind(this);
         this.setLevelSelectorVisible(true);
         
@@ -230,7 +249,114 @@ class ArmorOfGodGame {
         this.initializeAudio();
 
         // Let the first layout paint at its final dimensions before revealing the menu.
-        requestAnimationFrame(() => document.body.classList.add('menu-ready'));
+        requestAnimationFrame(() => {
+            document.body.classList.add('menu-ready');
+            document.getElementById('startBtn').focus({ preventScroll: true });
+        });
+    }
+
+    loadArmorLearningPreference() {
+        try { return localStorage.getItem('armor-of-god-hide-armor-learning') === 'true'; } catch (_) { return false; }
+    }
+
+    setupArmorLearningEvents() {
+        const modal = document.getElementById('armorLearningModal');
+        const done = document.getElementById('armorLearningDone');
+        const hide = document.getElementById('armorLearningHide');
+        done.addEventListener('click', () => this.closeArmorLearningModal());
+        done.addEventListener('mouseenter', () => this.audioManager.playSoundEffect('buttonHover'));
+        hide.checked = this.armorLearningDismissed;
+        hide.addEventListener('change', () => {
+            this.armorLearningDismissed = hide.checked;
+            try { localStorage.setItem('armor-of-god-hide-armor-learning', String(hide.checked)); } catch (_) { /* preference remains for this session */ }
+        });
+        modal.addEventListener('click', event => { if (event.target === modal) this.closeArmorLearningModal(); });
+        document.addEventListener('keydown', event => {
+            if (modal.classList.contains('hidden')) return;
+            if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            this.closeArmorLearningModal();
+        }, true);
+        this.canvas.addEventListener('click', event => {
+            const bounds = this.uiRenderer.getArmorCardBounds();
+            if (!bounds || !this.currentArmorPiece) return;
+            const rect = this.canvas.getBoundingClientRect();
+            const x = (event.clientX - rect.left) * this.canvas.width / rect.width;
+            const y = (event.clientY - rect.top) * this.canvas.height / rect.height;
+            if (x >= bounds.x && x <= bounds.x + bounds.width && y >= bounds.y && y <= bounds.y + bounds.height) this.openArmorLearningModal(this.currentArmorPiece, true);
+        });
+        this.canvas.addEventListener('mousemove', event => {
+            const bounds = this.uiRenderer.getArmorCardBounds();
+            if (!bounds) return;
+            const rect = this.canvas.getBoundingClientRect();
+            const x = (event.clientX - rect.left) * this.canvas.width / rect.width;
+            const y = (event.clientY - rect.top) * this.canvas.height / rect.height;
+            const hovered = x >= bounds.x && x <= bounds.x + bounds.width && y >= bounds.y && y <= bounds.y + bounds.height;
+            if (hovered && !this.uiRenderer.armorCardHovered) this.audioManager.playSoundEffect('buttonHover');
+            this.uiRenderer.setArmorCardHovered(hovered);
+            this.canvas.style.cursor = hovered ? 'pointer' : 'default';
+        });
+        this.canvas.addEventListener('mouseleave', () => this.uiRenderer.setArmorCardHovered(false));
+    }
+
+    getNextArmorPiece() {
+        const index = this.armorPiecesFound < this.armorPieces.length
+            ? this.armorPiecesFound
+            : Math.floor(Math.random() * this.armorPieces.length);
+        this.armorPiecesFound++;
+        return this.armorPieces[index];
+    }
+
+    collectArmorPiece() {
+        const piece = this.getNextArmorPiece();
+        this.currentArmorPiece = piece;
+        this.audioManager.playSound('armorFound');
+        this.effectsManager.triggerArmorPieceFound(this.player.x + this.player.width / 2, this.player.y - 8, piece.image);
+        this.uiRenderer.showArmorCard(piece);
+        if (!this.armorLearningDismissed && !this.armorPiecesSeen.has(piece.name)) {
+            this.armorPiecesSeen.add(piece.name);
+            this.openArmorLearningModal(piece, true);
+        }
+    }
+
+    openArmorLearningModal(piece, pauseGame) {
+        this.currentArmorPiece = piece;
+        document.getElementById('armorLearningName').textContent = piece.name;
+        document.getElementById('armorLearningImage').src = piece.imagePath;
+        document.getElementById('armorLearningImage').alt = piece.name;
+        document.getElementById('armorLearningVerse').textContent = piece.verse;
+        const scriptureLink = document.getElementById('armorLearningLink');
+        scriptureLink.href = piece.link;
+        scriptureLink.textContent = `— ${piece.reference}`;
+        const piecesRemaining = Math.max(0, 3 - this.booksCollected);
+        const piecesRemainingBadge = document.getElementById('armorLearningPiecesRemaining');
+        piecesRemainingBadge.textContent = piecesRemaining;
+        piecesRemainingBadge.classList.toggle('hidden', piecesRemaining === 0);
+        document.getElementById('armorLearningMorePrefix').textContent = piecesRemaining === 0 ? '' : 'Collect ';
+        document.getElementById('armorLearningMoreText').textContent = piecesRemaining === 0
+            ? 'Armor activated!'
+            : ` more ${piecesRemaining === 1 ? 'piece' : 'pieces'} to activate armor.`;
+        document.getElementById('armorLearningActivatedImage').classList.toggle('hidden', piecesRemaining !== 0);
+        document.querySelector('.armor-learning-more').classList.toggle('armor-learning-more--activated', piecesRemaining === 0);
+        document.getElementById('armorLearningHide').checked = this.armorLearningDismissed;
+        document.getElementById('armorLearningModal').classList.remove('hidden');
+        this.armorModalPausedGame = pauseGame && !this.isPaused;
+        if (this.armorModalPausedGame) this.togglePause();
+        const armorDoneButton = document.getElementById('armorLearningDone');
+        armorDoneButton.textContent = this.armorLearningButtonLabels[this.armorLearningButtonIndex % this.armorLearningButtonLabels.length];
+        this.armorLearningButtonIndex++;
+        armorDoneButton.focus({ preventScroll: true });
+        this.audioManager.playSoundEffect('modalOpen');
+    }
+
+    closeArmorLearningModal() {
+        const modal = document.getElementById('armorLearningModal');
+        if (modal.classList.contains('hidden')) return;
+        modal.classList.add('hidden');
+        this.audioManager.playSoundEffect('modalClose');
+        if (this.armorModalPausedGame && this.isPaused) this.togglePause();
+        this.armorModalPausedGame = false;
     }
 
     setupMobileExperience() {
@@ -345,11 +471,21 @@ class ArmorOfGodGame {
     }
     
     setupMenuEvents() {
+        document.addEventListener('keydown', event => {
+            const isStartKey = event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar';
+            if (!isStartKey || this.gameState !== 'menu' || document.activeElement !== document.getElementById('startBtn')) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            document.getElementById('startBtn').click();
+        }, true);
         document.getElementById('startBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('startGameClick');
             this.hasArmor = false;
             this.player.color = '#8b4513';
             this.booksCollected = 0;
+            this.armorPiecesFound = 0;
+            this.armorPiecesSeen.clear();
+            this.currentArmorPiece = null;
             this.pet.type = this.selectedPetType; // Set pet type based on selection
             this.startGame();
         });
@@ -439,6 +575,16 @@ class ArmorOfGodGame {
                 this.hideInstructionsModal();
             }
         });
+        document.addEventListener('keydown', event => {
+            const instructionsModal = document.getElementById('instructionsModal');
+            if (instructionsModal.classList.contains('hidden') ||
+                (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar')) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            this.audioManager.playSoundEffect('buttonClick');
+            this.audioManager.playSoundEffect('modalClose');
+            this.hideInstructionsModal();
+        }, true);
         
         document.getElementById('restartBtn').addEventListener('click', () => {
             this.audioManager.playSoundEffect('buttonClick');
@@ -580,7 +726,7 @@ class ArmorOfGodGame {
         document.addEventListener('keydown', event => {
             if (this.gameState !== 'credits') return;
             const key = event.key;
-            if (key === 'ArrowRight' || key === 'ArrowDown' || key === ' ') {
+            if (key === 'ArrowRight' || key === 'ArrowDown' || key === ' ' || key === 'Enter') {
                 this.nextCreditsSection();
             } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
                 this.previousCreditsSection();
@@ -677,7 +823,7 @@ class ArmorOfGodGame {
         }
         const levelTime = this.getLevelTime();
         const targetTime = {
-            1: 45 * 60,
+            1: 50 * 60, // Extra opening and post-scripture stretch
             2: 80 * 60,
             3: 65 * 60
         };
@@ -941,6 +1087,15 @@ class ArmorOfGodGame {
             this.initializeScoring();
             this.audioManager.playMusic('adventure');
             this.arrowManager.spawnInitialArrows(this.player);
+            if (this.level === 1) {
+                clearTimeout(this.levelOneWelcomeTimer);
+                this.uiRenderer.showMessage('Your adventure starts here.', 300);
+                this.levelOneWelcomeTimer = setTimeout(() => {
+                    if (this.gameState === 'playing' && this.level === 1) {
+                        this.uiRenderer.showMessage('Collect scriptures and head to the temple.', 300, '#FFD700', 600, true);
+                    }
+                }, 1000);
+            }
             this.showFirstLevelInstructions();
         };
         if (fromIntroTransition) this.finishGameplayCrossfade(beginLevel); else beginLevel();
@@ -1047,8 +1202,8 @@ class ArmorOfGodGame {
     
     setCastlePosition() {
         if (this.level === 1) {
-            // Castle level - original position
-            this.castle = { x: 6400, y: 230, width: 240, height: 248 };
+            // Castle level, following the new calm walk-in at the start.
+            this.castle = { x: 6400 + levelOneContentOffset(6400), y: 230, width: 240, height: 248 };
         } else if (this.level === 2) {
             // Jungle level - temple at the end of the jungle clearing
             this.castle = { x: 17200, y: 230, width: 240, height: 248 };
@@ -1123,6 +1278,7 @@ class ArmorOfGodGame {
         const canChooseLevel = visible && (this.isDevelopmentMode() || this.unlockedStageCount > 1);
         levelSelection.classList.toggle('hidden', !canChooseLevel);
         levelSelection.querySelectorAll('button').forEach(button => { button.disabled = !canChooseLevel; });
+        document.querySelector('#menuScreen .game-setup').classList.toggle('game-setup--companion-only', !canChooseLevel);
     }
 
     getUnlockedStages() {
@@ -1228,6 +1384,7 @@ class ArmorOfGodGame {
         };
         
         document.getElementById(screens[screenName]).classList.remove('hidden');
+        this.focusPrimaryScreenAction(screenName);
         requestAnimationFrame(this.updateMobileOrientation);
         // Level choice is available only on the initial/main-menu screen.  Keeping the
         // control out of every other screen prevents a live level swap from mismatching
@@ -1296,6 +1453,17 @@ class ArmorOfGodGame {
         }
     }
 
+    focusPrimaryScreenAction(screenName) {
+        const primaryActionIds = {
+            menu: 'startBtn',
+            levelIntro: 'startLevelBtn',
+            gameOver: 'restartBtn',
+            levelComplete: 'nextLevelBtn'
+        };
+        const primaryAction = document.getElementById(primaryActionIds[screenName]);
+        if (primaryAction) requestAnimationFrame(() => primaryAction.focus({ preventScroll: true }));
+    }
+
     startCredits() {
         this.gameState = 'credits';
         this.isPaused = false;
@@ -1356,7 +1524,6 @@ class ArmorOfGodGame {
             return;
         }
         const isTitle = section.classList.contains('credits-title');
-        // Keep every credits card on screen 50% longer before automatically advancing.
         const duration = 10500;
         const progressDuration = 9000;
         this.currentCreditsSectionDuration = duration;
@@ -1568,6 +1735,7 @@ class ArmorOfGodGame {
         }
         
         this.uiRenderer.update();
+        this.uiRenderer.updateArmorCard();
         this.characterRenderer.update();
 
         // Boss-only recovery: queue a heart about every 30 seconds, then let the next
@@ -1578,8 +1746,15 @@ class ArmorOfGodGame {
                 this.heartSpawnTimer = 0;
                 this.pendingBossHeartDrop = true;
             }
+            this.scriptureSpawnTimer++;
+            if (this.scriptureSpawnTimer === 900 || (this.scriptureSpawnTimer > 900 && (this.scriptureSpawnTimer - 900) % 1800 === 0)) {
+                this.spawnBossScripture();
+            }
+            let activeBossPickupExists = false;
             this.worldManager.hearts = this.worldManager.hearts.filter(heart => {
                 if (!heart.timed || heart.collected) return true;
+                if (activeBossPickupExists) return false;
+                activeBossPickupExists = true;
                 if (heart.phase === 'falling') {
                     heart.velocityY += .28;
                     heart.y += heart.velocityY;
@@ -1593,9 +1768,26 @@ class ArmorOfGodGame {
                 heart.age = (heart.age || 0) + 1;
                 return heart.age < 300; // Five seconds after landing at 60fps.
             });
+            this.worldManager.scriptureBooks = this.worldManager.scriptureBooks.filter(book => {
+                if (!book.timed || book.collected) return true;
+                if (activeBossPickupExists) return false;
+                activeBossPickupExists = true;
+                if (book.spawnPlatform && !book.spawnPlatform.disabled && !book.spawnPlatform.hidden && book.spawnPlatform.arenaMotion === 'idle') {
+                    book.x = book.spawnPlatform.x + (book.spawnPlatform.width - book.width) / 2;
+                    book.y = book.spawnPlatform.y - book.height - 10;
+                } else if (book.spawnPlatform) {
+                    book.spawnPlatform = null;
+                    book.x = 1060;
+                    book.y = 408;
+                }
+                book.age = (book.age || 0) + 1;
+                return book.age < book.duration;
+            });
         } else {
             this.heartSpawnTimer = 0;
             this.pendingBossHeartDrop = false;
+            this.scriptureSpawnTimer = 0;
+            this.bossScriptureSpawnIndex = 0;
         }
         
         // Update floating scores. Enter can speed the fireworks finale and its bonuses together.
@@ -1656,7 +1848,7 @@ class ArmorOfGodGame {
         }
         
         // Update armor timer
-        if (this.hasArmor && this.armorTimer > 0) {
+        if (this.gameState === 'playing' && this.hasArmor && this.armorTimer > 0) {
             this.armorTimer--;
             if (this.armorTimer <= 0) {
                 this.deactivateArmor();
@@ -1851,6 +2043,7 @@ class ArmorOfGodGame {
         
         if (this.bossManager.active) {
             this.bossManager.checkCollisions(this);
+            this.collectScriptures();
             this.collectHearts();
             if (this.bossManager.checkExit(this.player)) this.completeBossEncounter();
             return;
@@ -1939,7 +2132,36 @@ class ArmorOfGodGame {
             this.takeDamage(knockbackDirection);
         }
         
-        // Scripture book collisions
+        this.collectScriptures();
+        this.collectHearts();
+
+        if (this.postBossSurface && this.surfaceCaveExit && this.checkCollision(this.player, this.surfaceCaveExit)) {
+            this.returnToBossCave();
+            return;
+        }
+
+        // A high enough leap across the temple is an intentional secret. It also
+        // preserves completion when the player lands beyond the temple hitbox.
+        const playerBottom = this.player.y + this.player.height;
+        const playerCenterX = this.player.x + this.player.width / 2;
+        const hasClearedTempleDoor = playerCenterX > this.castle.x + this.castle.width / 2;
+        const clearsTempleRoof = playerBottom <= this.castle.y + 60;
+        if (!this.templeJumpBonusAwarded && !this.player.isGrounded && hasClearedTempleDoor && clearsTempleRoof) {
+            this.templeJumpBonusAwarded = true;
+            this.addScore(1000, '#FFD700', 'Jumped the Temple');
+        }
+
+        // Castle collision
+        const templeCompletionX = this.postBossSurface
+            ? this.castle.x + this.castle.width + 240
+            : this.castle.x + this.castle.width;
+        const hasLandedBeyondTemple = this.templeJumpBonusAwarded && this.player.x >= templeCompletionX;
+        if (this.checkCollision(this.player, this.castle) || hasLandedBeyondTemple) {
+            this.levelComplete();
+        }
+    }
+
+    collectScriptures() {
         this.worldManager.scriptureBooks.forEach(book => {
             if (!book.collected && this.checkCollision(this.player, book)) {
                 book.collected = true;
@@ -1953,6 +2175,7 @@ class ArmorOfGodGame {
                 if (this.booksCollected < 3) {
                     // Still collecting initial scriptures
                     this.booksCollected++;
+                    this.collectArmorPiece();
                     if (this.booksCollected >= 3) {
                         this.activateArmor();
                     }
@@ -1961,36 +2184,10 @@ class ArmorOfGodGame {
                     this.armorTimer = this.armorDuration;
                     this.addScore(200, '#8EE7FF', 'Armor Refill');
                     this.uiRenderer.showMessage('Armor Timer Reset!', 120, '#FFD700', 15, 400);
+                    this.collectArmorPiece();
                 }
             }
         });
-        
-        this.collectHearts();
-
-        if (this.postBossSurface && this.surfaceCaveExit && this.checkCollision(this.player, this.surfaceCaveExit)) {
-            this.returnToBossCave();
-            return;
-        }
-
-        // A high enough leap across the temple is an intentional secret. It also
-        // preserves completion when the player lands beyond the temple hitbox.
-        const playerBottom = this.player.y + this.player.height;
-        const playerOverTemple = this.player.x + this.player.width > this.castle.x &&
-            this.player.x < this.castle.x + this.castle.width;
-        const clearsTempleRoof = playerBottom <= this.castle.y + 60;
-        if (!this.templeJumpBonusAwarded && !this.player.isGrounded && playerOverTemple && clearsTempleRoof) {
-            this.templeJumpBonusAwarded = true;
-            this.addScore(1000, '#FFD700', 'Jumped the Temple');
-        }
-
-        // Castle collision
-        const templeCompletionX = this.postBossSurface
-            ? this.castle.x + this.castle.width + 240
-            : this.castle.x + this.castle.width;
-        const hasLandedBeyondTemple = this.templeJumpBonusAwarded && this.player.x >= templeCompletionX;
-        if (this.checkCollision(this.player, this.castle) || hasLandedBeyondTemple) {
-            this.levelComplete();
-        }
     }
 
     collectHearts() {
@@ -2020,13 +2217,45 @@ class ArmorOfGodGame {
     }
 
     dropBossHeartFromCeiling() {
-        if (!this.pendingBossHeartDrop || !this.bossManager.active) return;
-        const uncollectedHeartExists = this.worldManager.hearts.some(heart => !heart.collected && heart.timed);
-        if (uncollectedHeartExists) return;
+        if (!this.pendingBossHeartDrop || !this.bossManager.active || this.hasActiveBossPickup()) return;
         const x = 120 + Math.random() * 930;
         this.worldManager.hearts.push({ x, y: -30, width: 30, height: 30, collected: false, healthRestore: 1, timed: true, phase: 'falling', velocityY: 1.5, age: 0 });
         this.pendingBossHeartDrop = false;
         this.audioManager.playSound('fallingRock');
+    }
+
+    spawnBossScripture() {
+        if (this.hasActiveBossPickup()) return;
+        const platforms = this.worldManager.platforms.filter(platform =>
+            platform.arenaPlatform && !platform.disabled && !platform.hidden && platform.arenaMotion === 'idle'
+        );
+        const playerPlatform = platforms.find(platform =>
+            this.player.x + this.player.width > platform.x &&
+            this.player.x < platform.x + platform.width &&
+            Math.abs(this.player.y + this.player.height - platform.y) <= 18
+        );
+        const eligiblePlatforms = platforms.filter(platform => platform !== playerPlatform);
+        const platform = eligiblePlatforms.length > 0
+            ? eligiblePlatforms[this.bossScriptureSpawnIndex % eligiblePlatforms.length]
+            : null;
+        this.bossScriptureSpawnIndex++;
+        this.worldManager.scriptureBooks.push({
+            x: platform ? platform.x + (platform.width - 50) / 2 : 1060,
+            y: platform ? platform.y - 60 : 408,
+            width: 50,
+            height: 50,
+            collected: false,
+            verse: 'Courage',
+            timed: true,
+            age: 0,
+            duration: 480,
+            spawnPlatform: platform
+        });
+    }
+
+    hasActiveBossPickup() {
+        return this.worldManager.hearts.some(heart => heart.timed && !heart.collected) ||
+            this.worldManager.scriptureBooks.some(book => book.timed && !book.collected);
     }
     
     checkCollision(rect1, rect2) {
@@ -2085,7 +2314,7 @@ class ArmorOfGodGame {
 
         // The fall has finished. Keep this score reveal silent except for one heavy thud.
         this.audioManager.stopAllAudio();
-        this.audioManager.playSound('thud3');
+        this.audioManager.playSound('golemReignite');
         this.gameState = 'levelComplete';
         this.showScreen('levelComplete');
     }
@@ -2361,6 +2590,7 @@ class ArmorOfGodGame {
         // Play powerup sound effect and change music to armormarch.mp3
         this.audioManager.playSoundEffect('powerup');
         this.audioManager.playMusic('armormarch');
+        if (this.isPaused) this.audioManager.pauseCurrentMusic();
     }
     
     deactivateArmor() {
@@ -2386,12 +2616,15 @@ class ArmorOfGodGame {
         this.updatePauseButton();
         
         if (this.isPaused) {
+            this.inputHandler.hoveredButton = 'resume';
+            this.canvas.focus({ preventScroll: true });
             // Starting a pause - record when it began
             this.pauseStartTime = performance.now();
             if (this.bossFightStartTime > 0 && this.bossFightEndTime === 0) this.bossFightPauseStartTime = this.pauseStartTime;
             this.audioManager.playSoundEffect('pause');
             this.audioManager.pauseCurrentMusic();
         } else {
+            this.inputHandler.hoveredButton = null;
             // Ending a pause - add this pause duration to total
             if (this.pauseStartTime > 0) {
                 this.totalPausedTime += performance.now() - this.pauseStartTime;
@@ -2768,7 +3001,8 @@ class ArmorOfGodGame {
             this.comboMultiplier,
             this.airborneKills,
             this.bossManager,
-            this.heartImage
+            this.heartImage,
+            this.armorModalPausedGame
         );
         
         // Render sparkles on top of everything (with camera translation)
@@ -2870,6 +3104,7 @@ class ArmorOfGodGame {
         if (!this.isPaused) document.getElementById('instructionsDoneBtn').textContent = 'Done';
         this.showGameplayInstructions();
         document.getElementById('instructionsModal').classList.remove('hidden');
+        requestAnimationFrame(() => document.getElementById('instructionsDoneBtn').focus({ preventScroll: true }));
     }
 
     showScoringInstructions() {

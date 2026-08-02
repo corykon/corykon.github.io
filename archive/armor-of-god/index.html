@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="game.css?v=menu-title-pop">
+    <link rel="stylesheet" href="game.css?v=armor-learning">
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQ0NT1894T"></script>
@@ -94,7 +94,7 @@
         <div id="gameScreen" class="screen hidden">
             <div id="levelInfo" class="level-indicator">Level 1: Clover Hills</div>
             <div class="gameplay-stage">
-                <canvas id="gameCanvas" width="1200" height="600"></canvas>
+                <canvas id="gameCanvas" width="1200" height="600" tabindex="0"></canvas>
                 <div id="rotateDeviceNotice" class="rotate-device-notice hidden" role="status">
                     <span class="rotate-device-icon" aria-hidden="true">↻</span>
                     <strong>Rotate your device</strong>
@@ -120,6 +120,22 @@
             </div>
         </div>
 
+        <div id="armorLearningModal" class="modal armor-learning-modal hidden" role="dialog" aria-modal="true" aria-labelledby="armorLearningName">
+            <section class="modal-content armor-learning-content">
+                <div class="armor-learning-visual">
+                    <img id="armorLearningImage" class="armor-learning-image" src="" alt="">
+                    <p class="armor-learning-more"><img id="armorLearningActivatedImage" class="armor-learning-activated-image hidden" src="images/sprites/player/armored-jump.png" alt="Hero wearing armor"><span id="armorLearningMore"><span id="armorLearningMorePrefix"></span><span id="armorLearningPiecesRemaining" class="armor-learning-count hidden" aria-hidden="true"></span><span id="armorLearningMoreText"></span></span></p>
+                </div>
+                <div class="armor-learning-details">
+                    <h2 id="armorLearningName">Armor Piece</h2>
+                    <p id="armorLearningVerse" class="armor-learning-verse"></p>
+                    <a id="armorLearningLink" class="armor-learning-link" href="https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p14#p14" target="_blank" rel="noopener">— Ephesians 6:14</a>
+                    <button id="armorLearningDone" class="menu-btn armor-learning-done" type="button">Got it!</button>
+                    <label class="armor-learning-checkbox"><input id="armorLearningHide" type="checkbox"> Don’t show this window again</label>
+                </div>
+            </section>
+        </div>
+
         <!-- Level Intro Screen -->
         <div id="levelIntroScreen" class="screen hidden">
             <div class="level-intro-container">
@@ -135,7 +151,7 @@
                     </div>
                     <button id="startLevelBtn" class="menu-btn next-level-wide start-level-btn">Start Level <span class="chevron-icon">❯</span></button>
                     <div class="continue-prompt">
-                        <p>(Press 'space')</p>
+                        <p>(Press enter/space)</p>
                     </div>                </div>
             </div>
         </div>
@@ -146,7 +162,7 @@
                 <video id="cutsceneVideoA" class="cutscene-video" muted playsinline preload="auto"></video>
                 <video id="cutsceneVideoB" class="cutscene-video" muted playsinline preload="auto"></video>
             </div>
-            <p class="cutscene-keyboard-hint">Press 'space' to skip</p>
+            <p class="cutscene-keyboard-hint">Press enter/space to skip</p>
             <button id="skipCutsceneBtn" class="menu-btn cutscene-skip" type="button">Skip cutscene</button>
         </div>
 
@@ -231,6 +247,16 @@
                     <img src="images/ui/armor-of-god-title.png" alt="Armor of God" class="credits-title-image">
                 </section>
 
+                <section class="credits-card credits-scripture-card">
+                    <img src="images/ui/eph-6-scroll.png" alt="Ephesians 6" class="credits-scripture-title">
+                    <div class="credits-scripture-passage">
+                        <p><span>11</span> Put on the whole armour of God, that ye may be able to stand against the wiles of the devil.</p>
+                        <p><span>12</span> For we wrestle not against flesh and blood, but against principalities, against powers, against the rulers of the darkness...</p>
+                        <p><span>13</span> Wherefore take unto you the whole armour of God, that ye may be able to withstand in the evil day, and having done all, to stand.</p>
+                    </div>
+                    <a class="credits-scripture-link" href="https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p11-p13#p11" target="_blank" rel="noopener noreferrer">Open the scriptures</a>
+                </section>
+
                 <section class="credits-card">
                     <img src="images/ui/level-01-clover-hills.png" alt="Clover Hills">
                     <h2>LEAD GAME DESIGNERS</h2>
@@ -250,7 +276,7 @@
                     <p>PAUL</p>
                     <h2>INSPIRATION</h2>
                     <p>LDS KIDS VIDEO</p>
-                    <p class="credits-small"><a href="https://www.youtube.com/watch?v=AEb6jyDpMHY" target="_blank" rel="noopener noreferrer">See it here</a></p>
+                    <p class="credits-small"><a class="credits-video-link" href="https://www.youtube.com/watch?v=AEb6jyDpMHY" target="_blank" rel="noopener noreferrer">watch the video</a></p>
                 </section>
 
                 <section class="credits-card">
@@ -334,7 +360,7 @@
                     </div>
                     <div class="armor-objective">
                         <p>Collect scriptures to put on your armor</p>
-                        <div class="armor-objective-sprites"><img src="images/sprites/pickups/scripture-pickup.png" alt="Scripture"><span>+</span><img src="images/sprites/pickups/scripture-pickup.png" alt="Scripture"><span>+</span><img src="images/sprites/pickups/scripture-pickup.png" alt="Scripture"><span>=</span><img src="images/sprites/player/armored-stand.png" alt="Hero in armor"></div>
+                        <div class="armor-objective-sprites"><img src="images/sprites/pickups/scripture-pickup.png" alt="Scripture"><span>+</span><img src="images/sprites/pickups/scripture-pickup.png" alt="Scripture"><span>+</span><img src="images/sprites/pickups/scripture-pickup.png" alt="Scripture"><span>=</span><img class="armor-objective-result" src="images/sprites/player/armored-stand.png" alt="Hero in armor"></div>
                     </div>
                 </section>
             </div>
@@ -396,18 +422,18 @@
     </script>
 
     <!-- Load modular game files -->
-    <script src="js/audio-manager.js?v=sound-library-rename"></script>
-    <script src="js/effects-manager.js?v=pet-controls-fix"></script>
+    <script src="js/audio-manager.js?v=armor-learning"></script>
+    <script src="js/effects-manager.js?v=armor-learning"></script>
     <script src="js/input-handler.js"></script>
     <script src="js/world-manager.js"></script>
     <script src="js/arrow-manager.js"></script>
     <script src="js/enemy-manager.js"></script>
     <script src="js/background-manager.js"></script>
-    <script src="js/ui-renderer.js"></script>
+    <script src="js/ui-renderer.js?v=armor-learning"></script>
     <script src="js/character-renderer.js"></script>
     <script src="js/pet-manager.js?v=pet-controls-fix"></script>
     <script src="js/boss-manager.js"></script>
     <script src="js/high-score.js?v=leaderboard-chevron-fix"></script>
-    <script src="js/game-modular.js?v=celebration-fireworks-fix"></script>
+    <script src="js/game-modular.js?v=armor-learning"></script>
 </body>
 </html>
