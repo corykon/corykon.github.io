@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "assets:manifest": "node scripts/generate-asset-manifest.mjs",
+    "check": "node --check js/asset-manifest.js && node --check js/asset-preloader.js && node --check js/audio-manager.js && node --check js/game-modular.js && node --check sw.js"
+  }
+}

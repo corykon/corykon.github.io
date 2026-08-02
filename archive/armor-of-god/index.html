@@ -164,8 +164,8 @@
         <div id="cutsceneScreen" class="screen hidden">
             <div id="cutsceneFrame" class="cutscene-frame" aria-label="Opening cutscene">
                 <div id="cutsceneLoading" class="cutscene-loading"><span class="cutscene-spinner"></span>PREPARING CUTSCENE…</div>
-                <video id="cutsceneVideoA" class="cutscene-video" muted playsinline preload="auto"></video>
-                <video id="cutsceneVideoB" class="cutscene-video" muted playsinline preload="auto"></video>
+                <video id="cutsceneVideoA" class="cutscene-video" muted playsinline preload="auto" crossorigin="anonymous"></video>
+                <video id="cutsceneVideoB" class="cutscene-video" muted playsinline preload="auto" crossorigin="anonymous"></video>
             </div>
             <p class="cutscene-keyboard-hint">Press enter/space to skip</p>
             <button id="skipCutsceneBtn" class="menu-btn cutscene-skip" type="button">Skip cutscene</button>
@@ -427,7 +427,9 @@
     </script>
 
     <!-- Load modular game files -->
-    <script src="js/audio-manager.js?v=armor-learning"></script>
+    <script src="js/asset-manifest.js"></script>
+    <script src="js/asset-preloader.js?v=asset-cache-v3"></script>
+    <script src="js/audio-manager.js?v=asset-cache-v2"></script>
     <script src="js/effects-manager.js?v=armor-learning"></script>
     <script src="js/input-handler.js"></script>
     <script src="js/world-manager.js"></script>
@@ -439,6 +441,6 @@
     <script src="js/pet-manager.js?v=pet-controls-fix"></script>
     <script src="js/boss-manager.js"></script>
     <script src="js/high-score.js?v=leaderboard-chevron-fix"></script>
-    <script src="js/game-modular.js?v=armor-learning"></script>
+    <script src="js/game-modular.js?v=asset-cache-v2"></script>
 </body>
 </html>
