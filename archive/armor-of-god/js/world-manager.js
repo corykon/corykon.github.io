@@ -246,7 +246,7 @@ class WorldManager {
            
             { x: 5900, y: 500, width: 100, height: 30, type: 'rock_platform' },
             { x: 6100, y: 340, width: 100, height: 30, type: 'rock_platform' },
-            { x: 5900, y: 180, width: 100, height: 30, type: 'rock_platform' },
+            { x: 5800, y: 180, width: 100, height: 30, type: 'rock_platform' },
             { x: 6300, y: 180, width: 1100, height: 30, type: 'rock_platform' },
             { x: 7650, y: 180, width: 450, height: 30, type: 'rock_platform' },
             { x: 8500, y: 500, width: 1500, height: 200, type: 'rock' },
@@ -413,7 +413,7 @@ class WorldManager {
             // First heart on challenging vertical climb section
             { x: 1460, y: 50, width: 30, height: 30, collected: false, healthRestore: 1 },
             { x: 4290, y: 180, width: 30, height: 30, collected: false, healthRestore: 1 },
-            { x: 5940, y: 140, width: 30, height: 30, collected: false, healthRestore: 1 },
+            { x: 5835, y: 140, width: 30, height: 30, collected: false, healthRestore: 1 },
             { x: 11320, y: 20, width: 30, height: 30, collected: false, healthRestore: 1 }
         ];
     }
@@ -1263,22 +1263,23 @@ class WorldManager {
             }
             const image = foregroundImages[sprite.image];
             const fallOffset = sprite.collapseOffsetY || 0;
+            const fallOffsetX = sprite.collapseOffsetX || 0;
             const alpha = sprite.collapseAlpha === undefined ? 1 : sprite.collapseAlpha;
             ctx.save();
             ctx.globalAlpha = alpha;
             if (image && image.complete) {
-                if (sprite.collapseRotation !== undefined) {
-                    // Trees pivot from their roots, shaking loose then toppling sideways.
-                    ctx.translate(sprite.x + sprite.width / 2, sprite.y + sprite.height + fallOffset);
-                    ctx.rotate(sprite.collapseRotation);
+                if (sprite.collapseRotation !== undefined || sprite.collapseQuakeRotation !== undefined) {
+                    // Trees pivot from their roots for both the pre-collapse tremor and fall.
+                    ctx.translate(sprite.x + sprite.width / 2 + fallOffsetX, sprite.y + sprite.height + fallOffset);
+                    ctx.rotate(sprite.collapseRotation ?? sprite.collapseQuakeRotation ?? 0);
                     if (sprite.flipX) ctx.scale(-1, 1);
                     ctx.drawImage(image, -sprite.width / 2, -sprite.height, sprite.width, sprite.height);
                 } else if (sprite.flipX) {
-                    ctx.translate(sprite.x + sprite.width, sprite.y + fallOffset);
+                    ctx.translate(sprite.x + sprite.width + fallOffsetX, sprite.y + fallOffset);
                     ctx.scale(-1, 1);
                     ctx.drawImage(image, 0, 0, sprite.width, sprite.height);
                 } else {
-                    ctx.drawImage(image, sprite.x, sprite.y + fallOffset, sprite.width, sprite.height);
+                    ctx.drawImage(image, sprite.x + fallOffsetX, sprite.y + fallOffset, sprite.width, sprite.height);
                 }
             } else {
                 // Fallback: simple colored rectangle based on sprite type
@@ -1295,6 +1296,7 @@ class WorldManager {
             const inCollapse = spriteCenter >= centerX - leftReach && spriteCenter <= centerX + rightReach;
             if (!inCollapse || !sprite.image || sprite.collapseAlpha !== undefined) return;
             sprite.collapseOffsetY = 0;
+            sprite.collapseOffsetX = 0;
             sprite.collapseVelocityY = 1.8 + Math.random() * 1.2;
             sprite.collapseAlpha = 1;
             if (sprite.image.includes('tree')) {
@@ -1307,22 +1309,50 @@ class WorldManager {
         });
     }
 
+    beginCutsceneSceneryQuake(centerX, leftReach, rightReach) {
+        this.foregroundSprites.forEach(sprite => {
+            const spriteCenter = sprite.x + sprite.width / 2;
+            const inCollapse = spriteCenter >= centerX - leftReach && spriteCenter <= centerX + rightReach;
+            if (!inCollapse || !sprite.image?.includes('tree') || sprite.collapseQuakeTimer !== undefined) return;
+            sprite.collapseQuakeTimer = 0;
+            sprite.collapseQuakeDirection = spriteCenter < centerX ? -1 : 1;
+            // The staggered phase keeps the trees from rocking in unison.
+            sprite.collapseQuakePhase = (spriteCenter % 29) * .31;
+        });
+    }
+
+    updateCutsceneSceneryQuake() {
+        this.foregroundSprites.forEach(sprite => {
+            if (sprite.collapseQuakeTimer === undefined || sprite.collapseRotation !== undefined) return;
+            sprite.collapseQuakeTimer++;
+            const intensity = Math.min(1, sprite.collapseQuakeTimer / 18);
+            const motion = Math.sin(sprite.collapseQuakeTimer * 1.35 + sprite.collapseQuakePhase) * intensity;
+            sprite.collapseQuakeRotation = motion * .018 * sprite.collapseQuakeDirection;
+            sprite.collapseOffsetX = motion * 1.1;
+        });
+    }
+
     updateCutsceneSceneryFall() {
         this.foregroundSprites.forEach(sprite => {
             if (sprite.collapseAlpha === undefined || sprite.collapseAlpha <= 0) return;
             if (sprite.collapseRotation !== undefined) {
                 sprite.collapseTimer++;
-                if (sprite.collapseTimer <= 8) {
-                    sprite.collapseRotation = Math.sin(sprite.collapseTimer * 2.2) * .055 * sprite.collapseDirection;
+                if (sprite.collapseTimer <= 14) {
+                    // Keep the first beat rooted: the tree leans away from the quake before it gives way.
+                    sprite.collapseRotation = Math.sin(sprite.collapseTimer * 1.5 + sprite.collapseQuakePhase) * .022 * sprite.collapseDirection;
                 } else {
-                    sprite.collapseAngularVelocity = Math.min(.12, sprite.collapseAngularVelocity + .008);
-                    sprite.collapseRotation += sprite.collapseAngularVelocity * sprite.collapseDirection;
-                    if (Math.abs(sprite.collapseRotation) > Math.PI / 2) {
-                        sprite.collapseOffsetY += sprite.collapseVelocityY;
-                        sprite.collapseVelocityY += .42;
-                    }
+                    // A restrained topple reads more naturally than an instant 90-degree spin.
+                    sprite.collapseAngularVelocity = Math.min(.042, sprite.collapseAngularVelocity + .0025);
+                    const nextRotation = sprite.collapseRotation + sprite.collapseAngularVelocity * sprite.collapseDirection;
+                    // Keep the silhouette rooted: a 30-degree lean sells the collapse without toppling sideways.
+                    sprite.collapseRotation = Math.max(-Math.PI / 6, Math.min(Math.PI / 6, nextRotation));
+                    sprite.collapseOffsetX += sprite.collapseDirection * .35;
+                    sprite.collapseOffsetY += sprite.collapseVelocityY;
+                    sprite.collapseVelocityY += .24;
                 }
-                sprite.collapseAlpha = Math.max(0, sprite.collapseAlpha - .018);
+                // Let the collapse dissolve before the abbreviated animation reaches an awkward side-on pose.
+                const fallProgress = Math.max(0, sprite.collapseTimer - 10);
+                sprite.collapseAlpha = Math.max(0, 1 - Math.pow(fallProgress / 26, 1.35));
                 return;
             }
             sprite.collapseOffsetY += sprite.collapseVelocityY;

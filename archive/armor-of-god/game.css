@@ -1595,7 +1595,99 @@ body.menu-ready #menuScreen {
     #menuScreen .level-control { flex-wrap: nowrap; }
     #menuScreen .pet-options { width: auto; gap: 6px; }
     #menuScreen .pet-btn { min-width: 120px; flex: 0 0 auto; padding: 8px 6px; font-size: 10px; }
+    #menuScreen .level-nav-btn { width: 32px; height: 32px; flex: 0 0 32px; }
+    #menuScreen .level-nav-btn svg { width: 16px; height: 16px; }
+    #menuScreen .level-chip { width: 82px; min-width: 82px; padding: 10px 4px; font-size: 9px; }
+    #menuScreen .level-selector-text--full { display: none; }
+    #menuScreen .level-selector-text--short { display: inline; }
     #menuScreen .start-btn { grid-column: 1 / -1; grid-row: 2; margin: 0 auto; }
+}
+
+/* Short desktop windows need the same compact controls as a landscape device.
+   Keeping the footer in normal flow prevents it from colliding with the setup card. */
+@media (pointer: fine) and (max-height: 770px) {
+    #menuScreen { justify-content: flex-start; overflow-y: auto; padding-top: 24px; padding-bottom: 28px; }
+    #menuScreen .bottom-footer { position: static; flex: 0 0 auto; margin-top: 24px; }
+    #menuScreen .game-setup {
+        width: min(760px, calc(100% - 32px));
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 10px;
+        padding: 12px 16px;
+        margin-top: 16px;
+        margin-bottom: 0;
+        transform: none;
+    }
+    #menuScreen .pet-selection,
+    #menuScreen .level-selection { min-height: 48px; padding: 8px 10px; }
+    #menuScreen .pet-selection { grid-column: 1; grid-row: 1; justify-content: flex-start; }
+    #menuScreen .level-selection { grid-column: 2; grid-row: 1; justify-content: flex-end; }
+    #menuScreen .pet-label { display: none; }
+    #menuScreen .pet-options,
+    #menuScreen .level-control { flex-wrap: nowrap; }
+    #menuScreen .pet-options { width: auto; gap: 6px; }
+    #menuScreen .pet-btn { min-width: 120px; flex: 0 0 auto; padding: 8px 6px; font-size: 10px; }
+    #menuScreen .level-nav-btn { width: 32px; height: 32px; flex: 0 0 32px; }
+    #menuScreen .level-nav-btn svg { width: 16px; height: 16px; }
+    #menuScreen .level-chip { width: 82px; min-width: 82px; padding: 10px 4px; font-size: 9px; }
+    #menuScreen .level-selector-text--full { display: none; }
+    #menuScreen .level-selector-text--short { display: inline; }
+    #menuScreen .start-btn { grid-column: 1 / -1; grid-row: 2; margin: 0 auto; }
+}
+
+/* At very short desktop heights, adopt the full landscape-menu composition. */
+@media (pointer: fine) and (max-height: 600px) {
+    #menuScreen {
+        --short-desktop-menu-width: min(900px, calc(100% - 64px));
+        justify-content: center;
+        padding: 18px 32px;
+    }
+    #menuScreen .menu-brand {
+        width: var(--short-desktop-menu-width);
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-rows: auto auto;
+        align-items: center;
+        column-gap: 16px;
+        text-align: left;
+    }
+    #menuScreen .title-image {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        width: 140px;
+        height: auto;
+        max-width: none;
+        max-height: 120px;
+        margin: 0;
+        object-fit: contain;
+    }
+    #menuScreen h1 { grid-column: 2; grid-row: 1; margin: 0; font-size: 36px; line-height: 1.1; }
+    #menuScreen .scripture {
+        grid-column: 2;
+        grid-row: 2;
+        max-width: none;
+        margin: 7px 0 4px;
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: normal;
+    }
+    #menuScreen .scripture-full { display: none; }
+    #menuScreen .scripture-short { display: inline; }
+    #menuScreen .scripture-reference { display: block; margin: 6px 0 0; font-size: .8em; }
+    #menuScreen .game-setup {
+        width: var(--short-desktop-menu-width);
+        max-width: none;
+        padding: 16px 20px;
+        gap: 14px;
+        margin-top: 20px;
+    }
+    #menuScreen .pet-selection,
+    #menuScreen .level-selection { min-height: 56px; padding: 10px 14px; }
+    #menuScreen .pet-btn { min-width: 140px; padding: 10px 12px; font-size: 12px; }
+    #menuScreen .level-nav-btn { width: 36px; height: 36px; flex-basis: 36px; }
+    #menuScreen .level-chip { width: 94px; min-width: 94px; padding: 11px 4px; font-size: 10px; }
+    #menuScreen .start-btn { font-size: 20px; padding: 17px 34px; }
+    #menuScreen .bottom-footer { margin-top: 20px; }
 }
 
 @keyframes rotateDevicePrompt { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
