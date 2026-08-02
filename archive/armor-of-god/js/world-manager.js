@@ -1149,7 +1149,7 @@ class WorldManager {
         }
     }
     
-    renderScriptureBooks(ctx, bomImage, cameraX = 0, viewportWidth = ctx.canvas.width) {
+    renderScriptureBooks(ctx, bomImage, cameraX = 0, viewportWidth = ctx.canvas.width, reducedEffects = false) {
         const viewLeft = cameraX - 64;
         const viewRight = cameraX + viewportWidth + 64;
         this.scriptureBooks.forEach(book => {
@@ -1169,19 +1169,15 @@ class WorldManager {
                 }
                 ctx.translate(0, floatY);
                 
-                // Draw subtle glow behind scripture book
-                const glowRadius = 30;
-                const gradient = ctx.createRadialGradient(
-                    book.x + book.width/2, book.y + book.height/2, 0,
-                    book.x + book.width/2, book.y + book.height/2, glowRadius
-                );
-                gradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)'); // Gold glow
-                gradient.addColorStop(0.5, 'rgba(255, 215, 0, 0.1)');
-                gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
-                
-                ctx.fillStyle = gradient;
-                ctx.fillRect(book.x - glowRadius/2, book.y - glowRadius/2, 
-                           book.width + glowRadius, book.height + glowRadius);
+                if (!reducedEffects) {
+                    const glowRadius = 30;
+                    const gradient = ctx.createRadialGradient(book.x + book.width / 2, book.y + book.height / 2, 0, book.x + book.width / 2, book.y + book.height / 2, glowRadius);
+                    gradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)');
+                    gradient.addColorStop(0.5, 'rgba(255, 215, 0, 0.1)');
+                    gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(book.x - glowRadius / 2, book.y - glowRadius / 2, book.width + glowRadius, book.height + glowRadius);
+                }
                 
                 // Draw Book of Mormon image if loaded, otherwise fallback to simple design
                 if (bomImage.complete) {
@@ -1206,7 +1202,7 @@ class WorldManager {
         });
     }
     
-    renderHearts(ctx, heartImage, cameraX = 0, viewportWidth = ctx.canvas.width) {
+    renderHearts(ctx, heartImage, cameraX = 0, viewportWidth = ctx.canvas.width, reducedEffects = false) {
         const viewLeft = cameraX - 64;
         const viewRight = cameraX + viewportWidth + 64;
         this.hearts.forEach(heart => {
@@ -1216,7 +1212,7 @@ class WorldManager {
                 const floatY = heart.phase === 'falling' ? 0 : Math.sin(time + heart.x * 0.015) * 3; // Slightly more float amplitude
                 
                 // Pulsing scale effect
-                const pulseScale = heart.phase === 'falling' ? 1 : 1.0 + Math.sin(time * 2 + heart.x * 0.02) * 0.1;
+                const pulseScale = reducedEffects || heart.phase === 'falling' ? 1 : 1.0 + Math.sin(time * 2 + heart.x * 0.02) * 0.1;
                 
                 ctx.save();
                 if (heart.timed && heart.age >= 210) {
@@ -1225,19 +1221,15 @@ class WorldManager {
                 }
                 ctx.translate(0, floatY);
                 
-                // Draw glow behind heart
-                const glowRadius = 25;
-                const gradient = ctx.createRadialGradient(
-                    heart.x + heart.width/2, heart.y + heart.height/2, 0,
-                    heart.x + heart.width/2, heart.y + heart.height/2, glowRadius
-                );
-                gradient.addColorStop(0, 'rgba(255, 100, 100, 0.4)'); // Red glow
-                gradient.addColorStop(0.5, 'rgba(255, 100, 100, 0.2)');
-                gradient.addColorStop(1, 'rgba(255, 100, 100, 0)');
-                
-                ctx.fillStyle = gradient;
-                ctx.fillRect(heart.x - glowRadius/2, heart.y - glowRadius/2, 
-                           heart.width + glowRadius, heart.height + glowRadius);
+                if (!reducedEffects) {
+                    const glowRadius = 25;
+                    const gradient = ctx.createRadialGradient(heart.x + heart.width / 2, heart.y + heart.height / 2, 0, heart.x + heart.width / 2, heart.y + heart.height / 2, glowRadius);
+                    gradient.addColorStop(0, 'rgba(255, 100, 100, 0.4)');
+                    gradient.addColorStop(0.5, 'rgba(255, 100, 100, 0.2)');
+                    gradient.addColorStop(1, 'rgba(255, 100, 100, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(heart.x - glowRadius / 2, heart.y - glowRadius / 2, heart.width + glowRadius, heart.height + glowRadius);
+                }
                 
                 // Scale the heart for pulsing effect
                 const centerX = heart.x + heart.width/2;

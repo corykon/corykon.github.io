@@ -4,6 +4,9 @@ class ArmorOfGodGame {
         this.ctx = this.canvas.getContext('2d');
         this.canvas.width = 1200;
         this.canvas.height = 600;
+        // Keep desktop rendering exactly as-is.  Phones/tablets use a lighter
+        // decorative-effects path; this never changes gameplay simulation.
+        this.reducedMobileEffects = window.matchMedia('(pointer: coarse) and (max-width: 1024px)').matches;
         
         // Game state
         this.gameState = 'menu'; // menu, playing, gameOver, levelComplete, waitingToEnterTemple, enteringTemple, celebrating
@@ -201,6 +204,7 @@ class ArmorOfGodGame {
         // Initialize managers
         this.audioManager = new AudioManager();
         this.effectsManager = new EffectsManager();
+        this.effectsManager.reducedEffects = this.reducedMobileEffects;
         this.inputHandler = new InputHandler();
         this.worldManager = new WorldManager();
         this.arrowManager = new ArrowManager(this.audioManager, this.arrowImage, this.brokenArrowImage, this);
@@ -245,12 +249,68 @@ class ArmorOfGodGame {
         // Start game loop
         this.gameLoop();
         
-        // Start menu music with browser autoplay handling
-        this.initializeAudio();
+    }
 
-        // Let the first layout paint at its final dimensions before revealing the menu.
+    collectStartupImages() {
+        const images = new Set();
+        const visited = new WeakSet();
+        const collect = value => {
+            if (!value || typeof value !== 'object') return;
+            if (value instanceof HTMLImageElement) {
+                if (value.src) images.add(value);
+                return;
+            }
+            if (value instanceof HTMLElement || value instanceof HTMLMediaElement || visited.has(value)) return;
+            visited.add(value);
+            Object.values(value).forEach(collect);
+        };
+        collect(this);
+        document.querySelectorAll('img').forEach(image => images.add(image));
+        return [...images];
+    }
+
+    waitForStartupImage(image, onProgress) {
+        return new Promise(resolve => {
+            let fallbackTimer;
+            const finish = () => {
+                image.removeEventListener('load', finish);
+                image.removeEventListener('error', finish);
+                clearTimeout(fallbackTimer);
+                onProgress();
+                resolve();
+            };
+            // Mobile WebKit occasionally leaves an image request pending forever.
+            // The image continues loading in the background, but must not block the menu.
+            fallbackTimer = setTimeout(finish, 6000);
+            if (image.complete) {
+                finish();
+                return;
+            }
+            image.addEventListener('load', finish, { once: true });
+            image.addEventListener('error', finish, { once: true });
+        });
+    }
+
+    async preloadStartupAssets(onProgress = () => {}) {
+        const images = this.collectStartupImages();
+        const total = images.length + Object.keys(this.audioManager.audio).length + this.cutsceneSources.length;
+        let loaded = 0;
+        const reportProgress = () => {
+            loaded++;
+            onProgress(loaded, total);
+        };
+        await Promise.all([
+            this.audioManager.preloadAll(reportProgress),
+            this.preloadOpeningCutscenes(reportProgress),
+            ...images.map(image => this.waitForStartupImage(image, reportProgress))
+        ]);
+    }
+
+    revealMenuAfterStartup() {
+        this.initializeAudio();
         requestAnimationFrame(() => {
             document.body.classList.add('menu-ready');
+            document.getElementById('startupLoading').classList.add('hidden');
             document.getElementById('startBtn').focus({ preventScroll: true });
         });
     }
@@ -883,13 +943,26 @@ class ArmorOfGodGame {
         this.showLevelIntro();
     }
 
-    preloadOpeningCutscenes() {
+    preloadOpeningCutscenes(onProgress = () => {}) {
         if (this.cutscenePreloadPromise) return this.cutscenePreloadPromise;
         this.cutscenePreloadPromise = Promise.all(this.cutsceneSources.map(source => new Promise(resolve => {
             const video = document.createElement('video');
             video.preload = 'auto'; video.muted = true; video.src = source;
-            const done = () => resolve();
-            video.addEventListener('canplaythrough', done, { once: true });
+            this.preloadedCutsceneVideos ||= [];
+            this.preloadedCutsceneVideos.push(video);
+            let finished = false;
+            let fallbackTimer;
+            const done = () => {
+                if (finished) return;
+                finished = true;
+                clearTimeout(fallbackTimer);
+                video.removeEventListener('canplay', done);
+                video.removeEventListener('error', done);
+                onProgress();
+                resolve();
+            };
+            fallbackTimer = setTimeout(done, 8000);
+            video.addEventListener('canplay', done, { once: true });
             video.addEventListener('error', done, { once: true });
             video.load();
         })));
@@ -1089,12 +1162,8 @@ class ArmorOfGodGame {
             this.arrowManager.spawnInitialArrows(this.player);
             if (this.level === 1) {
                 clearTimeout(this.levelOneWelcomeTimer);
-                this.uiRenderer.showMessage('Your adventure starts here.', 300);
-                this.levelOneWelcomeTimer = setTimeout(() => {
-                    if (this.gameState === 'playing' && this.level === 1) {
-                        this.uiRenderer.showMessage('Collect scriptures and head to the temple.', 300, '#FFD700', 600, true);
-                    }
-                }, 1000);
+                this.levelOneWelcomeTimer = null;
+                this.uiRenderer.showMessage('Collect scriptures as you seek the temple.', 360, '#FFD700', 600);
             }
             this.showFirstLevelInstructions();
         };
@@ -2903,7 +2972,7 @@ class ArmorOfGodGame {
         if (this.bossManager.active && this.bossManager.state !== 'cutscene') {
             this.worldManager.renderBossCave(this.ctx, this.cameraX, this.canvas.width, this.canvas.height, this.caveCrystalImages);
         } else {
-            this.backgroundManager.render(this.ctx, this.cameraX, this.gameState);
+            this.backgroundManager.render(this.ctx, this.cameraX, this.gameState, this.reducedMobileEffects);
         }
         
         const heavyBossShake = ['jumpPrep', 'finalPrep', 'finalLeap'].includes(this.bossManager.state);
@@ -2927,8 +2996,8 @@ class ArmorOfGodGame {
         this.enemyManager.render(this.ctx, this.cameraX, this.canvas.width);
         // The world has already been translated by cameraX, so the boss uses world coordinates here.
         this.bossManager.render(this.ctx, 0);
-        this.worldManager.renderScriptureBooks(this.ctx, this.bomImage, this.cameraX, this.canvas.width);
-        this.worldManager.renderHearts(this.ctx, this.heartImage, this.cameraX, this.canvas.width);
+        this.worldManager.renderScriptureBooks(this.ctx, this.bomImage, this.cameraX, this.canvas.width, this.reducedMobileEffects);
+        this.worldManager.renderHearts(this.ctx, this.heartImage, this.cameraX, this.canvas.width, this.reducedMobileEffects);
         
         // Render characters
         this.characterRenderer.renderPlayer(this.ctx, this.player, this.hasArmor, this.gameState, this.isPaused);
@@ -3228,7 +3297,53 @@ class ArmorOfGodGame {
 
 }
 
-// Start the game when the page loads
-window.addEventListener('load', () => {
-    new ArmorOfGodGame();
-});
+// Start loading as soon as the document structure is ready. Waiting for window.load
+// can stall forever on mobile while Safari is still fetching a noncritical image.
+async function startGameAfterDomReady() {
+    const loadingStartedAt = performance.now();
+    const game = new ArmorOfGodGame();
+    const loaderHero = document.querySelector('.startup-loading__hero');
+    const loaderDog = document.querySelector('.startup-loading__dog');
+    let heroFrame = 11;
+    let dogFrame = 0;
+    const loaderRunAnimation = setInterval(() => {
+        heroFrame = (heroFrame + 1) % 14;
+        dogFrame = (dogFrame + 1) % 5;
+        loaderHero.src = `images/sprites/player/run-${String(heroFrame + 1).padStart(2, '0')}.png`;
+        loaderDog.src = `images/sprites/pets/dog-run-${String(dogFrame + 1).padStart(2, '0')}.png`;
+    }, 80);
+    const status = document.getElementById('startupLoadingStatus');
+    const progress = document.getElementById('startupLoadingProgress');
+    const preloadPromise = game.preloadStartupAssets((loaded, total) => {
+        const percent = Math.round((loaded / total) * 100);
+        progress.style.width = `${percent}%`;
+        status.textContent = `LOADING ADVENTURE… ${percent}%`;
+    });
+    let preloadFinished = false;
+    const startupDeadline = new Promise(resolve => setTimeout(resolve, 6000, 'deadline'));
+    try {
+        const result = await Promise.race([
+            preloadPromise.then(() => 'complete'),
+            startupDeadline
+        ]);
+        preloadFinished = result === 'complete';
+    } catch (error) {
+        console.warn('Startup asset preload failed; continuing to the menu.', error);
+    }
+    if (!preloadFinished) {
+        progress.style.width = '100%';
+        status.textContent = 'STARTING ADVENTURE…';
+    }
+    const remainingDisplayTime = 2000 - (performance.now() - loadingStartedAt);
+    if (remainingDisplayTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingDisplayTime));
+    }
+    clearInterval(loaderRunAnimation);
+    game.revealMenuAfterStartup();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startGameAfterDomReady, { once: true });
+} else {
+    startGameAfterDomReady();
+}
