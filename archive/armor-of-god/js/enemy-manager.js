@@ -56,7 +56,7 @@ class EnemyManager {
         this.audioManager = audioManager;
         this.game = game;
         this.snails = [];
-        this.defeatEffects = []; // For the crossfade "bad-guy-defeated.png" effect
+        this.defeatEffects = []; // For the crossfade defeat-smoke effect
         
         // Load snail images
         this.snailImages = {};
@@ -64,20 +64,20 @@ class EnemyManager {
         
         // Load defeat effect image
         this.defeatImage = new Image();
-        this.defeatImage.src = 'images/sprites/enemy/bad-guy-defeated.png';
+        this.defeatImage.src = 'images/sprites/enemies/defeat-smoke.png';
     }
     
     loadSnailImages() {
         // Load 6-frame animation cycle
         for (let i = 1; i <= 6; i++) {
             const img = new Image();
-            img.src = `images/sprites/enemy/snail-crawl${i}.png`;
+            img.src = `images/sprites/enemies/snail/snail-crawl-${String(i).padStart(2, '0')}.png`;
             this.snailImages[`crawl${i}`] = img;
         }
         
         // Load shell image
         const shellImg = new Image();
-        shellImg.src = 'images/sprites/enemy/snail-shell.png';
+        shellImg.src = 'images/sprites/enemies/snail/snail-shell.png';
         this.snailImages.shell = shellImg;
     }
     
@@ -97,27 +97,33 @@ class EnemyManager {
         // Add snails to level 1 - place them on ground platforms
         this.snails.push(
             new Snail({
-                x: 1650,
+                x: 650,
+                y: 418,
+                platformX: 500,
+                platformWidth: 300
+            }),
+            new Snail({
+                x: 1650 + levelOneContentOffset(1650),
                 y: 418, // Ground level (468) minus snail height (50) = 418
-                platformX: 1325,
+                platformX: 1325 + levelOneContentOffset(1325),
                 platformWidth: 525
             }),
             new Snail({
-                x: 2600,
+                x: 2600 + levelOneContentOffset(2600),
                 y: 404, // Ground level adjusted for bigger size
-                platformX: 2370,
+                platformX: 2370 + levelOneContentOffset(2370),
                 platformWidth: 900
             }),
             new Snail({
-                x: 2750,
+                x: 2750 + levelOneContentOffset(2750),
                 y: 404,
-                platformX: 2370,
+                platformX: 2370 + levelOneContentOffset(2370),
                 platformWidth: 900
             }),
             new Snail({
-                x: 4090,
+                x: 4090 + levelOneContentOffset(4090),
                 y: 250,
-                platformX: 4000,
+                platformX: 4000 + levelOneContentOffset(4000),
                 platformWidth: 200
             })
         );

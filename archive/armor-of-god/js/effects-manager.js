@@ -19,7 +19,7 @@ class EffectsManager {
     initializeFireworks(castle) {
         this.clearFireworkTimers();
         this.fireworks = [];
-        this.pendingFireworkBursts = 8;
+        this.pendingFireworkBursts = 10;
         this.fireworkCastle = castle;
         this.scheduleFireworkBursts(300);
     }
@@ -243,7 +243,7 @@ class EffectsManager {
     }
 
     triggerPetAffection(x, y) {
-        const lifetime = 120;
+        const lifetime = 180;
         this.petAffectionEffects.push({ type: 'heart', x, y, vx: 0.08, vy: -0.42, life: lifetime, maxLife: lifetime, size: 20 });
         for (let index = 0; index < 6; index++) {
             const angle = (Math.PI * 2 * index) / 6 + Math.random() * .35;
@@ -251,6 +251,19 @@ class EffectsManager {
                 type: 'sparkle', x: x + (Math.random() - .5) * 12, y: y + 8,
                 vx: Math.cos(angle) * .45, vy: -0.25 + Math.sin(angle) * .35,
                 life: lifetime - 12 - Math.floor(Math.random() * 20), maxLife: lifetime, size: 2 + Math.random() * 2
+            });
+        }
+    }
+
+    triggerArmorPieceFound(x, y, image) {
+        const lifetime = 120;
+        this.petAffectionEffects.push({ type: 'armor-piece', x, y, vx: .08, vy: -.42, life: lifetime, maxLife: lifetime, size: 42, image });
+        for (let index = 0; index < 10; index++) {
+            const angle = (Math.PI * 2 * index) / 10 + Math.random() * .3;
+            this.petAffectionEffects.push({
+                type: 'sparkle', x: x + (Math.random() - .5) * 14, y: y + 8,
+                vx: Math.cos(angle) * .58, vy: -.25 + Math.sin(angle) * .45,
+                life: lifetime - 10 - Math.floor(Math.random() * 20), maxLife: lifetime, size: 2 + Math.random() * 2
             });
         }
     }
@@ -282,6 +295,10 @@ class EffectsManager {
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText('♥', x, effect.y);
+            } else if (effect.type === 'armor-piece') {
+                if (effect.image?.complete) {
+                    ctx.drawImage(effect.image, x - effect.size / 2, effect.y - effect.size / 2, effect.size, effect.size);
+                }
             } else {
                 ctx.fillStyle = '#fff6a6';
                 ctx.strokeStyle = '#fff';

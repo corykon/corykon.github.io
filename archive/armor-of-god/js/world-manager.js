@@ -20,6 +20,11 @@ const BOSS_CAVE_CEILING_PROFILE = [
     [535, 76], [640, 50], [745, 84], [845, 57], [950, 72], [1050, 45],
     [1140, 82], [1220, 54]
 ];
+const LEVEL_ONE_INTRO_WIDTH = 800;
+const LEVEL_ONE_MID_BREAK_WIDTH = 300;
+const LEVEL_ONE_MID_BREAK_START = 700;
+const levelOneContentOffset = (x) => LEVEL_ONE_INTRO_WIDTH +
+    (x > LEVEL_ONE_MID_BREAK_START ? LEVEL_ONE_MID_BREAK_WIDTH : 0);
 
 const BOSS_CAVE_CRYSTAL_PLACEMENTS = [
     [85, 415, 1, 50, 60, 'up'], [315, 426, 2, 42, 52, 'up'], [640, 418, 0, 60, 70, 'up'], [905, 424, 1, 48, 58, 'up'], [1080, 412, 2, 58, 70, 'up'],
@@ -50,7 +55,7 @@ class WorldManager {
     setLevelProperties() {
         switch(this.currentLevel) {
             case 1:
-                this.worldWidth = 9000; // Original castle level
+                this.worldWidth = 9000 + LEVEL_ONE_INTRO_WIDTH + LEVEL_ONE_MID_BREAK_WIDTH;
                 this.theme = 'castle';
                 break;
             case 2:
@@ -109,6 +114,17 @@ class WorldManager {
             { x: 4440, y: 360, width: 150, height: 30, type: 'floating' },
             { x: 4900, y: 330, width: 80, height: 30, type: 'floating' },
             { x: 5200, y: 350, width: 350, height: 30, type: 'floating' }
+        ];
+        // Keep the original level intact, adding a calm walk-in and a short pause after
+        // the first scripture. Platforms crossing that pause are extended to keep the ground seamless.
+        this.platforms = [
+            { x: 0, y: 468, width: LEVEL_ONE_INTRO_WIDTH, height: 135, type: 'ground' },
+            ...this.platforms.map(platform => ({
+                ...platform,
+                x: platform.x + levelOneContentOffset(platform.x),
+                width: platform.width + (platform.x < LEVEL_ONE_MID_BREAK_START &&
+                    platform.x + platform.width > LEVEL_ONE_MID_BREAK_START ? LEVEL_ONE_MID_BREAK_WIDTH : 0)
+            }))
         ];
     }
     
@@ -169,8 +185,8 @@ class WorldManager {
             { x: 10000, y: 468, width: 700, height: 135, type: 'ground' },
             
             // Additional floating elements for variety
-            { x: 10900, y: 380, width: 300, height: 30, type: 'tree_platform' },
-            { x: 11500, y: 380, width: 300, height: 30, type: 'tree_platform' },
+            { x: 10900, y: 380, width: 350, height: 30, type: 'tree_platform' },
+            { x: 11450, y: 380, width: 350, height: 30, type: 'tree_platform' },
             
             // More ground with gaps
             { x: 12000, y: 468, width: 600, height: 135, type: 'ground' },
@@ -283,6 +299,12 @@ class WorldManager {
             { x: 5200, y: 45, size: 60 },
             { x: 5600, y: 80, size: 75 }
         ];
+        this.clouds = [
+            { x: 55, y: 58, size: 52 },
+            { x: 255, y: 28, size: 74 },
+            { x: 430, y: 92, size: 48 },
+            ...this.clouds.map(cloud => ({ ...cloud, x: cloud.x + levelOneContentOffset(cloud.x) }))
+        ];
     }
     
     createLevel2Clouds() {
@@ -335,19 +357,20 @@ class WorldManager {
             { x: 1500, y: 305, width: 50, height: 50, collected: false, verse: "Truth" },
             { x: 2840, y: 265, width: 50, height: 50, collected: false, verse: "Righteousness" }
         ];
+        this.scriptureBooks.forEach(book => { book.x += levelOneContentOffset(book.x); });
     }
     
     createLevel2ScriptureBooks() {
         this.scriptureBooks = [
             // Early jungle book
-            { x: 1500, y: 130, width: 50, height: 50, collected: false, verse: "Salvation" }, // On tree platform
+            { x: 1615, y: 130, width: 50, height: 50, collected: false, verse: "Salvation" }, // On tree platform
             
             // Mid-level books
             { x: 3860, y: 150, width: 50, height: 50, collected: false, verse: "Spirit" }, // Tree platform
-            { x: 8500, y: 180, width: 50, height: 50, collected: false, verse: "Light" }, // Jump off high branch
+            { x: 8700, y: 270, width: 50, height: 50, collected: false, verse: "Light" }, // Jump off high branch
             
             // Late jungle books
-            { x: 11300, y: 150, width: 50, height: 50, collected: false, verse: "Hope" },
+            { x: 11500, y: 180, width: 50, height: 50, collected: false, verse: "Hope" },
             // At the left edge of the clearing before the temple, where it is reachable.
             { x: 15935, y: 415, width: 50, height: 50, collected: false, verse: "Joy" }
         ];
@@ -355,8 +378,8 @@ class WorldManager {
     
     createLevel3ScriptureBooks() {
         this.scriptureBooks = [
-            // Early mountain book - on first rocky platform
-            { x: 1450, y: 120, width: 50, height: 50, collected: false, verse: "Courage" },
+            // Early mountain book - centered 10px above the 1600–1800 rocky platform.
+            { x: 1675, y: 240, width: 50, height: 50, collected: false, verse: "Courage" },
            
             { x: 3880, y: 250, width: 50, height: 50, collected: false, verse: "Perseverance" },
 
@@ -364,7 +387,7 @@ class WorldManager {
             { x: 6800, y: 120, width: 50, height: 50, collected: false, verse: "Strength" },
             
             // Final scripture before temple - requires skillful platforming
-            { x: 11330, y: 80, width: 50, height: 50, collected: false, verse: "Victory" } // On highest challenge platform
+            { x: 11020, y: 80, width: 50, height: 50, collected: false, verse: "Victory" } // On highest challenge platform
         ];
     }
     
@@ -373,6 +396,7 @@ class WorldManager {
             // Single heart in a tough-to-reach location on floating platform
             { x: 2035, y: 60, width: 30, height: 30, collected: false, healthRestore: 1 } // High floating platform
         ];
+        this.hearts.forEach(heart => { heart.x += levelOneContentOffset(heart.x); });
     }
     
     createLevel2Hearts() {
@@ -390,7 +414,7 @@ class WorldManager {
             { x: 1460, y: 50, width: 30, height: 30, collected: false, healthRestore: 1 },
             { x: 4290, y: 180, width: 30, height: 30, collected: false, healthRestore: 1 },
             { x: 5940, y: 140, width: 30, height: 30, collected: false, healthRestore: 1 },
-            { x: 11030, y: 120, width: 30, height: 30, collected: false, healthRestore: 1 }
+            { x: 11320, y: 20, width: 30, height: 30, collected: false, healthRestore: 1 }
         ];
     }
     
@@ -430,6 +454,14 @@ class WorldManager {
             { x: 6330, y: 363, width: 110, height: 110, image: 'tall-tree.png' },
             { x: 6605, y: 363, width: 110, height: 110, image: 'tall-tree.png' },
             { x: 6725, y: 373, width: 100, height: 100, image: 'tall-tree.png' }
+        ];
+        this.foregroundSprites = [
+            { x: 24, y: 430, width: 100, height: 40, image: 'long-bush.png' },
+            { x: 126, y: 430, width: 40, height: 40, image: 'round-bush.png' },
+            { x: 212, y: 322, width: 140, height: 148, image: 'short-tree.png' },
+            { x: 374, y: 430, width: 100, height: 40, image: 'long-bush.png' },
+            { x: 442, y: 350, width: 105, height: 120, image: 'tall-tree.png' },
+            ...this.foregroundSprites.map(sprite => ({ ...sprite, x: sprite.x + levelOneContentOffset(sprite.x) }))
         ];
     }
     
@@ -1127,6 +1159,14 @@ class WorldManager {
                 const floatY = Math.sin(time + book.x * 0.01) * 2;
                 
                 ctx.save();
+                if (book.timed) {
+                    const fadeIn = Math.min(1, book.age / 18);
+                    const fadeOutStart = book.duration - 90;
+                    const fadeOut = book.age < fadeOutStart
+                        ? 1
+                        : Math.max(0, (book.duration - book.age) / 90) * (Math.floor(book.age / 5) % 2 === 0 ? 1 : .28);
+                    ctx.globalAlpha = fadeIn * fadeOut;
+                }
                 ctx.translate(0, floatY);
                 
                 // Draw subtle glow behind scripture book

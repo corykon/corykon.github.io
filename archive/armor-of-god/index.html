@@ -6,14 +6,14 @@
     <title>Armor of God: Pixel Adventure</title>
     <meta property="og:title" content="Armor of God: Pixel Adventure">
     <meta property="og:description" content="A pixel-art platformer inspired by Ephesians 6.">
-    <meta property="og:image" content="https://coryfugate.com/archive/armor-of-god/images/sprites/main-char/armor-jump.png">
+    <meta property="og:image" content="https://coryfugate.com/archive/armor-of-god/images/sprites/player/armored-jump.png">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://coryfugate.com/archive/armor-of-god/images/sprites/main-char/armor-jump.png">
+    <meta name="twitter:image" content="https://coryfugate.com/archive/armor-of-god/images/sprites/player/armored-jump.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="game.css?v=leaderboard-chevron-fix">
+    <link rel="stylesheet" href="game.css?v=armor-learning">
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQ0NT1894T"></script>
@@ -28,13 +28,13 @@
 <body>
     <!-- Audio Toggle Button -->
     <button id="audioToggleBtn" class="audio-toggle-btn" title="Toggle Audio">
-        <img src="images/volume-on.svg" alt="Volume On" class="icon volume-on">
-        <img src="images/volume-off.svg" alt="Volume Off" class="icon volume-off">
+        <img src="images/icons/volume-on.svg" alt="Volume On" class="icon volume-on">
+        <img src="images/icons/volume-off.svg" alt="Volume Off" class="icon volume-off">
     </button>
     
     <!-- Game Speed Control Button -->
     <button id="speedToggleBtn" class="speed-toggle-btn" title="Game Speed">
-        <img src="images/rabbit-running-regular-full.svg" alt="Game Speed" class="icon">
+        <img src="images/icons/game-speed.svg" alt="Game Speed" class="icon">
     </button>
     
     <!-- Speed Control Dropdown -->
@@ -50,7 +50,7 @@
         <!-- Main Menu Screen -->
         <div id="menuScreen" class="screen">
             <div class="menu-brand">
-                <img src="images/armorOfGodTitleImage.png" alt="Armor of God Title" class="title-image">
+                <img src="images/ui/armor-of-god-title.png" alt="Armor of God Title" class="title-image">
                 <h1>Armor of God</h1>
                 <p class="scripture">
                     <span class="scripture-full">“Put on the whole armor of God, that ye may be able to stand against the wiles of the devil”</span>
@@ -63,10 +63,10 @@
                     <span class="pet-label">Companion:</span>
                     <div class="pet-options">
                         <button id="selectDog" class="pet-btn selected" data-pet="dog">
-                            <img src="images/dog-ico.svg" alt="Dog" class="pet-icon"> <span class="pet-btn-text">Dog</span>
+                            <img src="images/icons/dog-icon.svg" alt="Dog" class="pet-icon"> <span class="pet-btn-text">Dog</span>
                         </button>
                         <button id="selectCat" class="pet-btn" data-pet="cat">
-                            <img src="images/cat-ico.svg" alt="Cat" class="pet-icon"> <span class="pet-btn-text">Cat</span>
+                            <img src="images/icons/cat-icon.svg" alt="Cat" class="pet-icon"> <span class="pet-btn-text">Cat</span>
                         </button>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
         <div id="gameScreen" class="screen hidden">
             <div id="levelInfo" class="level-indicator">Level 1: Clover Hills</div>
             <div class="gameplay-stage">
-                <canvas id="gameCanvas" width="1200" height="600"></canvas>
+                <canvas id="gameCanvas" width="1200" height="600" tabindex="0"></canvas>
                 <div id="rotateDeviceNotice" class="rotate-device-notice hidden" role="status">
                     <span class="rotate-device-icon" aria-hidden="true">↻</span>
                     <strong>Rotate your device</strong>
@@ -115,9 +115,25 @@
                 <div id="armorStatus"></div>
             </div>
             <div id="controlsReminder" class="controls-reminder">
-                <p id="pauseReminderText">Press 'esc' to pause</p>
+                <p id="pauseReminderText">Press 'ESC' to pause</p>
                 <button id="pauseTouchBtn" type="button" aria-label="Pause game"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg></button>
             </div>
+        </div>
+
+        <div id="armorLearningModal" class="modal armor-learning-modal hidden" role="dialog" aria-modal="true" aria-labelledby="armorLearningName">
+            <section class="modal-content armor-learning-content">
+                <div class="armor-learning-visual">
+                    <img id="armorLearningImage" class="armor-learning-image" src="" alt="">
+                    <p class="armor-learning-more"><img id="armorLearningActivatedImage" class="armor-learning-activated-image hidden" src="images/sprites/player/armored-jump.png" alt="Hero wearing armor"><span id="armorLearningMore"><span id="armorLearningMorePrefix"></span><span id="armorLearningPiecesRemaining" class="armor-learning-count hidden" aria-hidden="true"></span><span id="armorLearningMoreText"></span></span></p>
+                </div>
+                <div class="armor-learning-details">
+                    <h2 id="armorLearningName">Armor Piece</h2>
+                    <p id="armorLearningVerse" class="armor-learning-verse"></p>
+                    <a id="armorLearningLink" class="armor-learning-link" href="https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p14#p14" target="_blank" rel="noopener">— Ephesians 6:14</a>
+                    <button id="armorLearningDone" class="menu-btn armor-learning-done" type="button">Got it!</button>
+                    <label class="armor-learning-checkbox"><input id="armorLearningHide" type="checkbox"> Don’t show this window again</label>
+                </div>
+            </section>
         </div>
 
         <!-- Level Intro Screen -->
@@ -131,7 +147,7 @@
                         <h2 class="level-name" id="introLevelName">CLOVER HILLS</h2>
                     </div>
                     <div class="level-image-container">
-                        <img class="level-image" id="introLevelImage" src="images/level1.png" alt="Level Image">
+                        <img class="level-image" id="introLevelImage" src="images/ui/level-01-clover-hills.png" alt="Level Image">
                     </div>
                     <button id="startLevelBtn" class="menu-btn next-level-wide start-level-btn">Start Level <span class="chevron-icon">❯</span></button>
                     <div class="continue-prompt">
@@ -153,7 +169,7 @@
         <!-- Game Over Screen -->
         <div id="gameOverScreen" class="screen hidden">
             <div class="game-over-content">
-                <img src="./images/game-over.png" alt="Game Over" class="game-over-image">
+                <img src="./images/ui/game-over.png" alt="Game Over" class="game-over-image">
                 <div class="game-over-copy">
                     <h1>Game Over</h1>
                     <p id="gameOverMessage"></p>
@@ -167,14 +183,14 @@
 
         <!-- Level Complete Screen -->
         <div id="levelCompleteScreen" class="screen hidden">
-            <img src="./images/sprites/temple.png" alt="Holy Temple" id="victoryTempleImage" class="victory-temple">
+            <img src="./images/sprites/world/temple/temple.png" alt="Holy Temple" id="victoryTempleImage" class="victory-temple">
             <!-- Completion characters -->
             <div id="victoryRunners" class="victory-runners hidden">
                 <div class="victory-pet">
-                    <img id="victoryPetImg" src="images/sprites/main-char/dog-jump1.png" alt="Pet celebrating" style="width: 100%; height: 100%; image-rendering: pixelated;">
+                    <img id="victoryPetImg" src="images/sprites/pets/dog-jump-01.png" alt="Pet celebrating" style="width: 100%; height: 100%; image-rendering: pixelated;">
                 </div>
                 <div class="victory-player">
-                    <img id="victoryPlayerImg" src="images/sprites/main-char/drop.png" alt="Player landing" style="width: 100%; height: 100%; image-rendering: pixelated;">
+                    <img id="victoryPlayerImg" src="images/sprites/player/fall.png" alt="Player landing" style="width: 100%; height: 100%; image-rendering: pixelated;">
                 </div>
             </div>
             <h1 id="levelCompleteTitle">Level Cleared</h1>
@@ -228,11 +244,21 @@
             <div class="credits-roll" aria-label="Armor of God credits">
                 <section class="credits-title">
                     <h1>ARMOR OF GOD</h1>
-                    <img src="images/armorOfGodTitleImage.png" alt="Armor of God" class="credits-title-image">
+                    <img src="images/ui/armor-of-god-title.png" alt="Armor of God" class="credits-title-image">
+                </section>
+
+                <section class="credits-card credits-scripture-card">
+                    <img src="images/ui/eph-6-scroll.png" alt="Ephesians 6" class="credits-scripture-title">
+                    <div class="credits-scripture-passage">
+                        <p><span>11</span> Put on the whole armour of God, that ye may be able to stand against the wiles of the devil.</p>
+                        <p><span>12</span> For we wrestle not against flesh and blood, but against principalities, against powers, against the rulers of the darkness...</p>
+                        <p><span>13</span> Wherefore take unto you the whole armour of God, that ye may be able to withstand in the evil day, and having done all, to stand.</p>
+                    </div>
+                    <a class="credits-scripture-link" href="https://www.churchofjesuschrist.org/study/scriptures/nt/eph/6?lang=eng&id=p11-p13#p11" target="_blank" rel="noopener noreferrer">Open the scriptures</a>
                 </section>
 
                 <section class="credits-card">
-                    <img src="images/level1.png" alt="Clover Hills">
+                    <img src="images/ui/level-01-clover-hills.png" alt="Clover Hills">
                     <h2>LEAD GAME DESIGNERS</h2>
                     <p>CORY F.</p>
                     <p>MADDOX P.</p>
@@ -245,16 +271,16 @@
                 </section>
 
                 <section class="credits-card">
-                    <img src="images/level2.png" alt="Midnight Jungle">
+                    <img src="images/ui/level-02-midnight-jungle.png" alt="Midnight Jungle">
                     <h2>FAMOUS SCRIPTURE WRITER</h2>
                     <p>PAUL</p>
                     <h2>INSPIRATION</h2>
                     <p>LDS KIDS VIDEO</p>
-                    <p class="credits-small"><a href="https://www.youtube.com/watch?v=AEb6jyDpMHY" target="_blank" rel="noopener noreferrer">See it here</a></p>
+                    <p class="credits-small"><a class="credits-video-link" href="https://www.youtube.com/watch?v=AEb6jyDpMHY" target="_blank" rel="noopener noreferrer">watch the video</a></p>
                 </section>
 
                 <section class="credits-card">
-                    <img src="images/level3.png" alt="Granite Mountain Pass">
+                    <img src="images/ui/level-03-granite-mountain-pass.png" alt="Granite Mountain Pass">
                     <h2>AI PROGRAMMING AGENTS</h2>
                     <p>GITHUB COPILOT</p>
                     <p>CLAUDE</p>
@@ -270,7 +296,7 @@
                 </section>
 
                 <section class="credits-card">
-                    <img src="images/boss-fight.png" alt="Stone Golem boss fight">
+                    <img src="images/ui/stone-golem-boss-fight.png" alt="Stone Golem boss fight">
                     <h2>SOUND &amp; MUSIC</h2>
                     <p>PIXABAY.COM</p>
                     <p>SFXR.ME</p>
@@ -282,13 +308,13 @@
                 </section>
 
                 <section class="credits-card">
-                    <img src="images/sprites/temple.png" alt="Temple sprite">
+                    <img src="images/sprites/world/temple/temple.png" alt="Temple sprite">
                     <h2>SPECIAL THANKS</h2>
                     <p>TO EVERYONE WHO PLAYED</p>
                 </section>
             </div>
             <div class="credits-finale" aria-live="polite">
-                <img id="creditsHero" src="images/hero-credits-dog.png" alt="Hero and companion">
+                <img id="creditsHero" src="images/ui/hero-dog.png" alt="Hero and companion">
                 <h1>THE END</h1>
                 <button id="creditsMenuBtn" class="menu-btn">Main Menu</button>
             </div>
@@ -313,28 +339,28 @@
                     <div class="how-to-play-grid how-to-move-grid">
                         <div class="how-to-play-card">
                             <h4>Jump</h4>
-                            <div class="control-demo"><span class="how-to-key" aria-label="Up arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 21v-9H5l7-8 7 8h-5v9z"/></svg></span><img src="images/sprites/main-char/jump.png" alt="Hero jumping"></div>
+                            <div class="control-demo"><span class="how-to-key" aria-label="Up arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 21v-9H5l7-8 7 8h-5v9z"/></svg></span><img src="images/sprites/player/jump.png" alt="Hero jumping"></div>
                         </div>
                         <div class="how-to-play-card">
                             <h4>Move</h4>
-                            <div class="control-demo control-demo--move"><img class="how-to-move-left" src="images/sprites/main-char/run3.png" alt="Hero running left"><span class="how-to-key" aria-label="Left arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10h-9V5l-8 7 8 7v-5h9z"/></svg></span><span class="how-to-key" aria-label="Right arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h9V5l8 7-8 7v-5H3z"/></svg></span><img src="images/sprites/main-char/run8.png" alt="Hero running right"></div>
+                            <div class="control-demo control-demo--move"><img class="how-to-move-left" src="images/sprites/player/run-03.png" alt="Hero running left"><span class="how-to-key" aria-label="Left arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10h-9V5l-8 7 8 7v-5h9z"/></svg></span><span class="how-to-key" aria-label="Right arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h9V5l8 7-8 7v-5H3z"/></svg></span><img src="images/sprites/player/run-08.png" alt="Hero running right"></div>
                         </div>
                         <div class="how-to-play-card">
                             <h4>Duck</h4>
-                            <div class="control-demo control-demo--duck"><span class="how-to-key" aria-label="Down arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v9h5l-7 8-7-8h5z"/></svg></span><img src="images/sprites/main-char/duck1.png" alt="Hero ducking"></div>
+                            <div class="control-demo control-demo--duck"><span class="how-to-key" aria-label="Down arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v9h5l-7 8-7-8h5z"/></svg></span><img src="images/sprites/player/duck-01.png" alt="Hero ducking"></div>
                         </div>
                     </div>
                 </section>
                 <section class="how-to-play-section how-to-do" aria-labelledby="whatToDoTitle">
                     <h3 id="whatToDoTitle">What to Do</h3>
                     <div class="how-to-play-grid how-to-do-grid">
-                        <div class="how-to-play-card"><h4>Dodge<br>Arrows</h4><img class="how-to-sprite how-to-arrows" src="images/sprites/enemy/fiery-arrow.png" alt="Fiery arrows"></div>
-                        <div class="how-to-play-card"><h4>Defeat<br>Enemies</h4><img class="how-to-sprite how-to-enemy" src="images/sprites/enemy/snail-crawl1.png" alt="Enemy snail"></div>
-                        <div class="how-to-play-card"><h4>Reach the<br>Temple</h4><img class="how-to-sprite how-to-temple" src="images/sprites/temple.png" alt="Temple"></div>
+                        <div class="how-to-play-card"><h4>Dodge<br>Arrows</h4><img class="how-to-sprite how-to-arrows" src="images/sprites/enemies/fiery-arrow.png" alt="Fiery arrows"></div>
+                        <div class="how-to-play-card"><h4>Defeat<br>Enemies</h4><img class="how-to-sprite how-to-enemy" src="images/sprites/enemies/snail/snail-crawl-01.png" alt="Enemy snail"></div>
+                        <div class="how-to-play-card"><h4>Reach the<br>Temple</h4><img class="how-to-sprite how-to-temple" src="images/sprites/world/temple/temple.png" alt="Temple"></div>
                     </div>
                     <div class="armor-objective">
                         <p>Collect scriptures to put on your armor</p>
-                        <div class="armor-objective-sprites"><img src="images/sprites/bom.png" alt="Scripture"><span>+</span><img src="images/sprites/bom.png" alt="Scripture"><span>+</span><img src="images/sprites/bom.png" alt="Scripture"><span>=</span><img src="images/sprites/main-char/armor-standing.png" alt="Hero in armor"></div>
+                        <div class="armor-objective-sprites"><img src="images/sprites/pickups/scripture-pickup.png" alt="Scripture"><span>+</span><img src="images/sprites/pickups/scripture-pickup.png" alt="Scripture"><span>+</span><img src="images/sprites/pickups/scripture-pickup.png" alt="Scripture"><span>=</span><img class="armor-objective-result" src="images/sprites/player/armored-stand.png" alt="Hero in armor"></div>
                     </div>
                 </section>
             </div>
@@ -345,19 +371,19 @@
                     <div class="score-rule-groups">
                         <section class="score-rule-group" aria-labelledby="scorePickupsTitle">
                             <h4 id="scorePickupsTitle">Pick up</h4>
-                            <div class="score-rule"><img src="images/sprites/bom.png" alt=""><span>Scripture</span><strong>+300</strong></div>
+                            <div class="score-rule"><img src="images/sprites/pickups/scripture-pickup.png" alt=""><span>Scripture</span><strong>+300</strong></div>
                             <div class="score-rule"><span class="score-rule-icon">♥</span><span>Heart</span><strong>+500</strong></div>
-                            <div class="score-rule"><img src="images/sprites/main-char/armor-standing.png" alt="Hero wearing armor"><span>Armor refill</span><strong>+200</strong></div>
+                            <div class="score-rule"><img src="images/sprites/player/armored-stand.png" alt="Hero wearing armor"><span>Armor refill</span><strong>+200</strong></div>
                         </section>
                         <section class="score-rule-group" aria-labelledby="scoreDefeatTitle">
                             <h4 id="scoreDefeatTitle">Defeat</h4>
-                            <div class="score-rule"><img src="images/sprites/enemy/snail-crawl1.png" alt=""><span>Snail</span><strong>+200</strong></div>
-                            <div class="score-rule"><img src="images/sprites/enemy/snail-shell.png" alt=""><span>Mega snail</span><strong>+1,000</strong></div>
-                            <div class="score-rule"><img src="images/sprites/enemy/fiery-arrow.png" alt=""><span>Break an arrow</span><strong>+300</strong></div>
-                            <div class="score-rule"><img src="images/sprites/enemy/fiery-arrow.png" alt="Fiery arrow"><span>Arrows deflected</span><strong>+10</strong></div>
+                            <div class="score-rule"><img src="images/sprites/enemies/snail/snail-crawl-01.png" alt=""><span>Snail</span><strong>+200</strong></div>
+                            <div class="score-rule"><img src="images/sprites/enemies/snail/snail-shell.png" alt=""><span>Mega snail</span><strong>+1,000</strong></div>
+                            <div class="score-rule"><img src="images/sprites/enemies/fiery-arrow.png" alt=""><span>Break an arrow</span><strong>+300</strong></div>
+                            <div class="score-rule"><img src="images/sprites/enemies/fiery-arrow.png" alt="Fiery arrow"><span>Arrows deflected</span><strong>+10</strong></div>
                             <div class="score-rule"><span class="score-rule-icon score-rule-icon--boss">◆</span><span>Boss head stomp</span><strong>+100</strong></div>
                             <div class="score-rule"><span class="score-rule-icon score-rule-icon--boss">◆</span><span>Defeat the golem</span><strong>+10,000</strong></div>
-                            <div class="score-rule"><img src="images/sprites/main-char/jump.png" alt="Hero jumping"><span>Airborne Combos</span><strong>x1, x2, x3 …</strong></div>
+                            <div class="score-rule"><img src="images/sprites/player/jump.png" alt="Hero jumping"><span>Airborne Combos</span><strong>x1, x2, x3 …</strong></div>
                         </section>
                         <section class="score-rule-group score-rule-group--bonuses" aria-labelledby="scoreBonusesTitle">
                             <h4 id="scoreBonusesTitle">End-of-Level Bonuses</h4>
@@ -396,18 +422,18 @@
     </script>
 
     <!-- Load modular game files -->
-    <script src="js/audio-manager.js?v=pet-controls-fix"></script>
-    <script src="js/effects-manager.js?v=pet-controls-fix"></script>
+    <script src="js/audio-manager.js?v=armor-learning"></script>
+    <script src="js/effects-manager.js?v=armor-learning"></script>
     <script src="js/input-handler.js"></script>
     <script src="js/world-manager.js"></script>
     <script src="js/arrow-manager.js"></script>
     <script src="js/enemy-manager.js"></script>
     <script src="js/background-manager.js"></script>
-    <script src="js/ui-renderer.js"></script>
+    <script src="js/ui-renderer.js?v=armor-learning"></script>
     <script src="js/character-renderer.js"></script>
     <script src="js/pet-manager.js?v=pet-controls-fix"></script>
     <script src="js/boss-manager.js"></script>
     <script src="js/high-score.js?v=leaderboard-chevron-fix"></script>
-    <script src="js/game-modular.js?v=pet-controls-fix"></script>
+    <script src="js/game-modular.js?v=armor-learning"></script>
 </body>
 </html>

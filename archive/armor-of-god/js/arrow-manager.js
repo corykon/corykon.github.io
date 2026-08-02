@@ -14,6 +14,7 @@ class ArrowManager {
         
         // Broken arrow effects
         this.brokenArrows = [];
+        this.ricochetSparks = [];
         
         // Arrow type definitions (speeds increased by 50% for faster gameplay)
         this.arrowTypes = [
@@ -91,12 +92,21 @@ class ArrowManager {
             brokenArrow.opacity = Math.max(0, 1 - (brokenArrow.timer / brokenArrow.duration));
             
             // Apply physics - upward pop then falling
+            brokenArrow.x += brokenArrow.velocityX || 0;
             brokenArrow.y += brokenArrow.velocityY;
             brokenArrow.velocityY += 0.3; // Gravity
             
             // Optional: slight rotation for more dramatic effect
-            brokenArrow.rotation = (brokenArrow.rotation || 0) + 0.05;
+            brokenArrow.rotation = (brokenArrow.rotation || 0) + (brokenArrow.rotationSpeed || 0.05);
         });
+
+        this.ricochetSparks.forEach(spark => {
+            spark.x += spark.vx;
+            spark.y += spark.vy;
+            spark.vy += .14;
+            spark.life--;
+        });
+        this.ricochetSparks = this.ricochetSparks.filter(spark => spark.life > 0);
         
         // Remove finished broken arrow effects
         for (let index = this.brokenArrows.length - 1; index >= 0; index--) {
@@ -191,6 +201,12 @@ class ArrowManager {
         });
         
         // Render broken arrow effects
+        this.ricochetSparks.forEach(spark => {
+            ctx.globalAlpha = spark.life / spark.maxLife;
+            ctx.fillStyle = spark.color;
+            ctx.fillRect(Math.floor(spark.x), Math.floor(spark.y), spark.size, spark.size);
+        });
+        ctx.globalAlpha = 1;
         this.brokenArrows.forEach(brokenArrow => {
             if (this.brokenArrowImage && this.brokenArrowImage.complete) {
                 ctx.save();
@@ -255,9 +271,7 @@ class ArrowManager {
                 } else {
                     // Side collision - normal damage or armor behavior
                     if (hasArmor) {
-                        // Arrow bounces off armor
-                        arrow.speedX = -arrow.speedX;
-                        arrow.speedY = -2; // Bounce up
+                        this.shatterArmorArrow(arrow);
                         
                         // Only play ricochet sound once per arrow
                         if (!arrow.hasPlayedRicochetSound) {
@@ -339,10 +353,45 @@ class ArrowManager {
         // Play arrow smash sound (playbackRate configured in audio manager)
         this.audioManager.playSound('arrowSmash');
     }
+
+    shatterArmorArrow(arrow) {
+        arrow.active = false;
+        const centerX = arrow.x + arrow.width / 2;
+        const centerY = arrow.y + arrow.height / 2;
+        this.brokenArrows.push({
+            x: arrow.x,
+            y: arrow.y,
+            width: arrow.width,
+            height: arrow.height,
+            opacity: 1,
+            timer: 0,
+            duration: 42,
+            velocityX: 1.5 + Math.random() * 1.5,
+            velocityY: -3 - Math.random() * 2,
+            rotation: 0,
+            rotationSpeed: .18 + Math.random() * .08
+        });
+        for (let index = 0; index < 10; index++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 1.5 + Math.random() * 3;
+            const life = 16 + Math.floor(Math.random() * 8);
+            this.ricochetSparks.push({
+                x: centerX,
+                y: centerY,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - 1,
+                life,
+                maxLife: life,
+                size: 2 + Math.floor(Math.random() * 2),
+                color: index % 2 === 0 ? '#8EE7FF' : '#FFD700'
+            });
+        }
+    }
     
     reset() {
         this.arrows = [];
         this.brokenArrows = [];
+        this.ricochetSparks = [];
         this.arrowSpawnTimer = 0;
         this.arrowSpawnDelay = 42;
     }

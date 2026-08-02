@@ -11,6 +11,7 @@ class BossManager {
         this.rocks = [];
         this.deathParticles = [];
         this.petAssistSmoke = null;
+        this.petAssistCrouchTimer = 0;
         this.defeatTimer = 0;
         this.shake = 0;
         this.chaseSpeed = 3.36;
@@ -38,35 +39,35 @@ class BossManager {
         this.finalPhasePending = false;
         this.afterHitAction = 'lava';
         this.exitImage = new Image();
-        this.exitImage.src = 'images/sprites/foreground/cave-exit.png';
+        this.exitImage.src = 'images/sprites/world/props/cave-exit.png';
         this.sprites = {};
         this.loadSprites();
         this.hitSmokeImage = new Image();
-        this.hitSmokeImage.src = 'images/sprites/enemy/bad-guy-defeated.png';
+        this.hitSmokeImage.src = 'images/sprites/enemies/defeat-smoke.png';
         this.rockSprites = ['falling-rock-1.png', 'falling-rock-2.png', 'falling-rock-3.png'].map(file => {
-            const image = new Image(); image.src = `images/sprites/foreground/${file}`; return image;
+            const image = new Image(); image.src = `images/sprites/world/props/${file}`; return image;
         });
     }
 
     loadSprites() {
         const definitions = {
             stand: ['golem-stand.png'],
-            standBlue: ['golem-stand-b.png'],
-            run: ['golem-run1.png', 'golem-run2.png', 'golem-run3.png', 'golem-run4.png', 'golem-run5.png', 'golem-run6.png', 'golem-run7.png'],
-            runBlue: ['golem-run1-b.png', 'golem-run2-b.png', 'golem-run3-b.png', 'golem-run4-b.png', 'golem-run5-b.png', 'golem-run6-b.png', 'golem-run7-b.png'],
-            slam: ['golem-slam1.png', 'golem-slam2.png', 'golem-slam3.png', 'golem-slam4.png', 'golem-slam5.png', 'golem-slam6.png', 'golem-slam7.png', 'golem-slam8.png'],
+            standBlue: ['golem-stand-blue.png'],
+            run: Array.from({ length: 7 }, (_, index) => `golem-run-${String(index + 1).padStart(2, '0')}.png`),
+            runBlue: Array.from({ length: 7 }, (_, index) => `golem-run-${String(index + 1).padStart(2, '0')}-blue.png`),
+            slam: Array.from({ length: 8 }, (_, index) => `golem-slam-${String(index + 1).padStart(2, '0')}.png`),
             // Vulnerability is a stationary recovery window, so never cycle running frames here.
-            vulnerable: ['golem-stand-b.png'],
-            jump1: ['golem-jump1.png'], jump2: ['golem-jump2.png'], jump3: ['golem-jump3.png'], jump4: ['golem-jump4.png'], jump5: ['golem-jump5.png'],
-            jump1Blue: ['golem-jump1-b.png'], jump2Blue: ['golem-jump2-b.png'], jump3Blue: ['golem-jump3-b.png'], jump4Blue: ['golem-jump4-b.png'], jump5Blue: ['golem-jump5-b.png'],
-            hit: ['golem-slam4.png']
+            vulnerable: ['golem-stand-blue.png'],
+            jump1: ['golem-jump-01.png'], jump2: ['golem-jump-02.png'], jump3: ['golem-jump-03.png'], jump4: ['golem-jump-04.png'], jump5: ['golem-jump-05.png'],
+            jump1Blue: ['golem-jump-01-blue.png'], jump2Blue: ['golem-jump-02-blue.png'], jump3Blue: ['golem-jump-03-blue.png'], jump4Blue: ['golem-jump-04-blue.png'], jump5Blue: ['golem-jump-05-blue.png'],
+            hit: ['golem-slam-04.png']
         };
         Object.entries(definitions).forEach(([name, files]) => {
-            this.sprites[name] = files.map(file => { const image = new Image(); image.src = `images/sprites/enemy/${file}`; return image; });
+            this.sprites[name] = files.map(file => { const image = new Image(); image.src = `images/sprites/enemies/golem/${file}`; return image; });
         });
     }
 
-    reset() { this.state = 'dormant'; this.active = false; this.exit = null; this.exitFade = 0; this.rocks = []; this.deathParticles = []; this.petAssistSmoke = null; this.defeatTimer = 0; this.timer = 0; this.health = this.maxHealth; this.poundRounds = 0; this.jumpPasses = 0; this.jumpCount = 0; this.jumpGroundTimer = 0; this.landingPoseTimer = 0; this.landingSoundPlayed = false; this.returnToLavaAfterLanding = false; this.defeatAfterFinalJump = false; this.jumpVulnerable = false; this.redWarning = false; this.tooHotCooldown = 0; this.contactInvulnerability = 0; this.finalVolleyCount = 0; this.finalStoneTimer = 0; this.airChaseOffset = 0; this.airChaseTimer = 0; this.stompedMidair = false; this.hasEnteredFinalPhase = false; this.finalPhasePending = false; this.golem.stompBounceOffset = 0; this.golem.stompBounceVelocity = 0; this.afterHitAction = 'lava'; }
+    reset() { this.state = 'dormant'; this.active = false; this.exit = null; this.exitFade = 0; this.rocks = []; this.deathParticles = []; this.petAssistSmoke = null; this.petAssistCrouchTimer = 0; this.defeatTimer = 0; this.timer = 0; this.health = this.maxHealth; this.poundRounds = 0; this.jumpPasses = 0; this.jumpCount = 0; this.jumpGroundTimer = 0; this.landingPoseTimer = 0; this.landingSoundPlayed = false; this.returnToLavaAfterLanding = false; this.defeatAfterFinalJump = false; this.jumpVulnerable = false; this.redWarning = false; this.tooHotCooldown = 0; this.contactInvulnerability = 0; this.finalVolleyCount = 0; this.finalStoneTimer = 0; this.airChaseOffset = 0; this.airChaseTimer = 0; this.stompedMidair = false; this.hasEnteredFinalPhase = false; this.finalPhasePending = false; this.golem.stompBounceOffset = 0; this.golem.stompBounceVelocity = 0; this.afterHitAction = 'lava'; }
 
     checkForTrigger(playerX, playerY, templeX, level) {
         if (level !== 3 || this.state !== 'dormant' || playerX < templeX - 500) return false;
@@ -81,6 +82,7 @@ class BossManager {
         this.timer++; this.updateAnimation();
         this.updateDeathParticles();
         if (this.petAssistSmoke && --this.petAssistSmoke.timer <= 0) this.petAssistSmoke = null;
+        if (this.petAssistCrouchTimer > 0) this.petAssistCrouchTimer--;
         if (this.exit && this.exitFade < 1) this.exitFade = Math.min(1, this.exitFade + 1 / 60);
         if (this.shake > 0) this.shake--;
         if (this.golem.flash > 0) this.golem.flash--;
@@ -284,7 +286,7 @@ class BossManager {
     }
 
     updatePetAssist(game) {
-        this.golem.animation = 'stand';
+        this.golem.animation = this.petAssistCrouchTimer > 0 ? 'jump5' : 'stand';
         if (game.petManager.bossAssist) return;
         this.state = 'lava';
         this.timer = 0;
@@ -384,8 +386,19 @@ class BossManager {
                     if (rock.age >= 30) { rock.phase = 'ceilingFall'; rock.velocityY = .45; rock.x = rock.baseX; }
                 } else if (rock.phase === 'ceilingFall') {
                     rock.velocityY += .046; rock.y += rock.velocityY;
-                    if (rock.y + rock.height > 468) { this.shake = Math.max(this.shake, 6); return false; }
+                    if (rock.y + rock.height > 468) {
+                        rock.y = 468 - rock.height;
+                        rock.phase = 'groundImpactSmoke';
+                        rock.age = 0;
+                        rock.alpha = 0;
+                        rock.smokeAlpha = 1;
+                        rock.smokeY = 468;
+                        this.shake = Math.max(this.shake, 6);
+                    }
                     if (this.overlaps(rock, game.player) && !game.hasArmor) game.takeDamage(game.player.x < rock.x ? -1 : 1);
+                } else if (rock.phase === 'groundImpactSmoke') {
+                    rock.smokeAlpha = Math.max(0, 1 - rock.age / 18);
+                    return rock.age < 18;
                 } else if (rock.phase === 'rise') {
                     // Final-phase stones are summoned from beneath the cave floor.  Their
                     // bottom stays planted on the ground as they emerge, making the rise
@@ -478,10 +491,10 @@ class BossManager {
                 this.tooHotCooldown = 75;
             }
             if (!game.hasArmor) game.takeDamage(p.x < b.x ? -1 : 1);
-        } else if (this.state !== 'vulnerable' && this.state !== 'finalVulnerable' && !(this.state === 'jump' && this.jumpVulnerable) && !game.hasArmor) {
+        } else if (!game.hasArmor) {
             game.takeDamage(p.x < b.x ? -1 : 1);
         }
-        // Blue/vulnerable contact is deliberately harmless; only a descending head-stomp damages it.
+        // Blue exposes the head for a stomp, but touching the boss is still dangerous until a stomp starts recovery.
     }
 
     reignite(game) {
@@ -674,12 +687,13 @@ class BossManager {
         // The boss is the timed objective; the peaceful walk to the temple is untimed.
         if (game.levelEndTime === 0) game.levelEndTime = performance.now();
         game.audioManager.playMusic('winner');
-        game.uiRenderer.showMessage('Stone Golem Defeated! Head to the exit.', 420, '#FFD700');
+        game.uiRenderer.showMessage('Stone golem defeated! Head to the exit.', 420, '#FFD700');
     }
     updateDeathParticles() {
         this.deathParticles = this.deathParticles.filter(particle => { particle.x += particle.vx; particle.y += particle.vy; particle.vy += .16; particle.vx *= .97; particle.life--; return particle.life > 0; });
     }
     triggerPetAssistImpact() {
+        this.petAssistCrouchTimer = 18;
         this.petAssistSmoke = {
             x: this.golem.x + this.golem.width / 2,
             y: this.golem.y + 16,
@@ -723,9 +737,16 @@ class BossManager {
             ctx.save();
             ctx.globalAlpha = rock.alpha === undefined ? 1 : rock.alpha;
             ctx.drawImage(sprite, rock.x - cameraX, rock.y, rock.width, rock.height);
-            if ((rock.phase === 'impactSmoke' || rock.phase === 'impactSink') && this.hitSmokeImage.complete) {
+            if ((rock.phase === 'impactSmoke' || rock.phase === 'impactSink' || rock.phase === 'groundImpactSmoke') && this.hitSmokeImage.complete) {
                 ctx.globalAlpha = rock.smokeAlpha === undefined ? 1 : rock.smokeAlpha;
-                ctx.drawImage(this.hitSmokeImage, rock.x - cameraX - 12, rock.y - 12, 78, 78);
+                const smokeSize = rock.phase === 'groundImpactSmoke' ? 68 + rock.age : 78;
+                const smokeX = rock.phase === 'groundImpactSmoke'
+                    ? rock.x - cameraX + rock.width / 2 - smokeSize / 2
+                    : rock.x - cameraX - 12;
+                const smokeY = rock.phase === 'groundImpactSmoke'
+                    ? rock.smokeY - smokeSize / 2
+                    : rock.y - 12;
+                ctx.drawImage(this.hitSmokeImage, smokeX, smokeY, smokeSize, smokeSize);
             }
             ctx.restore();
         });

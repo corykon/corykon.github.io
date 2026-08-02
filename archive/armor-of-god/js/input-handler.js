@@ -278,7 +278,7 @@ class InputHandler {
             e.preventDefault();
             return;
         }
-        if (this.game.gameState === 'credits' && e.code === 'Space') {
+        if (this.game.gameState === 'credits' && (e.code === 'Space' || e.code === 'Enter')) {
             this.game.nextCreditsSection();
             e.preventDefault();
             return;
@@ -302,7 +302,7 @@ class InputHandler {
         }
 
         // Handle level intro screen
-        if (this.game.gameState === 'levelIntro') {
+        if (this.game.gameState === 'levelIntro' && document.activeElement === document.getElementById('startLevelBtn')) {
             if (e.code === 'Space' || e.code === 'Enter') {
                 // Desktop keeps the original two-step flow: the first press
                 // rushes the reveal, and a later press continues once it is ready.
@@ -318,7 +318,7 @@ class InputHandler {
         }
         
         // Handle level complete screen
-        if (this.game.gameState === 'levelComplete') {
+        if (this.game.gameState === 'levelComplete' && document.activeElement === document.getElementById('nextLevelBtn')) {
             if (e.code === 'Space' || e.code === 'Enter') {
                 if (this.game.pendingLevelThreeBoss) this.game.continueToBossFight();
                 else this.game.startNextLevel();
@@ -328,6 +328,12 @@ class InputHandler {
         }
         
         // Handle pause toggle (only when playing)
+        if (this.game.isPaused && this.game.gameState === 'playing' && document.activeElement === this.game.canvas && (e.code === 'Space' || e.code === 'Enter')) {
+            this.game.togglePause();
+            e.preventDefault();
+            return;
+        }
+
         if ((e.code === 'KeyP' || e.code === 'Escape') && this.game.gameState === 'playing') {
             this.game.togglePause();
             e.preventDefault();
