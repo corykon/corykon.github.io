@@ -1158,10 +1158,14 @@ class ArmorOfGodGame {
             this.initializeScoring();
             this.audioManager.playMusic('adventure');
             this.arrowManager.spawnInitialArrows(this.player);
+            clearTimeout(this.levelOneWelcomeTimer);
+            this.levelOneWelcomeTimer = null;
             if (this.level === 1) {
-                clearTimeout(this.levelOneWelcomeTimer);
-                this.levelOneWelcomeTimer = null;
                 this.uiRenderer.showMessage('Collect scriptures as you seek the temple.', 360, '#FFD700', 600);
+                this.levelOneWelcomeTimer = setTimeout(() => {
+                    this.levelOneWelcomeTimer = null;
+                    this.uiRenderer.showMessage('Watch out for fiery darts. And lava snails.', 360, '#FFD700', 600);
+                }, 2000);
             }
             this.showFirstLevelInstructions();
         };
@@ -1692,7 +1696,7 @@ class ArmorOfGodGame {
         
         if (currentTime - this.lastFrameTime >= targetInterval) {
             // Update background manager with pause state (needs to run even when paused)
-            this.backgroundManager.update(this.isPaused);
+            this.backgroundManager.update(this.isPaused || this.mobileOrientationPaused);
             
             // Run multiple updates for speeds > 1.0 to maintain smooth gameplay
             const updateCount = Math.max(1, Math.floor(speed));
@@ -1708,7 +1712,9 @@ class ArmorOfGodGame {
     }
     
     update() {
-        if (this.isPaused) return;
+        // The rotate-device notice is a hard stop even if an orientation event
+        // arrives between animation frames and the regular pause state lags behind.
+        if (this.isPaused || this.mobileOrientationPaused) return;
         
         // Only run game updates for playing states
         if (this.gameState === 'menu' || this.gameState === 'levelIntro' || this.gameState === 'levelTransition' || this.gameState === 'cutscene' || this.gameState === 'gameOver' || this.gameState === 'levelComplete') {

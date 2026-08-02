@@ -72,6 +72,8 @@ class ArrowManager {
     
     update(player, castle, hasArmor, cameraX, canvasWidth, gameState, inputHandler = null, currentJumpPower = null) {
         if (gameState !== 'playing') return;
+        // Give new level-one players a moment to read the opening guidance before hazards begin.
+        if (this.game?.level === 1 && this.game.getLevelTime() < 2 * 60) return;
         
         // Update arrows
         this.arrows.forEach(arrow => {
