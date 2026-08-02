@@ -297,11 +297,18 @@ class BossManager {
         if (this.cutsceneStage === 'arrival') {
             this.golem.x = Math.max(this.cutsceneTargetX, this.golem.x - 6);
             this.golem.y = Math.min(this.golem.groundY - this.golem.height, this.golem.y + 5);
-            if (this.timer > 70 && this.golem.x <= this.cutsceneTargetX) { this.cutsceneStage = 'quake'; this.timer = 0; this.golem.animation = 'slam'; this.shake = 28; game.audioManager.playSound('golem'); game.audioManager.playSound('earthquakeRumble'); }
-        } else if (this.cutsceneStage === 'quake' && this.timer > 95) {
-            this.cutsceneStage = 'falling'; this.timer = 0;
-            game.prepareLevelThreeCollapseBonuses();
-            game.audioManager.playSound('falling');
+            if (this.timer > 70 && this.golem.x <= this.cutsceneTargetX) {
+                this.cutsceneStage = 'quake'; this.timer = 0; this.golem.animation = 'slam'; this.shake = 28;
+                game.worldManager.beginCutsceneSceneryQuake(this.golem.x + 55, 340, 215);
+                game.audioManager.playSound('golem'); game.audioManager.playSound('earthquakeRumble');
+            }
+        } else if (this.cutsceneStage === 'quake') {
+            game.worldManager.updateCutsceneSceneryQuake();
+            if (this.timer > 95) {
+                this.cutsceneStage = 'falling'; this.timer = 0;
+                game.prepareLevelThreeCollapseBonuses();
+                game.audioManager.playSound('falling');
+            }
         } else if (this.cutsceneStage === 'falling') {
             if (this.timer === 1) game.worldManager.beginCutsceneSceneryFall(this.golem.x + 55, 340, 215);
             game.worldManager.updateCutsceneSceneryFall();
@@ -838,7 +845,7 @@ class BossManager {
         const crackProgress = this.cutsceneStage === 'quake' ? Math.min(1, this.timer / 70) : 1;
         // The ground should disappear quickly once the collapse starts, ahead of the
         // characters' longer fall into the boss arena.
-        const collapseProgress = this.cutsceneStage === 'falling' ? Math.min(1, this.timer / 48) : 0;
+        const collapseProgress = this.cutsceneStage === 'falling' ? Math.min(1, this.timer / 18) : 0;
         const originX = worldSpace ? this.golem.x + 55 : Math.max(90, Math.min(ctx.canvas.width - 90, this.golem.x - cameraX + 55));
         const groundTop = this.golem.groundY || 468;
         const groundDepth = Math.max(80, ctx.canvas.height - groundTop - 16);
@@ -850,15 +857,10 @@ class BossManager {
         });
         ctx.save();
         if (collapseProgress > 0) {
-            // Only the cracked section collapses.  The mask grows upward from the broken
-            // floor, taking any nearby tree/plant bases with it while leaving the rest of
-            // the level (including the distant temple) intact.
-            // The player and pet stand left of the golem, while the temple is immediately
-            // to its right.  Keep the break broad on the player side but short of the temple.
-            const leftHalfWidth = 115 + collapseProgress * 225;
-            const rightHalfWidth = 90 + collapseProgress * 125;
-            const left = originX - leftHalfWidth;
-            const right = originX + rightHalfWidth;
+            // Replace the cracked floor with one fixed chasm silhouette.  Fading it in is
+            // cleaner than growing a mask, and deliberately covers the quake cracks.
+            const left = originX - 340;
+            const right = originX + 215;
             ctx.beginPath();
             ctx.moveTo(left, groundTop);
             ctx.lineTo(left + 38, ctx.canvas.height);
@@ -866,16 +868,11 @@ class BossManager {
             ctx.lineTo(right, groundTop);
             ctx.closePath();
             ctx.clip();
-            // A hard, descending fade front erases the ground from its surface down.
-            const fadeFront = groundTop + groundDepth * collapseProgress;
-            const fadeGradient = ctx.createLinearGradient(0, groundTop, 0, fadeFront + 34);
-            fadeGradient.addColorStop(0, 'rgba(8, 7, 21, .96)');
-            fadeGradient.addColorStop(.86, 'rgba(8, 7, 21, .96)');
-            fadeGradient.addColorStop(1, 'rgba(8, 7, 21, 0)');
-            ctx.fillStyle = fadeGradient;
-            ctx.fillRect(left, groundTop, leftHalfWidth + rightHalfWidth, Math.min(groundDepth, fadeFront - groundTop + 34));
+            ctx.fillStyle = '#080715';
+            ctx.globalAlpha = collapseProgress;
+            ctx.fillRect(left, groundTop, right - left, ctx.canvas.height - groundTop);
             ctx.restore();
-            ctx.save();
+            return;
         }
         ctx.beginPath();
         branches.forEach(points => {
