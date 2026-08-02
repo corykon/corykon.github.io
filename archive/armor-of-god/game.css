@@ -259,6 +259,7 @@ body {
 .startup-loading--visible { opacity: 1; }
 .startup-loading--leaving { opacity: 0; pointer-events: none; }
 .startup-loading p { margin: 0; font-size: clamp(9px, 1.5vw, 13px); line-height: 1.6; }
+.startup-loading__detail { color: #8ee7ff; font-size: .76em; }
 .startup-loading__track { width: min(360px, 78vw); height: 12px; border: 2px solid #ffd700; background: #070914; }
 .startup-loading__progress { width: 0; height: 100%; background: linear-gradient(90deg, #35b9c0, #ffd700); transition: width .12s linear; }
 

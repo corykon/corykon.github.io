@@ -269,41 +269,50 @@ class ArmorOfGodGame {
         return [...images];
     }
 
-    waitForStartupImage(image, onProgress) {
-        return new Promise(resolve => {
-            let fallbackTimer;
-            const finish = () => {
-                image.removeEventListener('load', finish);
-                image.removeEventListener('error', finish);
-                clearTimeout(fallbackTimer);
-                onProgress();
-                resolve();
+    async waitForVideoReady(video) {
+        if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) return;
+        await new Promise((resolve, reject) => {
+            const cleanup = () => {
+                video.removeEventListener('canplay', ready);
+                video.removeEventListener('error', failed);
             };
-            // Mobile WebKit occasionally leaves an image request pending forever.
-            // The image continues loading in the background, but must not block the menu.
-            fallbackTimer = setTimeout(finish, 6000);
-            if (image.complete) {
-                finish();
-                return;
-            }
-            image.addEventListener('load', finish, { once: true });
-            image.addEventListener('error', finish, { once: true });
+            const ready = () => { cleanup(); resolve(); };
+            const failed = () => { cleanup(); reject(new Error(`Could not prepare cutscene: ${video.currentSrc || video.src}`)); };
+            video.addEventListener('canplay', ready, { once: true });
+            video.addEventListener('error', failed, { once: true });
         });
     }
 
     async preloadStartupAssets(onProgress = () => {}) {
         const images = this.collectStartupImages();
-        const total = images.length + Object.keys(this.audioManager.audio).length + this.cutsceneSources.length;
-        let loaded = 0;
-        const reportProgress = () => {
-            loaded++;
-            onProgress(loaded, total);
-        };
-        await Promise.all([
-            this.audioManager.preloadAll(reportProgress),
-            this.preloadOpeningCutscenes(reportProgress),
-            ...images.map(image => this.waitForStartupImage(image, reportProgress))
-        ]);
+        const preloader = new AssetPreloader({ mobile: window.matchMedia('(pointer: coarse)').matches });
+        // The manifest is the complete, revisioned source of truth—not a partial
+        // runtime object walk—so every shipped image, sound, and cutscene is ready.
+        await preloader.preload(Object.keys(preloader.manifest.assets), onProgress);
+        if (preloader.persistentCacheUnavailable) {
+            console.warn('Game assets are ready, but this browser did not grant persistent offline cache storage.');
+        }
+        if (document.body.classList.contains('development-mode')) {
+            console.info(`Verified ${Object.keys(preloader.manifest.assets).length} assets from manifest ${preloader.manifest.version}.`);
+        }
+        await preloader.decodeImages(images, onProgress);
+        await this.audioManager.usePreparedSources(preloader);
+
+        // Prepare the actual playback elements.  The old implementation downloaded
+        // these files into throwaway videos, then requested them again at playback.
+        this.cutsceneCurrentVideo = document.getElementById('cutsceneVideoA');
+        this.cutsceneOtherVideo = document.getElementById('cutsceneVideoB');
+        // Object URLs guarantee the first visit uses the verified bytes already in
+        // Cache Storage, even before a newly installed service worker controls this
+        // particular page.  Only the two playback elements are materialized to keep
+        // mobile memory bounded.
+        this.cutscenePreparedSources = await Promise.all(this.cutsceneSources.map(source => preloader.getCachedObjectURL(source)));
+        this.cutsceneCurrentVideo.src = this.cutscenePreparedSources[0];
+        this.cutsceneOtherVideo.src = this.cutscenePreparedSources[1];
+        this.cutsceneCurrentVideo.load();
+        this.cutsceneOtherVideo.load();
+        await Promise.all([this.waitForVideoReady(this.cutsceneCurrentVideo), this.waitForVideoReady(this.cutsceneOtherVideo)]);
+        onProgress({ percent: 100, state: 'ADVENTURE READY' });
     }
 
     revealMenuAfterStartup(loaderWasShown = true) {
@@ -949,57 +958,30 @@ class ArmorOfGodGame {
         this.showLevelIntro();
     }
 
-    preloadOpeningCutscenes(onProgress = () => {}) {
-        if (this.cutscenePreloadPromise) return this.cutscenePreloadPromise;
-        this.cutscenePreloadPromise = Promise.all(this.cutsceneSources.map(source => new Promise(resolve => {
-            const video = document.createElement('video');
-            video.preload = 'auto'; video.muted = true; video.src = source;
-            this.preloadedCutsceneVideos ||= [];
-            this.preloadedCutsceneVideos.push(video);
-            let finished = false;
-            let fallbackTimer;
-            const done = () => {
-                if (finished) return;
-                finished = true;
-                clearTimeout(fallbackTimer);
-                video.removeEventListener('canplay', done);
-                video.removeEventListener('error', done);
-                onProgress();
-                resolve();
-            };
-            fallbackTimer = setTimeout(done, 8000);
-            video.addEventListener('canplay', done, { once: true });
-            video.addEventListener('error', done, { once: true });
-            video.load();
-        })));
-        return this.cutscenePreloadPromise;
-    }
-
-    async startOpeningCutscene() {
+    startOpeningCutscene() {
         const runId = ++this.cutsceneRunId;
         this.gameState = 'cutscene';
         this.showScreen('cutscene');
         document.getElementById('cutsceneLoading').classList.remove('hidden');
         this.audioManager.playMusic('openingCutscene');
-        await this.preloadOpeningCutscenes();
         if (runId !== this.cutsceneRunId || this.gameState !== 'cutscene') return;
         this.cutsceneIndex = 0;
         this.cutsceneMusicFadeStarted = false;
-        this.cutsceneCurrentVideo = document.getElementById('cutsceneVideoA');
-        this.cutsceneOtherVideo = document.getElementById('cutsceneVideoB');
         document.getElementById('cutsceneLoading').classList.add('hidden');
-        this.playCutsceneVideo(0, true);
+        // This call remains in the Start button's synchronous gesture chain. It is
+        // required for reliable iOS audible-media authorization.
+        this.playFirstCutsceneVideo();
     }
 
-    async playCutsceneVideo(index, first = false) {
-        const incoming = first ? this.cutsceneCurrentVideo : this.cutsceneOtherVideo;
-        const outgoing = first ? null : this.cutsceneCurrentVideo;
-        await new Promise(resolve => {
-            incoming.src = this.cutsceneSources[index]; incoming.load();
-            incoming.addEventListener('canplay', resolve, { once: true });
-            incoming.addEventListener('error', resolve, { once: true });
-        });
-        if (this.gameState !== 'cutscene') return;
+    playFirstCutsceneVideo() {
+        const incoming = this.cutsceneCurrentVideo;
+        if (!incoming) return;
+        this.configureCutsceneVideo(incoming, null, 0);
+        const playPromise = incoming.play();
+        if (playPromise) playPromise.catch(error => console.warn('Opening video playback was blocked:', error));
+    }
+
+    configureCutsceneVideo(incoming, outgoing, index) {
         if (incoming.videoWidth && incoming.videoHeight) document.getElementById('cutsceneFrame').style.aspectRatio = `${incoming.videoWidth} / ${incoming.videoHeight}`;
         incoming.currentTime = 0;
         incoming.playbackRate = 1;
@@ -1009,13 +991,23 @@ class ArmorOfGodGame {
         incoming.onended = () => this.advanceCutscene(index);
         incoming.ontimeupdate = () => {
             const isFinalVideo = index === this.cutsceneSources.length - 1;
-            if (incoming.duration && !isFinalVideo && !this.cutsceneTransitioning && incoming.currentTime >= incoming.duration - crossfadeDuration) {
-                this.advanceCutscene(index);
-            }
+            if (incoming.duration && !isFinalVideo && !this.cutsceneTransitioning && incoming.currentTime >= incoming.duration - crossfadeDuration) this.advanceCutscene(index);
         };
-        await incoming.play().catch(() => {});
         incoming.classList.add('cutscene-video--visible');
         if (outgoing) outgoing.classList.remove('cutscene-video--visible');
+    }
+
+    async playCutsceneVideo(index, first = false) {
+        const incoming = first ? this.cutsceneCurrentVideo : this.cutsceneOtherVideo;
+        const outgoing = first ? null : this.cutsceneCurrentVideo;
+        const source = this.cutscenePreparedSources?.[index] || this.cutsceneSources[index];
+        if (incoming.src !== new URL(source, document.baseURI).href) {
+            incoming.src = source; incoming.load();
+            await this.waitForVideoReady(incoming);
+        }
+        if (this.gameState !== 'cutscene') return;
+        this.configureCutsceneVideo(incoming, outgoing, index);
+        await incoming.play().catch(error => console.warn('Cutscene video playback was blocked:', error));
         this.cutsceneCurrentVideo = incoming;
         this.cutsceneOtherVideo = incoming === document.getElementById('cutsceneVideoA') ? document.getElementById('cutsceneVideoB') : document.getElementById('cutsceneVideoA');
         if (index === this.cutsceneSources.length - 1) {
@@ -3323,35 +3315,53 @@ async function startGameAfterDomReady() {
         loaderWasShown = true;
         requestAnimationFrame(() => loader.classList.add('startup-loading--visible'));
     }
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+        navigator.serviceWorker.register('sw.js').catch(error => console.warn('Offline asset cache could not be registered:', error));
+    }
     const game = new ArmorOfGodGame();
     const status = document.getElementById('startupLoadingStatus');
     const progress = document.getElementById('startupLoadingProgress');
-    const preloadPromise = game.preloadStartupAssets((loaded, total) => {
-        const percent = Math.round((loaded / total) * 100);
-        progress.style.width = `${percent}%`;
-        status.textContent = `LOADING ADVENTURE… ${percent}%`;
-    });
-    let preloadFinished = false;
-    const startupDeadline = new Promise(resolve => setTimeout(resolve, 6000, 'deadline'));
-    try {
-        const result = await Promise.race([
-            preloadPromise.then(() => 'complete'),
-            startupDeadline
-        ]);
-        preloadFinished = result === 'complete';
-    } catch (error) {
-        console.warn('Startup asset preload failed; continuing to the menu.', error);
-    }
-    if (!preloadFinished) {
-        progress.style.width = '100%';
-        status.textContent = 'STARTING ADVENTURE…';
-    }
-    if (desktopLoaderTimer) clearTimeout(desktopLoaderTimer);
-    const remainingDisplayTime = 1500 - (performance.now() - loadingStartedAt);
-    if (loaderWasShown && remainingDisplayTime > 0) {
-        await new Promise(resolve => setTimeout(resolve, remainingDisplayTime));
-    }
-    game.revealMenuAfterStartup(loaderWasShown);
+    const loadAssets = async () => {
+        progress.style.width = '0%';
+        status.textContent = 'CHECKING ADVENTURE… 0%';
+        try {
+            await game.preloadStartupAssets(({ percent, state }) => {
+                progress.style.width = `${percent}%`;
+                status.textContent = `${state} ${percent}%`;
+            });
+        } catch (error) {
+            console.error('Required startup asset failed:', error);
+            if (desktopLoaderTimer) clearTimeout(desktopLoaderTimer);
+            showLoader();
+            progress.style.width = '0%';
+            // Keep the player-facing message short, but expose the exact failing
+            // asset in the visible text and title so mobile failures can be diagnosed
+            // without attaching a remote debugger.
+            const failingAsset = error.message.match(/Could not prepare ([^:]+)/)?.[1] || error.message;
+            const reason = error.message.replace(/^Could not prepare [^:]+:\s*/, '');
+            status.innerHTML = `ASSET ERROR: ${failingAsset.split('/').pop()}<br><span class="startup-loading__detail">${reason}</span><br>TAP TO RETRY`;
+            status.title = error.message;
+            loader.setAttribute('role', 'button');
+            loader.setAttribute('tabindex', '0');
+            const retry = event => {
+                if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                loader.removeEventListener('click', retry);
+                loader.removeEventListener('keydown', retry);
+                loader.removeAttribute('role');
+                loader.removeAttribute('tabindex');
+                loadAssets();
+            };
+            loader.addEventListener('click', retry);
+            loader.addEventListener('keydown', retry);
+            return;
+        }
+        if (desktopLoaderTimer) clearTimeout(desktopLoaderTimer);
+        const remainingDisplayTime = 1500 - (performance.now() - loadingStartedAt);
+        if (loaderWasShown && remainingDisplayTime > 0) await new Promise(resolve => setTimeout(resolve, remainingDisplayTime));
+        game.revealMenuAfterStartup(loaderWasShown);
+    };
+    loadAssets();
 }
 
 if (document.readyState === 'loading') {

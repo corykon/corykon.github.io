@@ -123,6 +123,10 @@ class AudioManager {
         // Apply settings to each audio file
         Object.keys(this.audio).forEach(key => {
             const settings = audioSettings[key];
+            // Startup downloads are managed by AssetPreloader.  Keeping native audio
+            // elements at `none` prevents 52 independent media fetches competing with
+            // the bounded queue on mobile browsers.
+            this.audio[key].preload = 'none';
             this.audio[key].loop = settings.loop;
             this.audio[key].volume = settings.volume;
             if (settings.playbackRate) {
@@ -201,6 +205,16 @@ class AudioManager {
             music.preload = 'auto';
             music.load();
         });
+    }
+
+    async usePreparedSources(preloader) {
+        const prepared = new Map();
+        for (const track of Object.values(this.audio)) {
+            const source = track.currentSrc || track.src;
+            if (!prepared.has(source)) prepared.set(source, await preloader.getCachedObjectURL(source));
+            const cachedSource = prepared.get(source);
+            if (cachedSource !== source) track.src = cachedSource;
+        }
     }
 
     preloadAll(onProgress = () => {}) {
