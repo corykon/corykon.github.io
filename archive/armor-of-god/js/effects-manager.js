@@ -5,6 +5,7 @@ class EffectsManager {
         this.sparkleTrails = []; // Sparkle trail particles
         this.petAffectionEffects = [];
         this.fireworkTimers = new Set();
+        this.reducedEffects = false;
         
         // Celebration properties
         this.celebrationTimer = 0;
@@ -52,8 +53,9 @@ class EffectsManager {
         const centerY = castle.y + Math.random() * 200 - 100;
         
         // Create multiple particles for each burst - MORE particles for bigger effect
-        for (let i = 0; i < 40; i++) {
-            const angle = (Math.PI * 2 * i) / 40;
+        const particleCount = this.reducedEffects ? 20 : 40;
+        for (let i = 0; i < particleCount; i++) {
+            const angle = (Math.PI * 2 * i) / particleCount;
             const speed = 2.8 + Math.random() * 4.2; // Reduced by 50% for slower speed
             
             this.fireworks.push({
@@ -143,8 +145,9 @@ class EffectsManager {
         this.armorExplosion = []; // Clear any existing explosion
         
         // Create more particles for a bigger explosion
-        for (let i = 0; i < 60; i++) {
-            const angle = (Math.PI * 2 * i) / 60;
+        const outerParticleCount = this.reducedEffects ? 30 : 60;
+        for (let i = 0; i < outerParticleCount; i++) {
+            const angle = (Math.PI * 2 * i) / outerParticleCount;
             const speed = 2.5 + Math.random() * 4.0; // Increased speed for bigger explosion
             
             this.armorExplosion.push({
@@ -160,7 +163,7 @@ class EffectsManager {
         }
         
         // Add additional burst of inner particles for more drama
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < (this.reducedEffects ? 15 : 30); i++) {
             const angle = Math.random() * Math.PI * 2;
             const speed = 1.0 + Math.random() * 2.0;
             
@@ -182,10 +185,10 @@ class EffectsManager {
         if (!hasArmor) return; // Only sparkle when armor is active
         
         // Limit sparkle count for performance
-        if (this.sparkleTrails.length > 20) return;
+        if (this.sparkleTrails.length > (this.reducedEffects ? 10 : 20)) return;
         
         // Add sparkles occasionally for performance
-        if (Math.random() < 0.3) { // 30% chance - much more reasonable
+        if (Math.random() < (this.reducedEffects ? 0.15 : 0.3)) {
             this.sparkleTrails.push({
                 x: x + Math.random() * 20,
                 y: y + Math.random() * 24,
@@ -220,8 +223,10 @@ class EffectsManager {
             
             ctx.globalAlpha = alpha * 0.8; // Subtle transparency
             ctx.fillStyle = sparkle.color;
-            ctx.shadowColor = sparkle.color;
-            ctx.shadowBlur = 3; // Subtle glow
+            if (!this.reducedEffects) {
+                ctx.shadowColor = sparkle.color;
+                ctx.shadowBlur = 3; // Subtle glow
+            }
             
             // Draw sparkle as a small star
             ctx.beginPath();
@@ -289,8 +294,10 @@ class EffectsManager {
             ctx.globalAlpha = alpha;
             if (effect.type === 'heart') {
                 ctx.fillStyle = '#ff4d6d';
-                ctx.shadowColor = '#ff9aae';
-                ctx.shadowBlur = 6;
+                if (!this.reducedEffects) {
+                    ctx.shadowColor = '#ff9aae';
+                    ctx.shadowBlur = 6;
+                }
                 ctx.font = `${effect.size}px sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';

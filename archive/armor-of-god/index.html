@@ -10,6 +10,7 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://coryfugate.com/archive/armor-of-god/images/sprites/player/armored-jump.png">
+    <link rel="icon" type="image/png" href="images/sprites/player/run-12.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -26,6 +27,11 @@
     </script>
 </head>
 <body>
+    <div id="startupLoading" class="startup-loading" role="status" aria-live="polite">
+        <div class="startup-loading__title">ARMOR OF GOD</div>
+        <p id="startupLoadingStatus">LOADING ADVENTURE…</p>
+        <div class="startup-loading__track" aria-hidden="true"><div id="startupLoadingProgress" class="startup-loading__progress"></div></div>
+    </div>
     <!-- Audio Toggle Button -->
     <button id="audioToggleBtn" class="audio-toggle-btn" title="Toggle Audio">
         <img src="images/icons/volume-on.svg" alt="Volume On" class="icon volume-on">

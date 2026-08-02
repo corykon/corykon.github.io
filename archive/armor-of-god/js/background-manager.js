@@ -286,19 +286,17 @@ class BackgroundManager {
         this.lastUpdateTime = currentTime;
     }
     
-    render(ctx, cameraX = 0, gameState = 'playing') {
+    render(ctx, cameraX = 0, gameState = 'playing', reducedEffects = false) {
         if (!this.loaded) return;
         
         // Render sky gradient background with camera position for sunset effect
-        this.renderSky(ctx, cameraX, gameState);
+        this.renderSky(ctx, cameraX, gameState, reducedEffects);
         
         // Render each layer from back to front
-        this.layers.forEach(layer => {
-            this.renderLayer(ctx, layer, cameraX);
-        });
+        if (!reducedEffects) this.layers.forEach(layer => this.renderLayer(ctx, layer, cameraX));
     }
     
-    renderSky(ctx, cameraX = 0, gameState = 'playing') {
+    renderSky(ctx, cameraX = 0, gameState = 'playing', reducedEffects = false) {
         if (this.currentLevel === 1) {
             // Castle level - blue sky gradient
             const skyGradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
@@ -311,10 +309,10 @@ class BackgroundManager {
             ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         } else if (this.currentLevel === 2) {
             // Jungle level - sunset to night effect
-            this.renderJungleSunset(ctx, cameraX, ctx.canvas.width, ctx.canvas.height, gameState);
+            this.renderJungleSunset(ctx, cameraX, ctx.canvas.width, ctx.canvas.height, gameState, reducedEffects);
         } else if (this.currentLevel === 3) {
             // Mountain level - sunrise effect
-            this.renderMountainSunrise(ctx, cameraX, ctx.canvas.width, ctx.canvas.height, gameState);
+            this.renderMountainSunrise(ctx, cameraX, ctx.canvas.width, ctx.canvas.height, gameState, reducedEffects);
         } else if (this.currentLevel === 3) {
             // Mountain level - sunrise effect
             this.renderMountainSunrise(ctx, cameraX, ctx.canvas.width, ctx.canvas.height, gameState);
@@ -325,7 +323,7 @@ class BackgroundManager {
         }
     }
     
-    renderJungleSunset(ctx, cameraX, canvasWidth, canvasHeight, gameState = 'playing') {
+    renderJungleSunset(ctx, cameraX, canvasWidth, canvasHeight, gameState = 'playing', reducedEffects = false) {
         // Ensure we have valid canvas dimensions
         if (!canvasWidth || !canvasHeight) return;
         
@@ -364,16 +362,16 @@ class BackgroundManager {
         
         // Sun only during phase 1 (0-20%)
         if (progress <= 0.2) {
-            this.renderSun(ctx, canvasWidth, canvasHeight, progress, cameraX);
+            this.renderSun(ctx, canvasWidth, canvasHeight, progress, cameraX, reducedEffects);
         }
         
         // Moon only during phase 3 (25-100%)
         if (progress >= 0.25) {
-            this.renderMoon(ctx, canvasWidth, canvasHeight, progress, cameraX);
+            this.renderMoon(ctx, canvasWidth, canvasHeight, progress, cameraX, reducedEffects);
         }
     }
     
-    renderSun(ctx, canvasWidth, canvasHeight, progress, cameraX) {
+    renderSun(ctx, canvasWidth, canvasHeight, progress, cameraX, reducedEffects = false) {
         // Sun moves top to bottom during phase 1 (0-20%) with natural and parallax movement
         const phase1Progress = progress / 0.2; // Convert to 0-1 range for phase 1
         
@@ -404,17 +402,13 @@ class BackgroundManager {
         
         // Add atmospheric glow that gets stronger as sun sets
         const glowSize = 15 + (25 * progress);
-        ctx.shadowColor = sunColor;
-        ctx.shadowBlur = glowSize;
+        if (!reducedEffects) { ctx.shadowColor = sunColor; ctx.shadowBlur = glowSize; }
         
         // Add larger outer glow for atmosphere
-        ctx.save();
-        ctx.globalAlpha = 0.3;
-        ctx.fillStyle = sunColor;
-        ctx.beginPath();
-        ctx.arc(sunX, sunY, sunRadius + glowSize, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        if (!reducedEffects) {
+            ctx.save(); ctx.globalAlpha = 0.3; ctx.fillStyle = sunColor;
+            ctx.beginPath(); ctx.arc(sunX, sunY, sunRadius + glowSize, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        }
         
         // Render main sun
         ctx.fillStyle = sunColor;
@@ -424,7 +418,7 @@ class BackgroundManager {
         ctx.shadowBlur = 0; // Reset shadow
     }
     
-    renderMoon(ctx, canvasWidth, canvasHeight, progress, cameraX) {
+    renderMoon(ctx, canvasWidth, canvasHeight, progress, cameraX, reducedEffects = false) {
         // Moon moves vertically from bottom to top 10% and back during phase 3 (25-100%)
         const phase3Progress = (progress - 0.25) / 0.75; // Convert to 0-1 range for phase 3
         
@@ -452,17 +446,13 @@ class BackgroundManager {
         
         // Add glow effect for moon that gets stronger as it rises
         const glowStrength = 5 + (8 * phase3Progress); // Reduced glow strength
-        ctx.shadowColor = '#E6E6FA';
-        ctx.shadowBlur = glowStrength;
+        if (!reducedEffects) { ctx.shadowColor = '#E6E6FA'; ctx.shadowBlur = glowStrength; }
         
         // Outer glow
-        ctx.save();
-        ctx.globalAlpha = 0.15 * moonAlpha; // Dimmer glow with fade
-        ctx.fillStyle = '#E6E6FA';
-        ctx.beginPath();
-        ctx.arc(moonX, moonY, moonRadius + glowStrength, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        if (!reducedEffects) {
+            ctx.save(); ctx.globalAlpha = 0.15 * moonAlpha; ctx.fillStyle = '#E6E6FA';
+            ctx.beginPath(); ctx.arc(moonX, moonY, moonRadius + glowStrength, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        }
         
         // Main moon
         ctx.save();
@@ -512,7 +502,7 @@ class BackgroundManager {
         ctx.restore();
     }
     
-    renderMountainSunrise(ctx, cameraX, canvasWidth, canvasHeight, gameState = 'playing') {
+    renderMountainSunrise(ctx, cameraX, canvasWidth, canvasHeight, gameState = 'playing', reducedEffects = false) {
         // Ensure we have valid canvas dimensions
         if (!canvasWidth || !canvasHeight) return;
         
@@ -564,11 +554,11 @@ class BackgroundManager {
         
         // Sun only during phase 2 and early phase 3 (25-70%)
         if (progress >= 0.25 && progress <= 0.7) {
-            this.renderSunrise(ctx, canvasWidth, canvasHeight, progress, cameraX);
+            this.renderSunrise(ctx, canvasWidth, canvasHeight, progress, cameraX, reducedEffects);
         }
     }
     
-    renderSunrise(ctx, canvasWidth, canvasHeight, progress, cameraX) {
+    renderSunrise(ctx, canvasWidth, canvasHeight, progress, cameraX, reducedEffects = false) {
         // Sun rises from bottom to peak during phases 2-3 (25-70%)
         const sunProgress = (progress - 0.25) / 0.45; // Convert to 0-1 range for sun movement
         
@@ -597,17 +587,13 @@ class BackgroundManager {
         
         // Add atmospheric glow
         const glowSize = 10 + (20 * sunProgress);
-        ctx.shadowColor = sunColor;
-        ctx.shadowBlur = glowSize;
+        if (!reducedEffects) { ctx.shadowColor = sunColor; ctx.shadowBlur = glowSize; }
         
         // Outer glow
-        ctx.save();
-        ctx.globalAlpha = 0.4;
-        ctx.fillStyle = sunColor;
-        ctx.beginPath();
-        ctx.arc(sunX, sunY, sunRadius + glowSize, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        if (!reducedEffects) {
+            ctx.save(); ctx.globalAlpha = 0.4; ctx.fillStyle = sunColor;
+            ctx.beginPath(); ctx.arc(sunX, sunY, sunRadius + glowSize, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        }
         
         // Main sun
         ctx.fillStyle = sunColor;

@@ -203,6 +203,34 @@ class AudioManager {
         });
     }
 
+    preloadAll(onProgress = () => {}) {
+        const tracks = Object.values(this.audio);
+        return Promise.all(tracks.map(track => new Promise(resolve => {
+            let finished = false;
+            let fallbackTimer;
+            const finish = () => {
+                if (finished) return;
+                finished = true;
+                clearTimeout(fallbackTimer);
+                track.removeEventListener('canplay', finish);
+                track.removeEventListener('error', finish);
+                onProgress();
+                resolve();
+            };
+            fallbackTimer = setTimeout(finish, 8000);
+            if (track.readyState >= 4) {
+                finish();
+                return;
+            }
+            track.preload = 'auto';
+            // iOS Safari frequently never emits canplaythrough for preloaded media,
+            // even though the sound is ready to start. canplay is sufficient here.
+            track.addEventListener('canplay', finish, { once: true });
+            track.addEventListener('error', finish, { once: true });
+            track.load();
+        })));
+    }
+
     stopMusic(musicKey) {
         const music = this.audio[musicKey];
         if (!music) return;
