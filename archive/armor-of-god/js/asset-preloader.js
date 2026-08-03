@@ -15,6 +15,10 @@ class AssetPreloader {
         // use it to test loading behavior but reserve strict byte/hash enforcement
         // for HTTPS production (and secure localhost development).
         this.enforceIntegrity = globalThis.isSecureContext;
+        // Safari's native media loader is more reliable with same-origin URLs than
+        // with blob: URLs, including on iPadOS browsers that identify as macOS.
+        this.preferNativeMediaURLs = /iP(?:ad|hone|od)/.test(navigator.userAgent)
+            || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         this.manifest = globalThis.ASSET_MANIFEST;
         if (!this.manifest?.version || !this.manifest?.assets) throw new Error('Asset manifest is missing or invalid.');
         this.cacheName = `${AssetPreloader.CACHE_PREFIX}${this.manifest.version}`;
@@ -187,7 +191,12 @@ class AssetPreloader {
         await Promise.all(Array.from({ length: Math.min(this.concurrency, uniqueImages.length) }, worker));
     }
 
-    async getCachedObjectURL(url) {
+    async getCachedObjectURL(url, { preferNetworkURL = false } = {}) {
+        // Mobile WebKit can download and cache an MP4 successfully but still reject
+        // its blob: URL when the video element starts decoding it.  Giving Safari
+        // the same-origin URL lets its native media pipeline make range requests
+        // and use the bytes we have already placed in the HTTP/Service Worker cache.
+        if (preferNetworkURL) return url;
         const normalized = this.normalize(url);
         const cache = await this.openCache();
         const response = normalized && cache && await cache.match(normalized);

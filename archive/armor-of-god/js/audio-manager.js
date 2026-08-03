@@ -211,7 +211,11 @@ class AudioManager {
         const prepared = new Map();
         for (const track of Object.values(this.audio)) {
             const source = track.currentSrc || track.src;
-            if (!prepared.has(source)) prepared.set(source, await preloader.getCachedObjectURL(source));
+            if (!prepared.has(source)) {
+                prepared.set(source, await preloader.getCachedObjectURL(source, {
+                    preferNetworkURL: preloader.preferNativeMediaURLs
+                }));
+            }
             const cachedSource = prepared.get(source);
             if (cachedSource !== source) track.src = cachedSource;
         }

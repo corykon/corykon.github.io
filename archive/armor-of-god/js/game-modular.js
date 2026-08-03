@@ -272,15 +272,31 @@ class ArmorOfGodGame {
     async waitForVideoReady(video) {
         if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) return;
         await new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => failed(new Error('Timed out waiting for playable media')), 30000);
             const cleanup = () => {
+                clearTimeout(timeout);
                 video.removeEventListener('canplay', ready);
                 video.removeEventListener('error', failed);
             };
             const ready = () => { cleanup(); resolve(); };
-            const failed = () => { cleanup(); reject(new Error(`Could not prepare cutscene: ${video.currentSrc || video.src}`)); };
+            const failed = error => {
+                cleanup();
+                const detail = error instanceof Error ? `: ${error.message}` : '';
+                reject(new Error(`Could not prepare cutscene: ${video.currentSrc || video.src}${detail}`));
+            };
             video.addEventListener('canplay', ready, { once: true });
             video.addEventListener('error', failed, { once: true });
         });
+    }
+
+    async loadCutsceneVideos(sources) {
+        const videos = [this.cutsceneCurrentVideo, this.cutsceneOtherVideo];
+        videos.forEach((video, index) => { video.src = sources[index]; });
+        // Register readiness listeners before load(): on a warm mobile cache the
+        // event can be dispatched before a listener added afterwards sees it.
+        const readiness = Promise.all(videos.map(video => this.waitForVideoReady(video)));
+        videos.forEach(video => video.load());
+        await readiness;
     }
 
     async preloadStartupAssets(onProgress = () => {}) {
@@ -304,14 +320,22 @@ class ArmorOfGodGame {
         this.cutsceneOtherVideo = document.getElementById('cutsceneVideoB');
         // Object URLs guarantee the first visit uses the verified bytes already in
         // Cache Storage, even before a newly installed service worker controls this
-        // particular page.  Only the two playback elements are materialized to keep
-        // mobile memory bounded.
-        this.cutscenePreparedSources = await Promise.all(this.cutsceneSources.map(source => preloader.getCachedObjectURL(source)));
-        this.cutsceneCurrentVideo.src = this.cutscenePreparedSources[0];
-        this.cutsceneOtherVideo.src = this.cutscenePreparedSources[1];
-        this.cutsceneCurrentVideo.load();
-        this.cutsceneOtherVideo.load();
-        await Promise.all([this.waitForVideoReady(this.cutsceneCurrentVideo), this.waitForVideoReady(this.cutsceneOtherVideo)]);
+        // particular page. Mobile WebKit is the exception: it can emit a media
+        // error for a valid MP4 blob URL, so keep Safari on normal same-origin URLs
+        // and let its media stack use range requests and the browser cache.
+        this.cutscenePreparedSources = await Promise.all(this.cutsceneSources.map(source => (
+            preloader.getCachedObjectURL(source, { preferNetworkURL: preloader.preferNativeMediaURLs })
+        )));
+        try {
+            await this.loadCutsceneVideos(this.cutscenePreparedSources);
+        } catch (error) {
+            // A browser that fails to decode a Cache Storage blob gets one clean
+            // retry through its normal HTTP media path before startup is failed.
+            if (!this.cutscenePreparedSources.some(source => source.startsWith('blob:'))) throw error;
+            console.warn('Cached cutscene media failed; retrying with normal URLs.', error);
+            this.cutscenePreparedSources = [...this.cutsceneSources];
+            await this.loadCutsceneVideos(this.cutscenePreparedSources);
+        }
         onProgress({ percent: 100, state: 'ADVENTURE READY' });
     }
 
