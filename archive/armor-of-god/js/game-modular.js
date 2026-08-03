@@ -326,16 +326,7 @@ class ArmorOfGodGame {
         this.cutscenePreparedSources = await Promise.all(this.cutsceneSources.map(source => (
             preloader.getCachedObjectURL(source, { preferNetworkURL: preloader.preferNativeMediaURLs })
         )));
-        try {
-            await this.loadCutsceneVideos(this.cutscenePreparedSources);
-        } catch (error) {
-            // A browser that fails to decode a Cache Storage blob gets one clean
-            // retry through its normal HTTP media path before startup is failed.
-            if (!this.cutscenePreparedSources.some(source => source.startsWith('blob:'))) throw error;
-            console.warn('Cached cutscene media failed; retrying with normal URLs.', error);
-            this.cutscenePreparedSources = [...this.cutsceneSources];
-            await this.loadCutsceneVideos(this.cutscenePreparedSources);
-        }
+        await this.loadCutsceneVideos(this.cutscenePreparedSources);
         onProgress({ percent: 100, state: 'ADVENTURE READY' });
     }
 
@@ -1005,6 +996,7 @@ class ArmorOfGodGame {
         if (runId !== this.cutsceneRunId || this.gameState !== 'cutscene') return;
         this.cutsceneIndex = 0;
         this.cutsceneMusicFadeStarted = false;
+        this.cutsceneFailureHandled = false;
         document.getElementById('cutsceneLoading').classList.add('hidden');
         // This call remains in the Start button's synchronous gesture chain. It is
         // required for reliable iOS audible-media authorization.
@@ -1015,8 +1007,23 @@ class ArmorOfGodGame {
         const incoming = this.cutsceneCurrentVideo;
         if (!incoming) return;
         this.configureCutsceneVideo(incoming, null, 0);
+        if (incoming.error) {
+            this.handleCutsceneFailure(incoming.error);
+            return;
+        }
         const playPromise = incoming.play();
-        if (playPromise) playPromise.catch(error => console.warn('Opening video playback was blocked:', error));
+        if (playPromise) playPromise.catch(error => {
+            console.warn('Opening video playback was blocked:', error);
+            if (incoming.error || error.name === 'NotSupportedError') this.handleCutsceneFailure(error);
+        });
+    }
+
+    handleCutsceneFailure(error) {
+        if (this.cutsceneFailureHandled || this.gameState !== 'cutscene') return;
+        this.cutsceneFailureHandled = true;
+        console.warn('Opening cutscene could not be played; continuing to Level 1.', error);
+        this.cutsceneRunId++;
+        this.finishOpeningCutscene();
     }
 
     configureCutsceneVideo(incoming, outgoing, index) {
@@ -1027,10 +1034,7 @@ class ArmorOfGodGame {
         incoming.style.transitionDuration = `${crossfadeDuration}s`;
         if (outgoing) outgoing.style.transitionDuration = `${crossfadeDuration}s`;
         incoming.onended = () => this.advanceCutscene(index);
-        incoming.onerror = () => {
-            console.warn(`Cutscene segment ${index + 1} could not be played; skipping it.`);
-            if (this.gameState === 'cutscene' && index === this.cutsceneIndex) this.advanceCutscene(index);
-        };
+        incoming.onerror = () => this.handleCutsceneFailure(incoming.error);
         incoming.ontimeupdate = () => {
             const isFinalVideo = index === this.cutsceneSources.length - 1;
             if (incoming.duration && !isFinalVideo && !this.cutsceneTransitioning && incoming.currentTime >= incoming.duration - crossfadeDuration) this.advanceCutscene(index);
@@ -1043,13 +1047,24 @@ class ArmorOfGodGame {
         const incoming = first ? this.cutsceneCurrentVideo : this.cutsceneOtherVideo;
         const outgoing = first ? null : this.cutsceneCurrentVideo;
         const source = this.cutscenePreparedSources?.[index] || this.cutsceneSources[index];
-        if (incoming.src !== new URL(source, document.baseURI).href) {
-            incoming.src = source; incoming.load();
-            await this.waitForVideoReady(incoming);
+        try {
+            if (incoming.src !== new URL(source, document.baseURI).href) {
+                incoming.src = source; incoming.load();
+                await this.waitForVideoReady(incoming);
+            }
+        } catch (error) {
+            this.handleCutsceneFailure(error);
+            return;
         }
         if (this.gameState !== 'cutscene') return;
         this.configureCutsceneVideo(incoming, outgoing, index);
-        await incoming.play().catch(error => console.warn('Cutscene video playback was blocked:', error));
+        try {
+            await incoming.play();
+        } catch (error) {
+            console.warn('Cutscene video playback was blocked:', error);
+            if (incoming.error || error.name === 'NotSupportedError') this.handleCutsceneFailure(error);
+            return;
+        }
         this.cutsceneCurrentVideo = incoming;
         this.cutsceneOtherVideo = incoming === document.getElementById('cutsceneVideoA') ? document.getElementById('cutsceneVideoB') : document.getElementById('cutsceneVideoA');
         if (index === this.cutsceneSources.length - 1) {
@@ -3382,11 +3397,10 @@ async function startGameAfterDomReady() {
             console.error('Required startup asset failed:', error);
             if (desktopLoaderTimer) clearTimeout(desktopLoaderTimer);
             showLoader();
-            // Do not make a player wait at an error screen because the optional
-            // verification/cache layer failed. Once per page, fall back to the
-            // browser's normal element-by-element loading path. Programming errors
-            // and a failure after that fallback still retain the diagnostic screen.
-            const canUseNativeFallback = !nativeFallbackUsed && /^Could not prepare /.test(error.message || '');
+            // Only a browser rejecting a verified cached video blob gets the native
+            // loading escape hatch. Network, server, and integrity failures remain
+            // visible so a bad deploy is never concealed as a playable game.
+            const canUseNativeFallback = !nativeFallbackUsed && /^Could not prepare cutscene: blob:/.test(error.message || '');
             if (canUseNativeFallback) {
                 nativeFallbackUsed = true;
                 console.warn('Startup preloading failed; continuing with native asset loading.', error);
