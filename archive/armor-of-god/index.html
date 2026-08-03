@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="game.css?v=mobile-ui-v2">
+    <link rel="stylesheet" href="game.css?v=mobile-welcome-v3">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
@@ -35,6 +35,16 @@
     </script>
 </head>
 <body>
+    <section id="mobileWelcome" class="mobile-welcome" aria-labelledby="mobileWelcomeTitle">
+        <div class="mobile-welcome__laptop" aria-hidden="true">
+            <span class="mobile-welcome__screen"><img src="favicon/favicon-96x96.png" alt=""></span>
+            <span class="mobile-welcome__base"></span>
+        </div>
+        <p class="mobile-welcome__app-name">ARMOR OF GOD</p>
+        <h1 id="mobileWelcomeTitle">Open this adventure on a laptop.</h1>
+        <p class="mobile-welcome__detail">Mobile devices aren’t officially supported.</p>
+        <a id="mobileWelcomeContinue" class="mobile-welcome__continue" href="#play">PLAY ANYWAY <span aria-hidden="true">→</span></a>
+    </section>
     <div id="startupLoading" class="startup-loading" role="status" aria-live="polite">
         <p id="startupLoadingStatus">LOADING ADVENTURE…</p>
         <div class="startup-loading__track" aria-hidden="true"><div id="startupLoadingProgress" class="startup-loading__progress"></div></div>

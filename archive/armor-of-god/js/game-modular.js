@@ -3359,6 +3359,22 @@ class ArmorOfGodGame {
 // Start loading as soon as the document structure is ready. Waiting for window.load
 // can stall forever on mobile while Safari is still fetching a noncritical image.
 async function startGameAfterDomReady() {
+    const mobileWelcome = document.getElementById('mobileWelcome');
+    const isMobileDevice = window.matchMedia('(max-width: 767px) and (pointer: coarse)').matches;
+    if (isMobileDevice && mobileWelcome) {
+        await new Promise(resolve => {
+            const continueLink = document.getElementById('mobileWelcomeContinue');
+            continueLink.addEventListener('click', event => {
+                event.preventDefault();
+                mobileWelcome.classList.add('mobile-welcome--leaving');
+                setTimeout(() => {
+                    mobileWelcome.remove();
+                    resolve();
+                }, 250);
+            }, { once: true });
+            requestAnimationFrame(() => continueLink.focus({ preventScroll: true }));
+        });
+    }
     const isDevelopmentEnvironment = location.protocol === 'file:' || ['localhost', '127.0.0.1', '::1', '0.0.0.0'].includes(location.hostname);
     document.body.classList.toggle('development-mode', isDevelopmentEnvironment);
     const loadingStartedAt = performance.now();
