@@ -2674,3 +2674,53 @@ canvas:focus { outline: none; }
         margin: 0;
     }
 }
+
+/* iPad Safari can report a shorter visible viewport after its browser controls
+   appear. Never clip a menu/action below that viewport: let the affected screen
+   scroll instead, while preserving the compact layouts where they fit. */
+@media (pointer: coarse) {
+    #gameContainer {
+        height: 100dvh;
+        min-height: 100dvh;
+    }
+
+    /* Gameplay itself is never a scroll surface. Touches belong to the canvas
+       and controls, even when the surrounding menu screens may scroll. */
+    #gameScreen {
+        overflow: hidden;
+        overscroll-behavior: none;
+        touch-action: none;
+    }
+
+    #menuScreen,
+    #levelIntroScreen,
+    #gameOverScreen,
+    #levelCompleteScreen {
+        box-sizing: border-box;
+        height: 100dvh;
+        min-height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #menuScreen,
+    #levelIntroScreen,
+    #gameOverScreen,
+    #levelCompleteScreen .score-display-small,
+    #levelCompleteScreen #nextLevelBtn,
+    #levelCompleteScreen .button-row,
+    #gameOverScreen .game-over-actions {
+        position: relative;
+        z-index: 1;
+    }
+
+    #gameOverScreen .menu-btn,
+    #levelCompleteScreen .menu-btn,
+    #levelIntroScreen .menu-btn,
+    #menuScreen .menu-btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+}

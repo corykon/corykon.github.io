@@ -289,16 +289,6 @@ class ArmorOfGodGame {
         });
     }
 
-    async loadCutsceneVideos(sources) {
-        const videos = [this.cutsceneCurrentVideo, this.cutsceneOtherVideo];
-        videos.forEach((video, index) => { video.src = sources[index]; });
-        // Register readiness listeners before load(): on a warm mobile cache the
-        // event can be dispatched before a listener added afterwards sees it.
-        const readiness = Promise.all(videos.map(video => this.waitForVideoReady(video)));
-        videos.forEach(video => video.load());
-        await readiness;
-    }
-
     async preloadStartupAssets(onProgress = () => {}) {
         const images = this.collectStartupImages();
         const preloader = new AssetPreloader({ mobile: window.matchMedia('(pointer: coarse)').matches });
@@ -326,7 +316,10 @@ class ArmorOfGodGame {
         this.cutscenePreparedSources = await Promise.all(this.cutsceneSources.map(source => (
             preloader.getCachedObjectURL(source, { preferNetworkURL: preloader.preferNativeMediaURLs })
         )));
-        await this.loadCutsceneVideos(this.cutscenePreparedSources);
+        // Do not require iOS Safari to decode a video before the player taps Start.
+        // It may reject that background preparation even for a valid, cached MP4.
+        // The files remain downloaded/verified; source assignment and playback occur
+        // in the Start-button gesture below.
         onProgress({ percent: 100, state: 'ADVENTURE READY' });
     }
 
@@ -1006,6 +999,11 @@ class ArmorOfGodGame {
     playFirstCutsceneVideo() {
         const incoming = this.cutsceneCurrentVideo;
         if (!incoming) return;
+        const source = this.cutscenePreparedSources?.[0] || this.cutsceneSources[0];
+        if (incoming.src !== new URL(source, document.baseURI).href) {
+            incoming.src = source;
+            incoming.load();
+        }
         this.configureCutsceneVideo(incoming, null, 0);
         if (incoming.error) {
             this.handleCutsceneFailure(incoming.error);
