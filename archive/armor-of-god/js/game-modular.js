@@ -339,6 +339,20 @@ class ArmorOfGodGame {
         onProgress({ percent: 100, state: 'ADVENTURE READY' });
     }
 
+    useNativeAssetLoading() {
+        // This is intentionally a startup-only escape hatch. Images already retain
+        // their original URLs; restore media too, then let each browser element
+        // fetch its asset normally as gameplay reaches it.
+        this.audioManager.restoreNativeSources();
+        this.cutscenePreparedSources = [...this.cutsceneSources];
+        [this.cutsceneCurrentVideo, this.cutsceneOtherVideo].forEach((video, index) => {
+            if (!video) return;
+            video.pause();
+            video.src = this.cutscenePreparedSources[index];
+            video.load();
+        });
+    }
+
     revealMenuAfterStartup(loaderWasShown = true) {
         this.initializeAudio();
         requestAnimationFrame(() => {
@@ -1013,6 +1027,10 @@ class ArmorOfGodGame {
         incoming.style.transitionDuration = `${crossfadeDuration}s`;
         if (outgoing) outgoing.style.transitionDuration = `${crossfadeDuration}s`;
         incoming.onended = () => this.advanceCutscene(index);
+        incoming.onerror = () => {
+            console.warn(`Cutscene segment ${index + 1} could not be played; skipping it.`);
+            if (this.gameState === 'cutscene' && index === this.cutsceneIndex) this.advanceCutscene(index);
+        };
         incoming.ontimeupdate = () => {
             const isFinalVideo = index === this.cutsceneSources.length - 1;
             if (incoming.duration && !isFinalVideo && !this.cutsceneTransitioning && incoming.currentTime >= incoming.duration - crossfadeDuration) this.advanceCutscene(index);
@@ -3351,6 +3369,7 @@ async function startGameAfterDomReady() {
     const game = new ArmorOfGodGame();
     const status = document.getElementById('startupLoadingStatus');
     const progress = document.getElementById('startupLoadingProgress');
+    let nativeFallbackUsed = false;
     const loadAssets = async () => {
         progress.style.width = '0%';
         status.textContent = 'CHECKING ADVENTURE… 0%';
@@ -3363,6 +3382,20 @@ async function startGameAfterDomReady() {
             console.error('Required startup asset failed:', error);
             if (desktopLoaderTimer) clearTimeout(desktopLoaderTimer);
             showLoader();
+            // Do not make a player wait at an error screen because the optional
+            // verification/cache layer failed. Once per page, fall back to the
+            // browser's normal element-by-element loading path. Programming errors
+            // and a failure after that fallback still retain the diagnostic screen.
+            const canUseNativeFallback = !nativeFallbackUsed && /^Could not prepare /.test(error.message || '');
+            if (canUseNativeFallback) {
+                nativeFallbackUsed = true;
+                console.warn('Startup preloading failed; continuing with native asset loading.', error);
+                game.useNativeAssetLoading();
+                progress.style.width = '100%';
+                status.textContent = 'LOADING AS NEEDED…';
+                game.revealMenuAfterStartup(loaderWasShown);
+                return;
+            }
             progress.style.width = '0%';
             // Keep the player-facing message short, but expose the exact failing
             // asset in the visible text and title so mobile failures can be diagnosed

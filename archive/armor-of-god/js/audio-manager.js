@@ -61,6 +61,9 @@ class AudioManager {
             hallOfHeroes: new Audio('sounds/hall-of-heroes-theme.mp3'),
             credits: new Audio('sounds/credits-theme.mp3')
         };
+        // Keep the original same-origin sources so startup can abandon prepared
+        // blob URLs and let the browser fetch media normally if needed.
+        this.nativeSources = new Map(Object.values(this.audio).map(track => [track, track.src]));
         
         // Define loop and volume settings for each audio file
         const audioSettings = {
@@ -219,6 +222,14 @@ class AudioManager {
             const cachedSource = prepared.get(source);
             if (cachedSource !== source) track.src = cachedSource;
         }
+    }
+
+    restoreNativeSources() {
+        this.nativeSources.forEach((source, track) => {
+            track.pause();
+            track.src = source;
+            track.preload = 'none';
+        });
     }
 
     preloadAll(onProgress = () => {}) {
