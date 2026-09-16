@@ -1,0 +1,134 @@
+@charset "UTF-8";
+/* Watts Properties CSS
+   Additional Styling for Homepage	
+   created Mar 17, 2011	
+*/
+
+
+#container{
+	min-height: 1110px;	
+}
+
+#homepageimage {
+	margin: 0px 30px 0px 30px;
+	background-image: url("../images/collegekids2.jpg");
+	width: 900;
+	height: 350px;
+	
+}
+
+
+/***** HOMEPAGE "View Property Now" Links*******/
+#proplinks h2{
+	width: 388px;
+	height: 27px;
+	background-image: url("../images/viewpropertynow.png");
+	margin: 30px 0px 30px;
+}
+
+#proplinks h2 span{
+	display: none;
+}
+
+#proplinks{
+	width: 53%;
+	margin: 0px 0px 0px 30px;
+	float: left;	
+	border: none;
+	padding: none;
+	height: 300px;
+}
+
+#proplinks article{
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+#proplinks article img{
+	float:left;
+}
+
+#proplinks article h3{
+	font-weight: normal;
+	padding: 5px 0px 0px 32px;
+}
+
+#proplinks article h3 span{
+	font-size: .75em;
+	font-weight: normal;
+	color: #3EA8F4;
+}
+
+#proplinks article p{
+	margin: 5px 0px 20px 3px;
+	font-size: .75em;
+	letter-spacing: .025em;
+	padding-right: 20px;
+	
+}
+
+#proplinks img{
+	border:none;
+}
+
+#proplinks a{
+	color: #000;
+	text-decoration: none;
+	display: block;	
+	margin: 0;
+	padding: 0;
+}
+
+/***************HOMEPAGE Register Interest ***********************/
+
+#reginterest{
+	width: 35%;
+	padding-left: 3%;
+	height: 575px;
+	clear: none;
+	padding-top: 0px;
+	margin-top: 30px;
+		
+}
+
+#reginterest form {
+	display: flow-root;
+}
+
+#reginterest h4 {
+	font-family: propHeader;
+	font-weight: normal;
+	color: #3EA8F4;
+	margin-top: 150px;
+	font-size: 1.75em;
+}
+
+#reginterest h5 {
+	font-family: propHeader;
+	font-weight: normal;
+	color: #333333;
+	margin-top: 20px;
+	font-size: 2.5em;
+}
+
+
+/*****************Call Today***********************/
+#call {
+	clear: both;
+	box-sizing: border-box;
+	margin-top: 24px;
+	padding: 28px;
+	border-radius: 16px;
+	background: linear-gradient(135deg, #3ea8f4 0%, #1a669a 100%);
+	box-shadow: 0 6px 16px rgba(26, 102, 154, 0.2);
+}
+
+#call h4 {
+	color: #fff;
+	margin-top: 0;
+}
+
+#call h5 {
+	color: #fff;
+	margin-top: 8px;
+}

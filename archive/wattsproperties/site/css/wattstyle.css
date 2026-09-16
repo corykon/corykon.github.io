@@ -1,0 +1,477 @@
+@charset "UTF-8";
+/* Watts Properties CSS
+   created Feb 23, 2011
+*/
+
+@font-face {
+    font-family: propHeader;
+    src: url("CODE Bold.otf");
+}
+
+*{
+	margin: 0;
+	padding: 0;
+}
+
+header, nav, footer, section, arcticle {
+	display: block;
+}
+
+body{
+	font-family: Tahoma, Geneva, sans-serif;
+	background: url("../images/rockbg1.jpg");
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+/******White Center/Content Box *********/
+#container {
+	display: block;
+	flex: 1 0 auto;
+	width: 80%;
+	max-width: 1200px;
+	min-width: 1050px;
+	margin: auto;
+	min-height: 800px;
+	background-color: #FFF;
+	box-shadow: 1px 0px 7px #666;
+    -moz-box-shadow: 1px 0px 7px #666;
+    -webkit-box-shadow: 1px 0px 7px #666;
+    -o-box-shadow: 1px 0px 7px #666;
+}
+
+body > [data-component="footer"] {
+	margin-top: auto;
+	flex-shrink: 0;
+}
+
+/******Blue Gradient Stripe ****/
+#gradient {
+	width: 100%;
+	background: url("../images/bluegradient.jpg");
+	background-repeat: repeat-x;
+	height: 350px;
+	z-index: -1;
+	position: absolute;
+	top: 120px;
+}
+
+
+/****Header Container ****/
+header{
+	height: 70px;
+	padding-top: 20px;
+	padding-bottom: 30px;
+}
+
+
+/******Watts Prop Logo *****/
+h1 {
+	background-image: url("../images/wattspropertieslogo.png");
+	background-repeat: no-repeat;
+	height: 52px;
+	width: 437px;
+	display:inline-block;
+	float: left;
+	margin-top: 20px;
+	margin-left: 30px;
+}
+
+h1 span{
+	display: none;
+}
+
+
+/**********************Navigation************************/
+nav {
+	display: block-inline;
+	float: right;
+	margin-top: 42px;
+	margin-right: 35px;
+}
+
+nav ul li{
+	display: inline;
+	padding-left: 30px;
+	list-style: none;
+
+}
+
+nav a{
+	text-decoration: none;
+	color: #B6B6B7;
+	font-weight: 100;
+}
+
+nav a:hover{
+	color: #3EA8F4;
+	/*color: #9DC004;*/
+}
+
+
+.home nav a[title~=homepage],
+.about nav a[title~=Watts],
+.property nav a[title~=view],
+.contact nav a[title~=ask],
+.applications nav a[title~=application] {
+	color: #3EA8F4;
+	/*color: #9DC004;*/
+}
+
+/**********************end nav**********************/
+
+/****************About Page Content ****************/
+#about {
+	width: 57%;
+	float: left;
+	margin: 25px 0px 0px 30px;
+}
+
+#about h2 {
+	width: 380px;
+	height: 23px;
+	background-image: url("../images/aboutheader.png");
+	margin-bottom: 30px;
+}
+
+#about h2 span{
+	display: none;
+}
+
+#about p{
+	margin-bottom: 30px;
+}
+
+/****************Applications Page Content ****************/
+#applications {
+	width: 57%;
+	float: left;
+	margin: 25px 0px 0px 30px;
+}
+
+#applications h2.propHeader {
+    margin-bottom: 30px;
+}
+
+#applications ul img[alt~=pdf]{
+margin-top: -8px;
+float: left;
+}
+
+#applications ul a{
+    color: #3EA8F4;
+}
+
+/****************Contact Page Content ****************/
+#contact {
+	width: 57%;
+	float: left;
+	margin: 25px 0px 0px 30px;
+}
+
+#contact h2 {
+	width: 182px;
+	height: 23px;
+	background-image: url("../images/contactheader.png");
+	margin-bottom: 30px;
+}
+
+#contact h2 span{
+	display: none;
+}
+
+
+#contact p {
+    margin-bottom: 15px;
+}
+fieldset {
+    border: none;
+}
+#contact ul {
+    list-style:  none;
+}
+
+#contact {
+    float: left;
+    margin: 30px 0 0 30px;
+    width: 57%;
+}
+#contact h2 {
+    background-image: url("../images/contactheader.png");
+    height: 23px;
+    margin-bottom: 30px;
+    width: 182px;
+}
+#contact h2 span {
+    display: none;
+}
+
+#contact label{
+	width: 115px;
+	float: left;
+}
+
+#contact input{
+	width: 200px;
+	margin-bottom: 10px;
+}
+
+#message{
+	width: 400px;
+	height: 200px;
+	margin-bottom: 10px;
+}
+
+
+/****************Poperties Page Content*************/
+
+#property {
+	width: 57%;
+	float: left;
+	margin: 25px 0px 0px 30px;
+}
+
+#property h2.propHeader,
+#applications h2.propHeader {
+        font-family: propHeader;
+        color: #3EA8F4;
+        font-size: 1.75em;
+        font-weight: normal;
+}
+
+#property h2 span{
+	display: none;
+}
+
+#property p{
+	clear: left;
+	padding-top: 30px;
+}
+
+#imgs {
+    width: 600;
+    height: 293;
+}
+
+img.mainimage {
+	margin-top: 20px;
+	float:left;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+       box-shadow: 1px 0 5px #9F9F9F;
+}
+
+img.thumbnail {
+	border: none;
+    margin: 20px 0px 0px 19px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    opacity: .6;
+       
+}
+
+img.thumbnail:hover {
+        opacity: 1;
+        box-shadow: 1px 0 5px #9F9F9F;
+}
+div.thumbnail {
+		margin: 20px 0px 0px 19px;
+        width: 125px;
+        height: 76px;
+        display: block;
+}
+
+#property p{
+	clear: left;
+}
+
+#property ul {
+	margin: 15px 0px 0px 30px;
+}
+
+#property h3{
+	margin-top: 30px;
+        color: #3EA8F4;
+        font-weight: normal;
+	
+}
+
+/*#property a img{
+	border: none;
+}*/
+
+#selectedImage {
+        display: none;
+}
+
+
+/***** PROPPAGE "View Property Now" Links*******/
+#proplinks h2{
+	font-family: propHeader;
+	width: 325px;
+	height: 20px;
+	background-image: url("../images/viewanotherproperty.png");
+	margin: 0px 0px 40px;
+	color: #3EA8F4;
+	font-weight: normal;
+}
+
+
+#proplinks h2 span{
+	display: none;
+}
+
+
+#proplinks{
+	margin: 30px 30px 0px 0px;
+	width: 33%;
+	float: right;
+	border-left: 2px solid #B6B6B7;
+	padding-left: 2%;
+}
+
+#proplinks article{
+	width: 100%;
+}
+
+#proplinks article h3{
+	font-weight: normal;
+}
+
+#proplinks article h4{
+	font-weight: normal;
+	color: #3EA8F4;
+}
+
+#proplinks img{
+	border:none;
+	float: left;
+}
+
+#proplinks a{
+	color: #000;
+	text-decoration: none;
+	display: block;
+	margin: 0px 0px 30px 40px;
+	opacity: .8;
+}
+
+#proplinks article a:hover {
+	opacity: 1;
+}
+
+/*#proplinks article:nth-child(4) {
+	display: none;
+}*/
+
+
+/***************Register Interest ***********************/
+
+#reginterest{
+	width: 33%;
+	margin-right: 30px;
+	float: right;
+	padding-top: 30px;
+	border-left: 2px solid #B6B6B7;
+	clear: right;
+	padding-left: 2%;
+	height: 225px;
+
+}
+
+#reginterest h2{
+	width: 340px;
+	height: 20px;
+	font-family: propHeader;
+	color: #3EA8F4;
+	//background-image: url("../images/interestedletusknow2.png");
+	margin-bottom: 45px;
+	font-weight: normal;
+	font-size: 1.6em;
+
+}
+
+/*#reginterest h2 span{
+	display: none;
+}*/
+
+#reginterest ul{
+	list-style: none;
+	margin-top: 10px;
+}
+
+#reginterest li{
+	margin-top: 10px;
+}
+
+#reginterest li:nth-child(5){
+	margin-top: 25px;
+}
+
+#reginterest label{
+	width: 40%;
+}
+
+#reginterest input{
+	float: right;
+	width: 40%;
+	margin-right: 15%;
+}
+
+
+/*****Footer*****/
+footer{
+	background-color: #1A669A;
+	color: #FFF;
+	width: 100%;
+	clear:both;
+	height: 50px;
+	border-top: 1px solid #000;
+	font-weight: 100;
+}
+footer div.inner1{
+	border-top: 1px solid #3EA8F4;
+}
+
+footer div.inner2{
+	padding-top: 15px;
+	width: 80%;
+	max-width: 1200px;
+	min-width: 1050px;
+	margin:auto;
+}
+
+footer div.inner2 h6{
+	display: inline;
+	float: left;
+	font-size: .75em;
+	font-weight: 100;
+}
+
+footer ul{
+	float: right;
+	margin-top: -7px;
+}
+
+footer ul li{
+	display: inline;
+	list-style: none;
+	font-size: .75em;
+
+}
+footer a{
+	text-decoration: none;
+	color: #FFF;
+
+}
+
+footer a:hover{
+	color: #3EA8F4;
+	/*color: #9DC004;*/
+}
+
+
+
+
+

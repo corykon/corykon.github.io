@@ -1,0 +1,27 @@
+.webfolio-sidenav {
+  box-sizing: border-box;
+  width: 120px;
+  padding: 18px 8px;
+  background: #000080;
+}
+
+.webfolio-sidenav a {
+  display: block;
+  margin: 6px 0;
+  padding: 5px 4px;
+  border: 1px solid #4b4bff;
+  border-radius: 4px;
+  background: #0000e8;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  color: #fff;
+  font: bold 12px "Times New Roman", serif;
+  text-align: center;
+  text-decoration: none;
+}
+
+.webfolio-sidenav a:hover,
+.webfolio-sidenav a:focus {
+  background: #3232ff;
+  outline: 1px solid #fff;
+  outline-offset: 1px;
+}

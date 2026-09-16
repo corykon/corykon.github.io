@@ -1,0 +1,253 @@
+/* 
+    Document   : style.css
+    Created on : Jun 28, 2012, 5:42:19 PM
+    Author     : ckfugate
+    Description:
+        Stylesheet for a one page Cox Communications project.
+*/
+
+/****** General ******/
+root { 
+    display: block;
+}
+
+h1, h2, h3, h4, h5, h6, body, html{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    font-family: 'Droid Sans', Helvetica, Arial, sans-serif;
+    color: #333;
+}
+
+.container{
+    width: 960px;
+    margin: auto;
+}
+
+
+/******Header & Nav ******/
+#header .container{
+    background-image: url('images/topbar.png');
+    background-repeat: no-repeat;
+    padding-top: 22px;
+    margin-bottom: 20px;
+}
+
+#header #calltoday{
+    float: right;
+    margin: 17px 8px 0 0;
+}
+
+#header nav{
+    height: 52px;
+    width: 960px;
+    text-indent: -9999em;
+}
+
+nav ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#header nav li a{
+    background-image: url('images/globalnav.png');
+    height: 52px;
+    display: block;
+    float: left;
+}
+
+#header nav li a#nav-deals{width: 137px; background-position: 0 0;}
+#header nav li a#nav-tv{width: 100px; background-position: -137px 0;}
+#header nav li a#nav-internet{width: 212px; background-position: -237px 0;}
+#header nav li a#nav-phone{width: 193px; background-position: -449px 0;}
+#header nav li a#nav-bundles{width: 140px; background-position: -642px 0;}
+#header nav li a#nav-qands{width: 178px; background-position: -782px 0;}
+
+#header nav li a#nav-deals:hover{width: 137px; background-position: 0 -52px;}
+#header nav li a#nav-tv:hover{width: 100px; background-position: -137px -52px;}
+#header nav li a#nav-internet:hover{width: 212px; background-position: -237px -52px;}
+#header nav li a#nav-phone:hover{width: 193px; background-position: -449px -52px;}
+#header nav li a#nav-bundles:hover{width: 140px; background-position: -642px -52px;}
+#header nav li a#nav-qands:hover{width: 178px; background-position: -782px -52px;}
+
+
+
+
+/****** Content ******/
+
+#splash{
+    padding: 30px;
+    height: 300px;
+    position: relative;
+    background-image: url('images/splash.png');
+    background-repeat: no-repeat;
+}
+
+#splash ul{
+    font-size: 14px;
+    list-style-image: url('images/arrowbullet.png');
+    padding-left: 20px;
+}
+
+#splash p{
+    margin: 35px 0 0 0;
+}
+
+#splash h3{
+    font-size: 27px;
+}
+
+/**** Deal Form ****/
+#dealform {
+    padding: 30px 20px;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    box-shadow: 1px 1px 4px #BBB;
+    height: 260px;
+    width: 260px;
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    
+}
+
+#dealform form{
+    margin: 25px 0;
+}
+
+#dealform label{
+    display: block;
+    font-size: 14px;
+}
+
+#dealform input[type=text]{
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px #EEEEEE inset;
+    font-size: 14px;
+    height: 30px;
+    margin-top: 1px;
+    padding: 3px;    
+}
+
+#dealform input[type=text]:focus{
+    box-shadow: 1px 1px 4px #DDDDDD inset;
+}
+
+#dealform form div{
+    float: left;
+    margin-right: 30px;
+}
+
+#dealform form img{
+    margin: 25px 0 0 45px;
+    
+}
+
+#dealform input[type=text]#address{width: 250px; margin-bottom: 20px;}
+#dealform input[type=text]#apt{width: 60px;}
+#dealform input[type=text]#zip{width: 154px;}
+
+#dealform input[type=text].error{
+    border-color: red;
+}
+#dealform label.error{
+    color: red;
+}
+
+
+#dealform input[type=submit]{
+    background-image: url('images/clickhere.gif');
+    height: 44px;
+    width: 260px;
+    margin-top: 5px;
+    border: none;
+}
+
+#dealform input[type=submit]:hover{
+    cursor: pointer;
+    background-position: 0 -44px;
+}
+
+#dealform input[type=submit]:active{
+    cursor: pointer;
+    background-position: 0 -88px;
+}
+
+
+/**** Value Buttons ****/
+div.value-button{
+    width: 270px;
+    float: left;
+    margin-right: 20px;
+    border-radius: 5px;
+    border: 2px solid #eee;
+    padding: 15px 10px 15px 20px;
+
+}
+
+div.value-button h3{
+    font-size: 21px;
+}
+
+
+div.value-button h4{
+    font-size: 17px;
+    color: #009ED0;
+    font-weight:normal;
+}
+
+div.value-button ul{
+    padding: 0;
+    margin: 15px 0 0 14px;
+}
+
+div.value-button ul li{
+    list-style-image: url('images/arrowbullet.png');
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+div.value-button img{
+    margin: 25px 0 0 85px;
+}
+
+div.value-button#tv-btn img{
+    margin-top: 10px;
+}
+
+div.value-button p{
+    margin: 15px 0 3px 0;
+    font-size: 13px;
+}
+
+div #phone-btn{
+    margin-right: 0px;
+}
+
+div.value-button a{
+    display: block;
+    text-indent: -9999em;
+    width: 260px;
+    height: 44px;
+    background-image: url('images/learnmore.gif');
+    background-repeat:no-repeat;
+}
+
+div.value-button a:hover{background-position: 0px -44px;}
+div.value-button a:active{background-position: 0px -88px;}
+
+/**** Footer ****/
+#footer{
+    clear: both;
+    padding-top: 40px;
+}
+
+#footer div.container{
+    background-image: url('images/bottombar.png');
+    background-repeat: no-repeat;
+    height: 17px;
+}
